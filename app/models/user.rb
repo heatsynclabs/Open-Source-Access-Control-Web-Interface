@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :name, :admin, :instructor, :member, :emergency_name, :emergency_phone, :current_skills, :desired_skills, :waiver, :emergency_email, :phone, :payment_method, :orientation, :member_level, :certifications, :hidden, :marketing_source, :payee, :accountant, :exit_reason, :twitter_url, :facebook_url, :github_url, :website_url, :email_visible, :phone_visible, :postal_code #TODO: make admin/instructor/member/etc not accessible
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :name, :emergency_name, :emergency_phone, :current_skills, :desired_skills, :waiver, :emergency_email, :phone, :payment_method, :orientation, :member_level, :certifications, :hidden, :marketing_source, :payee, :accountant, :exit_reason, :twitter_url, :facebook_url, :github_url, :website_url, :email_visible, :phone_visible, :postal_code
 
   belongs_to :oriented_by, :foreign_key => "oriented_by_id", :class_name => "User"
   has_many :cards
