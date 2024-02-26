@@ -105,7 +105,7 @@ class User < ActiveRecord::Base
   end
 
   def self.member_levels
-    {25 => "Associate", 50 => "Basic", 75 => "Basic", 100 => "Plus"}
+    {20 => "Associate", 25 => "Associate", 35 => "Associate", 50 => "Basic", 75 => "Basic", 80 => 'Basic', 100 => "Plus"}
   end
 
   def payment_status
