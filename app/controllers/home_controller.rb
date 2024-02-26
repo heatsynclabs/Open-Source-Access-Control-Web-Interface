@@ -30,7 +30,7 @@ class HomeController < ApplicationController
 #    @num_associate_users = User.all.select{|u| u.member_status == 250 }.count
 #    @num_delinquent_users = User.all.select{|u| !u.payment_status }.count
     if can? :read, User then
-      @recent_user_names = User.where("member_level > 10").accessible_by(current_ability).order('created_at desc').limit(5)
+      @recent_user_names = User.where("member_level > 0").accessible_by(current_ability).order('created_at desc').limit(5)
     end
 #    @num_door_opens = DoorLog.where("key = 'G'").count
 #    @today_door_opens = DoorLog.where("key = 'G' AND created_at > ?", DateTime.now - 1.day).count
