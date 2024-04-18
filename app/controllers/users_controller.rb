@@ -102,6 +102,13 @@ class UsersController < ApplicationController
     end
   end
 
+  def redirect_home
+    respond_to do |format|
+      format.html { render 'home/index' }
+      format.json { render :json => { error: 'Error processing form.' }, status: :unprocessable_entity }
+    end
+  end
+
   # GET /user_summary/1
   def user_summary
     respond_to do |format|
@@ -126,34 +133,44 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    # update oriented_by only if orientation has been set
-    @user.oriented_by_id = current_user.id unless @user.orientation.blank?
+    # If the "honeypot" field is filled in, it is most likely a bot submission. Redirect to the home page.
+    if params[:user][:honeypot].present?
+      redirect_home
+    else
+      # update oriented_by only if orientation has been set
+      @user.oriented_by_id = current_user.id unless @user.orientation.blank?
 
-    respond_to do |format|
-      if @user.save
-        format.html { redirect_to @user, :notice => 'User was successfully created.' }
-        format.json { render :json => @user, :status => :created, :location => @user }
-      else
-        format.html { render :action => "new" }
-        format.json { render :json => @user.errors, :status => :unprocessable_entity }
+      respond_to do |format|
+        if @user.save
+          format.html { redirect_to @user, :notice => 'User was successfully created.' }
+          format.json { render :json => @user, :status => :created, :location => @user }
+        else
+          format.html { render :action => "new" }
+          format.json { render :json => @user.errors, :status => :unprocessable_entity }
+        end
       end
-    end
+    end # End honeypot check
   end
 
   # PUT /users/1
   # PUT /users/1.json
   def update
-    # update oriented_by only if it's blank but the (new) orientation isn't blank
-    # gotta test the params because they don't get applied til below.
-    @user.oriented_by_id = current_user.id if @user.oriented_by.blank? && (!params[:user]["orientation(1i)"].blank?)
+    # If the "honeypot" field is filled in, it is most likely a bot submission. Redirect to the home page.
+    if params[:user][:honeypot].present?
+      redirect_home
+    else
+      # update oriented_by only if it's blank but the (new) orientation isn't blank
+      # gotta test the params because they don't get applied til below.
+      @user.oriented_by_id = current_user.id if @user.oriented_by.blank? && (!params[:user]["orientation(1i)"].blank?)
 
-    respond_to do |format|
-      if @user.update_attributes(params[:user])
-        format.html { redirect_to @user, :notice => 'User was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render :action => "edit" }
-        format.json { render :json => @user.errors, :status => :unprocessable_entity }
+      respond_to do |format|
+        if @user.update_attributes(params[:user])
+          format.html { redirect_to @user, :notice => 'User was successfully updated.' }
+          format.json { head :no_content }
+        else
+          format.html { render :action => "edit" }
+          format.json { render :json => @user.errors, :status => :unprocessable_entity }
+        end # End HoneyPot check
       end
     end
   end
