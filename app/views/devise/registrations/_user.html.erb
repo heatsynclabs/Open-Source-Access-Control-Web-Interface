@@ -90,6 +90,12 @@ Thanks again, and happy hacking!</p>
   <%= f.password_field :current_password %></div>
   <% end %>
 
+<!--  <div style="display:none;">-->
+  <div>
+    <%= label_tag :honeypot %><br />
+    <%= text_field_tag :honeypot %>
+  </div>
+
   <div><%= f.submit button_label %></div>
 
 <% end %>
