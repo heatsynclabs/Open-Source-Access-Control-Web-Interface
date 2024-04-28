@@ -102,10 +102,10 @@ class UsersController < ApplicationController
     end
   end
 
-  def redirect_home
+  def possible_bot_redirect
+    logger.warn "[Possible Bot Submission] Timestamp: #{Time.now}, IP: #{request.remote_ip}, User ID: #{current_user.id if current_user}, Action: Invalid create user attempt, Honeypot field: #{params[:user][:honeypot]}, User Agent: #{request.user_agent}, Form Data: #{params[:user].except('password', 'password_confirmation')}, Headers: #{request.headers.env}"
     respond_to do |format|
       format.html { render 'home/index' }
-      format.json { render :json => { error: 'Error processing form.' }, status: :unprocessable_entity }
     end
   end
 
@@ -135,7 +135,7 @@ class UsersController < ApplicationController
   def create
     # If the "honeypot" field is filled in, it is most likely a bot submission. Redirect to the home page.
     if params[:user][:honeypot].present?
-      redirect_home
+      possible_bot_redirect
     else
       # update oriented_by only if orientation has been set
       @user.oriented_by_id = current_user.id unless @user.orientation.blank?
@@ -157,7 +157,7 @@ class UsersController < ApplicationController
   def update
     # If the "honeypot" field is filled in, it is most likely a bot submission. Redirect to the home page.
     if params[:user][:honeypot].present?
-      redirect_home
+      possible_bot_redirect
     else
       # update oriented_by only if it's blank but the (new) orientation isn't blank
       # gotta test the params because they don't get applied til below.
