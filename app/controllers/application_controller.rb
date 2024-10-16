@@ -1,18 +1,18 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
-  force_ssl if: :ssl_forced?
+  # force_ssl if: :ssl_forced?
+  #
+  # def ssl_forced?
+  #   # Non-production environments and read-only stuff like the space API and MACs should not require SSL. (APIs hate following 301s).
+  #   if Rails.env.development? || Rails.env.test? || ["space_api","macs"].include?(params[:controller])
+  #     return false
+  #   else
+  #     return true
+  #   end
+  # end
 
-  def ssl_forced?
-    # Non-production environments and read-only stuff like the space API and MACs should not require SSL. (APIs hate following 301s).
-    if Rails.env.development? || Rails.env.test? || ["space_api","macs"].include?(params[:controller])
-      return false
-    else
-      return true
-    end
-  end
-
-  rescue_from CanCan::AccessDenied do |exception|  
+  rescue_from CanCan::AccessDenied do |exception|
     if !current_user.nil? && current_user.orientation.blank? then
       flash[:alert] = "Sorry, you probably need to complete New Member Orientation before having access to this page. <br/>Please check your email and schedule a New Member Orientation with a volunteer."
     else

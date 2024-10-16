@@ -1,6 +1,5 @@
 require 'csv'
 class PaypalCsv < ActiveRecord::Base
-  attr_accessible :data, :_address_status, :_counterparty_status, :_currency, :_fee, :_from_email_address, :_gross, :_item_id, :_item_title, :_name, :_net, :_status, :_time, :_time_zone, :_to_email_address, :_transaction_id, :_type, :date, :string
   belongs_to :payment
 
   after_create :create_payment
@@ -15,7 +14,7 @@ class PaypalCsv < ActiveRecord::Base
 
   def self.batch_import_from_csv(filename)
     csv = CSV.table(filename)
-    csv.each do |row| 
+    csv.each do |row|
       paypal_csv = PaypalCsv.new()
 logger.fatal row.inspect
       paypal_csv.attributes.each do |c|
@@ -32,7 +31,7 @@ logger.fatal row.inspect
       paypal_csv.data = row.to_json
       paypal_csv.save
     end
-    
+
     return true
   end
 

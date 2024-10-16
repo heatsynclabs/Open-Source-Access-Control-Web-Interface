@@ -1,6 +1,5 @@
 class ResourceCategory < ActiveRecord::Base
   has_many :resources
-  attr_accessible :name
 
   before_destroy :has_resources?
 
