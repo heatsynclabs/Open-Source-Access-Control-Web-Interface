@@ -34,10 +34,10 @@ Dooraccess::Application.routes.draw do
   end
 
   match 'user_summary/:id' => 'users#user_summary', via: [:get, :post]
-  match 'users/activity' => 'users#activity'
-  match 'users/new_member_report' => 'users#new_member_report'
-  get 'users/merge' => 'users#merge_view'
-  post 'users/merge' => 'users#merge_action'
+  match 'users/activity' => 'users#activity', via: [:get, :post]
+  match 'users/new_member_report' => 'users#new_member_report', via: [:get, :post]
+  get 'users/merge' => 'users#merge_view', via: [:get, :post]
+  post 'users/merge' => 'users#merge_action', via: [:get, :post]
   match 'users/inactive' => 'users#inactive', via: [:get, :post]
 
   resources :users do
