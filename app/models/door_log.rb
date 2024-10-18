@@ -1,5 +1,4 @@
 class DoorLog < ActiveRecord::Base
-  attr_accessible :data, :key
   require 'open-uri'
 
   def self.execute_command(command)
@@ -104,7 +103,7 @@ class DoorLog < ActiveRecord::Base
       else
         return true # 1 = locked
       end
-    end 
+    end
   end
 
   def self.download_status
@@ -115,7 +114,7 @@ class DoorLog < ActiveRecord::Base
     # query for status
     source = open("#{door_access_url}?9").read
     # expect {"armed"=>255, "activated"=>255, "alarm_3"=>1, "alarm_2"=>1, "door_1_locked"=>1, "door_2_locked"=>1}
-    # See https://github.com/heatsynclabs/Open_Access_Control_Ethernet for more info 
+    # See https://github.com/heatsynclabs/Open_Access_Control_Ethernet for more info
     @status = JSON.parse(source)
     @status.each do |key,value|
       DoorLog.create!({:key => key, :data => value})

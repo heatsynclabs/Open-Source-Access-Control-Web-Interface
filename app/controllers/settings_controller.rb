@@ -29,4 +29,9 @@ class SettingsController < ApplicationController
     redirect_to settings_path
   end
 
+  private
+
+  def settings_params
+    params.require(:setting).permit(:var)
+  end
 end

@@ -61,7 +61,7 @@ class CertificationsController < ApplicationController
   # PUT /certifications/1.json
   def update
     respond_to do |format|
-      if @certification.update_attributes(params[:certification])
+      if @certification.update_attributes(certification_params)
         format.html { redirect_to Certification, :notice => 'Certification was successfully updated.' }
         format.json { head :no_content }
       else
@@ -80,5 +80,11 @@ class CertificationsController < ApplicationController
       format.html { redirect_to certifications_url }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def certification_params
+    params.require(:certification).permit(:description, :name, :slug)
   end
 end

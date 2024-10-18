@@ -15,8 +15,8 @@ class IpnsController < ApplicationController
   end
 
   def create
-    @ipn = Ipn.new_from_dynamic_params(params)
-    @ipn.data = params.to_json
+    @ipn = Ipn.new_from_dynamic_params(ipn_params)
+    @ipn.data = ipn_params.to_json
     @ipn.save
     render :nothing => true
     #unless @ipn.validate!
@@ -25,8 +25,8 @@ class IpnsController < ApplicationController
   end
 
   def import
-    @ipn = Ipn.new_from_dynamic_params(params)
-    @ipn.data = params.to_json
+    @ipn = Ipn.new_from_dynamic_params(ipn_params)
+    @ipn.data = ipn_params.to_json
     @ipn.save
     redirect_to ipn_path(@ipn)
     #unless @ipn.validate!
@@ -36,7 +36,7 @@ class IpnsController < ApplicationController
 
   def validate
     if @ipn.validate!
-      redirect_to ipns_url, :notice => 'Valid!' 
+      redirect_to ipns_url, :notice => 'Valid!'
     else
       redirect_to ipns_url, :notice => 'INVALID'
     end
@@ -45,10 +45,15 @@ class IpnsController < ApplicationController
   def link
     result = @ipn.link_payment
     if result.first
-      redirect_to ipns_url, :notice => 'Payment was successfully linked.' 
+      redirect_to ipns_url, :notice => 'Payment was successfully linked.'
     else
       redirect_to ipns_url, :notice => result.last
     end
   end
 
+  private
+
+  def ipn_params
+    params.require(:ipn).permit(:data)
+  end
 end

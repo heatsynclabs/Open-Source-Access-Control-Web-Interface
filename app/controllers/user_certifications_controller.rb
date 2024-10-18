@@ -9,7 +9,7 @@ class UserCertificationsController < ApplicationController
     @users = User.where(:hidden => [false,nil]).accessible_by(current_ability).sort_by(&:name)
     @certifications = Certification.accessible_by(current_ability).sort_by(&:name)
   end
-  
+
   # GET /user_certifications
   # GET /user_certifications.json
   def index
@@ -71,7 +71,7 @@ class UserCertificationsController < ApplicationController
     @user_certification.updated_by = current_user.id
 
     respond_to do |format|
-      if @user_certification.update_attributes(params[:user_certification])
+      if @user_certification.update_attributes(user_certification_params)
         format.html { redirect_to UserCertification, :notice => 'User certification was successfully updated.' }
         format.json { head :no_content }
       else
@@ -90,5 +90,11 @@ class UserCertificationsController < ApplicationController
       format.html { redirect_to user_certifications_url }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def user_certification_params
+    params.require(:user_certification).permit(:certification_id, :user_id)
   end
 end

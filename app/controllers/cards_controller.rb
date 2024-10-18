@@ -1,7 +1,7 @@
 class CardsController < ApplicationController
   load_and_authorize_resource except: :authorize
   before_filter :authenticate_user!, except: :authorize
-  
+
   # GET /cards
   # GET /cards.json
   def index
@@ -101,7 +101,7 @@ class CardsController < ApplicationController
     #@card = Card.find(params[:id])
 
     respond_to do |format|
-      if @card.update_attributes(params[:card])
+      if @card.update_attributes(cards_params)
         format.html { redirect_to cards_url, :notice => 'Card was successfully updated.' }
         format.json { head :no_content }
       else
@@ -125,8 +125,8 @@ class CardsController < ApplicationController
 
         begin
           @card = Card.find(:first, :conditions => ["lower(card_number) = ?", params[:id].downcase])
-          @auth = @card.inspect 
-          if @card && @card.user 
+          @auth = @card.inspect
+          if @card && @card.user
             @auth = @card.user.has_certification?(params[:device])
           else
             @auth = false
@@ -156,5 +156,11 @@ class CardsController < ApplicationController
       format.html { redirect_to cards_url, :notice => 'Card successfully deleted.' }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def cards_params
+    params.require(:card).permit(:user_id, :name, :card_number, :card_permissions)
   end
 end

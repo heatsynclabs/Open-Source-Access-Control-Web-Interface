@@ -75,7 +75,7 @@ class UsersController < ApplicationController
   def new_member_report
     @new_users = User.where(:created_at => 3.months.ago..Date.today).where(:hidden => false).where(['member_level >= ?','1'])
   end
- 
+
   # GET /users/1
   # GET /users/1.json
   def show
@@ -107,7 +107,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html { render :partial => "user_summary" } # show.html.erb
       format.json { render :json => @user }
-    end 
+    end
   end
 
   # GET /users/new
@@ -148,7 +148,7 @@ class UsersController < ApplicationController
     @user.oriented_by_id = current_user.id if @user.oriented_by.blank? && (!params[:user]["orientation(1i)"].blank?)
 
     respond_to do |format|
-      if @user.update_attributes(params[:user])
+      if @user.update_attributes(user_params)
         format.html { redirect_to @user, :notice => 'User was successfully updated.' }
         format.json { head :no_content }
       else
@@ -198,5 +198,11 @@ class UsersController < ApplicationController
       format.html { redirect_to users_url, :notice => 'User successfully deleted.' }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:email, :password, :password_confirmation, :remember_me, :name, :emergency_name, :emergency_phone, :current_skills, :desired_skills, :waiver, :emergency_email, :phone, :payment_method, :orientation, :member_level, :certifications, :hidden, :marketing_source, :payee, :accountant, :exit_reason, :twitter_url, :facebook_url, :github_url, :website_url, :email_visible, :phone_visible, :postal_code)
   end
 end

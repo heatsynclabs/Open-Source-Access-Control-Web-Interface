@@ -16,9 +16,9 @@ class PaymentsController < ApplicationController
   # GET /payments.json
   def index
     @payments = @payments.order("date DESC")
-    @graph = { :members => chart("members"), 
-      :total => chart("total"), 
-      :basic => chart("basic"), 
+    @graph = { :members => chart("members"),
+      :total => chart("total"),
+      :basic => chart("basic"),
       :associate => chart("associate")}
 
     respond_to do |format|
@@ -39,14 +39,14 @@ class PaymentsController < ApplicationController
     elsif chart_name == "associate"
       chart_type = [25]
     else
-      chart_type = [] 
+      chart_type = []
     end
 
     payment_months = @payments.sort_by(&:date).group_by{ |p| p.date.beginning_of_month }
     @payments_by_month = []
     payment_months.each do |month|
       # Calculate sum of amounts for each month and store at end of month array
-      @payments_by_month << [month.first.to_time.to_i*1000, month.last.sum{|p| 
+      @payments_by_month << [month.first.to_time.to_i*1000, month.last.sum{|p|
         amount = amount_or_level(p)
         if chart_type.include?(amount)
           if chart_name == "members"
@@ -75,7 +75,7 @@ class PaymentsController < ApplicationController
         Rails.logger.info p.user.inspect
         return 0
       end
-    end 
+    end
   end
 
   # GET /payments/1
@@ -120,7 +120,7 @@ class PaymentsController < ApplicationController
   # PUT /payments/1.json
   def update
     respond_to do |format|
-      if @payment.update_attributes(params[:payment])
+      if @payment.update_attributes(payments_params)
         format.html { redirect_to payments_url, :notice => 'Payment was successfully updated.' }
         format.json { head :no_content }
       else
@@ -139,5 +139,11 @@ class PaymentsController < ApplicationController
       format.html { redirect_to payments_url }
       format.json { head :no_content }
     end
+  end
+
+  private
+
+  def payments_params
+    params.require(:payment).permit(:date, :user_id, :created_by, :amount)
   end
 end
