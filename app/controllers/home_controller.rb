@@ -17,7 +17,7 @@ class HomeController < ApplicationController
     # Fun Stats
 
     # Commented out for now, as it's not really useful and is a performance hit
-    @featured_resource = Resource.where("picture_file_name IS NOT NULL").sample
+    # @featured_resource = Resource.where("picture_file_name IS NOT NULL").sample
 
 #    @num_certs = UserCertification.count
 #    @recent_certs = UserCertification.where("created_at > ?", DateTime.now - 7.days).count
