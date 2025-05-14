@@ -5,9 +5,12 @@
 <%= link_to 'Door Logs', door_logs_path, :class => "btn" if can? :read, DoorLog %>
 <%= link_to 'Space API', space_api_path, :class => "btn" %>
 <%= link_to 'Remote Door Access', space_api_access_path, :class => "btn" if can? :access_doors_remotely, :door_access %>
+
+<% if !@most_active_card.blank? %>
 <p>
 <b>Most Active Card Last Month:</b> <%= @most_active_card.user.name unless @most_active_card.user.blank? %> (<%= @most_active_card.accesses_this_week unless @most_active_card.blank? %> days)
 </p>
+<% end %>
 <p>
 <% unless @runner_up_card.blank? || @runner_up_card.user.blank? %>
 <b>Runner Up:</b> <%= @runner_up_card.user.name %> (<%= @runner_up_card.accesses_this_week %> days)
