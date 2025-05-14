@@ -216,7 +216,40 @@ Log Entries:
     <td><%= door_log.created_at %></td>
     <td><%= door_log.key %></td>
     <td><%= door_log.data %></td>
-    <% 
+    <%
+      # Check if the door_log.key begins with `rem_`
+      if door_log.key.start_with?('rem_')
+        if door_log.data.present? && door_log.data.to_s.match(/\A\d+\z/)
+
+          # This is to display "Automatic Locking" for the 15min cron job.
+          if door_log.data.to_i == 468
+            %>
+            <td>
+              <%= "Automatic Locking" %>
+            </td>
+            <%
+          end
+          
+          if door_log.data.to_i != 468
+            @user = User.find(door_log.data)
+
+            if @user
+              # Log the user's name to the production.log file if the user exists
+              Rails.logger.info "Web App User name: #{@user.name} (#{door_log.data})"
+              @user_name = @user.name
+            %>
+              <td>
+                <%= "Granted Web: #{@user_name}" %>
+              </td>
+            <%
+            end
+          end
+        else
+            Rails.logger.warn "###### Invalid or missing user ID: #{door_log.data}"
+        end
+      end
+    %>
+    <%
       if door_log.key == 'r' || door_log.key == 'd' ||door_log.key == 'g'
         @divided_tmp = door_log.data.to_i
       elsif (door_log.key == 'R' || door_log.key == 'D' || door_log.key == 'G') && !@divided_tmp.nil? %>
