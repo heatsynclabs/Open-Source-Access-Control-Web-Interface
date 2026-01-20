@@ -1,6 +1,5 @@
 require 'net/http'
 class Ipn < ActiveRecord::Base
-  attr_accessible :data
   belongs_to :payment
 
   after_create :create_payment
@@ -44,7 +43,7 @@ class Ipn < ActiveRecord::Base
       return false
     end
     unless response == "VERIFIED"
-      Rails.logger.error "Invalid IPN: #{response}" 
+      Rails.logger.error "Invalid IPN: #{response}"
       Rails.logger.error "Data: #{self.data}"
       return false
     end
@@ -57,6 +56,7 @@ class Ipn < ActiveRecord::Base
   end
 
   private
+
   def create_payment
     # find user by email, then by payee
     user = User.where("lower(email) = ?", self._from_email_address.downcase).first
@@ -91,5 +91,4 @@ class Ipn < ActiveRecord::Base
 
     return [true]
   end
-
 end

@@ -10,4 +10,9 @@ def index
   end
 end
 
+  private
+
+  def mac_log_params
+    params.require(:mac_log).permit(:action, :ip, :mac)
+  end
 end

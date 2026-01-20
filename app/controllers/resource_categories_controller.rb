@@ -20,7 +20,7 @@ class ResourceCategoriesController < ApplicationController
     authorize! :update, @resource_category
 
     respond_to do |format|
-      if @resource_category.update_attributes(params[:resource_category])
+      if @resource_category.update_attributes(resource_category_params)
         format.html { redirect_to resource_categories_path, :notice => "Category was successfully updated." }
         format.json { head :no_content }
       else
@@ -43,4 +43,9 @@ class ResourceCategoriesController < ApplicationController
     end
   end
 
+  private
+
+  def resource_category_params
+    params.require(:resource_category).permit(:name)
+  end
 end

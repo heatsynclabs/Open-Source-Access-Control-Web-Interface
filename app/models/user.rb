@@ -8,10 +8,7 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :name, :emergency_name, :emergency_phone, :current_skills, :desired_skills, :waiver, :emergency_email, :phone, :payment_method, :orientation, :member_level, :certifications, :hidden, :marketing_source, :payee, :accountant, :exit_reason, :twitter_url, :facebook_url, :github_url, :website_url, :email_visible, :phone_visible, :postal_code
-
-  belongs_to :oriented_by, :foreign_key => "oriented_by_id", :class_name => "User"
+  belongs_to :oriented_by, foreign_key: :oriented_by_id, class_name: :user
   has_many :cards
   has_many :user_certifications
   has_many :certifications, :through => :user_certifications
@@ -26,7 +23,8 @@ class User < ActiveRecord::Base
 
   validates_format_of [:twitter_url, :facebook_url, :github_url, :website_url], :with => URI::regexp(%w(http https)), :allow_blank => true
 
-  validates_format_of :email, :without => /\.ru$/
+  # validates_format_of :email # , :without => /\.ru$/
+  validates :email, uniqueness: true
   validates_presence_of [:name, :postal_code, :current_skills, :desired_skills, :marketing_source]
 
   after_create :send_new_user_email
@@ -43,7 +41,7 @@ class User < ActiveRecord::Base
 
     self.save!
 
-    user_to_absorb.cards.each {|card| 
+    user_to_absorb.cards.each {|card|
       Rails.logger.info "CARD BEFORE: "+card.inspect
       card.user_id = self.id
       card.save!
@@ -82,7 +80,7 @@ class User < ActiveRecord::Base
   def name_with_payee_and_member_level
     if payee.blank? then
       "#{name} - #{member_level_string}"
-    else 
+    else
       "#{payee} for #{name} - #{member_level_string}"
     end
   end
@@ -153,7 +151,6 @@ class User < ActiveRecord::Base
   end
 
 private
-
   def send_new_user_email
     Rails.logger.info UserMailer.new_user_email(self).deliver
   end
@@ -199,7 +196,7 @@ private
     flair = payment_results[:flair]
     rank = rank/10 unless payment_results[:paid]
     message = payment_results[:message] unless payment_results[:message].blank?
-    
+
     return {:message => message, :icon => icon, :flair => flair, :rank => rank}
   end
 
@@ -214,7 +211,7 @@ private
       # There are payments
       if self.payments.count > 0 then
         # They're on time
-        if self.payments.maximum(:date) > (DateTime.now - 60.days) 
+        if self.payments.maximum(:date) > (DateTime.now - 60.days)
           flair = "-paid"
           paid = true
         else
@@ -228,5 +225,4 @@ private
     end
     return {:message => message, :paid => paid, :flair => flair}
   end
-
 end

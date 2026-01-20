@@ -8,7 +8,7 @@ class ContractsController < ApplicationController
       @contracts = Contract.where(user_id: params[:user_id])
     end
     respond_to do |format|
-      format.html 
+      format.html
       format.json { render :json => @contracts }
     end
   end
@@ -23,28 +23,6 @@ class ContractsController < ApplicationController
   end
 
   def create
-#    if @contract.first_name.blank? && @contract.last_name.blank? && @contract.cosigner.blank? # assume autodetect of filename
-#      begin
-#        name_split = params[:contract][:document].original_filename.sub(".jpg","").split
-#        if name_split.count == 4 # we have one name
-#          @contract.first_name = name_split[0]
-#          @contract.last_name = name_split[1]
-#          # 2 is the hyphen
-#          @contract.signed_at = Date.parse(name_split[3])
-#        elsif name_split.count == 7 && name_split[2] == "by" # we have two names
-#          @contract.first_name = name_split[0]
-#          @contract.last_name = name_split[1]
-#          # 2 is "by"
-#          @contract.cosigner = "#{name_split[3]} #{name_split[4]}"
-#          # 5 is the hyphen
-#          @contract.signed_at = Date.parse(name_split[6])
-#        else
-#          Rails.logger.info "Couldn't determine name from filename array: #{name_split.inspect}"
-#        end
-#      rescue Exception => e
-#      end
-#    end
-
     @contract.created_by = current_user
     respond_to do |format|
       if @contract.save
@@ -62,7 +40,7 @@ class ContractsController < ApplicationController
 
   def update
     respond_to do |format|
-      if @contract.update_attributes(params[:contract])
+      if @contract.update_attributes(contracts_params)
         format.html { redirect_to @contract, :notice => 'Contract was successfully updated.' }
         format.json { head :no_content }
       else
@@ -83,5 +61,13 @@ class ContractsController < ApplicationController
 
   def load_users
     @users = User.accessible_by(current_ability).sort_by(&:name)
+  end
+
+  private
+
+  def contracts_params
+    params.require(:contract).permit(:user_id, :first_name, :last_name, :cosigner,
+      :signed_at, :document, :document_file_name, :document_content_type,
+      :document_file_size, :document_updated_at)
   end
 end

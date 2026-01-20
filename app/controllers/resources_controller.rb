@@ -9,7 +9,7 @@ class ResourcesController < ApplicationController
 
   def new
     # don't get too excited... for some reason this gets set to the current_user
-    @resource.user_id = nil 
+    @resource.user_id = nil
   end
 
   def create
@@ -29,11 +29,11 @@ class ResourcesController < ApplicationController
 
   def update
     @resource.modified_by = current_user.id # log who modified this last
-    @resource.assign_attributes(params[:resource])
+    @resource.assign_attributes(resources_params)
     authorize! :update, @resource
 
     respond_to do |format|
-      if @resource.update_attributes(params[:resource])
+      if @resource.update_attributes(resources_params)
         format.html { redirect_to resource_path(@resource), :notice => "Resource was successfully updated." }
         format.json { head :no_content }
       else
@@ -60,4 +60,14 @@ class ResourcesController < ApplicationController
     end
   end
 
+  private
+
+  def resources_params
+    params.require(:resources).permit(:supercategory, :user_id, :resource_category_id, :name, :serial, :specs, :status, :donatable,
+      :picture, :picture_file_name, :picture_content_type, :picture_file_size, :picture_updated_at,
+      :picture2, :picture2_file_name, :picture2_content_type, :picture2_file_size, :picture2_updated_at,
+      :picture3, :picture3_file_name, :picture3_content_type, :picture3_file_size, :picture3_updated_at,
+      :picture4, :picture4_file_name, :picture4_content_type, :picture4_file_size, :picture4_updated_at,
+      :notes, :estimated_value, :disposed_at, :modified_by)
+  end
 end

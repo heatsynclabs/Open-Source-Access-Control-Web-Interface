@@ -21,7 +21,7 @@ def index
       mac_log.last.each do |entry|
         # Find an activate followed immediately by a deactivate
         if entry.action == "activate"
-          last_active = entry 
+          last_active = entry
         else
           if last_active && entry.action == "deactivate"
             # Calculate the time difference between the two and append to this mac's total time
@@ -60,10 +60,10 @@ def index
       end
     end
   end
-  
+
   #@active_macs = Mac.where(:active => true, :hidden => false)
   #@active_macs += Mac.where(:active => true, :hidden => nil)
-  
+
   # De-dupe users for the public
   if can? :update, Mac then
     @active_macs = Mac.where("macs.active = ? AND (macs.hidden IS NULL OR macs.hidden = ?)", true, false).includes(:user).order("users.name ASC")
@@ -81,7 +81,7 @@ def index
     format.html
     format.json {
       @filtered_macs = Mac.select("macs.mac, users.name, macs.note").where("macs.active = ? AND (macs.hidden IS NULL OR macs.hidden = ?)", true, false).joins(:user)
-      render :json => @filtered_macs 
+      render :json => @filtered_macs
     }
   end
 end
@@ -145,7 +145,7 @@ end
     @mac = Mac.new
     if can? :manage, Mac then
       @users = User.accessible_by(current_ability).sort_by(&:name)
-    else 
+    else
       @users = [current_user]
     end
 
@@ -157,24 +157,24 @@ end
 
   # GET /macs/1/edit
   def edit
-    @mac = Mac.find(params[:id])
+    @mac = Mac.find(macs_params)
     if can? :manage, Mac then
       @users = User.accessible_by(current_ability).sort_by(&:name)
-    else 
+    else
       @users = [current_user]
     end
   end
 
   # POST /macs
   def create
-    @mac = Mac.new(params[:mac])
+    @mac = Mac.new(macs_params)
     @existing_mac = Mac.find_by_mac(@mac.mac)
         if can? :manage, Mac then
           @users = User.accessible_by(current_ability).sort_by(&:name)
-        else 
+        else
           @users = [current_user]
         end
- 
+
       if @existing_mac.present?
         if @existing_mac.user_id.nil?
           redirect_to edit_mac_path(@existing_mac), :notice => 'This MAC already exists, edit it here:'
@@ -183,7 +183,7 @@ end
           render :action => "new"
         end
       else
- 
+
         respond_to do |format|
           if @mac.save
             format.html { redirect_to macs_path, :notice => 'MAC was successfully created.' }
@@ -207,7 +207,7 @@ end
 
     if can? :manage, Mac then
       @users = User.accessible_by(current_ability).sort_by(&:name)
-    else 
+    else
       @users = [current_user]
     end
 
@@ -293,7 +293,7 @@ Rails.logger.info "starting scan..."
   end
   IO.popen(command) { |stdin|
     result = stdin.read()
-    result.lines.each { |line| 
+    result.lines.each { |line|
       Rails.logger.info "Reading stdin: "+line.inspect
       next if line !~ /^([\d\.]+)\s+([[:xdigit:]:]+)\s/;
       macs[($2).downcase] = ($1).downcase;
@@ -346,7 +346,7 @@ end #def scan
 
 def import
 
-require 'csv'    
+require 'csv'
 
 csv_text = File.read('mac_log.csv')
 csv = CSV.parse(csv_text)
@@ -359,4 +359,9 @@ end
 
 end
 
+  private
+
+  def macs_params
+    attr_accessible :active, :ip, :mac, :refreshed, :since, :hidden, :note, :user_id
+  end
 end

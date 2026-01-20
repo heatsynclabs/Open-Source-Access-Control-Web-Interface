@@ -26,7 +26,7 @@ class DoorLogsController < ApplicationController
     #  @door_logs_by_hour.each do |door_log|
     #    # Add one computer for activate, subtract one for deactivate
     #    if door_log.data == 1
-    #      
+    #
     #    elsif door_log.data == 0
     #      mac_running_balance -= 1
     #    end
@@ -63,5 +63,9 @@ class DoorLogsController < ApplicationController
     end
   end
 
+  private
 
+  def door_log_params
+    params.require(:door_log).permit(:data, :key)
+  end
 end
