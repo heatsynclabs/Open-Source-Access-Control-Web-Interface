@@ -93,13 +93,17 @@
 <div id="graph-dialog" title="Door Status">
   <div id="graph" style="height: 600px; width: 800px; float: right;"></div>
   <%= form_tag(nil, :method => :get) do %>
+    <label>Type
+      <%= select_tag :type, options_for_select(DoorLog::TYPE_OPTIONS, @door_log_type),
+            :onchange => "this.form.submit()" %>
+    </label>
     <label>Start Date
       <input id="start" name="start" type="date" value="<%= @start_date.to_date.to_s %>" />
     </label>
     <label>End Date
       <input id="end" name="end" type="date" value="<%= @end_date.to_date.to_s %>" />
     </label>
-    <%= submit_tag("Change Date", :name => nil, :class => 'btn') %>
+    <%= submit_tag("Update", :name => nil, :class => 'btn') %>
   <% end %>
 </div>
 

@@ -2,6 +2,30 @@ class DoorLog < ActiveRecord::Base
   attr_accessible :data, :key
   require 'open-uri'
 
+  # Optional type filter for the door log report. Keys in this table:
+  #   G/g Granted, D/d Denied, R/r Read (card events, data = card number)
+  #   L/U         Lock / Unlock actions (data = door number)
+  #   door_N_locked  automatic lock-status polls (data = 0/1)
+  #   rem_* / api_rem_*  remote web/mobile commands
+  #   armed / activated / alarm_* / a   alarm + system polling (high volume)
+  # 'all' (the default) shows everything except the alarm/system polling noise.
+  TYPE_FILTERS = {
+    'all'     => "key NOT LIKE 'alarm%' AND key NOT IN ('armed','activated')",
+    'card'    => "key IN ('G','g','D','d','R','r','C','c')",
+    'locking' => "key IN ('door_1_locked','door_2_locked','L','U')",
+    'remote'  => "key LIKE '%rem%'",
+    'alarm'   => "key LIKE 'alarm%' OR key IN ('armed','activated','a')"
+  }.freeze
+
+  # [label, value] pairs for the report dropdown, in display order
+  TYPE_OPTIONS = [
+    ['All access & locking', 'all'],
+    ['Card access (granted / denied / read)', 'card'],
+    ['Automatic locking / unlocking', 'locking'],
+    ['Remote access (web / mobile)', 'remote'],
+    ['Alarm & system', 'alarm']
+  ].freeze
+
   def self.execute_command(command)
     output = ""
     # load config values
