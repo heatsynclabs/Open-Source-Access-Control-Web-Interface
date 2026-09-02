@@ -14,7 +14,7 @@ class DoorLog < ActiveRecord::Base
     'card'    => "key IN ('G','g','D','d','R','r','C','c')",
     'locking' => "key IN ('door_1_locked','door_2_locked','L','U')",
     'remote'  => "key LIKE '%rem%'",
-    'alarm'   => "key LIKE 'alarm%' OR key IN ('armed','activated','a')"
+    'alarm'   => "key LIKE 'alarm%' OR key IN ('armed','activated','A','m','s','t','T')"
   }.freeze
 
   # [label, value] pairs for the report dropdown, in display order
