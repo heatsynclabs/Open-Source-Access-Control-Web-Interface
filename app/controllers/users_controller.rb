@@ -35,7 +35,7 @@ class UsersController < ApplicationController
       # eager-load what the view touches per row (member_status_symbol reads
       # payments; the table shows cards and certifications) so the page runs
       # a handful of queries instead of several per user
-      @users = @users.includes(:payments, :cards, :user_certifications)
+      @users = @users.includes(:payments, :cards, :user_certifications, :contracts)
 
       case params[:sort]
       when "name"
