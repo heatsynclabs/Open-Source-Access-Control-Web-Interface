@@ -39,8 +39,11 @@ class UsersController < ApplicationController
       when "name"
         @users = @users.order('LOWER(users.name) ASC')
       when "cert"
+        # sort on the eager-loaded association in Ruby: naming cards or
+        # user_certifications in a SQL ORDER BY flips Rails 3.2 into
+        # join-based eager loading, whose row fanout is far slower
         cert_id = params[:cert].to_i
-        @users = @users.order("(SELECT COUNT(*) FROM user_certifications uc WHERE uc.user_id = users.id AND uc.certification_id = #{cert_id}) DESC, LOWER(users.name) ASC")
+        @users = @users.sort_by{ |u| [-(u.user_certifications.any?{|uc| uc.certification_id == cert_id} ? 1 : 0), u.name.downcase] }
       when "orientation"
         @users = @users.order('users.orientation DESC NULLS LAST, LOWER(users.name) ASC')
       when "waiver"
@@ -50,7 +53,7 @@ class UsersController < ApplicationController
         # this no longer issues a query per user
         @users = @users.sort_by{ |u| [-u.member_status.to_i,u.name.downcase] }
       when "card"
-        @users = @users.order('(SELECT COUNT(*) FROM cards WHERE cards.user_id = users.id) DESC, LOWER(users.name) ASC')
+        @users = @users.sort_by{ |u| [-u.cards.length, u.name.downcase] }
       when "instructor"
         @users = @users.order('COALESCE(users.instructor, false) DESC, users.name ASC')
       when "admin"
