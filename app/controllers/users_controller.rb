@@ -19,7 +19,7 @@ class UsersController < ApplicationController
     unless params[:full] # by default, show summary
 
       # sort in SQL instead of loading every user and sorting in Ruby
-      @users = @users.active.order('member_level DESC, LOWER(name) ASC')
+      @users = @users.active.order('users.member_level DESC, LOWER(users.name) ASC')
 #@users.paying + @users.volunteer
 #.joins(:payments).where("payments.date > ? OR ", (DateTime.now - 60.days)).uniq
 
@@ -37,26 +37,26 @@ class UsersController < ApplicationController
 
       case params[:sort]
       when "name"
-        @users = @users.order('LOWER(name) ASC')
+        @users = @users.order('LOWER(users.name) ASC')
       when "cert"
         cert_id = params[:cert].to_i
-        @users = @users.order("(SELECT COUNT(*) FROM user_certifications uc WHERE uc.user_id = users.id AND uc.certification_id = #{cert_id}) DESC, LOWER(name) ASC")
+        @users = @users.order("(SELECT COUNT(*) FROM user_certifications uc WHERE uc.user_id = users.id AND uc.certification_id = #{cert_id}) DESC, LOWER(users.name) ASC")
       when "orientation"
-        @users = @users.order('orientation DESC NULLS LAST, LOWER(name) ASC')
+        @users = @users.order('users.orientation DESC NULLS LAST, LOWER(users.name) ASC')
       when "waiver"
-        @users = @users.order('(SELECT MIN(c.signed_at) FROM contracts c WHERE c.user_id = users.id) DESC NULLS LAST, LOWER(name) ASC')
+        @users = @users.order('(SELECT MIN(c.signed_at) FROM contracts c WHERE c.user_id = users.id) DESC NULLS LAST, LOWER(users.name) ASC')
       when "member"
         # member_status is computed in Ruby, but payments are eager-loaded so
         # this no longer issues a query per user
         @users = @users.sort_by{ |u| [-u.member_status.to_i,u.name.downcase] }
       when "card"
-        @users = @users.order('(SELECT COUNT(*) FROM cards WHERE cards.user_id = users.id) DESC, LOWER(name) ASC')
+        @users = @users.order('(SELECT COUNT(*) FROM cards WHERE cards.user_id = users.id) DESC, LOWER(users.name) ASC')
       when "instructor"
-        @users = @users.order('COALESCE(instructor, false) DESC, name ASC')
+        @users = @users.order('COALESCE(users.instructor, false) DESC, users.name ASC')
       when "admin"
-        @users = @users.order('COALESCE(admin, false) DESC, name ASC')
+        @users = @users.order('COALESCE(users.admin, false) DESC, users.name ASC')
       else
-        @users = @users.order('LOWER(name) ASC')
+        @users = @users.order('LOWER(users.name) ASC')
       end
 
 
