@@ -19,10 +19,13 @@ class PaymentsController < ApplicationController
     # the table and the chart aggregation both read payment.user per row -
     # eager-load users so that's one query, not one per payment
     @payments = @payments.includes(:user).order("date DESC")
-    @graph = { :members => chart("members"), 
-      :total => chart("total"), 
-      :basic => chart("basic"), 
+    @graph = { :members => chart("members"),
+      :total => chart("total"),
+      :basic => chart("basic"),
       :associate => chart("associate")}
+
+    # charts aggregate every payment, but render only recent rows by default
+    @payments_shown = params[:all] ? @payments : @payments.first(1000)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -45,7 +48,8 @@ class PaymentsController < ApplicationController
       chart_type = [] 
     end
 
-    payment_months = @payments.sort_by(&:date).group_by{ |p| p.date.beginning_of_month }
+    # memoized: four charts share one sort+group pass over all payments
+    payment_months = (@payment_months ||= @payments.sort_by(&:date).group_by{ |p| p.date.beginning_of_month })
     @payments_by_month = []
     payment_months.each do |month|
       # Calculate sum of amounts for each month and store at end of month array
@@ -71,11 +75,8 @@ class PaymentsController < ApplicationController
       return p.amount.to_i
     else
       if p.user
-        Rails.logger.info p.user.member_level
         return p.user.member_level.to_i
       else
-        Rails.logger.info p.inspect
-        Rails.logger.info p.user.inspect
         return 0
       end
     end 
