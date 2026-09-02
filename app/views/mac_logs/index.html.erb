@@ -5,7 +5,7 @@
 <% @mac_logs.each do |mac_log| %>
   <tr>
   <td>
-    <% if @macs[mac_log.mac].user_id.blank? %>
+    <% if @macs[mac_log.mac].blank? || @macs[mac_log.mac].user_id.blank? %>
     <% else %>
       <%= link_to @macs[mac_log.mac].user.name, @macs[mac_log.mac].user %><br/>
     <% end %>

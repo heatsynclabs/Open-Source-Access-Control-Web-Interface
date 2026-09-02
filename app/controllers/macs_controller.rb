@@ -6,6 +6,7 @@ before_filter :arp_lookup, :only => :new
 
 #require "active_record"
 require "optparse"
+require "shellwords"
 #require "rubygems"
 
 def index
@@ -237,7 +238,9 @@ end
 
 def arp_lookup
   @ip = request.env['REMOTE_ADDR']
-  @arp = /([0-9A-F]{2}[:-]){5}([0-9A-F]{2})/i.match(%x(arp -a | grep #{@ip}))
+  # -n skips reverse DNS: plain arp -a resolves a hostname for every ARP
+  # entry and hung this page for minutes when DNS was slow
+  @arp = /([0-9A-F]{2}[:-]){5}([0-9A-F]{2})/i.match(%x(arp -an | grep #{Shellwords.escape(@ip)}))
 end
 
 def scan

@@ -8,6 +8,11 @@ plot_band_end_hour = 22;
 
 $(function() {
 
+  if (!graph_data.length) {
+    $('#graph').text('No activity data for this period.');
+    return;
+  }
+
   $('#graph').highcharts({
       chart: {
         type: 'column',

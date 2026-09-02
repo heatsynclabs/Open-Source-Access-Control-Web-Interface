@@ -3,8 +3,9 @@ class PaymentsController < ApplicationController
   #load_and_authorize_resource :user, :through => :payment
   before_filter :authenticate_user!
 
-  # Load users and certs based on current ability
-  before_filter do
+  # Load users and certs based on current ability (only the form actions
+  # use @users - index was paying for this load on every request)
+  before_filter :only => [:new, :edit, :create, :update, :show] do
     @users = User.where(:hidden => false).where("member_level > 10").accessible_by(current_ability).sort_by(&:name_with_payee_and_member_level)
   end
 
@@ -15,7 +16,9 @@ class PaymentsController < ApplicationController
   # GET /payments
   # GET /payments.json
   def index
-    @payments = @payments.order("date DESC")
+    # the table and the chart aggregation both read payment.user per row -
+    # eager-load users so that's one query, not one per payment
+    @payments = @payments.includes(:user).order("date DESC")
     @graph = { :members => chart("members"), 
       :total => chart("total"), 
       :basic => chart("basic"), 
