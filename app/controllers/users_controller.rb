@@ -18,7 +18,8 @@ class UsersController < ApplicationController
   def index
     unless params[:full] # by default, show summary
 
-      @users = @users.active.sort_by{|u| [-u.member_level, u.name.downcase] }
+      # sort in SQL instead of loading every user and sorting in Ruby
+      @users = @users.active.order('member_level DESC, LOWER(name) ASC')
 #@users.paying + @users.volunteer
 #.joins(:payments).where("payments.date > ? OR ", (DateTime.now - 60.days)).uniq
 
@@ -29,25 +30,33 @@ class UsersController < ApplicationController
 
     else # show full
 
+      # eager-load what the view touches per row (member_status_symbol reads
+      # payments; the table shows cards and certifications) so the page runs
+      # a handful of queries instead of several per user
+      @users = @users.includes(:payments, :cards, :user_certifications)
+
       case params[:sort]
       when "name"
-        @users = @users.sort_by{ |u| u.name.downcase }
+        @users = @users.order('LOWER(name) ASC')
       when "cert"
-        @users = @users.sort_by{ |u| [-sort_by_cert(u.certifications,params[:cert].to_i),u.name.downcase] }
+        cert_id = params[:cert].to_i
+        @users = @users.order("(SELECT COUNT(*) FROM user_certifications uc WHERE uc.user_id = users.id AND uc.certification_id = #{cert_id}) DESC, LOWER(name) ASC")
       when "orientation"
-        @users = @users.sort_by{ |u| [-u.orientation.to_i,u.name.downcase] }
+        @users = @users.order('orientation DESC NULLS LAST, LOWER(name) ASC')
       when "waiver"
-        @users = @users.sort_by{ |u| [-u.contract_date.to_i,u.name.downcase] }
+        @users = @users.order('(SELECT MIN(c.signed_at) FROM contracts c WHERE c.user_id = users.id) DESC NULLS LAST, LOWER(name) ASC')
       when "member"
+        # member_status is computed in Ruby, but payments are eager-loaded so
+        # this no longer issues a query per user
         @users = @users.sort_by{ |u| [-u.member_status.to_i,u.name.downcase] }
       when "card"
-        @users = @users.sort_by{ |u| [-u.cards.count,u.name.downcase] }
+        @users = @users.order('(SELECT COUNT(*) FROM cards WHERE cards.user_id = users.id) DESC, LOWER(name) ASC')
       when "instructor"
-        @users = @users.sort{ |a,b| [b.instructor.to_s,a.name] <=> [a.instructor.to_s,b.name] }
+        @users = @users.order('COALESCE(instructor, false) DESC, name ASC')
       when "admin"
-        @users = @users.sort{ |a,b| [b.admin.to_s,a.name] <=> [a.admin.to_s,b.name] }
+        @users = @users.order('COALESCE(admin, false) DESC, name ASC')
       else
-        @users = @users.sort_by{ |u| u.name.downcase }
+        @users = @users.order('LOWER(name) ASC')
       end
 
 
@@ -60,7 +69,10 @@ class UsersController < ApplicationController
 
   # 'Active' users who haven't paid recently
   def inactive
-    @users = @users.all.select{|u| u if u.payment_status == false }.sort_by{ |u| -u.delinquency }
+    # eager-load payments (payment_status/delinquency) plus the cards and
+    # certifications shown in the view, so this is a few queries total
+    # instead of several per user
+    @users = @users.includes(:payments, :cards, :certifications).all.select{|u| u if u.payment_status == false }.sort_by{ |u| -u.delinquency }
   end
 
   # Recent user activity
