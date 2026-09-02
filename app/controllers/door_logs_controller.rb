@@ -6,8 +6,8 @@ class DoorLogsController < ApplicationController
   # GET /door_logs.json
   def index
     # optional type filter; defaults to 'all' (everything but alarm/system noise)
-    @door_log_type = DoorLog::TYPE_FILTERS.key?(params[:type]) ? params[:type] : 'all'
-    @door_logs = DoorLog.where(DoorLog::TYPE_FILTERS[@door_log_type]).order("created_at DESC").limit(3000)
+    @door_log_type = DoorLog.valid_type?(params[:type]) ? params[:type] : 'all'
+    @door_logs = DoorLog.by_type(@door_log_type).order("created_at DESC").limit(3000)
 
 
     begin

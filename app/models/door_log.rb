@@ -7,15 +7,8 @@ class DoorLog < ActiveRecord::Base
   #   L/U         Lock / Unlock actions (data = door number)
   #   door_N_locked  automatic lock-status polls (data = 0/1)
   #   rem_* / api_rem_*  remote web/mobile commands
-  #   armed / activated / alarm_* / a   alarm + system polling (high volume)
+  #   armed / activated / alarm_* / A/m/s/t/T   alarm + system polling
   # 'all' (the default) shows everything except the alarm/system polling noise.
-  TYPE_FILTERS = {
-    'all'     => "key NOT LIKE 'alarm%' AND key NOT IN ('armed','activated')",
-    'card'    => "key IN ('G','g','D','d','R','r','C','c')",
-    'locking' => "key IN ('door_1_locked','door_2_locked','L','U')",
-    'remote'  => "key LIKE '%rem%'",
-    'alarm'   => "key LIKE 'alarm%' OR key IN ('armed','activated','A','m','s','t','T')"
-  }.freeze
 
   # [label, value] pairs for the report dropdown, in display order
   TYPE_OPTIONS = [
@@ -25,6 +18,30 @@ class DoorLog < ActiveRecord::Base
     ['Remote access (web / mobile)', 'remote'],
     ['Alarm & system', 'alarm']
   ].freeze
+
+  TYPES = TYPE_OPTIONS.map { |_label, value| value }.freeze
+
+  def self.valid_type?(type)
+    TYPES.include?(type)
+  end
+
+  # Relation filtered to one report type. All conditions are parameterized
+  # (key sets and LIKE patterns are AR-escaped), so nothing here interpolates
+  # a value into SQL; the type argument only selects a branch.
+  def self.by_type(type)
+    case type
+    when 'card'
+      where(:key => %w[G g D d R r C c])
+    when 'locking'
+      where(:key => %w[door_1_locked door_2_locked L U])
+    when 'remote'
+      where("key LIKE ?", "%rem%")
+    when 'alarm'
+      where("key LIKE ? OR key IN (?)", "alarm%", %w[armed activated A m s t T])
+    else # 'all'
+      where("key NOT LIKE ? AND key NOT IN (?)", "alarm%", %w[armed activated])
+    end
+  end
 
   def self.execute_command(command)
     output = ""
