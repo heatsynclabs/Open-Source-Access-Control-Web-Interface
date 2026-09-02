@@ -143,6 +143,11 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
+    # CanCan's load_and_authorize_resource built @user with the default
+    # assignment role, which drops the role checkboxes; re-assign as :admin
+    # so admins can set them on creation
+    @user.assign_attributes(params[:user], :as => :admin) if current_user.admin?
+
     # update oriented_by only if orientation has been set
     @user.oriented_by_id = current_user.id unless @user.orientation.blank?
 
@@ -165,7 +170,7 @@ class UsersController < ApplicationController
     @user.oriented_by_id = current_user.id if @user.oriented_by.blank? && (!params[:user]["orientation(1i)"].blank?)
 
     respond_to do |format|
-      if @user.update_attributes(params[:user])
+      if @user.update_attributes(params[:user], :as => (current_user.admin? ? :admin : :default))
         format.html { redirect_to @user, :notice => 'User was successfully updated.' }
         format.json { head :no_content }
       else
