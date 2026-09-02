@@ -72,6 +72,8 @@ Dooraccess::Application.routes.draw do
 
   resources :settings, :only => [:index, :edit, :update]
 
+  resources :audit_events, :only => [:index]
+
   # API routes
   namespace :api do
     namespace :v1 do

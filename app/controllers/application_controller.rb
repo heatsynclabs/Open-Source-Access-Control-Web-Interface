@@ -37,6 +37,34 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # Record a sensitive action to the admin-visible audit log. Generic on
+  # purpose: event_type is any string, target is any model (or nil, the
+  # precise record changed), affected_user is the member the action is about
+  # (for reporting joins), and summary is free text (often
+  # AuditEvent.diff(record)). Never raises into the request - a logging
+  # failure must not break the underlying action.
+  def audit_event(event_type, target, summary, affected_user = nil)
+    affected_user ||= target if target.is_a?(User)
+    AuditEvent.create!(
+      :event_type       => event_type,
+      :editor_id        => current_user && current_user.id,
+      :editor_name      => current_user ? current_user.name : "(anonymous)",
+      :affected_user_id => affected_user && affected_user.id,
+      :target_type      => target && target.class.name,
+      :target_id        => target && target.id,
+      :target_label     => audit_label(target),
+      :summary          => summary.to_s,
+      :ip               => request.remote_ip
+    )
+  rescue => e
+    Rails.logger.error "audit_event failed: #{e.class}: #{e.message}"
+  end
+
+  def audit_label(target)
+    return nil if target.nil?
+    return target.name if target.respond_to?(:name) && target.name.present?
+    "#{target.class.name}##{target.id}"
+  end
 
 end
 

@@ -155,6 +155,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
+        audit_event("user_create", @user, "created user #{@user.name} (#{@user.email})")
         format.html { redirect_to @user, :notice => 'User was successfully created.' }
         format.json { render :json => @user, :status => :created, :location => @user }
       else
@@ -173,6 +174,12 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.update_attributes(params[:user], :as => (current_user.admin? ? :admin : :default))
+        # log edits of *other* people's profiles (self-service edits go through
+        # Devise and are intentionally not audited)
+        if current_user.id != @user.id
+          changes = AuditEvent.diff(@user)
+          audit_event("user_update", @user, changes.presence || "(no field changes)")
+        end
         format.html { redirect_to @user, :notice => 'User was successfully updated.' }
         format.json { head :no_content }
       else

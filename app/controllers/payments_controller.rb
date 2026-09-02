@@ -111,6 +111,9 @@ class PaymentsController < ApplicationController
     Rails.logger.warn @payment.inspect
     respond_to do |format|
       if @payment.save
+        audit_event("payment_created", @payment,
+                    "recorded payment ##{@payment.id}: $#{@payment.amount} dated #{@payment.date}",
+                    @payment.user)
         format.html { redirect_to payments_url, :notice => 'Payment was successfully created.' }
         format.json { render :json => @payment, :status => :created, :location => @payment }
       else
@@ -125,6 +128,9 @@ class PaymentsController < ApplicationController
   def update
     respond_to do |format|
       if @payment.update_attributes(params[:payment])
+        changes = AuditEvent.diff(@payment)
+        audit_event("payment_updated", @payment,
+                    "updated payment ##{@payment.id}\n#{changes}", @payment.user)
         format.html { redirect_to payments_url, :notice => 'Payment was successfully updated.' }
         format.json { head :no_content }
       else
@@ -137,7 +143,11 @@ class PaymentsController < ApplicationController
   # DELETE /payments/1
   # DELETE /payments/1.json
   def destroy
+    pay_user = @payment.user
+    pay_desc = "deleted payment ##{@payment.id}: $#{@payment.amount} dated #{@payment.date}"
+    deleted = @payment
     @payment.destroy
+    audit_event("payment_deleted", deleted, pay_desc, pay_user)
 
     respond_to do |format|
       format.html { redirect_to payments_url }

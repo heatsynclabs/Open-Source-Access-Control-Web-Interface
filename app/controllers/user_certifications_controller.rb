@@ -55,6 +55,9 @@ class UserCertificationsController < ApplicationController
 
     respond_to do |format|
       if @user_certification.save
+        audit_event("cert_granted", @user_certification,
+                    "granted certification '#{@user_certification.certification.try(:name)}' to #{@user_certification.user.try(:name)}",
+                    @user_certification.user)
         format.html { redirect_to UserCertification, :notice => 'User certification was successfully created.' }
         format.json { render :json => @user_certification, :status => :created, :location => @user_certification }
       else
@@ -84,7 +87,13 @@ class UserCertificationsController < ApplicationController
   # DELETE /user_certifications/1
   # DELETE /user_certifications/1.json
   def destroy
+    cert_name = @user_certification.certification.try(:name)
+    cert_user = @user_certification.user
+    revoked = @user_certification
     @user_certification.destroy
+    audit_event("cert_revoked", revoked,
+                "revoked certification '#{cert_name}' from #{cert_user.try(:name)}",
+                cert_user)
 
     respond_to do |format|
       format.html { redirect_to user_certifications_url }

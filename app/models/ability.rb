@@ -54,6 +54,10 @@ class Ability
         can :manage, :all
       end
 
+      # The audit log is admin-only, and read-only even for them (append-only)
+      cannot [:create, :update, :destroy], AuditEvent
+      can :read, AuditEvent if user.admin?
+
       # Prevent most destruction for now
       #cannot :destroy, User
       #cannot :destroy, Card
