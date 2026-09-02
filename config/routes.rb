@@ -72,6 +72,21 @@ Dooraccess::Application.routes.draw do
 
   resources :settings, :only => [:index, :edit, :update]
 
+  # API routes
+  namespace :api do
+    namespace :v1 do
+      # Authentication
+      match 'login' => 'auth#login', :via => :post
+      match 'login' => 'auth#login_method_error', :via => :get
+      match 'logout' => 'auth#logout', :via => :delete
+      match 'status' => 'auth#status', :via => :get
+      
+      # Door Control
+      match 'doors/status' => 'doors#status', :via => :get
+      match 'doors/control' => 'doors#control', :via => :post
+    end
+  end
+
   match 'more_info' => 'home#more_info'
   root :to => "home#index"
 

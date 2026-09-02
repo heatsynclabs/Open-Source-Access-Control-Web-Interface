@@ -1,137 +1,97 @@
 <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<style type="text/css">
+    .access-web-granted { }
+    .access-card-granted { background-color: lightgreen; }
+    .access-card-denied { background-color: lightcoral; }
+    .access-auto-lock { background-color: lightgray; }
+    #doorLogActions {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        gap: 2rem;
+        padding: 1rem 0;
+    }
+    .webAccessOpen { background-color: green; color: whitesmoke; }
+    .webAccessLock { background-color: darkgray; color: black; }
+    .webAccessUnlock { background-color: lightblue; color: black; }
+    .mobileAccessOpen { background-color: darkolivegreen; color: whitesmoke; border: 1px solid black; }
+    .mobileAccessLock { background-color: darkgray; color: black; border: 1px solid lightgray; }
+    .mobileAccessUnlock { background-color: lightsteelblue; color: black; border: 1px solid cadetblue; }
+</style>
+
 <script type="text/javascript">
+    graph_data = <%= raw @door_log_graph.to_json %>;
 
-graph_data = <%= raw @door_log_graph.to_json %>;
+    plot_band_start_hour = 16;
+    plot_band_end_hour = 22;
 
-plot_band_start_hour = 16;
-plot_band_end_hour = 22;
+    $(function() {
+        $( "#graph-dialog" ).dialog({
+            autoOpen: false,
+            height: 700,
+            width: 825,
+            modal: true,
+        });
 
-$(function() {
+        $( "#graph-button" ).click(function() {
+            $( "#graph-dialog" ).dialog( "open" );
+        });
 
-  $( "#graph-dialog" ).dialog({
-    autoOpen: false,
-    height: 700,
-    width: 825,
-    modal: true,
-  });
+        $('#graph').highcharts({
+            chart: { type: 'line', zoomType : 'x' },
+            colors: ['#2f7ed8','#910000'],
+            title: { style : { fontSize: '12px' }, text: "Click a Door in the Legend to Hide" },
+            subtitle: { style : { fontSize: '10px' }, text: "Click and Drag to Zoom." },
+            xAxis: {
+                type : 'datetime',
+                plotBands: generatePlotBands(graph_data[0][0][0], graph_data[0][graph_data[0].length-1][0]),
+                labels : { align : "left" }
+            },
+            yAxis : { title : { text : "Door Open History" } },
+            series: [
+                { name: "Door 1", data: graph_data[0] },
+                { name: "Door 2", data: graph_data[1] }
+            ],
+            tooltip: {
+                shared: true,
+                xDateFormat: '%A %B %e, %l:%M %P',
+                formatter: function() {
+                    output = '<b>'+ Highcharts.dateFormat(this.points[0].series.tooltipOptions.xDateFormat,this.x) +'</b><br/>';
+                    this.points.forEach(function(e){
+                        var val = (e.y == 1 ? "Open" : "Closed");
+                        output += '<b><span style="color:'+e.series.color+'">'+e.series.name +'</span>: ' + val +'</b><br/>';
+                    });
+                    return output;
+                }
+            },
+            plotOptions: { line: { marker: { enabled: false } } }
+        });
 
-  $( "#graph-button" ).click(function() {
-    $( "#graph-dialog" ).dialog( "open" );
-  });
+        Highcharts.setOptions({ global : { useUTC : false } });
+    });
 
-
-  $('#graph').highcharts({
-      chart: {
-        type: 'line',
-        zoomType : 'x'   
-      },
-      colors: [
-        '#2f7ed8',
-        '#910000'
-      ],
-      title: { 
-        style : { fontSize: '12px' },
-        text: "Click a Door in the Legend to Hide" 
-      },
-      subtitle: { 
-        style : { fontSize: '10px' },
-        text: "Click and Drag to Zoom." 
-      },
-      xAxis: {
-        type : 'datetime',
-        // grab plot bands from start and end time
-        plotBands: generatePlotBands(graph_data[0][0][0], graph_data[0][graph_data[0].length-1][0]),
-        labels : { align : "left" }
-      },
-      yAxis : {
-        title : {
-          text : "Door Open History"
+    function generatePlotBands(start,end){
+        plotBands = [];
+        for (var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+            if(d.getDay()%6==0){
+                plotBands.push({ color: '#eee', from: d.setHours(0), to: d.setHours(23) });
+                plotBands.push({ color: '#94C9EC', from: d.setHours(12), to: d.setHours(18) });
+            }
+            else if(d.getDay()==3){
+                plotBands.push({ color: '#94C9EC', from: d.setHours(12), to: d.setHours(plot_band_end_hour) });
+            }
+            else {
+                plotBands.push({ color: '#82DAC9', from: d.setHours(plot_band_start_hour), to: d.setHours(plot_band_end_hour) });
+            }
         }
-      },
-      series: [
-      {
-        name: "Door 1",
-        data: graph_data[0]
-      },
-      {
-        name: "Door 2",
-        data: graph_data[1]
-      },
-      ],
-      tooltip: {
-          shared: true,
-          xDateFormat: '%A %B %e, %l:%M %P',
-          formatter: function() {
-            output = '<b>'+ Highcharts.dateFormat(this.points[0].series.tooltipOptions.xDateFormat,this.x) +'</b><br/>';
-            total = 0;
-            this.points.forEach(function(e,i,a){
-              if(e.y == 1){ val = "Open"; } else { val = "Closed"; }
-              output += '<b><span style="color:'+e.series.color+'">'+e.series.name +'</span>: ' + val +'</b><br/>';
-            });
-            return output;
-          }
-      },
-      plotOptions: {
-        line: {
-          marker: {
-            enabled: false
-          },
-        }
-      }
-   });
-    
-   Highcharts.setOptions({
-     global : {
-       useUTC : false
-     }
-   });
-});
-
-function generatePlotBands(start,end){
-  plotBands = new Array();
-  for (var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    // weekends
-    if(d.getDay()%6==0){
-      // highlight the whole day
-      plotBands.push({
-        color: '#eee',
-        from: d.setHours(0),
-        to: d.setHours(23)
-      });
-      // weekend hours
-      plotBands.push({
-        color: '#94C9EC',
-        from: d.setHours(12),
-        to: d.setHours(18)
-      });
+        return plotBands;
     }
-    else if(d.getDay()==3){
-      // special wednesday hours
-      plotBands.push({
-        color: '#94C9EC',
-        from: d.setHours(12),
-        to: d.setHours(plot_band_end_hour)
-      });
-    }
-    else {
-      // open hours
-      plotBands.push({
-        color: '#82DAC9',
-        from: d.setHours(plot_band_start_hour),
-        to: d.setHours(plot_band_end_hour)
-      });
-    }
-  }
-  return plotBands;
-}
 </script>
 
 <div id="graph-dialog" title="Door Status">
-
   <div id="graph" style="height: 600px; width: 800px; float: right;"></div>
-  
   <%= form_tag(nil, :method => :get) do %>
     <label>Start Date
       <input id="start" name="start" type="date" value="<%= @start_date.to_date.to_s %>" />
@@ -141,31 +101,20 @@ function generatePlotBands(start,end){
     </label>
     <%= submit_tag("Change Date", :name => nil, :class => 'btn') %>
   <% end %>
-
 </div>
 
-
 <h1>Door Logs <button id="graph-button" class="btn">View Graph</button></h1>
+<div id="doorLogActions">
+  <%= link_to 'Download Door Logs', download_path %>
+  <a href="#" onclick="$('#log-guide').toggle();">Show Log Guide</a>
+</div>
 
-<%= link_to 'Download Door Logs', download_path %>
-<a href="#" onclick="$('#log-guide').toggle();">Show Log Guide</a>
 <div id="log-guide" style="display: none;">
 <pre>
 Guide to Card Number storage:
 cardnum = (R+(r*32767)), convert to hex
 
 Guide to log keys and data:
-
-Commands:
- * rem_ = remote command issues via web UI (#=user id)
-Statuses:
- * armed = current status of alarm arming
- * activated = current status of alarm ringing
- * alarm_2 = current status of alarm sensor 2
- * alarm_3 = current status of alarm sensor 3
- * door_1_locked = status of door 1
- * door_2_locked = status of door 2
-Log Entries:
  * A=alarm armed (# level)
  * a=added user (# usernum)
  * C=keypad command (# command)
@@ -186,7 +135,6 @@ Log Entries:
  * L=locked (1=door1, 2=door2, 3=bedtime)
  * M=minute (#=minute)
  * m=alarm state (# level)
- * p=power restored / arduino boot (1)
  * R=read tag (# card num)
  * r=second half of tag
  * Q=superuser authed (#=superuser)
@@ -200,6 +148,7 @@ Log Entries:
  * z=log cleared (0)
 </pre>
 </div>
+
 <table>
   <tr>
     <th>Date</th>
@@ -210,36 +159,58 @@ Log Entries:
     <th></th>
   </tr>
 
-<% @divided_tmp = nil %>
-<% @door_logs.each do |door_log| %>
-  <tr>
-    <td><%= door_log.created_at %></td>
-    <td><%= door_log.key %></td>
-    <td><%= door_log.data %></td>
-    <% 
-      if door_log.key == 'r' || door_log.key == 'd' ||door_log.key == 'g'
-        @divided_tmp = door_log.data.to_i
-      elsif (door_log.key == 'R' || door_log.key == 'D' || door_log.key == 'G') && !@divided_tmp.nil? %>
-      <td>
-        <%= case door_log.key
-              when 'R'
-                "Read"
-              when 'D'
-                "Denied"
-              when 'G'
-                "Granted"
+  <% @divided_tmp = nil %>
+  <% @door_logs.each do |door_log| %>
+    <tr>
+      <td><%= door_log.created_at %></td>
+      <td><%= door_log.key %></td>
+      <td><%= door_log.data %></td>
+
+      <% if door_log.key.start_with?('rem_', 'api_rem_') %>
+        <% if door_log.data.present? && door_log.data.to_s.match(/\A\d+\z/) %>
+
+          <% if door_log.data.to_i == 468 %>
+            <td class="access-auto-lock">Automatic Locking</td>
+          <% else %>
+            <% user = User.find_by_id(door_log.data) %>
+            <% access_source, access_class, access_action = extract_access_info(door_log) %>
+
+            <% if user && access_source && access_action %>
+              <% Rails.logger.info "Web App User name: #{user.name} (#{door_log.data})" %>
+              <td class="access-web-granted <%= access_class %>">
+                Granted <%= access_source %>: <%= user.name %> (<%= access_action %>)
+              </td>
+            <% end %>
+          <% end %>
+
+        <% else %>
+          <% Rails.logger.warn "###### Invalid or missing user ID: #{door_log.data}" %>
+        <% end %>
+      <% end %>
+
+      <% if door_log.key == 'r' || door_log.key == 'd' || door_log.key == 'g' %>
+        <% @divided_tmp = door_log.data.to_i %>
+      <% elsif (door_log.key == 'R' || door_log.key == 'D' || door_log.key == 'G') && !@divided_tmp.nil? %>
+        <td class="<%= case door_log.key
+                       when 'G' then 'access-card-granted'
+                       when 'D' then 'access-card-denied'
+                       else ''
+                       end %>">
+          <%= case door_log.key
+              when 'R' then "Read"
+              when 'D' then "Denied"
+              when 'G' then "Granted"
               end %>
-        <% @cardnum = (door_log.data.to_i+(@divided_tmp*32767)).to_s(16) %>
-        <%= "Card: "+@cardnum %>
-	<% @card = Card.find(:first,:conditions=>['lower(card_number) = ?', @cardnum.downcase]) %>
-	<%= "("+@card.user.name+")" unless @card.nil? %>
-      </td>
-   <% else 
-        @divided_tmp = nil
-      end %>
-  </tr>
-<% end %>
+          <% @cardnum = (door_log.data.to_i + (@divided_tmp*32767)).to_s(16) %>
+          <%= "Card: " + @cardnum %>
+          <% @card = Card.find(:first, :conditions => ['lower(card_number) = ?', @cardnum.downcase]) %>
+          <%= "(" + @card.user.name + ")" unless @card.nil? %>
+        </td>
+      <% else %>
+        <% @divided_tmp = nil %>
+      <% end %>
+    </tr>
+  <% end %>
 </table>
 
 <br />
-
