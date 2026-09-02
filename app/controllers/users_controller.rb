@@ -18,8 +18,10 @@ class UsersController < ApplicationController
   def index
     unless params[:full] # by default, show summary
 
-      # sort in SQL instead of loading every user and sorting in Ruby
-      @users = @users.active.order('users.member_level DESC, LOWER(users.name) ASC')
+      # sort in SQL instead of loading every user and sorting in Ruby;
+      # eager-load payments because the badges partial's member_status_symbol
+      # reads them for every user rendered
+      @users = @users.active.includes(:payments).order('users.member_level DESC, LOWER(users.name) ASC')
 #@users.paying + @users.volunteer
 #.joins(:payments).where("payments.date > ? OR ", (DateTime.now - 60.days)).uniq
 
