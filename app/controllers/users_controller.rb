@@ -90,7 +90,9 @@ class UsersController < ApplicationController
 
   # New members (for emailing out)
   def new_member_report
-    @new_users = User.where(:created_at => 3.months.ago..Date.today).where(:hidden => false).where(['member_level >= ?','1'])
+    # hidden is NULL (not false) for users nobody has explicitly hidden, and
+    # the range must end at Time.now or people who signed up today are excluded
+    @new_users = User.where(:created_at => 3.months.ago..Time.now).where(:hidden => [false, nil]).where(['member_level >= ?','1'])
   end
  
   # GET /users/1
