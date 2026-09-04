@@ -68,10 +68,10 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">People <b class="caret"></b></a>
             <ul class="dropdown-menu">
               <%= li_link_to 'People', users_path if can? :read, User %>
-              <%= li_link_to 'Active Cardholders', users_active_cardholders_path if can? :active_cardholders, User %>
               <%= li_link_to 'People - Full Table View', {:controller => "users", :full => "full"} if can? :read, User %>
               <%= li_link_to 'Inactive Users', users_inactive_path if can? :inactive_report, User %>
               <%= li_link_to 'Recent Activity', users_activity_path if can? :activity, User %>
+              <%= li_link_to 'Active Cardholders', users_active_cardholders_path if can? :active_cardholders, User %>
               <%= li_link_to 'New Members Report', users_new_member_report_path if can? :new_member_report, User %>
             </ul>
           </li>
