@@ -9,6 +9,9 @@ class Ability
 
     if !user.nil?
 
+      # Any logged-in member can see the active cardholders list (names + avatars)
+      can :active_cardholders, User
+
       # By default, users can only see their own stuff
       can :read, Card, :user_id => user.id
       can :read, Certification
@@ -28,7 +31,7 @@ class Ability
       end
 
       # Instructors can manage certs and see users
-      if user.instructor? 
+      if user.instructor?
         can :manage, Certification
         can [:create,:read], User, :hidden => [nil,false]
         can [:create,:read], UserCertification

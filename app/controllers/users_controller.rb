@@ -72,6 +72,16 @@ class UsersController < ApplicationController
     end
   end
 
+  # Members who currently hold an active door card (card_permissions = 1,
+  # the same definition as User#card_access_enabled). Names + avatars only.
+  def active_cardholders
+    # exclude hidden members since this list is visible to every logged-in user
+    @cardholders = User.where(
+      "(users.hidden IS NULL OR users.hidden = ?) AND users.id IN " +
+      "(SELECT user_id FROM cards WHERE card_permissions = ? AND user_id IS NOT NULL)", false, 1
+    ).order("LOWER(users.name)")
+  end
+
   # 'Active' users who haven't paid recently
   def inactive
     # eager-load payments (payment_status/delinquency) plus the cards and

@@ -42,6 +42,7 @@ Dooraccess::Application.routes.draw do
   match 'users/merge' => 'users#merge_view', :via => :get # Merge view
   match 'users/merge' => 'users#merge_action', :via => :post # Merge action
   match 'users/inactive' => 'users#inactive' # Inactive users report
+  match 'users/active_cardholders' => 'users#active_cardholders', :as => :users_active_cardholders # Active door cardholders
   resources :users do 
     get 'email' => 'users#compose_email', :as => "compose_email"
     post 'email' => 'users#send_email'
