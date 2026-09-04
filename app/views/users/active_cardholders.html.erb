@@ -1,8 +1,8 @@
 <style type="text/css">
   .cardholders .thumbnail { text-align: center; padding: 8px; }
   .cardholders .thumbnail img { width: 80px; height: 80px; border-radius: 6px; }
-  .cardholders .thumbnail h4 {
-    font-size: 12px; margin: 6px 0 0;
+  .cardholders .thumbnail .name {
+    font-size: 12px; margin: 6px 0 0; display: block;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
 </style>
@@ -13,8 +13,8 @@
 <div class="users cardholders row">
   <% @cardholders.each do |user| %>
     <div class="thumbnail col-lg-1 col-sm-2 col-xs-4">
-      <%= link_to (image_tag user.gravatar_url(:size => 80, :default => "http://members.heatsynclabs.org/assets/nil.png")), user %>
-      <h4><%= link_to user.name, user, :title => user.name %></h4>
+      <img src="https://secure.gravatar.com/avatar/<%= user.gravatar_hash %>.png?s=80&amp;d=<%= u('http://members.heatsynclabs.org/assets/nil.png') %>" alt="" />
+      <span class="name" title="<%= user.name %>"><%= user.name %></span>
     </div>
   <% end %>
 </div>
