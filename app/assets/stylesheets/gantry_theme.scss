@@ -190,10 +190,10 @@ button[type="submit"]:hover {
 }
 .btn-primary:hover, .btn-success:hover,
 input[type="submit"]:hover, button[type="submit"]:hover { color: var(--tape-dark); }
-.btn-info { background: var(--info); color: #fff; border-color: var(--tape-dark); }
-.btn-info:hover { color: #fff; }
-.btn-danger { background: var(--fault); color: #fff; border-color: var(--tape-dark); }
-.btn-danger:hover { color: #fff; }
+.btn-info { background: var(--info); color: var(--on-dark); border-color: var(--tape-dark); }
+.btn-info:hover { color: var(--on-dark); }
+.btn-danger { background: var(--fault); color: var(--on-dark); border-color: var(--tape-dark); }
+.btn-danger:hover { color: var(--on-dark); }
 
 /* ---------- tables -------------------------------------------- */
 table, .table {
@@ -223,7 +223,7 @@ td, .table > tbody > tr > td {
   color: var(--g-ink);
   vertical-align: middle;
 }
-tbody tr:nth-child(even) td { background: rgba(236, 227, 211, 0.025); }
+tbody tr:nth-child(even) td { background: var(--slab-hi); }
 tbody tr:hover td { background: var(--hazard-dim); }
 .lined-table td { border-bottom: 1px solid var(--g-line); }
 
