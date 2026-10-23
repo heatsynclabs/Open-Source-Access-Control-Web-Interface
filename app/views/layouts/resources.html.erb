@@ -33,8 +33,7 @@
   <style>
     #logo {
       height: 40px;
-      width: 40px;
-      float: left;
+      width: auto;
       margin-top: 5px;
     }
     @media (max-width: 768px) {
@@ -46,6 +45,7 @@
       margin: 1em;
     }
   </style>
+  <%= stylesheet_link_tag "application", :media => "all" %>
 </head>
 <body>
   <nav class="navbar navbar-default" role="navigation">
@@ -58,7 +58,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a id="home_nav_link" href="/" title="Home"><img src="/assets/logo.png" id="logo" /></a>
+        <%= link_to root_path, id: "home_nav_link", title: "Home" do %><%= image_tag "hsl-lockup-h.svg", class: "nav-logo logo-light", alt: "HeatSync Labs" %><%= image_tag "hsl-lockup-h-reverse.svg", class: "nav-logo logo-dark", alt: "HeatSync Labs" %><% end %>
       </div>
 
       <div class="collapse navbar-collapse" id="mainmenu-collapse">

@@ -1,0 +1,460 @@
+/* GANTRY fonts, self-hosted through the Rails asset pipeline. */
+@font-face { font-family:'Archivo'; font-style:normal; font-weight:700; font-display:swap; src:font-url('archivo-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family:'Archivo'; font-style:normal; font-weight:800; font-display:swap; src:font-url('archivo-latin-800-normal.woff2') format('woff2'); }
+@font-face { font-family:'Archivo'; font-style:normal; font-weight:900; font-display:swap; src:font-url('archivo-latin-900-normal.woff2') format('woff2'); }
+@font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:400; font-display:swap; src:font-url('instrument-sans-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:500; font-display:swap; src:font-url('instrument-sans-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:600; font-display:swap; src:font-url('instrument-sans-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:700; font-display:swap; src:font-url('instrument-sans-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family:'IBM Plex Mono'; font-style:normal; font-weight:500; font-display:swap; src:font-url('ibm-plex-mono-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family:'IBM Plex Mono'; font-style:normal; font-weight:600; font-display:swap; src:font-url('ibm-plex-mono-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:400; font-display:swap; src:font-url('jetbrains-mono-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:600; font-display:swap; src:font-url('jetbrains-mono-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family:'Charis SIL'; font-style:normal; font-weight:700; font-display:swap; src:font-url('charis-sil-latin-700-normal.woff2') format('woff2'); }
+/* ============================================================
+   GANTRY v2.0 - HeatSync Labs design system
+   Industrial UI for the workshop floor.
+
+   One raw token set, remapped per [data-theme]. Caution-tape accent.
+   Charis SIL is reserved for the "HeatSync Labs" wordmark only.
+
+   Extends the v1.1 tokens shipping in heatsynclabs/new-hsl
+   (src/styles/tokens.css). Every v1.1 name still resolves.
+   New in v2.0:
+     - four grounds per theme (page / raised / plate / hazard) via [data-ground]
+     - fill vs text accent split enforced with --on-* tokens
+     - fluid type scale with clamp()
+     - mobile-first primitives, 44px taps, safe-area insets
+   ============================================================ */
+
+/* ---------- fonts -------------------------------------------------
+   Self-host in production. The @font-face blocks below are written for
+   assets/fonts/*.woff2 as shipped in this package; swap the src for a
+   CDN if you would rather.                                          */
+
+
+/* ============================================================
+   1. RAW TOKENS - DARK (default)
+   ============================================================ */
+:root,
+:root[data-theme="dark"] {
+  --char:        #15120f;
+  --grime:       #1d1915;
+  --slab:        #26211b;
+  --slab-hi:     #2f2920;
+  --steel:       #3a342b;
+  --steel-hi:    #4a4338;
+
+  --bone:        #ece3d3;
+  --ash:         #a79d8c;
+  --smoke:       #756c5e;
+
+  --hazard:      #f2ab1e;
+  --hazard-deep: #c98714;
+  --hazard-dim:  rgba(242, 171, 30, 0.12);
+  --accent-text: #f2ab1e;
+
+  --rust:        #c2542c;
+  --rust-deep:   #9a3f20;
+  --live:        #5fb892;
+  --fault:       #d24f3a;
+  --idle:        #f2ab1e;
+  --violet:      #9b7fd0;
+  --info:        #5e93c4;
+
+  --tape-dark:   #14110d;
+  --on-dark:     #ece3d3;
+  --on-dark-line: rgba(236, 227, 211, 0.24);
+
+  --grain-op:    0.045;
+  --grain-blend: normal;
+  --shadow:      6px 6px 0 #0a0806;
+  --shadow-sm:   4px 4px 0 #0a0806;
+  --shadow-lg:   10px 10px 0 #0a0806;
+
+  --nav-bg:      rgba(21, 18, 15, 0.94);
+
+  /* text-safe status inks, measured against --char and --slab */
+  --ink-ok:      #7fd0aa;
+  --ink-warn:    #f2ab1e;
+  --ink-err:     #ef7b68;
+  --ink-info:    #8fbde6;
+  --ink-faint:   #9c9384;
+  --ink-ghost:   #6a6255;
+}
+
+/* ============================================================
+   2. RAW TOKENS - LIGHT (paper + ink)
+   ============================================================ */
+:root[data-theme="light"] {
+  --char:        #f4efe3;
+  --grime:       #ebe3d3;
+  --slab:        #faf6ec;
+  --slab-hi:     #f0e8d8;
+  --steel:       rgba(28, 24, 18, 0.16);
+  --steel-hi:    #1c1812;
+
+  --bone:        #1c1812;
+  --ash:         #4a4236;
+  --smoke:       #6f6555;
+
+  --hazard:      #f2ab1e;
+  --hazard-deep: #b9740f;
+  --hazard-dim:  rgba(242, 171, 30, 0.18);
+  --accent-text: #97600c;
+
+  --rust:        #c2542c;
+  --rust-deep:   #9a3f20;
+  --live:        #2f8562;
+  --fault:       #b8341f;
+  --idle:        #97600c;
+  --violet:      #6a4fa0;
+  --info:        #35648f;
+
+  --tape-dark:   #14110d;
+  --on-dark:     #ece3d3;
+  --on-dark-line: rgba(236, 227, 211, 0.24);
+
+  --grain-op:    0.05;
+  --grain-blend: multiply;
+  --shadow:      6px 6px 0 #1c1812;
+  --shadow-sm:   4px 4px 0 #1c1812;
+  --shadow-lg:   10px 10px 0 #1c1812;
+
+  --nav-bg:      rgba(244, 239, 227, 0.94);
+
+  --ink-ok:      #216b4d;
+  --ink-warn:    #8a5a09;
+  --ink-err:     #a52d1a;
+  --ink-info:    #2b5578;
+  --ink-faint:   #5f5648;
+  --ink-ghost:   #8a8071;
+}
+
+/* ============================================================
+   3. GROUNDS
+   A ground is the surface a block sits on. Setting [data-ground] on
+   any element remaps the semantic tokens for it and everything inside,
+   so a hazard band or a tape plate inside a paper page still resolves
+   legible text without hand-picked colours.
+   ============================================================ */
+:root,
+[data-ground="page"] {
+  --g-bg:      var(--char);
+  --g-raised:  var(--slab);
+  --g-line:    var(--steel);
+  --g-line-hi: var(--steel-hi);
+  --g-ink:     var(--bone);
+  --g-ink-2:   var(--ash);
+  --g-ink-3:   var(--smoke);
+  --g-accent:  var(--hazard);
+  --g-on-accent: var(--accent-text);
+}
+
+[data-ground="raised"] {
+  --g-bg:      var(--slab);
+  --g-raised:  var(--slab-hi);
+  --g-line:    var(--steel);
+  --g-line-hi: var(--steel-hi);
+  --g-ink:     var(--bone);
+  --g-ink-2:   var(--ash);
+  --g-ink-3:   var(--smoke);
+  --g-accent:  var(--hazard);
+  --g-on-accent: var(--accent-text);
+}
+
+/* Always-dark plate. Used for footers, donate bands, kiosk chrome and
+   anything that stays dark when the page flips to paper. */
+[data-ground="plate"] {
+  --g-bg:      var(--tape-dark);
+  --g-raised:  #201b16;
+  --g-line:    var(--on-dark-line);
+  --g-line-hi: rgba(236, 227, 211, 0.4);
+  --g-ink:     var(--on-dark);
+  --g-ink-2:   #b3a996;
+  --g-ink-3:   #8b8271;
+  --g-accent:  var(--hazard);
+  --g-on-accent: #f2ab1e;
+}
+
+/* Full-bleed caution amber. Text on it is always the dark tape ink. */
+[data-ground="hazard"] {
+  --g-bg:      var(--hazard);
+  --g-raised:  #f8bf52;
+  --g-line:    rgba(20, 17, 13, 0.32);
+  --g-line-hi: #14110d;
+  --g-ink:     #14110d;
+  --g-ink-2:   #3d3120;
+  --g-ink-3:   #5c4a2e;
+  --g-accent:  #14110d;
+  --g-on-accent: #14110d;
+}
+
+/* ============================================================
+   4. TYPOGRAPHY
+   ============================================================ */
+:root {
+  --font-display: 'Archivo', 'Arial Black', sans-serif;
+  --font-body:    'Instrument Sans', system-ui, sans-serif;
+  --font-ui:      'IBM Plex Mono', ui-monospace, monospace;
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+  --font-code:    var(--font-mono);
+  --font-logo:    'Charis SIL', Georgia, serif;   /* WORDMARK ONLY */
+
+  --font-sans:    var(--font-body);
+  --font-serif:   var(--font-logo);
+  --font-ui-uppercase: var(--font-ui);
+
+  /* fluid scale, mobile first */
+  --text-xs:   clamp(11px, 0.70rem + 0.1vw, 13px);
+  --text-sm:   clamp(13px, 0.80rem + 0.15vw, 15px);
+  --text-base: clamp(15px, 0.90rem + 0.2vw, 17px);
+  --text-lg:   clamp(17px, 1.00rem + 0.25vw, 19px);
+  --text-xl:   clamp(19px, 1.10rem + 0.4vw, 22px);
+  --text-2xl:  clamp(21px, 1.15rem + 0.9vw, 26px);
+  --text-3xl:  clamp(25px, 1.30rem + 1.6vw, 32px);
+  --text-4xl:  clamp(29px, 1.40rem + 2.6vw, 40px);
+  --text-5xl:  clamp(33px, 1.45rem + 3.8vw, 48px);
+  --text-6xl:  clamp(38px, 1.50rem + 5.4vw, 60px);
+  --text-7xl:  clamp(42px, 1.50rem + 7.2vw, 72px);
+
+  --font-light: 400; --font-normal: 400; --font-medium: 500;
+  --font-semibold: 600; --font-bold: 700; --font-black: 900;
+
+  --tracking-tight:  -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.04em;
+  --tracking-wider:  0.08em;
+  --tracking-ui:     0.14em;
+  --tracking-eyebrow: 0.22em;
+
+  --leading-tight:   1.02;
+  --leading-snug:    1.2;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.65;
+  --leading-loose:   1.75;
+}
+
+/* ============================================================
+   5. SPACE, SHAPE, MOTION
+   ============================================================ */
+:root {
+  --space-1: 4px;   --space-2: 8px;   --space-3: 12px;  --space-4: 16px;
+  --space-5: 20px;  --space-6: 24px;  --space-8: 32px;  --space-10: 40px;
+  --space-12: 48px; --space-16: 64px; --space-20: 80px; --space-24: 96px;
+  --space-32: 128px;
+
+  /* GANTRY is sharp. Only circular UI gets a radius. */
+  --radius-none: 0; --radius-sm: 0; --radius-base: 0;
+  --radius-md: 0;   --radius-lg: 0; --radius-xl: 0;
+  --radius-full: 9999px;
+
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1180px;
+  --maxw: var(--container-xl);
+
+  --z-base: 0; --z-raised: 10; --z-overlay: 50;
+  --z-dropdown: 60; --z-modal: 100; --z-toast: 1000;
+
+  --transition-fast: 0.12s ease;
+  --transition-base: 0.18s ease;
+  --transition-slow: 0.4s ease;
+
+  --header-height: 72px;
+  --card-padding: var(--space-6);
+  --button-height: 48px;     /* never below 44px, tap target floor */
+  --tap: 44px;
+
+  --bd:   1px solid var(--g-line);
+  --bd-2: 2px solid var(--g-line-hi);
+  --border-thick: var(--bd-2);
+  --border-orange: 2px solid var(--hazard);
+
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+
+/* ============================================================
+   6. SEMANTIC ALIASES
+   What components consume. These follow the current ground.
+   ============================================================ */
+:root, [data-ground] {
+  --color-bg-primary:    var(--g-bg);
+  --color-bg-secondary:  var(--grime);
+  --color-bg-tertiary:   var(--g-raised);
+  --color-bg-panel:      var(--tape-dark);
+
+  --color-text-primary:   var(--g-ink);
+  --color-text-secondary: var(--g-ink-2);
+  --color-text-tertiary:  var(--g-ink-3);
+  --color-text-on-panel:  var(--on-dark);
+
+  --color-border:        var(--g-line-hi);
+  --color-border-light:  var(--g-line);
+  --color-border-thick:  var(--bd-2);
+
+  --color-shadow-block:  var(--shadow);
+  --color-accent-primary:   var(--g-accent);
+  --color-accent-secondary: var(--g-on-accent);
+  --color-highlight:     var(--hazard-dim);
+}
+
+/* ============================================================
+   7. v1.1 COMPATIBILITY
+   Every name the shipping site references still resolves.
+   New work should use the raw or ground tokens above.
+   ============================================================ */
+:root, [data-ground] {
+  --paper: var(--char);  --paper-c: var(--grime); --paper-d: var(--slab);
+  --paper-white: var(--char); --cream: var(--grime); --off-white: var(--grime);
+  --ink: var(--bone); --ink-black: var(--bone); --ink-panel: var(--tape-dark);
+  --ink-soft: var(--ash); --graphite: var(--ash); --warm-gray: var(--smoke);
+  --orange: var(--hazard); --orange-d: var(--hazard-deep);
+  --orange-dim: var(--hazard-dim); --orange-dim2: var(--hazard-dim);
+  --accent-rust: var(--rust); --accent-sage: var(--ash); --highlight: var(--hazard);
+  --teal: var(--info); --blue: var(--info); --red: var(--fault);
+  --newbie-green: var(--live); --success-green: var(--live); --error-red: var(--fault);
+  --builder: var(--rust-deep); --talker: var(--violet); --lurker: var(--info);
+  --founder: var(--rust-deep); --newbie: var(--live); --drama: var(--fault);
+  --day-sun: var(--accent-text); --day-mon: var(--violet); --day-tue: var(--live);
+  --day-wed: var(--info); --day-thu: var(--rust); --day-fri: var(--hazard-deep);
+  --day-sat: var(--accent-text);
+  --event-timed: var(--hazard); --event-allday: var(--smoke);
+  --shadow-block: var(--shadow); --shadow-block-sm: var(--shadow-sm);
+  --shadow-block-lg: var(--shadow-lg); --shadow-block-orange: var(--shadow);
+  --shadow-block-orange-sm: var(--shadow-sm); --shadow-block-orange-lg: var(--shadow-lg);
+  --charcoal-deep: var(--tape-dark); --charcoal-light: var(--bone);
+  --charcoal-lighter: var(--ash); --warm-cream: var(--char);
+  --muted-cream: var(--grime); --warm-gray-dark: var(--ash);
+  --border-dark: var(--steel-hi);
+}
+
+/* ============================================================
+   8. EVENT CATEGORY COLOURS
+   Mirrors src/utils/eventCategory.ts so the site, the kiosk and the
+   social studio all colour an event the same way.
+   ============================================================ */
+:root, [data-ground] {
+  --cat-class:     var(--hazard);      /* registration required */
+  --cat-open:      var(--smoke);       /* open hours, ghosted */
+  --cat-hack:      var(--rust);        /* Hack Your Hackerspace */
+  --cat-group:     var(--violet);      /* meetups, chapters, clubs */
+  --cat-recurring: var(--live);        /* repeats in the window */
+  --cat-default:   var(--info);
+}
+
+/* ============================================================
+   9. PRIMITIVES
+   ============================================================ */
+.g-root {
+  background: var(--g-bg);
+  color: var(--g-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+}
+
+.g-wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: #{"max(var(--space-4), var(--safe-l))"};
+}
+
+.g-band { background: var(--g-bg); color: var(--g-ink); padding-block: var(--space-12); }
+
+/* single column first, opt into columns at the breakpoint */
+.g-grid { display: grid; gap: var(--space-6); grid-template-columns: 1fr; }
+@media (min-width: 720px) {
+  .g-grid[data-cols="2"] { grid-template-columns: repeat(2, 1fr); }
+  .g-grid[data-cols="3"] { grid-template-columns: repeat(3, 1fr); }
+  .g-grid[data-cols="4"] { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .g-grid[data-cols="4"] { grid-template-columns: repeat(4, 1fr); }
+}
+
+.g-split { display: grid; gap: var(--space-8); grid-template-columns: 1fr; }
+@media (min-width: 900px) { .g-split { grid-template-columns: 1.05fr 1fr; } }
+
+/* horizontal scroll rail for mobile carousels */
+.g-rail {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 78%;
+  gap: var(--space-4); overflow-x: auto; scroll-snap-type: x mandatory;
+  padding-bottom: var(--space-2); scrollbar-width: thin;
+}
+.g-rail > * { scroll-snap-align: start; }
+@media (min-width: 720px) { .g-rail { grid-auto-columns: 42%; } }
+
+.g-card {
+  background: var(--g-raised);
+  border: var(--bd-2);
+  padding: var(--card-padding);
+  box-shadow: var(--shadow-sm);
+}
+
+.g-eyebrow {
+  font-family: var(--font-ui); font-size: var(--text-xs);
+  font-weight: 600; letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase; color: var(--g-on-accent);
+}
+
+.g-title, .g-display {
+  font-family: var(--font-display); font-weight: 800;
+  text-transform: uppercase; letter-spacing: var(--tracking-tight);
+  line-height: 0.95; color: var(--g-ink);
+}
+
+.g-wordmark { font-family: var(--font-logo); font-weight: 700; letter-spacing: 0; }
+
+.g-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: var(--tap); padding: 0 var(--space-6);
+  font-family: var(--font-ui); font-size: var(--text-sm); font-weight: 600;
+  letter-spacing: var(--tracking-ui); text-transform: uppercase;
+  border: var(--bd-2); border-color: var(--g-line-hi);
+  background: transparent; color: var(--g-ink);
+  cursor: pointer; transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.g-btn[data-variant="primary"] {
+  background: var(--hazard); color: #14110d; border-color: #14110d;
+  box-shadow: var(--shadow-sm);
+}
+.g-btn:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow); }
+.g-btn:active { transform: translate(0, 0); box-shadow: var(--shadow-sm); }
+
+/* caution tape ribbon */
+.g-tape {
+  height: 34px;
+  background: repeating-linear-gradient(-45deg,
+    var(--hazard) 0 24px, var(--tape-dark) 24px 48px);
+  border-block: 2px solid var(--tape-dark);
+}
+
+/* film grain overlay, applied to a positioned parent */
+.g-grain::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  opacity: var(--grain-op); mix-blend-mode: var(--grain-blend);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* status dot */
+.g-dot { width: 10px; height: 10px; border-radius: var(--radius-full); display: inline-block; }
+.g-dot[data-state="open"]   { background: var(--live); }
+.g-dot[data-state="closed"] { background: var(--smoke); }
+.g-dot[data-state="soon"]   { background: var(--hazard); }
+
+:where(input, textarea, select) { font-size: 16px; }  /* stops iOS zoom on focus */
+
+*:focus-visible { outline: 2px solid var(--hazard); outline-offset: 2px; }
+::selection { background: var(--hazard); color: var(--tape-dark); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

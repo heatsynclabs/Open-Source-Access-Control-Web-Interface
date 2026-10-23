@@ -8,8 +8,20 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
+ * Explicit order: legacy component sheets first, GANTRY last so it wins.
  *= require_self
- *= require_tree .
+ *= require scaffolds
+ *= require home
+ *= require users
+ *= require certifications
+ *= require user_certifications
+ *= require macs
+ *= require mac_logs
+ *= require door_logs
+ *= require payments
+ *= require ipn
+ *= require gantry_tokens
+ *= require gantry_theme
 */
 .caption { display: inline-block; background-color: #eee; border: 1px solid #333; border-radius: 5px; margin-bottom: 1em; }
 .btn {
