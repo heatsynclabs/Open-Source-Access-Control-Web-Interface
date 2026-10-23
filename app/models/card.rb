@@ -15,7 +15,7 @@ class Card < ActiveRecord::Base
       cardnum = self.card_number.rjust(8, '0')
 
       # login and send the command all in one go (auto-logout is a feature of the arduino when used this way)
-      source = open("#{door_access_url}?m#{cardid}&p#{cardperm}&t#{cardnum}&e=#{door_access_password}").read
+      source = URI.open("#{door_access_url}?m#{cardid}&p#{cardperm}&t#{cardnum}&e=#{door_access_password}").read
       results = source.scan(/cur/)
 
       if(results.size > 0) then
@@ -41,7 +41,7 @@ class Card < ActiveRecord::Base
       cardnum = u.card_number.rjust(8, '0')
 
       # login and send the command all in one go (auto-logout is a feature of the arduino when used this way)
-      source = open("#{door_access_url}?m#{cardid}&p#{cardperm}&t#{cardnum}&e=#{door_access_password}").read
+      source = URI.open("#{door_access_url}?m#{cardid}&p#{cardperm}&t#{cardnum}&e=#{door_access_password}").read
       results = source.scan(/cur/)
 
       if(results.size > 0) then

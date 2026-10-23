@@ -49,7 +49,7 @@ class DoorLog < ActiveRecord::Base
     door_access_password = APP_CONFIG['door_access_password']
 
     #login
-    source = open("#{door_access_url}?e=#{door_access_password}").read
+    source = URI.open("#{door_access_url}?e=#{door_access_password}").read
     results = source.scan(/ok/)
 
     #only continue if we've got an OK login
@@ -60,7 +60,7 @@ class DoorLog < ActiveRecord::Base
       url_param = parsing[:url_param]
 
       # Execute the command
-      open("#{door_access_url}?#{url_param}")
+      URI.open("#{door_access_url}?#{url_param}")
 
       self.download_status # Update the status cache
     else
@@ -68,7 +68,7 @@ class DoorLog < ActiveRecord::Base
     end
 
     #logout
-    open("#{door_access_url}?e=0000")
+    URI.open("#{door_access_url}?e=0000")
 
     return output
   end
@@ -153,7 +153,7 @@ class DoorLog < ActiveRecord::Base
     door_access_password = APP_CONFIG['door_access_password']
 
     # query for status
-    source = open("#{door_access_url}?9").read
+    source = URI.open("#{door_access_url}?9").read
     # expect {"armed"=>255, "activated"=>255, "alarm_3"=>1, "alarm_2"=>1, "door_1_locked"=>1, "door_2_locked"=>1}
     # See https://github.com/heatsynclabs/Open_Access_Control_Ethernet for more info
     @status = JSON.parse(source)
@@ -168,13 +168,13 @@ class DoorLog < ActiveRecord::Base
     door_access_password = APP_CONFIG['door_access_password']
 
     # connect to door access system
-    source = open("#{door_access_url}?e=#{door_access_password}").read
+    source = URI.open("#{door_access_url}?e=#{door_access_password}").read
     results = source.scan(/ok/)
     if(results.size > 0) then
       @end_results = Array.new
 
       #only continue if we've got an OK login
-      source = open("#{door_access_url}?z").read
+      source = URI.open("#{door_access_url}?z").read
       results = source.scan(/(.*): (.*)\r\n/)
 
       results.each do |r|
@@ -184,9 +184,9 @@ class DoorLog < ActiveRecord::Base
       end
 
       #clear log
-      open("#{door_access_url}?y")
+      URI.open("#{door_access_url}?y")
       #logout
-      open("#{door_access_url}?e=0000")
+      URI.open("#{door_access_url}?e=0000")
 
       if(results.size > 0) then
         #only return true if we got some kind of decent response
