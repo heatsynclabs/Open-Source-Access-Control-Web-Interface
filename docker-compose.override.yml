@@ -1,5 +1,0 @@
-# Local dev only (gitignored). Rails on 3001 to avoid the host Nuxt server on 3000.
-services:
-  members_web:
-    ports: !override
-      - "3001:3000"
