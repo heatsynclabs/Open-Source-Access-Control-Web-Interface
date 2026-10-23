@@ -266,8 +266,9 @@ hr { border: 0; border-top: 1px solid var(--g-line); }
 #header, .navbar.navbar-default { position: relative; }
 #gantry-theme-toggle {
   position: absolute;
-  top: var(--space-3);
+  top: 50%;
   right: var(--space-4);
+  transform: translateY(-50%);
   z-index: var(--z-toast);
   display: inline-flex;
   align-items: center;
@@ -276,14 +277,13 @@ hr { border: 0; border-top: 1px solid var(--g-line); }
   height: var(--tap);
   padding: 0;
   color: var(--g-ink);
-  background: var(--g-raised);
+  background: transparent;
   border: 2px solid var(--g-line-hi);
   border-radius: 0;
-  box-shadow: var(--shadow-sm);
   cursor: pointer;
 }
 #gantry-theme-toggle svg { display: block; }
-#gantry-theme-toggle:hover { background: var(--hazard); color: var(--tape-dark); transform: translate(-1px, -1px); box-shadow: var(--shadow); }
+#gantry-theme-toggle:hover { background: var(--hazard); color: var(--tape-dark); }
 
 /* ---------- caution-tape ribbon ------------------------------- */
 /* The one decorative element in GANTRY: punctuation under the nav. */
@@ -366,7 +366,7 @@ hr { border: 0; border-top: 1px solid var(--g-line); }
   }
   .g-form .fieldset-grid { grid-template-columns: 1fr; }
   /* sit left of the hamburger on small screens */
-  #gantry-theme-toggle { top: var(--space-3); right: calc(var(--tap) + var(--space-5)); }
+  #gantry-theme-toggle { right: calc(var(--tap) + var(--space-4)); }
 }
 
 /* ============================================================
