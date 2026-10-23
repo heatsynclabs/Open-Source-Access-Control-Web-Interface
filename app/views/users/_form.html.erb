@@ -3,7 +3,7 @@
   else
   this_url = user_path(@user)
   end %>
-<%= form_for @user, :url => this_url  do |f| %>
+<%= form_for @user, :url => this_url, :html => { :class => "g-form" }  do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>

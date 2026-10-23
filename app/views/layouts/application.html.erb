@@ -34,6 +34,7 @@
     <%= link_to 'Login', new_user_session_path unless user_signed_in? %>
     <%= link_to 'Membership Application', new_user_registration_path unless user_signed_in? %>
   </div>
+  <div class="g-tape" role="presentation"></div>
   <div id="content">
     <% if notice %>
       <p class="notice"><%= raw(notice) %></p>

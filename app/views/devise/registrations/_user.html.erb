@@ -6,90 +6,120 @@ Please also note that certain privileges like 24/7 card access require community
 Thanks again, and happy hacking!</p>
 <% end %>
 
-
-
 <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => html) do |f| %>
-  <i><%= f.label :public_notice, "* denoted fields will be published to our public mailing list" %></i><br />
-  <div class="field">
-    <%= f.label :member_level, "Membership Level" %><br />
-    <%= f.select :member_level, [[nil],["None",0],["Unable",1],["Volunteer",10],["Associate ($25)",25],["Basic ($50)",50],["Plus ($100)",100]]  %>
-  </div>
+<div class="g-form">
+  <p class="form-note"><i><%= f.label :public_notice, "* denoted fields will be published to our public mailing list" %></i></p>
 
-  <div class="field">
-    <%= render :partial => "/users/payment_methods", :locals => { :g => f } %>
-  </div>
+  <fieldset>
+    <legend>Membership</legend>
+    <div class="fieldset-grid">
+      <div class="field">
+        <%= f.label :member_level, "Membership Level" %>
+        <%= f.select :member_level, [[nil],["None",0],["Unable",1],["Volunteer",10],["Associate ($25)",25],["Basic ($50)",50],["Plus ($100)",100]]  %>
+      </div>
+      <div class="field">
+        <%= render :partial => "/users/payment_methods", :locals => { :g => f } %>
+      </div>
+    </div>
+  </fieldset>
 
-  <div class="field">
-    <%= f.label :name, "Full Name *" %><br />
-    <%= f.text_field :name %>
-  </div>
+  <fieldset>
+    <legend>Account</legend>
+    <div class="fieldset-grid">
+      <div class="field">
+        <%= f.label :name, "Full Name *" %>
+        <%= f.text_field :name %>
+      </div>
+      <div class="field">
+        <%= f.label :email %>
+        <%= f.email_field :email %>
+        <span class="field-inline"><%= f.check_box :email_visible %> <%= f.label :email_visible, "Show Email to All Members?" %></span>
+      </div>
+      <div class="field">
+        <%= f.label :password %><% unless ['new','create'].include?(params[:action]) %> <em>(Only if you want to change your password)</em><% end %>
+        <%= f.password_field :password %>
+      </div>
+      <div class="field">
+        <%= f.label :password_confirmation %>
+        <%= f.password_field :password_confirmation %>
+      </div>
+      <% unless ['new','create'].include?(params[:action]) %>
+      <div class="field">
+        <%= f.label :current_password, "Type Your Current Password" %> <em>(For your account's security)</em>
+        <%= f.password_field :current_password %>
+      </div>
+      <% end %>
+    </div>
+  </fieldset>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email %>
-    <%= f.check_box :email_visible %>
-    <%= f.label :email_visible, "Show Email to All Members?" %>
-  </div>
+  <fieldset>
+    <legend>Contact</legend>
+    <div class="fieldset-grid">
+      <div class="field">
+        <%= f.label :phone %>
+        <%= f.text_field :phone %>
+        <span class="field-inline"><%= f.check_box :phone_visible %> <%= f.label :phone_visible, "Show Phone to All Members?" %></span>
+      </div>
+      <div class="field">
+        <%= f.label :postal_code, "Residential Postal Code" %>
+        <%= f.text_field :postal_code %>
+        <span class="field-hint">(we'd like to know where you're commuting from!)</span>
+      </div>
+      <div class="field field-wide">
+        <%= f.label :twitter_url %>
+        <%= f.text_field :twitter_url, :placeholder => "https://twitter.com/heatsynclabs" %>
+      </div>
+      <div class="field field-wide">
+        <%= f.label :facebook_url %>
+        <%= f.text_field :facebook_url, :placeholder => "https://www.facebook.com/HeatSyncLabs" %>
+      </div>
+      <div class="field field-wide">
+        <%= f.label :github_url %>
+        <%= f.text_field :github_url, :placeholder => "https://github.com/heatsynclabs" %>
+      </div>
+      <div class="field field-wide">
+        <%= f.label :website_url %>
+        <%= f.text_field :website_url, :placeholder => "http://www.heatsynclabs.org" %>
+      </div>
+    </div>
+  </fieldset>
 
-  <div class="field">
-    <%= f.label :phone %><br />
-    <%= f.text_field :phone %>
-    <%= f.check_box :phone_visible %>
-    <%= f.label :phone_visible, "Show Phone to All Members?" %>
-  </div>
+  <fieldset>
+    <legend>Emergency Contact</legend>
+    <div class="fieldset-grid">
+      <div class="field">
+        <%= f.label :emergency_name, "Emergency Contact Name" %>
+        <%= f.text_field :emergency_name %>
+      </div>
+      <div class="field">
+        <%= f.label :emergency_phone %>
+        <%= f.text_field :emergency_phone %>
+      </div>
+      <div class="field">
+        <%= f.label :emergency_email %>
+        <%= f.text_field :emergency_email %>
+      </div>
+    </div>
+  </fieldset>
 
-  <div class="field">
-    <%= f.label :postal_code, "Residential Postal Code" %><br />
-    <%= f.text_field :postal_code %> (we'd like to know where you're commuting from!)
-  </div>
+  <fieldset>
+    <legend>About You</legend>
+    <div class="fieldset-grid">
+      <div class="field field-wide">
+        <%= f.label :current_skills, "What skills, knowledge and experience do you bring to the community? *" %>
+        <%= f.text_area :current_skills %>
+      </div>
+      <div class="field field-wide">
+        <%= f.label :desired_skills, "What skills, knowledge and experiences are you looking for in HeatSync? *" %>
+        <%= f.text_area :desired_skills %>
+      </div>
+      <div class="field field-wide">
+        <%= f.label :marketing_source, "How'd you find out about HeatSync? *" %>
+        <%= f.text_area :marketing_source %>
+      </div>
+    </div>
+  </fieldset>
 
-  <div class="field">
-    <%= f.label :twitter_url %>
-    <%= f.text_field :twitter_url, :placeholder => "https://twitter.com/heatsynclabs" %><br/>
-    <%= f.label :facebook_url %>
-    <%= f.text_field :facebook_url, :placeholder => "https://www.facebook.com/HeatSyncLabs" %><br/>
-    <%= f.label :github_url %>
-    <%= f.text_field :github_url, :placeholder => "https://github.com/heatsynclabs" %><br/>
-    <%= f.label :website_url %>
-    <%= f.text_field :website_url, :placeholder => "http://www.heatsynclabs.org" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :emergency_name, "Emergency Contact Name" %><br />
-    <%= f.text_field :emergency_name %>
-  </div>
-  <div class="field">
-    <%= f.label :emergency_phone %><br />
-    <%= f.text_field :emergency_phone %>
-  </div>
-  <div class="field">
-    <%= f.label :emergency_email %><br />
-    <%= f.text_field :emergency_email %>
-  </div>
-  <div class="field">
-    <%= f.label :current_skills, "What skills, knowledge and experience do you bring to the community? *" %><br />
-    <%= f.text_area :current_skills %>
-  </div>
-  <div class="field">
-    <%= f.label :desired_skills, "What skills, knowledge and experiences are you looking for in HeatSync? *" %><br />
-    <%= f.text_area :desired_skills %>
-  </div>
-  <div class="field">
-    <%= f.label :marketing_source, "How'd you find out about HeatSync? *" %><br />
-    <%= f.text_area :marketing_source %>
-  </div>
-
-  <div><%= f.label :password %><% unless ['new','create'].include?(params[:action]) %> <em>(Only if you want to change your password)</em><% end %><br />
-  <%= f.password_field :password %></div>
-
-  <div><%= f.label :password_confirmation %><br />
-  <%= f.password_field :password_confirmation %></div>
-
-  <% unless ['new','create'].include?(params[:action]) %>
-  <div><%= f.label :current_password, "Type Your Current Password" %> <em>(For your account's security)</em><br />
-  <%= f.password_field :current_password %></div>
-  <% end %>
-
-  <div><%= f.submit button_label %></div>
-
+  <div class="form-actions"><%= f.submit button_label %></div>
+</div>
 <% end %>
