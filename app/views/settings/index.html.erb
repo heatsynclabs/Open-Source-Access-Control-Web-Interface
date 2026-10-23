@@ -8,7 +8,7 @@
   <tr>
     <td><%= setting.first.titleize %></td>
     <td>"<%= setting.last.truncate(140) %>"</td>
-    <% if can? :update, setting %>
+    <% if can? :update, Setting %>
     <td><%= link_to 'Edit', edit_setting_path(setting.first) %></td>
     <% end %>
   </tr>

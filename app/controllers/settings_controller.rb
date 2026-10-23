@@ -1,30 +1,24 @@
 class SettingsController < ApplicationController
   authorize_resource
 
+  # Settings are declared as fields on the Setting model (rails-settings-cached).
+  # Each field carries its own default, so there is no separate defaults hash.
   def index
-    @settings = Setting.all
-    @@default_settings.each do |key, value|
-      if @settings[key].blank?
-        @settings[key] = value
-      end
-    end
+    @settings = Setting.defined_fields.to_h { |field| [field.key, Setting.send(field.key).to_s] }
   end
 
   def edit
-    value = Setting[params[:id].to_sym]
-    if value.present?
-      @setting = {}
-      @setting[:var] = params[:id]
-      @setting[:value] = value
-    elsif @@default_settings[params[:id].to_sym].present?
-      @setting = {}
-      @setting[:var] = params[:id]
-      @setting[:value] = @@default_settings[params[:id].to_sym]
+    key = params[:id]
+    if Setting.respond_to?(key)
+      @setting = { :var => key, :value => Setting.send(key).to_s }
+    else
+      redirect_to settings_path
     end
   end
 
   def update
-    Setting[params[:id]] = params[:value]
+    key = params[:id]
+    Setting.send("#{key}=", params[:value]) if Setting.respond_to?("#{key}=")
 
     redirect_to settings_path
   end

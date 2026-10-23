@@ -100,7 +100,7 @@ class UsersController < ApplicationController
     @zombie_members = User.where('sign_in_count = 0').where('member_level > 1')
     @user_logins = User.where(:current_sign_in_at => 2.months.ago..Time.now).where('sign_in_count > 1')
     @new_users = User.where(:created_at => 3.months.ago..Date.today)
-    @cardless_users = User.includes('cards').where(['users.member_level >= ?','50']).where('cards.id IS NULL')
+    @cardless_users = User.includes('cards').references('cards').where(['users.member_level >= ?','50']).where('cards.id IS NULL')
   end
 
   # New members (for emailing out)

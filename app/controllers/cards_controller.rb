@@ -16,9 +16,9 @@ class CardsController < ApplicationController
       @runner_up_card = nil
       @cards.each do |card|
         card_num_R = card.card_number.to_i(16)%32767
-        card[:accesses_this_week] = DoorLog.where("key = ? AND data = ? AND created_at > ?", 'G', card_num_R, DateTime.now - 1.month).order("created_at DESC").group_by { |d| d.created_at.beginning_of_day }.count
+        card.accesses_this_week = DoorLog.where("key = ? AND data = ? AND created_at > ?", 'G', card_num_R, DateTime.now - 1.month).order("created_at DESC").group_by { |d| d.created_at.beginning_of_day }.count
       end
-      @most_active_cards = @cards.sort{|a,b| b[:accesses_this_week] <=> a[:accesses_this_week]}
+      @most_active_cards = @cards.sort{|a,b| b.accesses_this_week <=> a.accesses_this_week}
       @most_active_card = @most_active_cards[0]
       @runner_up_card = @most_active_cards[1]
     end

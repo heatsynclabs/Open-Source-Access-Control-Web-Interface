@@ -29,7 +29,7 @@
         <%= link_to contract.user.name, contract.user if contract.user %>
       </td>
       <td>
-        <%= contract.signed_at.to_date.to_s(:long) %>
+        <%= contract.signed_at.to_date.to_fs(:long) %>
       </td>
       <td>
         <%= link_to "View", contract, class: "btn btn-primary" %>

@@ -16,7 +16,7 @@
   <%= link_to "(#{@contract.user.name})", @contract.user if @contract.user %>
   <small>
     signed
-    <%= @contract.signed_at.to_date.to_s(:long) %>
+    <%= @contract.signed_at.to_date.to_fs(:long) %>
   </small>
 </h2>
 <% unless @contract.created_by.blank? %>

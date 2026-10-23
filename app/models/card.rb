@@ -5,6 +5,9 @@ class Card < ActiveRecord::Base
   validates_uniqueness_of :id, :card_number
   belongs_to :user
 
+  # Computed per-request in CardsController#index, not a column.
+  attr_accessor :accesses_this_week
+
   def upload_to_door
     # load config values
     door_access_url = APP_CONFIG['door_access_url']
