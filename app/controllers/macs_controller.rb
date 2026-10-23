@@ -6,10 +6,13 @@ before_filter :arp_lookup, :only => :new
 
 #require "active_record"
 require "optparse"
+require "shellwords"
 #require "rubygems"
 
 def index
-  recent_mac_logs_ungrouped = MacLog.last(1000)
+  # the JSON response builds its own @filtered_macs below; skip the
+  # ranking/list work that only the HTML view renders
+  recent_mac_logs_ungrouped = request.format.json? ? [] : MacLog.last(1000)
   if recent_mac_logs_ungrouped.present?
     @mac_time_start_date = recent_mac_logs_ungrouped.first.created_at
     recent_mac_logs = recent_mac_logs_ungrouped.group_by(&:mac)
@@ -40,18 +43,21 @@ def index
       end
     end
     @mac_times_sorted = @mac_times.sort{|a,b| b.last[:time] <=> a.last[:time] }
+    # look up all candidate macs in one query instead of one query per loop pass
+    macs_by_mac = {}
+    Mac.where(:mac => @mac_times_sorted.map{|mt| mt.first }).includes(:user).each{|m| macs_by_mac[m.mac] ||= m }
     @most_active_mac = nil
     @runner_up_mac = nil
     @mac_times_sorted.each do |mac_time|
       unless @most_active_mac
-        this_mac = Mac.find_by_mac(mac_time.first)
+        this_mac = macs_by_mac[mac_time.first]
         unless this_mac.hidden
           @most_active_mac = this_mac
           @most_active = mac_time
         end
       else
         unless @runner_up_mac
-          this_mac = Mac.find_by_mac(mac_time.first)
+          this_mac = macs_by_mac[mac_time.first]
           unless this_mac.hidden
             @runner_up_mac = this_mac
             @runner_up = mac_time
@@ -63,7 +69,8 @@ def index
 
   #@active_macs = Mac.where(:active => true, :hidden => false)
   #@active_macs += Mac.where(:active => true, :hidden => nil)
-
+  
+  unless request.format.json?
   # De-dupe users for the public
   if can? :update, Mac then
     @active_macs = Mac.where("macs.active = ? AND (macs.hidden IS NULL OR macs.hidden = ?)", true, false).includes(:user).order("users.name ASC")
@@ -73,9 +80,16 @@ def index
     @active_macs = Mac.select("mac, note, user_id").where("macs.active = ? AND (macs.hidden IS NULL OR macs.hidden = ?)", true, false).joins(:user).order("users.name ASC").group("users.name, mac, note, user_id")
   end
 
-  @hidden_macs = Mac.where("macs.active = ? AND macs.hidden = ?", true, true).order("note ASC")
+  # only load what the current user's view will actually render, and
+  # eager-load :user since every row prints mac.user.name
+  if can? :read_details, Mac
+    @hidden_macs = Mac.where("macs.active = ? AND macs.hidden = ?", true, true).includes(:user).order("note ASC")
+  end
 
-  @all_macs = Mac.find(:all, :order => "LOWER(mac)")
+  if can? :manage, Mac
+    @all_macs = Mac.includes(:user).order("LOWER(mac)")
+  end
+  end # unless request.format.json?
 
   respond_to do |format|
     format.html
@@ -224,7 +238,9 @@ end
 
 def arp_lookup
   @ip = request.env['REMOTE_ADDR']
-  @arp = /([0-9A-F]{2}[:-]){5}([0-9A-F]{2})/i.match(%x(arp -a | grep #{@ip}))
+  # -n skips reverse DNS: plain arp -a resolves a hostname for every ARP
+  # entry and hung this page for minutes when DNS was slow
+  @arp = /([0-9A-F]{2}[:-]){5}([0-9A-F]{2})/i.match(%x(arp -an | grep #{Shellwords.escape(@ip)}))
 end
 
 def scan

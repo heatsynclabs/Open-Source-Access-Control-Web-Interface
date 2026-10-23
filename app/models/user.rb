@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  belongs_to :oriented_by, foreign_key: :oriented_by_id, class_name: :user
+  belongs_to :oriented_by, foreign_key: :oriented_by_id, class_name: "User"
   has_many :cards
   has_many :user_certifications
   has_many :certifications, :through => :user_certifications
@@ -23,8 +23,8 @@ class User < ActiveRecord::Base
 
   validates_format_of [:twitter_url, :facebook_url, :github_url, :website_url], :with => URI::regexp(%w(http https)), :allow_blank => true
 
-  # validates_format_of :email # , :without => /\.ru$/
   validates :email, uniqueness: true
+  validates_format_of :email, :without => /\.ru$/
   validates_presence_of [:name, :postal_code, :current_skills, :desired_skills, :marketing_source]
 
   after_create :send_new_user_email
@@ -122,12 +122,17 @@ class User < ActiveRecord::Base
   end
 
   def last_payment_date
-    self.payments.maximum(:date)
+    # use the already-loaded association when eager-loaded to avoid an N+1 query
+    payments.loaded? ? payments.map(&:date).compact.max : payments.maximum(:date)
+  end
+
+  def payments_count
+    payments.loaded? ? payments.length : self.payments.count
   end
 
   def delinquency
-    if self.payments.count > 0
-      paydate = self.payments.maximum(:date)
+    if payments_count > 0
+      paydate = last_payment_date
       (Date.today - paydate).to_i
     else
       (Date.today - self.created_at.to_date).to_i
@@ -165,8 +170,8 @@ private
     # First status item is level
     case self.member_level.to_i
     when 0..9
-      if self.payments.count > 0 then
-        message = "Former Member (#{(DateTime.now - self.payments.maximum(:date)).to_i/30} months ago)"
+      if payments_count > 0 then
+        message = "Former Member (#{(DateTime.now - last_payment_date).to_i/30} months ago)"
         icon = :timeout
         rank = 1
       else
@@ -209,13 +214,13 @@ private
     case self.member_level.to_i
     when 25..999
       # There are payments
-      if self.payments.count > 0 then
+      if payments_count > 0 then
         # They're on time
-        if self.payments.maximum(:date) > (DateTime.now - 60.days)
+        if last_payment_date > (DateTime.now - 60.days)
           flair = "-paid"
           paid = true
         else
-          message = "Last Payment #{(DateTime.now - self.payments.maximum(:date)).to_i/30} months ago"
+          message = "Last Payment #{(DateTime.now - last_payment_date).to_i/30} months ago"
           paid = false
         end
       else

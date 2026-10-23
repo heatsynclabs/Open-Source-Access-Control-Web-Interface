@@ -1,0 +1,74 @@
+<h1>Audit Log</h1>
+<p class="meta">Records administrative actions (edits to other members' profiles, certification and payment changes). Self-service profile edits are not logged.</p>
+
+<%= form_tag audit_events_path, :method => :get, :class => "audit-filters" do %>
+  <label>Event type
+    <%= select_tag :event_type,
+        options_for_select([["all", ""]] + @event_types.map { |t| [t, t] }, params[:event_type]) %>
+  </label>
+  <label>Affected user id
+    <%= text_field_tag :affected_user_id, params[:affected_user_id], :size => 6 %>
+  </label>
+  <label>Editor id
+    <%= text_field_tag :editor_id, params[:editor_id], :size => 6 %>
+  </label>
+  <%= submit_tag "Filter" %>
+  <%= link_to "reset", audit_events_path %>
+<% end %>
+
+<table class="audit-table">
+  <thead>
+    <tr>
+      <th>When</th>
+      <th>Event</th>
+      <th>Editor</th>
+      <th>Affected member</th>
+      <th>Details</th>
+      <th>IP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @events.each do |e| %>
+      <tr>
+        <td class="nowrap"><%= e.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+        <td><span class="evt evt-<%= e.event_type %>"><%= e.event_type %></span></td>
+        <td>
+          <% if e.editor_id %>
+            <%= link_to (@user_names[e.editor_id] || e.editor_name || "##{e.editor_id}"), user_path(e.editor_id) %>
+          <% else %>
+            <%= e.editor_name %>
+          <% end %>
+        </td>
+        <td>
+          <% if e.affected_user_id %>
+            <%= link_to (@user_names[e.affected_user_id] || "user ##{e.affected_user_id}"), user_path(e.affected_user_id) %>
+          <% else %>
+            <em><%= e.target_label %></em>
+          <% end %>
+        </td>
+        <td><pre class="audit-summary"><%= e.summary %></pre></td>
+        <td class="nowrap"><%= e.ip %></td>
+      </tr>
+    <% end %>
+    <% if @events.empty? %>
+      <tr><td colspan="6" class="empty">No audit events recorded yet.</td></tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% unless params[:all] %>
+  <p><%= link_to "Show more", audit_events_path(params.merge(:all => 1)) %> (showing latest 500)</p>
+<% end %>
+
+<style>
+  .audit-filters { margin: 1em 0; padding: 10px; background: #f4f4f4; border-radius: 5px; }
+  .audit-filters label { margin-right: 14px; font-size: 0.9em; }
+  .audit-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+  .audit-table th, .audit-table td { border-bottom: 1px solid #ddd; padding: 5px 8px; text-align: left; vertical-align: top; }
+  .audit-table .nowrap { white-space: nowrap; }
+  .audit-summary { margin: 0; white-space: pre-wrap; font-size: 0.95em; max-width: 480px; }
+  .evt { font-family: monospace; font-size: 0.85em; padding: 1px 5px; border-radius: 3px; background: #e6e6e6; }
+  .evt-user_update, .evt-user_create { background: #d9edf7; }
+  .evt-cert_granted, .evt-cert_revoked { background: #dff0d8; }
+  .evt-payment_created, .evt-payment_updated, .evt-payment_deleted { background: #fcf8e3; }
+</style>

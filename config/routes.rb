@@ -36,9 +36,10 @@ Dooraccess::Application.routes.draw do
   match 'user_summary/:id' => 'users#user_summary', via: [:get, :post]
   match 'users/activity' => 'users#activity', via: [:get, :post]
   match 'users/new_member_report' => 'users#new_member_report', via: [:get, :post]
-  get 'users/merge' => 'users#merge_view', via: [:get, :post]
-  post 'users/merge' => 'users#merge_action', via: [:get, :post]
+  get 'users/merge' => 'users#merge_view'
+  post 'users/merge' => 'users#merge_action'
   match 'users/inactive' => 'users#inactive', via: [:get, :post]
+  get 'users/active_cardholders' => 'users#active_cardholders', as: :users_active_cardholders
 
   resources :users do
     get 'email' => 'users#compose_email', :as => "compose_email"
@@ -69,6 +70,23 @@ Dooraccess::Application.routes.draw do
   resources :mac_logs
 
   resources :settings, :only => [:index, :edit, :update]
+
+  resources :audit_events, only: [:index]
+
+  # API routes
+  namespace :api do
+    namespace :v1 do
+      # Authentication
+      post 'login' => 'auth#login'
+      get 'login' => 'auth#login_method_error'
+      delete 'logout' => 'auth#logout'
+      get 'status' => 'auth#status'
+
+      # Door Control
+      get 'doors/status' => 'doors#status'
+      post 'doors/control' => 'doors#control'
+    end
+  end
 
   match 'more_info' => 'home#more_info', via: [:get, :post]
   root :to => "home#index"

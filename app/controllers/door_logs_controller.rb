@@ -5,8 +5,9 @@ class DoorLogsController < ApplicationController
   # GET /door_logs
   # GET /door_logs.json
   def index
-#    @door_logs = DoorLog.find(:all, :order => "created_at DESC", :limit => 1000)
-    @door_logs = DoorLog.where("key NOT LIKE 'alarm%' AND key != 'armed' AND key != 'activated'").order("created_at DESC").limit(3000)
+    # optional type filter; defaults to 'all' (everything but alarm/system noise)
+    @door_log_type = DoorLog.valid_type?(params[:type]) ? params[:type] : 'all'
+    @door_logs = DoorLog.by_type(@door_log_type).order("created_at DESC").limit(3000)
 
 
     begin

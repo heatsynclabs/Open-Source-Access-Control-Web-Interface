@@ -2,6 +2,9 @@
 <p>
   <%= link_to "Upload CSV", new_paypal_csv_path %>
 </p>
+<% unless params[:all] %>
+  <p>Showing the 1,000 most recent imports. <%= link_to "Show all", paypal_csvs_path(:all => 1) %></p>
+<% end %>
 
 <table>
   <tr>

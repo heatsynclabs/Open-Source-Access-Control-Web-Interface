@@ -18,7 +18,10 @@ class UsersController < ApplicationController
   def index
     unless params[:full] # by default, show summary
 
-      @users = @users.active.sort_by{|u| [-u.member_level, u.name.downcase] }
+      # sort in SQL instead of loading every user and sorting in Ruby;
+      # eager-load payments because the badges partial's member_status_symbol
+      # reads them for every user rendered
+      @users = @users.active.includes(:payments).order('users.member_level DESC, LOWER(users.name) ASC')
 #@users.paying + @users.volunteer
 #.joins(:payments).where("payments.date > ? OR ", (DateTime.now - 60.days)).uniq
 
@@ -29,25 +32,36 @@ class UsersController < ApplicationController
 
     else # show full
 
+      # eager-load what the view touches per row (member_status_symbol reads
+      # payments; the table shows cards and certifications) so the page runs
+      # a handful of queries instead of several per user
+      @users = @users.includes(:payments, :cards, :user_certifications, :contracts)
+
       case params[:sort]
       when "name"
-        @users = @users.sort_by{ |u| u.name.downcase }
+        @users = @users.order('LOWER(users.name) ASC')
       when "cert"
-        @users = @users.sort_by{ |u| [-sort_by_cert(u.certifications,params[:cert].to_i),u.name.downcase] }
+        # sort on the eager-loaded association in Ruby: naming cards or
+        # user_certifications in a SQL ORDER BY flips Rails 3.2 into
+        # join-based eager loading, whose row fanout is far slower
+        cert_id = params[:cert].to_i
+        @users = @users.sort_by{ |u| [-(u.user_certifications.any?{|uc| uc.certification_id == cert_id} ? 1 : 0), u.name.downcase] }
       when "orientation"
-        @users = @users.sort_by{ |u| [-u.orientation.to_i,u.name.downcase] }
+        @users = @users.order('users.orientation DESC NULLS LAST, LOWER(users.name) ASC')
       when "waiver"
-        @users = @users.sort_by{ |u| [-u.contract_date.to_i,u.name.downcase] }
+        @users = @users.order('(SELECT MIN(c.signed_at) FROM contracts c WHERE c.user_id = users.id) DESC NULLS LAST, LOWER(users.name) ASC')
       when "member"
+        # member_status is computed in Ruby, but payments are eager-loaded so
+        # this no longer issues a query per user
         @users = @users.sort_by{ |u| [-u.member_status.to_i,u.name.downcase] }
       when "card"
-        @users = @users.sort_by{ |u| [-u.cards.count,u.name.downcase] }
+        @users = @users.sort_by{ |u| [-u.cards.length, u.name.downcase] }
       when "instructor"
-        @users = @users.sort{ |a,b| [b.instructor.to_s,a.name] <=> [a.instructor.to_s,b.name] }
+        @users = @users.order('COALESCE(users.instructor, false) DESC, users.name ASC')
       when "admin"
-        @users = @users.sort{ |a,b| [b.admin.to_s,a.name] <=> [a.admin.to_s,b.name] }
+        @users = @users.order('COALESCE(users.admin, false) DESC, users.name ASC')
       else
-        @users = @users.sort_by{ |u| u.name.downcase }
+        @users = @users.order('LOWER(users.name) ASC')
       end
 
 
@@ -58,9 +72,27 @@ class UsersController < ApplicationController
     end
   end
 
+  # Members who currently hold an active door card (card_permissions = 1,
+  # the same definition as User#card_access_enabled). Names + avatars only.
+  def active_cardholders
+    # Compute the gravatar hash in SQL (md5(lower(trim(email))), same as
+    # Gravtastic) so the raw email never leaves the database - the view only
+    # gets id, name, and the hash. Exclude hidden members since this list is
+    # visible to every logged-in user.
+    @cardholders = User.select(
+      "users.name, md5(lower(btrim(users.email))) AS gravatar_hash"
+    ).where(
+      "(users.hidden IS NULL OR users.hidden = ?) AND users.id IN " +
+      "(SELECT user_id FROM cards WHERE card_permissions = ? AND user_id IS NOT NULL)", false, 1
+    ).order("LOWER(users.name)")
+  end
+
   # 'Active' users who haven't paid recently
   def inactive
-    @users = @users.all.select{|u| u if u.payment_status == false }.sort_by{ |u| -u.delinquency }
+    # eager-load payments (payment_status/delinquency) plus the cards and
+    # certifications shown in the view, so this is a few queries total
+    # instead of several per user
+    @users = @users.includes(:payments, :cards, :certifications).all.select{|u| u if u.payment_status == false }.sort_by{ |u| -u.delinquency }
   end
 
   # Recent user activity
@@ -73,7 +105,9 @@ class UsersController < ApplicationController
 
   # New members (for emailing out)
   def new_member_report
-    @new_users = User.where(:created_at => 3.months.ago..Date.today).where(:hidden => false).where(['member_level >= ?','1'])
+    # hidden is NULL (not false) for users nobody has explicitly hidden, and
+    # the range must end at Time.now or people who signed up today are excluded
+    @new_users = User.where(:created_at => 3.months.ago..Time.now).where(:hidden => [false, nil]).where(['member_level >= ?','1'])
   end
 
   # GET /users/1
@@ -126,11 +160,17 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
+    # CanCan's load_and_authorize_resource built @user with the default
+    # assignment role, which drops the role checkboxes; re-assign as :admin
+    # so admins can set them on creation
+    @user.assign_attributes(params[:user], :as => :admin) if current_user.admin?
+
     # update oriented_by only if orientation has been set
     @user.oriented_by_id = current_user.id unless @user.orientation.blank?
 
     respond_to do |format|
       if @user.save
+        audit_event("user_create", @user, "created user #{@user.name} (#{@user.email})")
         format.html { redirect_to @user, :notice => 'User was successfully created.' }
         format.json { render :json => @user, :status => :created, :location => @user }
       else
@@ -148,7 +188,13 @@ class UsersController < ApplicationController
     @user.oriented_by_id = current_user.id if @user.oriented_by.blank? && (!params[:user]["orientation(1i)"].blank?)
 
     respond_to do |format|
-      if @user.update_attributes(user_params)
+      if @user.update(user_params)
+        # log edits of *other* people's profiles (self-service edits go through
+        # Devise and are intentionally not audited)
+        if current_user.id != @user.id
+          changes = AuditEvent.diff(@user)
+          audit_event("user_update", @user, changes.presence || "(no field changes)")
+        end
         format.html { redirect_to @user, :notice => 'User was successfully updated.' }
         format.json { head :no_content }
       else

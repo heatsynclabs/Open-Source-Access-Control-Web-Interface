@@ -4,9 +4,11 @@ before_filter :authenticate_user!
 
 def index
   @mac_logs = MacLog.desc.limit(1000)
+  # one lookup for all macs instead of a query per log row; the view
+  # handles macs that have no Mac record (nil)
   @macs = {}
-  @mac_logs.each do |log|
-    @macs.merge!({log.mac => Mac.find_by_mac(log.mac)})
+  Mac.where(:mac => @mac_logs.map(&:mac).uniq).includes(:user).each do |m|
+    @macs[m.mac] ||= m
   end
 end
 

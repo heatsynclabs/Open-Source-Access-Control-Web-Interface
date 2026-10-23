@@ -1,0 +1,21 @@
+<style type="text/css">
+  .cardholders .thumbnail { text-align: center; padding: 8px; }
+  .cardholders .thumbnail img { width: 80px; height: 80px; border-radius: 6px; }
+  .cardholders .thumbnail .name {
+    font-size: 12px; margin: 6px 0 0; display: block;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+</style>
+
+<h1>Active Cardholders</h1>
+<p class="meta"><%= @cardholders.length %> member<%= 's' unless @cardholders.length == 1 %> with active door access.</p>
+
+<div class="users cardholders row">
+  <% @cardholders.each do |user| %>
+    <div class="thumbnail col-lg-1 col-sm-2 col-xs-4">
+      <%# non-gravatar members fall back to the HSL pirate, matching the People summary page %>
+      <img src="https://secure.gravatar.com/avatar/<%= user.gravatar_hash %>.png?s=80&amp;d=<%= u('https://members.heatsynclabs.org/pirate.png') %>" alt="" />
+      <span class="name" title="<%= user.name %>"><%= user.name %></span>
+    </div>
+  <% end %>
+</div>

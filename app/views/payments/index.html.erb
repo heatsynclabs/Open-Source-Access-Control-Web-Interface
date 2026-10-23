@@ -131,7 +131,10 @@ $(function() {
     <th></th>
   </tr>
 
-<% @payments.each do |payment| %>
+<% unless params[:all] %>
+  <tr><td colspan="8">Showing the 1,000 most recent payments (charts include all). <%= link_to "Show all", payments_path(:all => 1) %></td></tr>
+<% end %>
+<% @payments_shown.each do |payment| %>
   <tr>
     <td><%= payment.user.payee unless payment.user.blank? %></td>
     <td><%= link_to payment.user.name, payment.user unless payment.user.blank? %></td>

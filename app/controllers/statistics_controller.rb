@@ -10,14 +10,19 @@ class StatisticsController < ApplicationController
     card_hash = {}
     cards.each{|c| card_hash[c.card_number.to_i(16)%32767] = c.card_number}
     card_num_Rs = cards.map{|c| c.card_number.to_i(16)%32767}
-    @door_logs = DoorLog.where("data = ?", card_num_Rs).order("created_at ASC")
-    @door_logs.map{|l| 
+    @door_logs = DoorLog.where("data = ?", card_num_Rs).order("created_at ASC").all
+
+    # collect granted entries before the display mutation below overwrites key;
+    # filtering the loaded array avoids a second scan of the door_logs table
+    granted_logs = @door_logs.select{|l| l.key == 'G' }
+
+    @door_logs.map{|l|
       l.data = card_hash[l.data.to_i].to_i(16)
       l.key = DoorLog.key_legend[l.key]
     }
 
     @door_log_graph = []
-    @door_logs.where("key = 'G'").group_by{|l| l.created_at.beginning_of_day}.each{|l| @door_log_graph << [l.first.to_time.to_i*1000,l.last.size]}
+    granted_logs.group_by{|l| l.created_at.beginning_of_day}.each{|l| @door_log_graph << [l.first.to_time.to_i*1000,l.last.size]}
 
     respond_to do |format|
       format.html 
@@ -27,11 +32,14 @@ class StatisticsController < ApplicationController
 
   def mac_log
     macs = @user.macs.where(:hidden => false).map{|m| m.mac}
-    @mac_logs = MacLog.where(:mac => macs)
+    @mac_logs = MacLog.where(:mac => macs).order("created_at ASC").all
+    # group the single loaded result set instead of re-querying mac_logs
+    # once per mac (which loaded the same rows a second time)
+    logs_by_mac = @mac_logs.group_by(&:mac)
     @mac_log_graph = {}
     macs.each do |mac|
-      mac_log = MacLog.where(:mac => mac)
-  
+      mac_log = logs_by_mac[mac] || []
+
       mac_times = []
       last_active = nil
       mac_log.each do |entry|

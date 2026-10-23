@@ -1,0 +1,11 @@
+[{
+  "relation": ["delegate_permission/common.get_login_creds"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.heatsynclabs.app",
+    "sha256_cert_fingerprints": [
+      "E7:7E:41:F7:0C:4E:91:26:DC:B6:D2:24:84:61:A1:25:31:21:E0:EE:5A:90:34:12:C3:34:B8:55:BB:2C:CF:55"
+    ]
+  }
+}]
+

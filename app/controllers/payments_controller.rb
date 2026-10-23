@@ -3,8 +3,9 @@ class PaymentsController < ApplicationController
   #load_and_authorize_resource :user, :through => :payment
   before_filter :authenticate_user!
 
-  # Load users and certs based on current ability
-  before_filter do
+  # Load users and certs based on current ability (only the form actions
+  # use @users - index was paying for this load on every request)
+  before_filter :only => [:new, :edit, :create, :update, :show] do
     @users = User.where(:hidden => false).where("member_level > 10").accessible_by(current_ability).sort_by(&:name_with_payee_and_member_level)
   end
 
@@ -15,11 +16,16 @@ class PaymentsController < ApplicationController
   # GET /payments
   # GET /payments.json
   def index
-    @payments = @payments.order("date DESC")
+    # the table and the chart aggregation both read payment.user per row -
+    # eager-load users so that's one query, not one per payment
+    @payments = @payments.includes(:user).order("date DESC")
     @graph = { :members => chart("members"),
       :total => chart("total"),
       :basic => chart("basic"),
       :associate => chart("associate")}
+
+    # charts aggregate every payment, but render only recent rows by default
+    @payments_shown = params[:all] ? @payments : @payments.first(1000)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -42,7 +48,8 @@ class PaymentsController < ApplicationController
       chart_type = []
     end
 
-    payment_months = @payments.sort_by(&:date).group_by{ |p| p.date.beginning_of_month }
+    # memoized: four charts share one sort+group pass over all payments
+    payment_months = (@payment_months ||= @payments.sort_by(&:date).group_by{ |p| p.date.beginning_of_month })
     @payments_by_month = []
     payment_months.each do |month|
       # Calculate sum of amounts for each month and store at end of month array
@@ -68,11 +75,8 @@ class PaymentsController < ApplicationController
       return p.amount.to_i
     else
       if p.user
-        Rails.logger.info p.user.member_level
         return p.user.member_level.to_i
       else
-        Rails.logger.info p.inspect
-        Rails.logger.info p.user.inspect
         return 0
       end
     end
@@ -107,6 +111,9 @@ class PaymentsController < ApplicationController
     Rails.logger.warn @payment.inspect
     respond_to do |format|
       if @payment.save
+        audit_event("payment_created", @payment,
+                    "recorded payment ##{@payment.id}: $#{@payment.amount} dated #{@payment.date}",
+                    @payment.user)
         format.html { redirect_to payments_url, :notice => 'Payment was successfully created.' }
         format.json { render :json => @payment, :status => :created, :location => @payment }
       else
@@ -120,7 +127,10 @@ class PaymentsController < ApplicationController
   # PUT /payments/1.json
   def update
     respond_to do |format|
-      if @payment.update_attributes(payments_params)
+      if @payment.update(payments_params)
+        changes = AuditEvent.diff(@payment)
+        audit_event("payment_updated", @payment,
+                    "updated payment ##{@payment.id}\n#{changes}", @payment.user)
         format.html { redirect_to payments_url, :notice => 'Payment was successfully updated.' }
         format.json { head :no_content }
       else
@@ -133,7 +143,11 @@ class PaymentsController < ApplicationController
   # DELETE /payments/1
   # DELETE /payments/1.json
   def destroy
+    pay_user = @payment.user
+    pay_desc = "deleted payment ##{@payment.id}: $#{@payment.amount} dated #{@payment.date}"
+    deleted = @payment
     @payment.destroy
+    audit_event("payment_deleted", deleted, pay_desc, pay_user)
 
     respond_to do |format|
       format.html { redirect_to payments_url }

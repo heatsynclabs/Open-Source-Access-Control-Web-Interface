@@ -1,7 +1,12 @@
 <div class="thumbnail col-lg-1 col-sm-2 col-xs-4">
   <%= link_to (image_tag user.gravatar_url(:default => "https://members.heatsynclabs.org/pirate.png") ), user %>
   <span class="badges">
-    <%= render partial: 'badges', locals: {user: user} %>
+    <%# badges inlined: a nested partial per user doubled render overhead on this page %>
+    <%= raw(user.member_status_symbol) %>
+    <%= link_to image_tag('/twitter.png', :class => 'social-icon', :title => "Twitter"), user.twitter_url, :class => 'social-link' if user.twitter_url.present? %>
+    <%= link_to image_tag('/facebook.png', :class => 'social-icon', :title => "Facebook"), user.facebook_url, :class => 'social-link' if user.facebook_url.present? %>
+    <%= link_to image_tag('/github.png', :class => 'social-icon', :title => "Github"), user.github_url, :class => 'social-link' if user.github_url.present? %>
+    <%= link_to image_tag('/website.png', :class => 'social-icon', :title => "Website"), user.website_url, :class => 'social-link' if user.website_url.present? %>
   </span>
 
   <div class="bio">

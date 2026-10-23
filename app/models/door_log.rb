@@ -1,6 +1,47 @@
 class DoorLog < ActiveRecord::Base
   require 'open-uri'
 
+  # Optional type filter for the door log report. Keys in this table:
+  #   G/g Granted, D/d Denied, R/r Read (card events, data = card number)
+  #   L/U         Lock / Unlock actions (data = door number)
+  #   door_N_locked  automatic lock-status polls (data = 0/1)
+  #   rem_* / api_rem_*  remote web/mobile commands
+  #   armed / activated / alarm_* / A/m/s/t/T   alarm + system polling
+  # 'all' (the default) shows everything except the alarm/system polling noise.
+
+  # [label, value] pairs for the report dropdown, in display order
+  TYPE_OPTIONS = [
+    ['All access & locking', 'all'],
+    ['Card access (granted / denied / read)', 'card'],
+    ['Automatic locking / unlocking', 'locking'],
+    ['Remote access (web / mobile)', 'remote'],
+    ['Alarm & system', 'alarm']
+  ].freeze
+
+  TYPES = TYPE_OPTIONS.map { |_label, value| value }.freeze
+
+  def self.valid_type?(type)
+    TYPES.include?(type)
+  end
+
+  # Relation filtered to one report type. All conditions are parameterized
+  # (key sets and LIKE patterns are AR-escaped), so nothing here interpolates
+  # a value into SQL; the type argument only selects a branch.
+  def self.by_type(type)
+    case type
+    when 'card'
+      where(:key => %w[G g D d R r C c])
+    when 'locking'
+      where(:key => %w[door_1_locked door_2_locked L U])
+    when 'remote'
+      where("key LIKE ?", "%rem%")
+    when 'alarm'
+      where("key LIKE ? OR key IN (?)", "alarm%", %w[armed activated A m s t T])
+    else # 'all'
+      where("key NOT LIKE ? AND key NOT IN (?)", "alarm%", %w[armed activated])
+    end
+  end
+
   def self.execute_command(command)
     output = ""
     # load config values

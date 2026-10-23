@@ -107,6 +107,7 @@
     <%= f.label :exit_reason, "Reason for Leaving" %><br />
     <%= f.text_area :exit_reason %>
   </div>
+  <% if current_user.admin? %>
   <div class="field">
     <%= f.label :instructor, "Instructor?" %><br />
     <%= f.check_box :instructor %>
@@ -119,6 +120,7 @@
     <%= f.label :accountant, "Accountant?" %><br />
     <%= f.check_box :accountant %>
   </div>
+  <% end %>
   <div class="field">
     <%= f.label :hidden, "Hidden?" %><br />
     <%= f.check_box :hidden %>

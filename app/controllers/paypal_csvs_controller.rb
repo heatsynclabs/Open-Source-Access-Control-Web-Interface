@@ -3,6 +3,10 @@ class PaypalCsvsController < ApplicationController
   before_filter :authenticate_user!
 
   def index
+    # every row links to its payment - load them in one query, and default
+    # to the most recent imports instead of rendering all ~12k rows
+    @paypal_csvs = @paypal_csvs.includes(:payment)
+    @paypal_csvs = @paypal_csvs.order("paypal_csvs.id DESC").limit(1000) unless params[:all]
   end
 
   def show

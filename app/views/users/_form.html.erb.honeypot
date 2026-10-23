@@ -1,0 +1,141 @@
+<% if @user.id.blank? then
+  this_url = users_create_path
+  else
+  this_url = user_path(@user)
+  end %>
+<%= form_for @user, :url => this_url  do |f| %>
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+      <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name, "Full Name (this will be public)" %><br />
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email %>
+    <%= f.check_box :email_visible %>
+    <%= f.label :email_visible, "Show Email to All Members?" %>
+  </div>
+  <% if @user.id.blank? || !params[:password].nil? %>
+  <div class="field">
+    <%= f.label :password %><br />
+    <%= f.password_field :password, :autocomplete => "off" %>
+  </div>
+  <div class="field">
+    <%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation %>
+  </div>
+<% else %>
+  <div class="field">
+    <a href="?password=edit">Change Password</a>
+  </div>
+<% end %>
+  <div class="field">
+    <%= f.label :phone %><br />
+    <%= f.text_field :phone %>
+    <%= f.check_box :phone_visible %>
+    <%= f.label :phone_visible, "Show Phone to All Members?" %>
+  </div>
+  <div class="field">
+    <%= f.label :postal_code, "Residential Postal Code" %><br />
+    <%= f.text_field :postal_code %> (we'd like to know where you're commuting from!)
+  </div>
+  <div class="field">
+    <%= f.label :twitter_url %>
+    <%= f.text_field :twitter_url, :placeholder => "https://twitter.com/heatsynclabs" %><br/>
+    <%= f.label :facebook_url %>
+    <%= f.text_field :facebook_url, :placeholder => "https://www.facebook.com/HeatSyncLabs" %><br/>
+    <%= f.label :github_url %>
+    <%= f.text_field :github_url, :placeholder => "https://github.com/heatsynclabs" %><br/>
+    <%= f.label :website_url %>
+    <%= f.text_field :website_url, :placeholder => "http://www.heatsynclabs.org" %>
+  </div>
+  <div class="field">
+    <%= f.label :waiver %><br />
+    <%= f.date_select :waiver, :include_blank => 'true', :default => 'nil' %>
+  </div>
+  <div class="field">
+    <%= f.label :orientation %><br />
+    <%= f.date_select :orientation, :include_blank => 'true', :default => 'nil' %>
+  </div>
+  <div class="field">
+    <%= f.label :emergency_name %><br />
+    <%= f.text_field :emergency_name %>
+  </div>
+  <div class="field">
+    <%= f.label :emergency_phone %><br />
+    <%= f.text_field :emergency_phone %>
+  </div>
+  <div class="field">
+    <%= f.label :emergency_email %><br />
+    <%= f.text_field :emergency_email %>
+  </div>
+  <div class="field">
+    <%= f.label :member_level, "Desired Member Level" %><br />
+    <%= f.select :member_level, [[nil],["None",0],["Unable",1],["Volunteer",10],["Associate ($25)",25],["Basic ($50)",50],["Plus ($100)",100]] %>
+  </div>
+  <div class="field">
+    <%= render :partial => "/users/payment_methods", :locals => { :g => f } %>
+  </div>
+  <div class="field">
+    <%= f.label :payee %><br />
+    <%= f.text_field :payee%>
+  </div>
+  <div class="field">
+    <%= f.label :current_skills, "What skills, knowledge and experience do you bring to the community?" %><br />
+    <%= f.text_area :current_skills %>
+  </div>
+  <div class="field">
+    <%= f.label :desired_skills, "What skills, knowledge and experiences are you looking for in HeatSync?" %><br />
+    <%= f.text_area :desired_skills %>
+  </div>
+  <div class="field">
+    <%= f.label :marketing_source, "How'd you find out about HeatSync?" %><br />
+    <%= f.text_area :marketing_source %>
+  </div>
+  <div class="field">
+    <%= f.label :exit_reason, "Reason for Leaving" %><br />
+    <%= f.text_area :exit_reason %>
+  </div>
+  <div class="field">
+    <%= f.label :instructor, "Instructor?" %><br />
+    <%= f.check_box :instructor %>
+  </div>
+  <div class="field">
+    <%= f.label :admin, "Admin?" %><br />
+    <%= f.check_box :admin %>
+  </div>
+  <div class="field">
+    <%= f.label :accountant, "Accountant?" %><br />
+    <%= f.check_box :accountant %>
+  </div>
+  <div class="field">
+    <%= f.label :hidden, "Hidden?" %><br />
+    <%= f.check_box :hidden %>
+  </div>
+  <div class="field">
+    <h3>Cards</h3>
+    <ul>
+    <% @user.cards.each do |c| %>
+      <li><%= link_to "#{c.card_number} #{c.name}", card_url(c) %></li>
+    <% end %>
+    </ul>
+  </div>
+  <div style="display:none;">
+    <%= f.label :honeypot %><br />
+    <%= f.text_field :honeypot %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
