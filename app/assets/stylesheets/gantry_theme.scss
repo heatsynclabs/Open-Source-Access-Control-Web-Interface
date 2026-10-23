@@ -364,3 +364,81 @@ hr { border: 0; border-top: 1px solid var(--g-line); }
   .g-form .fieldset-grid { grid-template-columns: 1fr; }
   #gantry-theme-toggle { bottom: var(--space-3); right: var(--space-3); }
 }
+
+/* ============================================================
+   UI consistency + responsiveness pass
+   ============================================================ */
+
+/* border-box everywhere. The plain (#header) layout never loads
+   Bootstrap, so width:100% inputs were overflowing their fieldsets. */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* One hazard accent per page: the caution strip, not a nav border. */
+#header, .navbar.navbar-default { border-bottom: 0; margin: 0; }
+
+/* Bolder, flush caution strip. Consistent on every layout. */
+.g-tape {
+  display: block;
+  width: 100%;
+  height: var(--space-4);
+  margin: 0 0 var(--space-6);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--hazard) 0, var(--hazard) var(--space-4),
+    var(--tape-dark) var(--space-4), var(--tape-dark) var(--space-8)
+  );
+}
+
+/* Plain (#header) nav: a flex row of links, hamburger on small screens. */
+.header-links { display: flex; flex-wrap: wrap; align-items: center; }
+.nav-toggle {
+  display: none;
+  flex-direction: column; justify-content: center; gap: 4px;
+  width: var(--tap); height: var(--tap); margin-left: auto; padding: 0 var(--space-2);
+  background: transparent; border: 2px solid var(--g-line-hi); border-radius: 0; cursor: pointer;
+}
+.nav-toggle-bar { display: block; width: 100%; height: 2px; background: var(--g-ink); }
+
+/* Bootstrap (.navbar) hamburger, themed. */
+.navbar-default .navbar-toggle {
+  border: 2px solid var(--g-line-hi); border-radius: 0; background: transparent;
+  margin: var(--space-2) 0; padding: var(--space-2) var(--space-3); min-height: var(--tap);
+}
+.navbar-default .navbar-toggle .icon-bar { background: var(--g-ink); border-radius: 0; }
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus { background: var(--hazard-dim); }
+
+/* Profile page: stats + payment info as a stacked card, never a float. */
+.payment_links {
+  float: none; display: block; width: 100%; max-width: 920px;
+  margin: 0 0 var(--space-6); padding: var(--space-5);
+  background: var(--g-raised); border: 2px solid var(--g-line-hi); border-radius: 0;
+  box-shadow: var(--shadow-sm);
+}
+.payment-highlighted { background: var(--hazard-dim) !important; }
+.caption { display: inline-block; padding: var(--space-3); margin: 0 0 var(--space-6); }
+
+/* Keep every form control inside its container. */
+input, select, textarea { max-width: 100%; }
+
+/* Alternating-column highlight (users/cards tables): theme it so it
+   does not stay light gray on the dark ground. */
+.col_highlight { background: var(--slab-hi); }
+
+/* Row hover: Bootstrap .table-hover hardcodes a light gray that washes
+   out the dark theme. Match its specificity and keep text readable. */
+.table > tbody > tr:hover > td,
+table tbody tr:hover td { background: var(--hazard-dim); color: var(--g-ink); }
+
+@media (max-width: 767px) {
+  /* plain-layout hamburger */
+  .nav-toggle { display: inline-flex; }
+  .header-links { display: none; flex-basis: 100%; flex-direction: column; align-items: stretch; }
+  .header-links a { width: 100%; }
+  #header.nav-open .header-links { display: flex; }
+  /* bootstrap navbar stacks vertically when open */
+  .navbar-default .navbar-nav { flex-direction: column; align-items: stretch; width: 100%; }
+  .navbar-default .navbar-nav > li,
+  .navbar-default .navbar-nav > li > a { width: 100%; }
+  .navbar-default .dropdown-menu { position: static; float: none; width: 100%; box-shadow: none; }
+}

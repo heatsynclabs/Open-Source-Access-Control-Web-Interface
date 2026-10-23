@@ -16,6 +16,8 @@
 <body>
   <div id="header">
     <%= link_to root_path, id: "home_nav_link", title: "Home" do %><%= image_tag "hsl-lockup-h.svg", class: "nav-logo logo-light", alt: "HeatSync Labs" %><%= image_tag "hsl-lockup-h-reverse.svg", class: "nav-logo logo-dark", alt: "HeatSync Labs" %><% end %>
+    <button type="button" id="nav-toggle" class="nav-toggle" aria-label="Toggle menu" aria-controls="header-menu" aria-expanded="false"><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span></button>
+    <nav class="header-links" id="header-menu">
     <%= link_to 'People', users_path if can? :read, User %>
     <%= link_to 'Tools & Resources', resources_path if can? :read, Resource %>
     <%= link_to 'Access Cards', cards_path if can? :manage, Card %>
@@ -33,6 +35,7 @@
     <%= link_to 'Logout', destroy_user_session_path, :method => :delete if user_signed_in? %>
     <%= link_to 'Login', new_user_session_path unless user_signed_in? %>
     <%= link_to 'Membership Application', new_user_registration_path unless user_signed_in? %>
+    </nav>
   </div>
   <div class="g-tape" role="presentation"></div>
   <div id="content">

@@ -44,3 +44,23 @@
     build();
   }
 })();
+
+// GANTRY mobile nav. Toggles the plain #header menu on small screens.
+// The bootstrap .navbar layout uses its own collapse, so this only
+// wires the #header hamburger.
+(function () {
+  function init() {
+    var header = document.getElementById('header');
+    var toggle = document.getElementById('nav-toggle');
+    if (!header || !toggle) return;
+    toggle.addEventListener('click', function () {
+      var open = header.classList.toggle('nav-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
