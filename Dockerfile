@@ -1,17 +1,30 @@
-FROM ruby:1.9.3
+FROM ruby:3.3.5-slim
 
-# TODO: install imagemagick, arp-scan(?)
+# System deps: build tools for native gems (pg, bcrypt, passenger),
+# imagemagick for Paperclip, node as the JS runtime for execjs (replaces
+# therubyracer), postgres client headers, git and curl.
+RUN apt-get update -qq && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    imagemagick \
+    nodejs \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+
+# Install gems first so code changes do not bust the bundle cache layer.
+COPY Gemfile /app/
+RUN gem install bundler -v 2.5.19 && bundle install
+
 COPY . /app
 
-RUN bundle install
-
-# Copy example Docker configs and generate a random secret token
-# .env will be handled by ENV in docker-compose
+# Copy example Docker configs and generate a random secret_key_base
+# (Rails 7 replaced the old secret_token). .env is handled by ENV in compose.
 RUN cp config/database.yml.docker config/database.yml &&\
     cp config/config.yml.docker config/config.yml &&\
-    echo "Dooraccess::Application.config.secret_token = \"$(tr -dc A-Za-z0-9 </dev/urandom | head -c 30; echo)\"" > config/initializers/secret_token.rb
+    echo "Rails.application.config.secret_key_base = \"$(tr -dc A-Za-z0-9 </dev/urandom | head -c 64; echo)\"" > config/initializers/secret_token.rb
 
 EXPOSE 3000
-CMD "/app/docker-run.sh"
+CMD ["bash", "/app/docker-run.sh"]

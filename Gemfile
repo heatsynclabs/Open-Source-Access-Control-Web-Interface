@@ -5,52 +5,44 @@ ruby '3.3.5'
 gem 'rails', '~> 7.2'
 gem 'dotenv-rails'
 
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+# App server (dev and production). Rails 7 no longer ships a default server.
+gem 'puma'
 
-# gem 'sqlite3'
 gem 'pg'
-gem 'taps'
 
-gem 'json'
+# Pin json to the 2.x line: activesupport 7.2's cookie/message serializer
+# still passes quirks_mode: true, which json 3.1+ removed (breaks every
+# response that writes a session cookie).
+gem 'json', '~> 2.7'
 
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'sass-rails' #,   '~> 3.2.3'
-  gem 'coffee-rails' #, '~> 3.2.1'
+  gem 'sass-rails'
+  gem 'coffee-rails'
 
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  gem 'therubyracer', :platform => :ruby
-
-  gem 'uglifier' #, '>= 1.0.3'
+  # Asset compilation uses the Node runtime (installed in the Docker image)
+  # via execjs. therubyracer/libv8 no longer build on modern toolchains.
+  gem 'uglifier'
 end
 
 gem 'jquery-rails'
 
 gem 'devise'
 
-gem "cancan"
+# cancancan is the maintained successor to the abandoned cancan gem and keeps
+# the same CanCan API (Ability, load_and_authorize_resource, can?, authorize!).
+gem 'cancancan', '~> 3.5'
 
 # To use ActiveModel has_secure_password
-gem 'bcrypt' #, '~> 3.0.0'
+gem 'bcrypt'
 
-# To use Jbuilder templates for JSON
-# gem 'jbuilder'
-
-# Use unicorn as the app server
-# gem 'unicorn'
-
-# Deploy with Capistrano
-# gem 'capistrano'
-
-# To use debugger
-#gem 'debugger'
-
-gem "paperclip" #, "~> 3.0"
-gem "aws-sdk"
+# kt-paperclip is the maintained fork of the retired paperclip gem; S3 storage
+# uses aws-sdk-s3.
+gem 'kt-paperclip', '~> 7.2'
+gem 'aws-sdk-s3'
 gem 'gravtastic'
 
 gem 'passenger'
 
-gem "rails-settings-cached" #, "0.2.4"
+gem 'rails-settings-cached'

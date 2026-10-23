@@ -11,11 +11,12 @@ services:
         condition: service_healthy
     ports:
       - "3000:3000"
-    # environment:
-      # TODO: implement for Paperclip uploads (user-provided photos, PDFs, etc)
-      # S3_BUCKET: ""
-      # S3_KEY: ""
-      # S3_SECRET: ""
+    environment:
+      # Dummy values so Paperclip/aws-sdk-s3 initialize for local testing.
+      # Uploads will not reach a real bucket; viewing pages works.
+      S3_BUCKET: "members-dev-bucket"
+      S3_KEY: "dummy-key"
+      S3_SECRET: "dummy-secret"
     # volumes:
       # Uncomment and use volume overlays to easily edit the app as a developer
       # - .:/app
