@@ -1,5 +1,5 @@
 class AuditEventsController < ApplicationController
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
   authorize_resource :class => "AuditEvent"   # admins only, per ability.rb
   layout 'resources'
 

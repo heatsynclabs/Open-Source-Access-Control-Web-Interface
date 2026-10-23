@@ -1,7 +1,4 @@
 class AuditEvent < ActiveRecord::Base
-  attr_accessible :event_type, :editor_id, :editor_name, :affected_user_id,
-                  :target_type, :target_id, :target_label, :summary, :ip
-
   belongs_to :editor, :class_name => "User"
   belongs_to :affected_user, :class_name => "User"
 
@@ -13,7 +10,7 @@ class AuditEvent < ActiveRecord::Base
     current_sign_in_ip last_sign_in_ip
   ].freeze
 
-  scope :recent, order("created_at DESC")
+  scope :recent, -> { order("created_at DESC") }
 
   # Turn ActiveModel previous_changes into a readable "field: old => new" block.
   def self.diff(record, extra_ignored = [])

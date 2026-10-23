@@ -1,7 +1,7 @@
 class CertificationsController < ApplicationController
   load_and_authorize_resource :certification
   #load_and_authorize_resource :user, :through => :certification
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
 
   # GET /certifications
   # GET /certifications.json
@@ -61,7 +61,7 @@ class CertificationsController < ApplicationController
   # PUT /certifications/1.json
   def update
     respond_to do |format|
-      if @certification.update_attributes(certification_params)
+      if @certification.update(certification_params)
         format.html { redirect_to Certification, :notice => 'Certification was successfully updated.' }
         format.json { head :no_content }
       else

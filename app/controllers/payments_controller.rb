@@ -1,15 +1,15 @@
 class PaymentsController < ApplicationController
   load_and_authorize_resource :payment
   #load_and_authorize_resource :user, :through => :payment
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
 
   # Load users and certs based on current ability (only the form actions
   # use @users - index was paying for this load on every request)
-  before_filter :only => [:new, :edit, :create, :update, :show] do
+  before_action :only => [:new, :edit, :create, :update, :show] do
     @users = User.where(:hidden => false).where("member_level > 10").accessible_by(current_ability).sort_by(&:name_with_payee_and_member_level)
   end
 
-  before_filter :only => [:create, :update] do
+  before_action :only => [:create, :update] do
     @payment.created_by = current_user.id
   end
 

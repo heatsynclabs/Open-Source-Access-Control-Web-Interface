@@ -1,6 +1,6 @@
 class PaypalCsvsController < ApplicationController
   load_and_authorize_resource :paypal_csv
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
 
   def index
     # every row links to its payment - load them in one query, and default

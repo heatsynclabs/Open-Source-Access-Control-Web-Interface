@@ -2,10 +2,10 @@ class UserCertificationsController < ApplicationController
   load_and_authorize_resource :user_certification
   #load_and_authorize_resource :user, :through => :user_certification
   #load_and_authorize_resource :certification, :through => :user_certification
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
 
   # Load users and certs based on current ability
-  before_filter :only => [:new, :edit, :create, :update] do
+  before_action :only => [:new, :edit, :create, :update] do
     @users = User.where(:hidden => [false,nil]).accessible_by(current_ability).sort_by(&:name)
     @certifications = Certification.accessible_by(current_ability).sort_by(&:name)
   end
@@ -74,7 +74,7 @@ class UserCertificationsController < ApplicationController
     @user_certification.updated_by = current_user.id
 
     respond_to do |format|
-      if @user_certification.update_attributes(user_certification_params)
+      if @user_certification.update(user_certification_params)
         format.html { redirect_to UserCertification, :notice => 'User certification was successfully updated.' }
         format.json { head :no_content }
       else

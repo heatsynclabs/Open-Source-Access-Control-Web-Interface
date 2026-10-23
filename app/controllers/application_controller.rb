@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
 end
 
 # Add a "fit" function to sanitize inputs for mac history
-class Fixnum
+class Integer
   def fit(range)
     self > range.max ? range.max : (self < range.min ? range.min : self)
   end

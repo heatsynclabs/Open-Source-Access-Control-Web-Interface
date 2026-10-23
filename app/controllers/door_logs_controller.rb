@@ -1,6 +1,6 @@
 class DoorLogsController < ApplicationController
   authorize_resource :except => :auto_download
-  before_filter :authenticate_user!, :except => :auto_download
+  before_action :authenticate_user!, :except => :auto_download
 
   # GET /door_logs
   # GET /door_logs.json
@@ -20,8 +20,8 @@ class DoorLogsController < ApplicationController
 
     @door_logs_by_hour = DoorLog.where("created_at > ? AND created_at < ? AND (key = ? OR key = ?)", @start_date, @end_date,"door_1_locked","door_2_locked").order("created_at ASC").group_by(&:key)
     @door_log_graph = [
-      @door_logs_by_hour["door_1_locked"].map{|d| [d.created_at.to_time.to_i*1000, 1^d.data.to_i]}, # use XOR to invert 1 into 0 and vice versa
-      @door_logs_by_hour["door_2_locked"].map{|d| [d.created_at.to_time.to_i*1000, 1^d.data.to_i]}
+      @door_logs_by_hour["door_1_locked"].to_a.map{|d| [d.created_at.to_time.to_i*1000, 1^d.data.to_i]}, # use XOR to invert 1 into 0 and vice versa
+      @door_logs_by_hour["door_2_locked"].to_a.map{|d| [d.created_at.to_time.to_i*1000, 1^d.data.to_i]}
     ]
 
     #  @door_logs_by_hour.each do |door_log|

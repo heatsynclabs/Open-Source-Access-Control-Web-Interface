@@ -1,5 +1,5 @@
 class Api::V1::DoorsController < Api::V1::BaseController
-  before_filter :authenticate_user_for_api!
+  before_action :authenticate_user_for_api!
   
   def status
     door_status = DoorLog.show_status

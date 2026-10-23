@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   load_and_authorize_resource
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
   layout 'resources'
 
   def sort_by_cert(certs,id)
@@ -160,10 +160,9 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    # CanCan's load_and_authorize_resource built @user with the default
-    # assignment role, which drops the role checkboxes; re-assign as :admin
-    # so admins can set them on creation
-    @user.assign_attributes(params[:user], :as => :admin) if current_user.admin?
+    # load_and_authorize_resource already built @user from user_params, which
+    # only permits the role flags (admin/instructor/accountant) when the
+    # current user is an admin, so no extra role-aware assignment is needed.
 
     # update oriented_by only if orientation has been set
     @user.oriented_by_id = current_user.id unless @user.orientation.blank?
@@ -249,6 +248,10 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :remember_me, :name, :emergency_name, :emergency_phone, :current_skills, :desired_skills, :waiver, :emergency_email, :phone, :payment_method, :orientation, :member_level, :certifications, :hidden, :marketing_source, :payee, :accountant, :exit_reason, :twitter_url, :facebook_url, :github_url, :website_url, :email_visible, :phone_visible, :postal_code)
+    permitted = [:email, :password, :password_confirmation, :remember_me, :name, :emergency_name, :emergency_phone, :current_skills, :desired_skills, :waiver, :emergency_email, :phone, :payment_method, :orientation, :member_level, :certifications, :hidden, :marketing_source, :payee, :exit_reason, :twitter_url, :facebook_url, :github_url, :website_url, :email_visible, :phone_visible, :postal_code]
+    # role flags are assignable only by admins (parity with the old
+    # attr_accessible :as => :admin behavior)
+    permitted += [:admin, :instructor, :accountant] if current_user && current_user.admin?
+    params.require(:user).permit(*permitted)
   end
 end

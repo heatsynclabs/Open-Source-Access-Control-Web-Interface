@@ -2,7 +2,7 @@ class MacsController < ApplicationController
 load_and_authorize_resource :mac, :except => [:index, :create, :history]
 #load_and_authorize_resource :user, :through => :mac, :except => [:index, :show, :scan, :import]
 
-before_filter :arp_lookup, :only => :new
+before_action :arp_lookup, :only => :new
 
 #require "active_record"
 require "optparse"
@@ -320,7 +320,7 @@ Rails.logger.info "starting scan..."
   }
 
   # Scan the existing macs and update each record as necessary
-  Mac.find(:all).each { |entry|
+  Mac.all.each { |entry|
     mac = entry.mac.downcase
     ip = entry.ip
     if macs.has_key?(mac) # if our scan shows this mac
@@ -378,6 +378,6 @@ end
   private
 
   def macs_params
-    attr_accessible :active, :ip, :mac, :refreshed, :since, :hidden, :note, :user_id
+    params.require(:mac).permit(:active, :ip, :mac, :refreshed, :since, :hidden, :note, :user_id)
   end
 end

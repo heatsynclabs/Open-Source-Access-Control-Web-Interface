@@ -11,7 +11,27 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141120200638) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_02_120000) do
+
+  create_table "audit_events", :force => true do |t|
+    t.string   "event_type"
+    t.integer  "editor_id"
+    t.string   "editor_name"
+    t.integer  "affected_user_id"
+    t.string   "target_type"
+    t.integer  "target_id"
+    t.string   "target_label"
+    t.text     "summary"
+    t.string   "ip"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "audit_events", ["created_at"], :name => "index_audit_events_on_created_at"
+  add_index "audit_events", ["event_type"], :name => "index_audit_events_on_event_type"
+  add_index "audit_events", ["target_type", "target_id"], :name => "index_audit_events_on_target_type_and_target_id"
+  add_index "audit_events", ["editor_id"], :name => "index_audit_events_on_editor_id"
+  add_index "audit_events", ["affected_user_id"], :name => "index_audit_events_on_affected_user_id"
 
   create_table "cards", :force => true do |t|
     t.string   "card_number"

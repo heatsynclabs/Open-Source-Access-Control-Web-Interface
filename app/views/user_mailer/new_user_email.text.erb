@@ -3,7 +3,7 @@
 Please contact them at <%= @user.email %><%= " or "+@user.phone.to_s unless @user.phone.blank? %> to set up a
 new user orientation, waiver, welcome, payment help, etc.
 
-User Details: <%= link_to @url+user_path(@user), @url+user_path(@user) %>
+User Details: <%= link_to user_url(@user), user_url(@user) %>
 Member Level: <%= simple_format @user.member_level_string %>
 
 What skills, knowledge and experience do you bring to the community?

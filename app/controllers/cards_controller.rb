@@ -1,6 +1,6 @@
 class CardsController < ApplicationController
   load_and_authorize_resource except: :authorize
-  before_filter :authenticate_user!, except: :authorize
+  before_action :authenticate_user!, except: :authorize
 
   # GET /cards
   # GET /cards.json
@@ -101,7 +101,7 @@ class CardsController < ApplicationController
     #@card = Card.find(params[:id])
 
     respond_to do |format|
-      if @card.update_attributes(cards_params)
+      if @card.update(cards_params)
         format.html { redirect_to cards_url, :notice => 'Card was successfully updated.' }
         format.json { head :no_content }
       else
@@ -124,7 +124,7 @@ class CardsController < ApplicationController
       else
 
         begin
-          @card = Card.find(:first, :conditions => ["lower(card_number) = ?", params[:id].downcase])
+          @card = Card.where(["lower(card_number) = ?", params[:id].downcase]).first
           @auth = @card.inspect
           if @card && @card.user
             @auth = @card.user.has_certification?(params[:device])

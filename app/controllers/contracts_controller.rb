@@ -1,6 +1,6 @@
 class ContractsController < ApplicationController
   load_and_authorize_resource :contract
-  before_filter :authenticate_user!, :load_users
+  before_action :authenticate_user!, :load_users
   layout 'resources'
 
   def index
@@ -40,7 +40,7 @@ class ContractsController < ApplicationController
 
   def update
     respond_to do |format|
-      if @contract.update_attributes(contracts_params)
+      if @contract.update(contracts_params)
         format.html { redirect_to @contract, :notice => 'Contract was successfully updated.' }
         format.json { head :no_content }
       else

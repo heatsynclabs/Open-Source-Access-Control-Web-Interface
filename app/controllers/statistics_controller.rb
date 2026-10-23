@@ -1,5 +1,5 @@
 class StatisticsController < ApplicationController
-  before_filter :load_and_authorize_user
+  before_action :load_and_authorize_user
 
   def index
   end

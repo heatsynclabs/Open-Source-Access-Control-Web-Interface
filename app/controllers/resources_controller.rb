@@ -1,6 +1,6 @@
 class ResourcesController < ApplicationController
   load_and_authorize_resource
-  before_filter :load_users
+  before_action :load_users
   layout 'resources'
 
   def index
@@ -33,7 +33,7 @@ class ResourcesController < ApplicationController
     authorize! :update, @resource
 
     respond_to do |format|
-      if @resource.update_attributes(resources_params)
+      if @resource.update(resources_params)
         format.html { redirect_to resource_path(@resource), :notice => "Resource was successfully updated." }
         format.json { head :no_content }
       else

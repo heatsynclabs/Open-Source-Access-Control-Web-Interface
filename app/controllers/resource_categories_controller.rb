@@ -20,7 +20,7 @@ class ResourceCategoriesController < ApplicationController
     authorize! :update, @resource_category
 
     respond_to do |format|
-      if @resource_category.update_attributes(resource_category_params)
+      if @resource_category.update(resource_category_params)
         format.html { redirect_to resource_categories_path, :notice => "Category was successfully updated." }
         format.json { head :no_content }
       else

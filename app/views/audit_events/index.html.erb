@@ -57,7 +57,7 @@
 </table>
 
 <% unless params[:all] %>
-  <p><%= link_to "Show more", audit_events_path(params.merge(:all => 1)) %> (showing latest 500)</p>
+  <p><%= link_to "Show more", audit_events_path(request.query_parameters.merge(:all => 1)) %> (showing latest 500)</p>
 <% end %>
 
 <style>
