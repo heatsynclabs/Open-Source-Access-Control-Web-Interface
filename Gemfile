@@ -15,16 +15,16 @@ gem 'pg'
 # response that writes a session cookie).
 gem 'json', '~> 2.7'
 
-# Gems used only for assets and not required
-# in production environments by default.
-group :assets do
-  gem 'sass-rails'
-  gem 'coffee-rails'
+# Asset pipeline. In Rails 7 these must live in the default group so
+# Bundler.require loads Sprockets::Railtie; the Rails 3.2 ":assets" group
+# is no longer auto-required, which left the pipeline dormant.
+gem 'sprockets-rails'
+gem 'sass-rails'
+gem 'coffee-rails'
 
-  # Asset compilation uses the Node runtime (installed in the Docker image)
-  # via execjs. therubyracer/libv8 no longer build on modern toolchains.
-  gem 'uglifier'
-end
+# Asset compilation uses the Node runtime (installed in the Docker image)
+# via execjs. therubyracer/libv8 no longer build on modern toolchains.
+gem 'uglifier'
 
 gem 'jquery-rails'
 

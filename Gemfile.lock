@@ -348,6 +348,7 @@ DEPENDENCIES
   rails (~> 7.2)
   rails-settings-cached
   sass-rails
+  sprockets-rails
   uglifier
 
 RUBY VERSION

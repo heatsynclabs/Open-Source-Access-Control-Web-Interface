@@ -15,7 +15,9 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Install gems first so code changes do not bust the bundle cache layer.
-COPY Gemfile /app/
+# Copy the lock too so the install is deterministic and matches the committed
+# versions (COPY . below restores the same lock).
+COPY Gemfile Gemfile.lock /app/
 RUN gem install bundler -v 2.5.19 && bundle install
 
 COPY . /app
