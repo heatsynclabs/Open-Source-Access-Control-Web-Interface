@@ -241,10 +241,12 @@ tbody tr:hover td { background: var(--hazard-dim); }
 }
 .table-scroll > table, .table-scroll > .table { margin: 0; border: 0; white-space: nowrap; }
 .table-scroll thead th { position: sticky; top: 0; z-index: 2; }
-/* Narrow admin tables (cards, etc.) read better wrapped and full-width than
-   nowrap-scrolled, so long notes stop forcing huge empty columns. */
-.table-scroll > .lined-table { white-space: normal; width: 100%; }
-.lined-table td, .lined-table th { word-break: break-word; }
+/* Only the free-text Note column wraps (capped), so long notes stop forcing a
+   huge empty column; every other cell keeps its nowrap scroll behavior so short
+   values like card ids and action links never break mid-word. */
+.lined-table td:nth-child(2), .lined-table th:nth-child(2) { white-space: normal; max-width: 24rem; word-break: break-word; }
+.lined-table td.actions { white-space: nowrap; text-align: right; }
+.lined-table td.actions a { margin-left: var(--space-4); }
 
 /* ---------- forms --------------------------------------------- */
 input[type="text"], input[type="email"], input[type="password"],

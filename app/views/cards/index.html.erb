@@ -27,9 +27,7 @@
     <th>Card #</th>
     <th>Access?</th>
     <th>Days Accessed Last Month</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th class="actions">Actions</th>
   </tr>
   
 <% if !@cards.blank? %>
@@ -48,9 +46,11 @@
     <td><%= card.card_number %></td>
     <td><%= if card.card_permissions == 1 then "Access" end %></td>
     <td><%= card.accesses_this_week unless card.accesses_this_week < 1 %></td>
-    <td><%= link_to 'Upload', upload_path(card) if can? :upload, card %></td>
-    <td><%= link_to 'Edit', edit_card_path(card) if can? :update, card %></td>
-    <td><%= link_to 'Destroy', card, :confirm => 'Are you sure? WARNING: THIS DOES NOT REMOVE THE CARD FROM THE DOOR SYSTEM! DISABLE AND UPLOAD IT FIRST.', :method => :delete if can? :destroy, card %></td>
+    <td class="actions">
+      <%= link_to 'Upload', upload_path(card) if can? :upload, card %>
+      <%= link_to 'Edit', edit_card_path(card) if can? :update, card %>
+      <%= link_to 'Destroy', card, :confirm => 'Are you sure? WARNING: THIS DOES NOT REMOVE THE CARD FROM THE DOOR SYSTEM! DISABLE AND UPLOAD IT FIRST.', :method => :delete if can? :destroy, card %>
+    </td>
   </tr>
   <% end %>
 <% end %>
