@@ -17,6 +17,10 @@ services:
       S3_BUCKET: "members-dev-bucket"
       S3_KEY: "dummy-key"
       S3_SECRET: "dummy-secret"
+      DOOR_ACCESS_URL: ${DOOR_ACCESS_URL:-http://172.22.110.99}
+      DOOR_ACCESS_PASSWORD: ${DOOR_ACCESS_PASSWORD:-}
+      SMTP_ADDRESS: ${SMTP_ADDRESS:-inbucket}
+      SMTP_PORT: "${SMTP_PORT:-10025}"
     # volumes:
       # Uncomment and use volume overlays to easily edit the app as a developer
       # - .:/app
