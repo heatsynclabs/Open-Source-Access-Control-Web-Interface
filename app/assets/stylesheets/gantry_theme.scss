@@ -241,6 +241,10 @@ tbody tr:hover td { background: var(--hazard-dim); }
 }
 .table-scroll > table, .table-scroll > .table { margin: 0; border: 0; white-space: nowrap; }
 .table-scroll thead th { position: sticky; top: 0; z-index: 2; }
+/* Narrow admin tables (cards, etc.) read better wrapped and full-width than
+   nowrap-scrolled, so long notes stop forcing huge empty columns. */
+.table-scroll > .lined-table { white-space: normal; width: 100%; }
+.lined-table td, .lined-table th { word-break: break-word; }
 
 /* ---------- forms --------------------------------------------- */
 input[type="text"], input[type="email"], input[type="password"],
@@ -260,7 +264,7 @@ input:focus, textarea:focus, select:focus {
   outline-offset: 1px;
   border-color: var(--hazard);
 }
-label, b, strong, th { color: var(--g-ink); }
+label, b, strong { color: var(--g-ink); }
 .field_with_errors { background: var(--hazard-dim); padding: 2px; display: inline-block; }
 #error_explanation {
   border: 2px solid var(--fault);
