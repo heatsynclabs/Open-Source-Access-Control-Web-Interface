@@ -227,6 +227,21 @@ tbody tr:nth-child(even) td { background: var(--slab-hi); }
 tbody tr:hover td { background: var(--hazard-dim); }
 .lined-table td { border-bottom: 1px solid var(--g-line); }
 
+/* Wide data tables (People, certs, payments, door logs, audit, macs) scroll
+   inside a bordered container at any width, with a header that stays put on
+   long tables. The table is wrapped by application.js. */
+.table-scroll {
+  max-width: 100%;
+  max-height: 78vh;
+  overflow: auto;
+  border: 2px solid var(--g-line-hi);
+  box-shadow: var(--shadow-sm);
+  margin: 0 0 var(--space-6);
+  -webkit-overflow-scrolling: touch;
+}
+.table-scroll > table, .table-scroll > .table { margin: 0; border: 0; white-space: nowrap; }
+.table-scroll thead th { position: sticky; top: 0; z-index: 2; }
+
 /* ---------- forms --------------------------------------------- */
 input[type="text"], input[type="email"], input[type="password"],
 input[type="tel"], input[type="number"], input[type="url"],
@@ -356,14 +371,8 @@ hr { border: 0; border-top: 1px solid var(--g-line); }
   #home_nav_link { padding-right: var(--space-2); }
   .nav-logo { height: 32px; }
   #content { padding: var(--space-4) var(--space-4) var(--space-12); }
-  /* wide data tables scroll instead of overflowing the viewport */
-  #content table, #content .table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-  }
+  /* data tables scroll inside their .table-scroll wrapper (application.js) */
+  .table-scroll { max-height: 70vh; }
   .g-form .fieldset-grid { grid-template-columns: 1fr; }
   /* sit left of the hamburger on small screens */
   #gantry-theme-toggle { right: calc(var(--tap) + var(--space-4)); }

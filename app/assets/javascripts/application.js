@@ -68,3 +68,24 @@
     init();
   }
 })();
+
+// Wrap wide data tables in a horizontal-scroll container so they never
+// overflow the layout, and keep their header visible on long tables.
+(function () {
+  function wrap() {
+    var tables = document.querySelectorAll('#content table');
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      if (t.parentNode && t.parentNode.classList && t.parentNode.classList.contains('table-scroll')) continue;
+      var w = document.createElement('div');
+      w.className = 'table-scroll';
+      t.parentNode.insertBefore(w, t);
+      w.appendChild(t);
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wrap);
+  } else {
+    wrap();
+  }
+})();

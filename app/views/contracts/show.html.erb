@@ -16,7 +16,7 @@
   <%= link_to "(#{@contract.user.name})", @contract.user if @contract.user %>
   <small>
     signed
-    <%= @contract.signed_at.to_date.to_fs(:long) %>
+    <%= @contract.signed_at.to_date.to_fs(:long) if @contract.signed_at %>
   </small>
 </h2>
 <% unless @contract.created_by.blank? %>
@@ -28,12 +28,14 @@
 <% if @contract.document.blank? %>
   <p>No document uploaded</p>
 <% else %>
-<p><%= link_to "Download Contract", @contract.document.url %>
-  <div class="col-xs-12">
-    <% contract_url = (@contract.document.exists?(:large) ? @contract.document.url(:large) : @contract.document.url) %>
-    <iframe src="<%= contract_url %>" width="100%" height="600"></iframe>
-  </div>
-</p>
+  <% begin %>
+    <p><%= link_to "Download Contract", @contract.document.url, class: "btn btn-default" %></p>
+    <div class="contract-doc">
+      <iframe src="<%= @contract.document.url %>" width="100%" height="600" title="Signed waiver document"></iframe>
+    </div>
+  <% rescue StandardError %>
+    <p>The signed document could not be loaded in this environment.</p>
+  <% end %>
 <% end %>
          
 
