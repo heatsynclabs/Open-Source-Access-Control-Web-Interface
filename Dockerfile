@@ -29,4 +29,4 @@ RUN cp config/database.yml.docker config/database.yml &&\
     echo "Rails.application.config.secret_key_base = \"$(tr -dc A-Za-z0-9 </dev/urandom | head -c 64; echo)\"" > config/initializers/secret_token.rb
 
 EXPOSE 3000
-CMD ["bash", "/app/docker-run.sh"]
+CMD ["bash", "/app/docker-entrypoint.sh"]
