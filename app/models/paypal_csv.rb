@@ -122,17 +122,20 @@ class PaypalCsv < ActiveRecord::Base
       next (queued += rows.size) if month.nil?
       cands = members_for(email)
       next (queued += rows.size) if cands.empty?
+      # One candidate: every payment from this email is that member's, so link
+      # them all (the DB allows at most one per member per DATE, which covers an
+      # in-month upgrade like a 25 then a 50). Several candidates: the email pays
+      # for several members, so spread one per member per month.
+      single = (cands.size == 1)
       used = []
       rows.each do |r|
         d = r.date_value
         user = cands.find do |u|
-          next false if used.include?(u.id)
-          !Payment.where(user_id: u.id)
-                  .where('extract(year from date) = ? AND extract(month from date) = ?', d.year, d.month)
-                  .exists?
+          next false if !single && used.include?(u.id)
+          !Payment.where(user_id: u.id).where(date: d).exists?
         end
         if user && r.link_to_user!(user).first
-          used << user.id
+          used << user.id unless single
           linked += 1
         else
           queued += 1
