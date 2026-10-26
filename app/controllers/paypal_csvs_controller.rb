@@ -1,12 +1,18 @@
 class PaypalCsvsController < ApplicationController
-  load_and_authorize_resource :paypal_csv
+  load_and_authorize_resource :paypal_csv, :except => [:assign]
   before_action :authenticate_user!
 
   def index
-    # every row links to its payment - load them in one query, and default
-    # to the most recent imports instead of rendering all ~12k rows
     @paypal_csvs = @paypal_csvs.includes(:payment)
-    @paypal_csvs = @paypal_csvs.order("paypal_csvs.id DESC").limit(1000) unless params[:all]
+    if params[:needs_review]
+      # Unlinked rows that look like money coming in to the lab, newest first.
+      @needs_review = true
+      @paypal_csvs = @paypal_csvs.where(:payment_id => nil).order("paypal_csvs.id DESC").limit(1000)
+                                 .select(&:incoming_payment?)
+    else
+      @paypal_csvs = @paypal_csvs.order("paypal_csvs.id DESC")
+      @paypal_csvs = @paypal_csvs.limit(1000) unless params[:all]
+    end
   end
 
   def show
@@ -16,17 +22,49 @@ class PaypalCsvsController < ApplicationController
   end
 
   def create
-    PaypalCsv.batch_import_from_csv(params[:file].path)
-    redirect_to paypal_csvs_path, :notice => 'Paypal CSV batch was successfully loaded.'
+    @summary = PaypalCsv.batch_import_from_csv(params[:file].path)
+    notice = "Imported #{@summary[:imported]} rows (#{@summary[:skipped_duplicates]} duplicates skipped). " \
+             "Linked #{@summary[:linked]} payments; #{@summary[:queued]} need review."
+    redirect_to paypal_csvs_path(:needs_review => 1), :notice => notice
   end
 
+  # Link one row. With a user_id, link to that chosen member (reconciliation);
+  # with "remember", store the payer email on that member so it auto-links next
+  # time. Without a user_id, try to auto-match by payer email.
   def link
-    result = @paypal_csv.link_payment
-    if result.first
-      redirect_to paypal_csvs_url, :notice => 'Payment was successfully linked.'
+    if params[:user_id].present?
+      user = User.find(params[:user_id])
+      result = @paypal_csv.link_to_user!(user)
+      if result.first && params[:remember].present? && user.payee.blank?
+        user.update_column(:payee, @paypal_csv.payer_email)
+      end
     else
-      redirect_to paypal_csvs_url, :notice => result.last
+      result = @paypal_csv.link_payment
     end
+    redirect_to paypal_csvs_path(:needs_review => 1),
+                :notice => (result.first ? 'Payment linked.' : result.last)
+  end
+
+  # Map a payer email to a member and relink. Sets the member's payee so every
+  # future payment from that email auto-links. Assign the same payer to a second
+  # member to handle one email that pays for several people.
+  def assign
+    authorize! :manage, PaypalCsv
+    payer = params[:payer_email].to_s.strip.downcase
+    user  = User.where("lower(email) = ?", params[:member_email].to_s.strip.downcase).first
+    if user.nil?
+      redirect_to paypal_csvs_path(:needs_review => 1), :alert => "No member with email '#{params[:member_email]}'."
+      return
+    end
+    if user.payee.present? && user.payee.strip.downcase != payer
+      redirect_to paypal_csvs_path(:needs_review => 1),
+                  :alert => "#{user.email} already has payee '#{user.payee}'. Clear it on their profile first."
+      return
+    end
+    user.update_column(:payee, payer) if user.payee.blank?
+    res = PaypalCsv.reconcile_unlinked!
+    redirect_to paypal_csvs_path(:needs_review => 1),
+                :notice => "Mapped #{payer} to #{user.email}. Linked #{res[:linked]} payment(s)."
   end
 
   private
