@@ -2,9 +2,9 @@
   # The admin-set welcome text can run long; lead with its first paragraph and
   # link to the rest so the sign-in card and the next steps stay on screen.
   body = Setting.welcome_body.to_s
-  first_para = body.split(/<\/p>|\n\s*\n/i).map { |p| CGI.unescapeHTML(strip_tags(p)).squish }.reject(&:blank?).first.to_s
+  first_para = body.split(/<\/p>|\n\s*\n/i).map { |p| Nokogiri::HTML.fragment(p).text.squish }.reject(&:blank?).first.to_s
   lead = truncate(first_para, length: 240, separator: " ")
-  longer = CGI.unescapeHTML(strip_tags(body)).squish.length > lead.length + 20
+  longer = Nokogiri::HTML.fragment(body).text.squish.length > lead.length + 20
 %>
 <section class="hero">
   <div>
