@@ -4,14 +4,13 @@
       <p class="eyebrow">Who's in the lab community</p>
       <h1>People</h1>
     </div>
-    <p class="small muted" style="max-width: 46ch; margin: 0">Find someone who knows the thing you're stuck on.</p>
+    <div class="head-actions">
+      <%= link_to 'New user', new_user_path, class: "btn btn-default btn-sm" if can? :create, User %>
+      <%= link_to 'Merge users', users_merge_path, class: "btn btn-default btn-sm" if can? :manage, User %>
+      <%= link_to 'Full table', users_path(full: "full"), class: "btn btn-default btn-sm" %>
+    </div>
   </div>
-
-  <p>
-    <%= link_to 'New User', new_user_path, class: "btn btn-success" if can? :create, User %>
-    <%= link_to 'Merge Users', users_merge_path, class: "btn btn-primary" if can? :manage, User %>
-    <%= link_to 'Full table', users_path(full: "full"), class: "btn btn-default" %>
-  </p>
+  <p class="small muted" style="margin: 0 0 var(--space-4)">Find someone who knows the thing you're stuck on.</p>
 
   <% if current_user.orientation.blank? %>
     <p class="alert">There's a lot more to see here, but our records show you haven't completed the new member orientation yet. If that's incorrect, please contact a volunteer.</p>
@@ -42,7 +41,7 @@
       %>
       <li data-text="<%= [user.name, user.current_skills, user.desired_skills, certs.join(' ')].join(' ').downcase %>"
           data-cards="<%= cardholder %>" data-teach="<%= user.instructor? %>" data-certs="<%= certs.join('|') %>">
-        <a class="row" href="<%= user_path(user) %>">
+        <a class="person-row" href="<%= user_path(user) %>">
           <%= person_avatar(user, 44) %>
           <div style="min-width:0">
             <div class="who-line">

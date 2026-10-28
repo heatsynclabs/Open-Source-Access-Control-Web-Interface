@@ -115,6 +115,8 @@
   .featured img { max-width: 100%; height: auto; display: block; border: 2px solid var(--steel-hi); }
 
   // ---------------------------------------------------------- people list
+  .head-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .head-actions .btn { min-height: 34px; padding: 0 var(--space-3); display: inline-flex; align-items: center; font-size: var(--text-xs); }
   .filters { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin: 0 0 var(--space-3); }
   .search-box { position: relative; flex: 1 1 280px; margin: 0; }
   .search-box svg { position: absolute; left: 12px; top: 50%; width: 18px; height: 18px; transform: translateY(-50%); color: var(--smoke); }
@@ -129,11 +131,11 @@
   .people-list { list-style: none; margin: 0; padding: 0; border: 2px solid var(--steel-hi); background: var(--slab); }
   .people-list li { border-bottom: 1px solid var(--steel); }
   .people-list li:last-child { border-bottom: 0; }
-  .people-list a.row {
+  .people-list a.person-row {
     display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-4); align-items: center;
     margin: 0; padding: var(--space-3) var(--space-4); color: inherit; text-decoration: none;
   }
-  .people-list a.row:hover, .people-list a.row:focus-visible { background: var(--hazard-dim); }
+  .people-list a.person-row:hover, .people-list a.person-row:focus-visible { background: var(--hazard-dim); }
   .people-list .who-line { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
   .people-list .who-line img { width: 16px; height: 16px; }
   .people-list .name { font-weight: 700; font-size: var(--text-base); }
@@ -141,7 +143,7 @@
   .people-list .tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
   .people-list .chev { color: var(--smoke); font-size: var(--text-xl); }
   @media (max-width: 640px) {
-    .people-list a.row { grid-template-columns: auto 1fr; }
+    .people-list a.person-row { grid-template-columns: auto 1fr; }
     .people-list .chev { display: none; }
     .hero-actions .btn { flex: 1 1 100%; justify-content: center; }
     .signin { padding: var(--space-6); box-shadow: var(--shadow-sm); }
