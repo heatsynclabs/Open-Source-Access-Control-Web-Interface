@@ -2,9 +2,20 @@ class HomeController < ApplicationController
   layout 'resources'
 
   def index
-    # Alerts
-    if user_signed_in? && current_user.orientation.blank? then
-      flash[:alert] = "There's a lot more to see here, but our records show you haven't completed the new member orientation yet. If that's incorrect, please contact a volunteer."
+    # Door state and address for both views, from the same data as /space_api.
+    @door_status = DoorLog.show_status rescue nil
+    @space = (JSON.parse(Setting.space_api_json_template) rescue {})
+
+    if user_signed_in?
+      # The newcomer checklist (orientation used to be a flash alert here).
+      u = current_user
+      @steps = [
+        ["Sign the waiver", u.waiver.present? || u.contracts.exists?, "Sign it online from your profile, or on paper at the lab."],
+        ["Come to an orientation night", u.orientation.present?, "Ask any volunteer, or come to an open night."],
+        ["Make your first dues payment", u.payments.exists?, "PayPal, check, cash or bill pay. The treasurer records it."],
+        ["Get certified on a tool", u.user_certifications.exists?, "Instructors run checkouts. See Certifications."],
+        ["Card access", u.cards.exists?, "Voted on at Hack Your Hackerspace after two months as a member."],
+      ]
     end
 #    if user_signed_in? && current_user.member_status.between?(2,100) then
 #      flash[:alert] = "<!--
@@ -30,7 +41,7 @@ class HomeController < ApplicationController
 #    @num_associate_users = User.all.select{|u| u.member_status == 250 }.count
 #    @num_delinquent_users = User.all.select{|u| !u.payment_status }.count
     if can? :read, User then
-      @recent_user_names = User.where("member_level > 0").accessible_by(current_ability).order('created_at desc').limit(5)
+      @recent_user_names = User.where("member_level > 0").accessible_by(current_ability).order('created_at desc').limit(6)
     end
 #    @num_door_opens = DoorLog.where("key = 'G'").count
 #    @today_door_opens = DoorLog.where("key = 'G' AND created_at > ?", DateTime.now - 1.day).count

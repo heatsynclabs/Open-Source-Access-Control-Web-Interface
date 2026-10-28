@@ -1,53 +1,7 @@
-<h1><%= Setting.welcome_title %></h1>
-<% if !user_signed_in? then %>
-<%= simple_format Setting.welcome_body %>
-<% end %>
-
-<% if ((can? :read, User) && (@recent_user_names.count > 1)) then %>
-  <div class="col-sm-4">
-    <h2>New People: <em>(say hi!)</em></h2>
-    <ul>
-    <% @recent_user_names.each do |user| %>
-      <% if can? :read, user %>
-        <li><%= link_to user.name, user %> <%= raw(user.member_status_symbol) %> <em>(Signed up <%= user.created_at.strftime("%b %d") %>)</em></li>
-      <% end %>
-    <% end %>
-    </ul>
-  </div>
-<% end %>
-
-<div class="col-sm-4">
-<% if false %>
-  <h2>Cool Stats:</h2>
-  <span>Disabled for now.</span>
-  <dl>
-    <dt># of People in this DB:</dt>
-    <dd><%= @num_users %> (<%= @recent_users %> new in the last 7 days)</dd>
-    <dt># of People Certified:</dt>
-    <dd><%= @num_certs %> (<%= @recent_certs %> new in the last 7 days)</dd>
-    <dt># of Current Paying Members:</dt>
-    <dd><%= @num_paid_users %> (<%= @num_plus_users %> plus, <%= @num_basic_users %> basic, <%= @num_associate_users %> associate. <%= @num_delinquent_users %> not-current)</dd>
-    <dt># of Door Accesses Granted:</dt>
-    <dd><%= @num_door_opens %> (<%= @today_door_opens %> today, <%= @recent_door_opens %> in the last 7 days)</dd>
-    <dt># of Door Accesses Denied:</dt>
-    <dd><%= @num_door_denieds %> (<%= @recent_door_denieds %> in the last month)</dd>
-    <dt># of Members DB Logins:</dt>
-    <dd><%= @num_logins %> (<%= @recent_logins %> users last 7 days)</dd>
-    <dt># of Computers in this DB:</dt>
-    <dd><%= @num_macs %> (<%= @recent_macs %> seen today)</dd>
-  </dl>
+<div class="g-page">
+<% if user_signed_in? %>
+  <%= render "member" %>
+<% else %>
+  <%= render "public" %>
 <% end %>
 </div>
-
-<div class="col-sm-4">
-  <h2>Member Resources</h2>
-  <% if can? :access_doors_remotely, :door_access %>
-  <ul><li><%= link_to "Remote Door Access", space_api_access_path %></li></ul>
-  <% end %>
-  <%= simple_format Setting.member_resources_inset %>
-</div>
-
-<span class="col-sm-4">
-  <h3>Featured tool:</h3>
-  <%= render @featured_resource unless @featured_resource.blank? %>
-</span>

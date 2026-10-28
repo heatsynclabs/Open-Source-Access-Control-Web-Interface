@@ -1,0 +1,72 @@
+<%
+  # The admin-set welcome text can run long; lead with its first paragraph and
+  # link to the rest so the sign-in card and the next steps stay on screen.
+  body = Setting.welcome_body.to_s
+  first_para = body.split(/<\/p>|\n\s*\n/i).map { |p| strip_tags(p).squish }.reject(&:blank?).first.to_s
+  lead = truncate(first_para, length: 240, separator: " ")
+  longer = strip_tags(body).squish.length > lead.length + 20
+%>
+<section class="hero">
+  <div>
+    <div class="hero-meta">
+      <p class="eyebrow" style="margin:0">Mesa's community workshop</p>
+      <%= render "door_chip" %>
+    </div>
+    <h1><%= Setting.welcome_title %></h1>
+    <% if lead.present? %>
+      <p class="lead"><%= lead %> <% if longer %><%= link_to "More about visiting", more_info_path %><% end %></p>
+    <% end %>
+    <div class="hero-actions">
+      <%= link_to "Join the lab", new_user_registration_path, class: "btn btn-primary" %>
+      <%= link_to "Visiting and dues", more_info_path, class: "btn btn-default" %>
+    </div>
+  </div>
+
+  <div class="g-card signin">
+    <p class="eyebrow">Members</p>
+    <h2>Sign in</h2>
+    <%= form_for(:user, url: user_session_path) do |f| %>
+      <label>Email <%= f.email_field :email, autocomplete: "username", required: true %></label>
+      <label>Password <%= f.password_field :password, autocomplete: "current-password", required: true %></label>
+      <label class="remember"><%= f.check_box :remember_me %> Keep me signed in</label>
+      <%= f.submit "Sign in" %>
+    <% end %>
+    <p class="note"><%= link_to "Forgot your password?", new_user_password_path %></p>
+  </div>
+</section>
+
+<section class="steps" aria-labelledby="steps-title">
+  <h2 id="steps-title">How joining works</h2>
+  <ol class="g-grid three">
+    <li class="step">
+      <span class="step-num">01</span>
+      <h3>Come by</h3>
+      <p>Visit on an open night and look around. Anyone can come; you do not need to be a member.</p>
+    </li>
+    <li class="step">
+      <span class="step-num">02</span>
+      <h3>Sign up</h3>
+      <p>Make an account here and sign the waiver online. It takes about five minutes.</p>
+    </li>
+    <li class="step">
+      <span class="step-num">03</span>
+      <h3>Get oriented</h3>
+      <p>A member shows you the shop and the house rules. After that you can find other members here and get signed off on tools.</p>
+    </li>
+  </ol>
+</section>
+
+<% if @space["address"].present? && @space["address"] !~ /123 main st/i %>
+  <section class="find">
+    <div>
+      <p class="eyebrow">Find us</p>
+      <p class="find-address"><%= @space["address"] %></p>
+    </div>
+    <div class="find-links">
+      <% if @space["lat"].to_f != 0 && @space["lon"].to_f != 0 %>
+        <%= link_to "Map", "https://www.openstreetmap.org/?mlat=#{@space['lat']}&mlon=#{@space['lon']}#map=18/#{@space['lat']}/#{@space['lon']}", class: "btn btn-default" %>
+      <% end %>
+      <%= link_to "heatsynclabs.org", "https://www.heatsynclabs.org", class: "btn btn-default" %>
+    </div>
+  </section>
+<% end %>

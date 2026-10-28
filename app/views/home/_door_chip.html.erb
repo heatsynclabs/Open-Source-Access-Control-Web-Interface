@@ -1,0 +1,7 @@
+<% if @door_status && !@door_status[:door_1_locked].nil? %>
+  <% if @door_status[:unlocked] %>
+    <span class="chip ok live-status">Doors open now</span>
+  <% else %>
+    <span class="chip idle live-status">Closed right now</span>
+  <% end %>
+<% end %>

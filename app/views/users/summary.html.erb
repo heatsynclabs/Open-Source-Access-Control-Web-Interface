@@ -1,96 +1,91 @@
+<div class="g-page">
+  <div class="split-head">
+    <div>
+      <p class="eyebrow">Who's in the lab community</p>
+      <h1>People</h1>
+    </div>
+    <p class="small muted" style="max-width: 46ch; margin: 0">Find someone who knows the thing you're stuck on.</p>
+  </div>
 
-<style type="text/css">
-  /* Member card grid: even, responsive cards that show the full name. */
-  .users {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: var(--space-4);
-    margin-top: var(--space-4);
-  }
-  .users .thumbnail {
-    float: none;
-    width: auto;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    padding: var(--space-3);
-    background: var(--g-raised);
-    border: 2px solid var(--g-line-hi);
-    border-radius: 0;
-    box-shadow: var(--shadow-sm);
-  }
-  .users .thumbnail:hover { box-shadow: var(--shadow); }
-  .users .thumbnail > a:first-child { display: block; line-height: 0; }
-  .users .thumbnail img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-radius: 0;
-    background: var(--g-bg);
-  }
-  .users .badges {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 3px;
-    min-height: var(--space-5);
-    margin-top: var(--space-2);
-  }
-  .users .badges img {
-    float: none;
-    width: 16px;
-    height: 16px;
-    background: var(--g-bg);
-    border-radius: 999px;
-  }
-  .users .bio {
-    margin-top: var(--space-1);
-    min-height: var(--space-8);
-  }
-  .users .bio small {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    color: var(--ink-faint);
-    font-size: var(--text-xs);
-    line-height: var(--leading-snug);
-  }
-  .users .thumbnail h4 {
-    margin: var(--space-2) 0 0;
-    font-family: var(--font-display);
-    font-size: var(--text-sm);
-    font-weight: 700;
-    line-height: var(--leading-snug);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-tight);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    word-break: break-word;
-  }
-  .users .thumbnail h4 a { color: var(--accent-text); }
-  .users .thumbnail h4 a:hover { color: var(--hazard); }
-</style>
+  <p>
+    <%= link_to 'New User', new_user_path, class: "btn btn-success" if can? :create, User %>
+    <%= link_to 'Merge Users', users_merge_path, class: "btn btn-primary" if can? :manage, User %>
+    <%= link_to 'Full table', users_path(full: "full"), class: "btn btn-default" %>
+  </p>
 
-<% if user_signed_in? && current_user.current_sign_in_at < Date.parse("2014-03-01") %>
-  <div class="alert alert-info">Looking for the old table view? Find it in the menu under People, Full Table View.</div>
-<% end %>
+  <% if current_user.orientation.blank? %>
+    <p class="alert">There's a lot more to see here, but our records show you haven't completed the new member orientation yet. If that's incorrect, please contact a volunteer.</p>
+  <% end %>
 
-<h1>HeatSync People
-<%= link_to 'New User', new_user_path, class: "btn btn-success" if can? :create, User %>
-<%= link_to 'Merge Users', users_merge_path, class: "btn btn-primary" if can? :manage, User %>
-</h1>
+  <% cert_names = @users.flat_map { |u| u.certifications.map(&:name) }.uniq.sort %>
+  <div class="filters">
+    <label class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>
+      <input id="people-q" type="search" placeholder="Search names, skills, tools" aria-label="Search people">
+    </label>
+    <button type="button" class="toggle" id="f-cards" aria-pressed="false">Cardholders</button>
+    <button type="button" class="toggle" id="f-teach" aria-pressed="false">Instructors</button>
+    <select id="f-cert" aria-label="Certified on">
+      <option value="">Certified on any tool</option>
+      <% cert_names.each do |c| %><option><%= c %></option><% end %>
+    </select>
+  </div>
+  <p class="small muted" id="people-count" aria-live="polite"><%= @users.size %> people</p>
 
-
-<div class="users">
-  <%= render @users %>
+  <ul class="people-list" id="people-list">
+    <% @users.each do |user| %>
+      <%
+        certs = user.certifications.map(&:name).sort
+        can_line = first_sentence(user.current_skills)
+        wants_line = first_sentence(user.desired_skills)
+        cardholder = user.cards.any?
+      %>
+      <li data-text="<%= [user.name, user.current_skills, user.desired_skills, certs.join(' ')].join(' ').downcase %>"
+          data-cards="<%= cardholder %>" data-teach="<%= user.instructor? %>" data-certs="<%= certs.join('|') %>">
+        <a class="row" href="<%= user_path(user) %>">
+          <%= person_avatar(user, 44) %>
+          <div style="min-width:0">
+            <div class="who-line">
+              <span class="name"><%= user.name %></span>
+              <%= raw(user.member_status_symbol) %>
+              <% if user.instructor? %><span class="chip info">instructor</span><% end %>
+              <% if cardholder %><span class="chip ok">cardholder</span><% end %>
+            </div>
+            <% if can_line.present? %>
+              <div class="skills"><span class="inline-label">Skills</span><%= can_line %></div>
+            <% elsif wants_line.present? %>
+              <div class="skills"><span class="inline-label">Learning</span><%= wants_line %></div>
+            <% end %>
+            <% if certs.any? %>
+              <div class="tags"><% certs.first(4).each do |c| %><span class="tag"><%= c %></span><% end %><% if certs.size > 4 %><span class="tag">+<%= certs.size - 4 %></span><% end %></div>
+            <% end %>
+          </div>
+          <span class="chev" aria-hidden="true">&rsaquo;</span>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+  <p class="empty" id="people-none" hidden>Nobody matches. Try fewer words, or clear a filter.</p>
 </div>
 
-<% if current_user.orientation.blank? then %>
-<p class="alert">There's a lot more to see here, but our records show you haven't completed the new member orientation yet. If that's incorrect, please contact a volunteer.</p>
-<% end %>
-
-<br />
+<script>
+  (function () {
+    var q = document.getElementById("people-q"), cert = document.getElementById("f-cert");
+    var cards = document.getElementById("f-cards"), teach = document.getElementById("f-teach");
+    var rows = Array.prototype.slice.call(document.querySelectorAll("#people-list > li"));
+    function render() {
+      var words = q.value.trim().toLowerCase().split(/\s+/).filter(Boolean), shown = 0;
+      rows.forEach(function (li) {
+        var ok = words.every(function (w) { return li.dataset.text.indexOf(w) !== -1; }) &&
+          (cards.getAttribute("aria-pressed") !== "true" || li.dataset.cards === "true") &&
+          (teach.getAttribute("aria-pressed") !== "true" || li.dataset.teach === "true") &&
+          (!cert.value || li.dataset.certs.split("|").indexOf(cert.value) !== -1);
+        li.hidden = !ok; if (ok) shown++;
+      });
+      document.getElementById("people-count").textContent = shown === rows.length ? rows.length + " people" : shown + " of " + rows.length + " people";
+      document.getElementById("people-none").hidden = shown !== 0;
+    }
+    [cards, teach].forEach(function (b) { b.addEventListener("click", function () { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); render(); }); });
+    q.addEventListener("input", render); cert.addEventListener("change", render);
+  })();
+</script>

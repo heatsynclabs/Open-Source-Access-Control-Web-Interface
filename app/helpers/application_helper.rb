@@ -28,4 +28,20 @@ module ApplicationHelper
     end
   end
 
+  # A round avatar: the person's initials on a colour derived from their name,
+  # with their Gravatar on top when they have one (d=404 makes Gravatar fail
+  # for people without one, and the image removes itself).
+  def person_avatar(user, size = 40)
+    name = user.name.to_s
+    initials = name.split(/\s+/).reject(&:blank?).first(2).map { |w| w[0] }.join.upcase
+    hue = name.each_char.reduce(7) { |h, c| (h * 31 + c.ord) % 360 }
+    hash = Digest::MD5.hexdigest(user.email.to_s.strip.downcase)
+    img = tag.img(src: "https://www.gravatar.com/avatar/#{hash}?s=#{size * 2}&d=404", alt: "", loading: "lazy", onerror: "this.remove()")
+    tag.span(tag.span(initials) + img, class: "avatar", style: "--s:#{size}px;--h:#{hue}", "aria-hidden": "true")
+  end
+
+  # The first sentence or line of a free-text field, for one-line summaries.
+  def first_sentence(text)
+    text.to_s.split(/[\n.;]/).map(&:strip).reject(&:blank?).first.to_s
+  end
 end

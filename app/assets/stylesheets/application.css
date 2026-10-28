@@ -22,6 +22,7 @@
  *= require ipn
  *= require gantry_tokens
  *= require gantry_theme
+ *= require gantry_pages
 */
 .caption { display: inline-block; background-color: #eee; border: 1px solid #333; border-radius: 5px; margin-bottom: 1em; }
 .btn {
