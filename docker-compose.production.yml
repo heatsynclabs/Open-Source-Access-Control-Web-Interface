@@ -1,0 +1,60 @@
+# Production on Coolify: members.heatsynclabs.org.
+# Every value comes from the Coolify resource's environment variables; none are
+# in git. Nothing is published on the host: Traefik reaches members_web by the
+# domain set in Coolify, and only members_web reaches the database (service
+# members-db: DATABASE_URL needs a hostname without an underscore).
+#
+# Door automation (log import every 6 minutes, after-hours lock) runs as Coolify
+# scheduled tasks on members_web; see docs/19 in the operations folder.
+services:
+  members_web:
+    build:
+      context: .
+    restart: unless-stopped
+    depends_on:
+      members-db:
+        condition: service_healthy
+    expose:
+      - "3000"
+    environment:
+      RAILS_ENV: production
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      DATABASE_URL: postgres://members:${POSTGRES_PASSWORD}@members-db:5432/members
+      DOOR_ACCESS_URL: ${DOOR_ACCESS_URL}
+      DOOR_ACCESS_PASSWORD: ${DOOR_ACCESS_PASSWORD}
+      DOOR_CRON_PASSWORD: ${DOOR_CRON_PASSWORD}
+      SMTP_ADDRESS: ${SMTP_ADDRESS}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_TLS: ${SMTP_TLS}
+      SMTP_DOMAIN: ${SMTP_DOMAIN}
+      SMTP_AUTHENTICATION: ${SMTP_AUTHENTICATION}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      S3_BUCKET: ${S3_BUCKET}
+      S3_KEY: ${S3_KEY}
+      S3_SECRET: ${S3_SECRET}
+    healthcheck:
+      # Reads the cached door state from the database; never contacts the board.
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost:3000/space_api/simple.json || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  members-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: members
+      POSTGRES_DB: members
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - members_pg16:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U members -d members"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  members_pg16:

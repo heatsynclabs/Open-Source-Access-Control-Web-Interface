@@ -28,8 +28,8 @@ services:
   members_postgres:
     container_name: members_postgres
     image: postgres:9.6.1-alpine
-    ports:
-      - "5432:5432"
+    # Not published: only members_web needs it. (It holds a copy of member
+    # data and uses the default password.)
     environment:
       POSTGRES_MULTIPLE_DATABASES: members_db_development,members_db_test
       POSTGRES_PASSWORD: postgres

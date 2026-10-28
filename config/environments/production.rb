@@ -1,18 +1,23 @@
 Dooraccess::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
-  # Code is not reloaded between requests
-  config.cache_classes = false
+  # Code is not reloaded between requests, and is loaded once at boot
+  config.cache_classes = true
+  config.eager_load = true
 
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
 
-  # Disable Rails's static asset server (Apache or nginx will already do this)
-  config.serve_static_assets = false
+  # Puma serves public/ and the precompiled assets itself (no Apache or nginx
+  # in front; Traefik only proxies)
+  config.public_file_server.enabled = true
 
-  # Compress JavaScripts and CSS
-  config.assets.compress = true
+  # No minifiers: the Sass-based CSS compressor cannot parse modern CSS such as
+  # max(var(--space-4), var(--safe-l)) in the GANTRY theme and aborts the
+  # precompile. Cloudflare compresses responses in transit.
+  config.assets.css_compressor = nil
+  config.assets.js_compressor = nil
 
   # Fallback to assets pipeline if a precompiled asset is missed
   config.assets.compile = false
@@ -31,13 +36,13 @@ Dooraccess::Application.configure do
   # config.force_ssl = true
 
   # See everything in the log (default is :info)
-  # config.log_level = :debug
+  config.log_level = :info
 
   # Prepend all log lines with the following tags
   # config.log_tags = [ :subdomain, :uuid ]
 
-  # Use a different logger for distributed setups
-  # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
+  # Log to stdout so Coolify shows the logs and they survive redeploys
+  config.logger = ActiveSupport::TaggedLogging.new(ActiveSupport::Logger.new($stdout))
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store
@@ -65,5 +70,10 @@ Dooraccess::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
   
-  config.action_mailer.default_url_options = { :host => 'members.heatsynclabs.org' }
+  config.action_mailer.default_url_options = { :host => 'members.heatsynclabs.org', :protocol => 'https' }
+
+  # hsl-web's Apache sent this on every members response; keep it so anything
+  # reading the site from another origin keeps working. (Cloudflare rewrites
+  # it for space_api.json.)
+  config.action_dispatch.default_headers.merge!("Access-Control-Allow-Origin" => "*")
 end
