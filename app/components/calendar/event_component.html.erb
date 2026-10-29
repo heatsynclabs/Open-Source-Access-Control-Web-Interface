@@ -1,9 +1,14 @@
-<a href="#<%= dialog_id %>" class="event <%= pill? ? 'pill' : 'row' %> cat-<%= @event.category.key %>"
+<a href="#<%= dialog_id %>" class="event <%= @style %> cat-<%= @event.category.key %>"
    data-action="dialog#open" data-dialog-id="<%= dialog_id %>"
    title="<%= @event.display_title %>, <%= event_time_range(@event) %>">
-  <% if pill? %>
+  <% case @style %>
+  <% when :pill %>
     <% unless @event.all_day %><span class="time"><%= event_clock(@event.starts_at) %></span><% end %>
     <span class="title"><%= @event.display_title %></span>
+  <% when :line %>
+    <span class="time"><%= @event.all_day ? "All day" : event_clock(@event.starts_at) %></span>
+    <span class="title"><%= @event.display_title %></span>
+    <% if @event.registration_required? %><span class="tag">Sign up<%= " #{@event.cost}" if @event.cost %></span><% end %>
   <% else %>
     <span class="icon"><%= helpers.lucide_icon(@event.icon) %></span>
     <span class="body">

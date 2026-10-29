@@ -1,0 +1,36 @@
+<%# How this member pays, with the PayPal subscription button for their level.
+    The buttons are the lab's own subscription buttons, set up in its PayPal
+    account (one per level). %>
+<% paypal_buttons = { 25 => ["Associate", "SZWVLPAG79XCN"], 50 => ["Basic", "GEAMCMZZKC4AW"], 100 => ["Plus", "L7XVC2GUJJR5A"] } %>
+<section class="card">
+  <h2>Paying your dues</h2>
+  <% case member.payment_method %>
+  <% when "PayPal" %>
+    <% level_name, button_id = paypal_buttons[member.member_level.to_i] %>
+    <% if button_id %>
+      <p><strong><%= level_name %> membership, $<%= member.member_level %> a month,</strong> as a PayPal subscription. PayPal takes it every month until you cancel.</p>
+      <form class="paypal-form" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+        <input type="hidden" name="cmd" value="_s-xclick">
+        <input type="hidden" name="hosted_button_id" value="<%= button_id %>">
+        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif" name="submit" alt="Subscribe with PayPal">
+      </form>
+      <ul class="pay-notes">
+        <li><strong>Subscribe once.</strong> If you already have a HeatSync subscription in PayPal, you do not need a new one.</li>
+        <li><strong>Pay from a PayPal account with your email, <%= member.email %>.</strong> That is how the treasurer matches payments to you. If you pay from another email, or pay for someone else, tell the treasurer which one.</li>
+        <li><strong>Changing level?</strong> Your PayPal subscription does not change on its own. Cancel the old one in PayPal under automatic payments, then subscribe with the new button.</li>
+      </ul>
+    <% else %>
+      <p>Your level is not one of $25, $50 or $100, so there is no PayPal button for it. Pick a level under Your details, or ask the treasurer.</p>
+    <% end %>
+  <% when "Dwolla" %>
+    <p>The Dwolla button no longer works. Choose another way to pay under Your details, or ask the treasurer.</p>
+  <% when "BillPay" %>
+    <p>Have your bank send a monthly check to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201. <strong>Electronic or advance payments are appreciated.</strong></p>
+  <% when "Check" %>
+    <p>Mail it to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201, or put it in the drop safe at the lab with a deposit slip attached, each month. <strong>Electronic or advance payments are appreciated.</strong></p>
+  <% when "Cash" %>
+    <p>Put it in the drop safe at the lab with a deposit slip attached, each month. <strong>Electronic or advance payments are appreciated.</strong></p>
+  <% else %>
+    <p>Choose how you pay under Your details, and the payment button or instructions show up here.</p>
+  <% end %>
+</section>

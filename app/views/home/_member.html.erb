@@ -3,25 +3,18 @@
 <p class="eyebrow"><%= Time.zone.now.strftime("%A, %B %-d") %></p>
 <h1>Hi, <%= current_user.name.to_s.split.first %></h1>
 
+<% if @needs_waiver || @needs_orientation %>
+  <p class="msg warn todo">
+    <strong>Before you use the shop on your own:</strong>
+    <%= safe_join([
+      ("sign the waiver at the lab" if @needs_waiver),
+      (safe_join(["come to a new member orientation (ask any volunteer, or come to ", link_to("open hours", calendar_path(view: "list", open: "1")), ")"]) if @needs_orientation),
+    ].compact, ", and ") %>.
+  </p>
+<% end %>
+
 <div class="grid side">
   <div class="stack">
-    <% if @steps && @steps.any? { |_what, done, _hint| !done } %>
-      <section class="card">
-        <h2>Getting started</h2>
-        <ul class="checklist">
-          <% @steps.each do |what, done, hint| %>
-            <li class="<%= 'done' if done %>">
-              <span class="box"><%= lucide_icon("check") if done %></span>
-              <span>
-                <span class="what"><%= what %></span>
-                <% unless done %><br><span class="small muted"><%= hint %></span><% end %>
-              </span>
-            </li>
-          <% end %>
-        </ul>
-      </section>
-    <% end %>
-
     <section class="card">
       <div class="card-head">
         <h2>Doors</h2>
@@ -60,7 +53,7 @@
           <% @recent_user_names.each do |user| %>
             <% next unless can? :read, user %>
             <li>
-              <%= link_to user, class: "person-cell" do %><%= person_avatar(user, 32) %><span><%= user.name %></span><% end %>
+              <%= person_link(user, size: 32) %>
               <span class="small muted nowrap">joined <%= user.created_at.strftime("%b %-d") %></span>
             </li>
           <% end %>

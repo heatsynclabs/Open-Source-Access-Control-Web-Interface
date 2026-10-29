@@ -1,35 +1,54 @@
 // Page styles for the records pages: certifications, waivers, tools and
-// their categories. Kept in their own file so each area can change without
-// touching the others.
+// their categories.
 @layer pages {
-  // Icon at the start of a certification or category row.
-  .cert-icon { color: var(--accent-text); display: grid; place-items: center; }
+  // Icon at the start of a category row.
+  .row-icon { color: var(--accent-text); display: grid; place-items: center; }
 
-  // Who is certified: one folding group per tool.
-  .cert-groups { display: grid; gap: var(--space-3); }
-  .cert-group {
-    border: 2px solid var(--steel-hi);
-    background: var(--slab);
-    summary {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: var(--space-3);
-      min-height: 48px;
-      padding: 0 var(--space-4);
-      cursor: pointer;
-      list-style: none;
-      &::-webkit-details-marker { display: none; }
-      &::before { content: "+"; font-family: var(--font-ui); color: var(--smoke); width: 1ch; }
-      &:hover { background: var(--hazard-dim); }
-    }
-    &[open] summary { border-bottom: 1px solid var(--steel); }
-    &[open] summary::before { content: "\2212"; }
-    .cert-name { flex: 1; font-weight: 700; }
-    ul.plain { padding: var(--space-2) var(--space-4); }
+  // Certifications, after the PocketBase rewrite: tools down the side, the
+  // chosen tool's holders beside them.
+  .sign-off { margin-bottom: var(--space-8); h2 { margin-bottom: var(--space-3); } }
+  .cert-layout { display: grid; gap: var(--space-6); grid-template-columns: 1fr; align-items: start; }
+  @media (min-width: 800px) { .cert-layout { grid-template-columns: 260px minmax(0, 1fr); } }
+  .cert-tools { display: grid; border: 2px solid var(--steel-hi); background: var(--slab); }
+  .cert-tools a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--tap);
+    padding: 0 var(--space-4);
+    border-bottom: 1px solid var(--steel);
+    color: var(--bone);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    &:last-child { border-bottom: 0; }
+    &:hover { background: var(--hazard-dim); }
+    &.on { background: var(--hazard); color: var(--tape-dark); font-weight: 700; }
   }
+  .cert-count { font-family: var(--font-ui); font-size: var(--text-xs); opacity: 0.8; font-variant-numeric: tabular-nums; }
+  // On phones the tools become a row that scrolls sideways above the holders.
+  @media (max-width: 799px) {
+    .cert-tools { display: flex; overflow-x: auto; }
+    .cert-tools a { flex: none; border-bottom: 0; border-right: 1px solid var(--steel); }
+  }
+  .cert-layout .split-head { align-items: flex-start; .filters { margin: 0; } .search-box { flex: 0 1 240px; } p { margin: var(--space-1) 0 0; } }
 
-  .cert-description { margin-top: var(--space-4); }
+  .holder-list { list-style: none; margin: 0; padding: 0; border: 2px solid var(--steel-hi); background: var(--slab); }
+  .holder-list li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    gap: var(--space-3);
+    align-items: center;
+    padding: var(--space-2) var(--space-4);
+    border-bottom: 1px solid var(--steel);
+    &:last-child { border-bottom: 0; }
+    &.empty-row { display: block; padding: var(--space-6); }
+  }
+  .holder-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 640px) {
+    .holder-list li { grid-template-columns: auto minmax(0, 1fr) auto; }
+    .holder-when { grid-column: 2; grid-row: 2; }
+  }
 
   // A waiver scan shown on its page.
   .contract-doc iframe {
@@ -39,7 +58,7 @@
     border: 2px solid var(--steel-hi);
     background: var(--char);
   }
-  .replace-document summary { cursor: pointer; color: var(--accent-text); margin-bottom: var(--space-2); }
+  .replace-document summary { color: var(--accent-text); margin-bottom: var(--space-2); }
 
   // Tool cards: the chips sit under the name.
   .tool-chips:not(:empty) { display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--space-1); }
@@ -47,4 +66,25 @@
 
   // A tool's photo fields show the current photo beside the upload.
   .photo-field .current-photo img { display: block; width: 50px; height: 50px; object-fit: cover; border: 2px solid var(--steel-hi); }
+
+  .featured-tool { margin-bottom: var(--space-8); }
+
+  // Tool cards, here and on the home page and people's pages.
+  .tool-grid { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .tool-card {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: var(--slab);
+    border: 2px solid var(--steel-hi);
+    color: inherit;
+    text-decoration: none;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    &:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-sm); color: inherit; }
+    .pic { aspect-ratio: 4 / 3; background: var(--slab-hi); display: grid; place-items: center; overflow: hidden; color: var(--smoke); }
+    .pic img { width: 100%; height: 100%; object-fit: cover; }
+    .pic svg.lucide { width: 40px; height: 40px; }
+    .body { padding: var(--space-3) var(--space-4); display: grid; gap: var(--space-1); align-content: start; }
+    .name { font-weight: 700; }
+    &.gone { opacity: 0.6; }
+  }
 }

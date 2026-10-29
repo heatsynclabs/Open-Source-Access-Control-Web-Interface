@@ -5,16 +5,10 @@ class HomeController < ApplicationController
     @door_status = DoorLog.show_status rescue nil
     @space = (JSON.parse(Setting.space_api_json_template) rescue {})
 
+    # What a member still needs before they can use the shop on their own.
     if user_signed_in?
-      # The newcomer checklist (orientation used to be a flash alert here).
-      u = current_user
-      @steps = [
-        ["Sign the waiver", u.waiver.present? || u.contracts.exists?, "Sign it online from your profile, or on paper at the lab."],
-        ["Come to an orientation night", u.orientation.present?, "Ask any volunteer, or come to an open night."],
-        ["Make your first dues payment", u.payments.exists?, "PayPal, check, cash or bill pay. The treasurer records it."],
-        ["Get certified on a tool", u.user_certifications.exists?, "Instructors run checkouts. See Certifications."],
-        ["Card access", u.cards.exists?, "Voted on at Hack Your Hackerspace after two months as a member."],
-      ]
+      @needs_waiver = current_user.waiver.blank? && !current_user.contracts.exists?
+      @needs_orientation = current_user.orientation.blank?
     end
 #    if user_signed_in? && current_user.member_status.between?(2,100) then
 #      flash[:alert] = "<!--

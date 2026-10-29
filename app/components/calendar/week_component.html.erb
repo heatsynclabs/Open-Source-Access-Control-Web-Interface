@@ -4,21 +4,26 @@
     <%= link_to "Full calendar", helpers.calendar_path %>
   </div>
   <ol class="week-days">
-    <% @days.each do |day| %>
-      <li class="week-day <%= 'today' if day == Date.current %> <%= 'quiet' if nothing_on?(day) %>">
-        <div class="week-day-head">
-          <span class="dow"><%= event_day_label(day) %></span>
-          <span class="date"><%= day.strftime("%b %-d") %></span>
+    <% shown_days.each do |day| %>
+      <li class="week-day <%= 'today' if day == Date.current %>">
+        <time class="day-badge" datetime="<%= day.iso8601 %>" title="<%= day.strftime('%A, %B %-d') %>">
+          <span class="dow"><%= day == Date.current ? "Today" : day.strftime("%a") %></span>
+          <span class="dom"><%= day.day %></span>
+        </time>
+        <div class="day-body">
+          <% open_hours_on(day).each do |open| %>
+            <p class="open-line">Open <%= event_time_range(open) %></p>
+          <% end %>
+          <% events_on(day).each do |event| %>
+            <%= render Calendar::EventComponent.new(event: event, style: :line) %>
+          <% end %>
+          <% if events_on(day).empty? && open_hours_on(day).empty? %><p class="empty small">Nothing listed today</p><% end %>
         </div>
-        <% open_hours_on(day).each do |open| %>
-          <p class="open-line"><%= helpers.lucide_icon("door-open") %> Open <%= event_time_range(open) %></p>
-        <% end %>
-        <% events_on(day).each do |event| %>
-          <%= render Calendar::EventComponent.new(event: event) %>
-        <% end %>
-        <% if nothing_on?(day) %><p class="empty small">Nothing listed</p><% end %>
       </li>
     <% end %>
   </ol>
-  <%= render Calendar::EventDialogComponent.with_collection(@events.reject { |e| e.category.key == "open" }.uniq) %>
+  <% if shown_days.size < @days.count %>
+    <p class="note">Days with nothing listed are left out.</p>
+  <% end %>
+  <%= render Calendar::EventDialogComponent.with_collection(listed_events) %>
 </section>

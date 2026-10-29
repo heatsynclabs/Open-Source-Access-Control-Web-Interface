@@ -1,7 +1,8 @@
 module Calendar
-  # One event on the calendar: a compact pill in the month grid, or a row
-  # with time and icon in the week and list views. Clicking opens its details
-  # in a dialog (Calendar::EventDialogComponent).
+  # One event on the calendar. style: :pill in the month grid, :line in the
+  # this-week card (time and title on one line), :row in the week and list
+  # views (icon, title, then time). Clicking opens its details in a dialog;
+  # each page renders those once with Calendar::EventDialogComponent.
   class EventComponent < ViewComponent::Base
     include CalendarHelper
 
@@ -16,10 +17,6 @@ module Calendar
 
     def dialog_id
       self.class.dialog_id(@event)
-    end
-
-    def pill?
-      @style == :pill
     end
   end
 end

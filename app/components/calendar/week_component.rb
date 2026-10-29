@@ -1,7 +1,7 @@
 module Calendar
-  # "This week at the lab": the next seven days, one row (or column, when the
-  # card is wide) per day. Open hours show as a line under the day instead of
-  # an event, so the events stand out. Drop it into any page through the
+  # "This week at the lab": the next seven days in a compact list, one line
+  # per event, with open hours as a short note on the day. Days with nothing
+  # on are left out (today always shows). Drop it into any page through the
   # calendar/week_frame partial, which loads it without holding up the page.
   class WeekComponent < ViewComponent::Base
     include CalendarHelper
@@ -11,16 +11,20 @@ module Calendar
       @events = events
     end
 
+    def shown_days
+      @days.select { |day| day == Date.current || events_on(day).any? || open_hours_on(day).any? }
+    end
+
     def events_on(day)
-      @events.select { |event| event.day == day && event.category.key != "open" }
+      @events.select { |event| event.day == day && !event.open_hours? }
     end
 
     def open_hours_on(day)
-      @events.select { |event| event.day == day && event.category.key == "open" }
+      @events.select { |event| event.day == day && event.open_hours? }
     end
 
-    def nothing_on?(day)
-      events_on(day).empty? && open_hours_on(day).empty?
+    def listed_events
+      @events.reject { |event| event.open_hours? }.uniq
     end
   end
 end

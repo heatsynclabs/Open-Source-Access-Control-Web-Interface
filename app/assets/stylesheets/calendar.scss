@@ -150,48 +150,58 @@
   .agenda-day.today h3 span:first-child { color: var(--accent-text); }
 
   // ---------------------------------------------------------- this-week card
-  // Lays out by its own width: seven columns when wide, rows when narrow.
+  // A compact list: a small date block per day, one line per event. Lays
+  // out by its own width: days flow into columns when the card is wide.
   .week-card { container: week-card / inline-size; }
-  .week-days { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .week-days { list-style: none; margin: 0; padding: 0; display: grid; }
   .week-day {
     display: grid;
-    grid-template-columns: 110px 1fr;
-    gap: var(--space-1) var(--space-4);
-    padding: var(--space-3) 0;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: start;
+    padding: var(--space-2) 0;
     border-top: 1px solid var(--steel);
-    > :not(.week-day-head) { grid-column: 2; }
-    .week-day-head { flex-direction: column; gap: 0; margin: 0; grid-row: 1 / span 20; }
-    a.event.row { margin: 0; }
-    &.today .dow { color: var(--accent-text); }
-    &.quiet { opacity: 0.75; }
+    &:first-child { border-top: 0; padding-top: 0; }
+  }
+  .day-badge {
+    display: grid;
+    justify-items: center;
+    padding: 3px 0 4px;
+    border: 2px solid var(--steel-hi);
+    line-height: 1.1;
+    .dow { font-family: var(--font-ui); font-size: 10px; font-weight: 600; letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--ash); }
+    .dom { font-family: var(--font-display); font-weight: 800; font-size: var(--text-lg); }
+  }
+  .week-day.today .day-badge { background: var(--hazard); border-color: var(--tape-dark); color: var(--tape-dark); .dow { color: var(--on-hazard-muted); } }
+  .day-body { display: grid; gap: 2px; padding-top: 2px; }
+
+  a.event.line {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    gap: 0 var(--space-2);
+    align-items: baseline;
+    padding: 1px 0 1px var(--space-2);
+    border-left: 3px solid var(--cat);
+    font-size: var(--text-sm);
+    line-height: 1.35;
+    &:hover { background: var(--hazard-dim); }
+    .time { font-family: var(--font-ui); font-size: 11px; text-transform: uppercase; color: var(--ash); }
+    .title { font-weight: 600; }
+    .tag { grid-column: 2; justify-self: start; border-color: var(--cat); }
   }
   .open-line {
-    display: flex;
-    gap: var(--space-2);
-    align-items: center;
     margin: 0;
+    padding-left: calc(var(--space-2) + 3px);
     font-family: var(--font-ui);
     font-size: 11px;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
     color: var(--ash);
   }
-  @container week-card (min-width: 960px) {
-    .week-days { grid-template-columns: repeat(7, minmax(0, 1fr)); }
-    .week-day {
-      grid-template-columns: 1fr;
-      align-content: start;
-      padding: var(--space-3);
-      border-top: 0;
-      border-left: 1px solid var(--steel);
-      &:first-child { border-left: 0; padding-left: 0; }
-      > :not(.week-day-head) { grid-column: 1; }
-      .week-day-head { grid-row: auto; margin-bottom: var(--space-2); }
-      a.event.row { grid-template-columns: 1fr; .icon { display: none; } }
-    }
-  }
-  @container week-card (max-width: 420px) {
-    .week-day { grid-template-columns: 1fr; > :not(.week-day-head) { grid-column: 1; } .week-day-head { grid-row: auto; flex-direction: row; gap: var(--space-2); } }
+  .week-card .note { margin-top: var(--space-2); }
+  @container week-card (min-width: 860px) {
+    .week-days { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: var(--space-4) var(--space-6); }
+    .week-day, .week-day:first-child { border-top: 0; padding: 0; }
   }
 
   // ---------------------------------------------------------- dialog

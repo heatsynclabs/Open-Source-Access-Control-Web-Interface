@@ -13,7 +13,8 @@ class UserCertificationsController < ApplicationController
   # GET /user_certifications
   # GET /user_certifications.json
   def index
-    @grouped_user_certs = @user_certifications.group_by { |uc| uc.certification }
+    @sign_offs = @user_certifications.includes(:user, :certification).order(created_at: :desc)
+    @signed_off_by = User.where(id: @sign_offs.map(&:created_by).compact.uniq).pluck(:id, :name).to_h
 
     respond_to do |format|
       format.html # index.html.erb

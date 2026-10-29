@@ -1,0 +1,128 @@
+<%# The certifications page (index and show): who holds what, recent
+    sign-offs, and the tool list. Data comes from CertificationsController#load_board. %>
+<%= render PageHeaderComponent.new(eyebrow: "The shop", title: "Certifications", lead: "Who is signed off on each tool. A checkout comes before using a tool on your own.") do |header| %>
+  <% header.with_action { link_to "All sign-offs", user_certifications_path, class: "btn" } if can? :create, UserCertification %>
+<% end %>
+
+<% if @members %>
+  <%= form_for(UserCertification.new, html: { class: "card sign-off" }) do |f| %>
+    <h2>Sign someone off</h2>
+    <div class="inline-form">
+      <div class="field">
+        <%= f.label :user_id, "Member" %>
+        <%= f.select :user_id, @members, { include_blank: true }, required: true %>
+      </div>
+      <div class="field">
+        <%= f.label :certification_id, "Tool" %>
+        <%= f.select :certification_id, @tools.map { |tool| [tool.name, tool.id] }, { selected: @tool&.id }, required: true %>
+      </div>
+      <%= f.submit "Certify", class: "primary" %>
+    </div>
+    <p class="note">After their checkout. Your name goes on the record, and only you or an admin can remove it.</p>
+  <% end %>
+<% end %>
+
+<div data-controller="tabs">
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" data-tabs-target="tab" data-name="holders" data-action="tabs#select">Who holds what</button>
+    <button type="button" role="tab" data-tabs-target="tab" data-name="recent" data-action="tabs#select">Recent sign-offs</button>
+    <button type="button" role="tab" data-tabs-target="tab" data-name="tools" data-action="tabs#select">The tool list <span class="count"><%= @tools.size %></span></button>
+  </div>
+
+  <section role="tabpanel" data-tabs-target="panel" data-name="holders">
+    <% if @tool %>
+      <div class="cert-layout">
+        <nav class="cert-tools" aria-label="Tools">
+          <% @tools.each do |tool| %>
+            <%= link_to certification_path(tool), class: ("on" if tool == @tool), "aria-current": ("page" if tool == @tool) do %>
+              <span><%= tool.name %></span><span class="cert-count"><%= @holders.fetch(tool.id, []).size %></span>
+            <% end %>
+          <% end %>
+        </nav>
+
+        <% holders = @holders.fetch(@tool.id, []) %>
+        <% holders = @newest_first ? holders.sort_by(&:created_at).reverse : holders.sort_by { |sign_off| sign_off.user.name.to_s.downcase } %>
+        <section data-controller="filter" data-filter-noun-value="certified">
+          <div class="split-head">
+            <div>
+              <h2><%= @tool.name %></h2>
+              <% if @tool.description.present? %><p class="small muted"><%= @tool.description %></p><% end %>
+            </div>
+            <div class="filters">
+              <%= render "shared/search", placeholder: "Find a holder", label: "Find a holder" %>
+              <%= link_to "A to Z", certification_path(@tool), class: ["toggle", ("on" unless @newest_first)] %>
+              <%= link_to "Newest first", certification_path(@tool, order: "new"), class: ["toggle", ("on" if @newest_first)] %>
+            </div>
+          </div>
+          <p class="count-line" data-filter-target="count" aria-live="polite"></p>
+          <ul class="holder-list">
+            <% holders.each do |sign_off| %>
+              <li data-filter-target="item" data-filter-text="<%= sign_off.user.name %>">
+                <%= person_avatar(sign_off.user, 32) %>
+                <span class="holder-name"><%= link_to sign_off.user.name, sign_off.user %></span>
+                <span class="small muted holder-when">
+                  <%= sign_off.created_at.strftime("%b %-d, %Y") %><% if (by = @signed_off_by[sign_off.created_by]) %> by <%= by %><% end %>
+                </span>
+                <% if can? :destroy, sign_off %>
+                  <%= link_to "Remove", sign_off, method: :delete, class: "btn small danger", data: { confirm: "Remove #{sign_off.user.name}'s #{@tool.name} certification?" } %>
+                <% else %>
+                  <span></span>
+                <% end %>
+              </li>
+            <% end %>
+            <% if holders.empty? %><li class="empty-row"><%= render EmptyStateComponent.new("Nobody is certified on this yet.") %></li><% end %>
+          </ul>
+          <p class="empty" data-filter-target="none" hidden>Nobody by that name holds this one.</p>
+        </section>
+      </div>
+    <% else %>
+      <%= render EmptyStateComponent.new("No tools have a certification yet.") %>
+    <% end %>
+  </section>
+
+  <section role="tabpanel" data-tabs-target="panel" data-name="recent" hidden>
+    <% if @recent_sign_offs.any? %>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>When</th><th>Member</th><th>Tool</th><th>Signed off by</th></tr></thead>
+          <tbody>
+            <% tool_names = @tools.to_h { |tool| [tool.id, tool.name] } %>
+            <% @recent_sign_offs.each do |sign_off| %>
+              <tr>
+                <td class="nowrap"><%= sign_off.created_at.strftime("%b %-d, %Y") %></td>
+                <td><%= link_to sign_off.user.name, sign_off.user %></td>
+                <td><%= tool_names[sign_off.certification_id] %></td>
+                <td><%= @signed_off_by[sign_off.created_by] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <%= render EmptyStateComponent.new("No sign-offs yet.") %>
+    <% end %>
+  </section>
+
+  <section role="tabpanel" data-tabs-target="panel" data-name="tools" hidden>
+    <% if can? :create, Certification %>
+      <p><%= link_to "Add a tool", new_certification_path, class: "btn primary" %></p>
+    <% end %>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tool</th><th>Short code</th><th class="num">Holders</th><th>What the checkout covers</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+        <tbody>
+          <% @tools.sort_by { |tool| tool.name.to_s.downcase }.each do |tool| %>
+            <tr>
+              <td><%= link_to tool.name, certification_path(tool) %></td>
+              <td class="mono"><%= tool.slug %></td>
+              <td class="num"><%= @holders.fetch(tool.id, []).size %></td>
+              <td><%= tool.description %></td>
+              <td class="actions"><%= link_to "Edit", edit_certification_path(tool), class: "btn small" if can? :update, tool %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">The short code is what tool interlocks ask about.</p>
+  </section>
+</div>

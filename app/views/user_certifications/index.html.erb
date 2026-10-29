@@ -1,37 +1,36 @@
-<%= render PageHeaderComponent.new(eyebrow: "Certifications", eyebrow_path: certifications_path, title: "Who is certified", lead: "Everyone signed off on each tool. Open a tool to see its holders.") do |header| %>
+<%= render PageHeaderComponent.new(eyebrow: "Certifications", eyebrow_path: certifications_path, title: "All sign-offs", lead: "Every certification on record, newest first.") do |header| %>
   <% header.with_action { link_to "Certify someone", new_user_certification_path, class: "btn primary" } if can? :create, UserCertification %>
 <% end %>
 
-<div data-controller="filter" data-filter-noun-value="certifications">
+<div data-controller="filter" data-filter-noun-value="sign-offs">
   <div class="filters">
-    <label class="search-box">
-      <%= lucide_icon "search" %>
-      <input type="search" placeholder="Tool or person" aria-label="Search certifications" data-filter-target="query" data-action="filter#apply">
-    </label>
+    <%= render "shared/search", placeholder: "Member, tool or instructor", label: "Search sign-offs" %>
   </div>
   <p class="count-line" data-filter-target="count" aria-live="polite"></p>
 
-  <div class="cert-groups">
-    <% @grouped_user_certs.sort_by { |cert, _| cert&.name.to_s }.each do |cert, user_certifications| %>
-      <% holders = user_certifications.sort_by { |uc| uc.user_name.downcase } %>
-      <details class="cert-group" data-filter-target="item" data-filter-text="<%= [cert&.name, *holders.map(&:user_name)].join(' ') %>">
-        <summary>
-          <span class="cert-name"><%= cert ? cert.name : "Missing certification" %></span>
-          <span class="cert-count"><%= pluralize(holders.size, "holder") %></span>
-        </summary>
-        <ul class="plain">
-          <% holders.each do |user_certification| %>
-            <li>
-              <%= link_to user_certification, class: "person-cell" do %>
-                <% if user_certification.user %><%= person_avatar(user_certification.user, 28) %><% end %><span><%= user_certification.user_name %></span>
-              <% end %>
-              <span class="small muted nowrap">since <%= user_certification.created_at.strftime("%b %Y") %></span>
-            </li>
+  <% if @sign_offs.any? %>
+    <div class="table-wrap tall">
+      <table>
+        <thead><tr><th>When</th><th>Member</th><th>Tool</th><th>Signed off by</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+        <tbody>
+          <% @sign_offs.each do |sign_off| %>
+            <% by = @signed_off_by[sign_off.created_by] %>
+            <tr data-filter-target="item" data-filter-text="<%= [sign_off.user_name, sign_off.certification&.name, by].compact.join(' ') %>">
+              <td class="nowrap"><%= link_to sign_off.created_at.strftime("%b %-d, %Y"), sign_off %></td>
+              <td><%= sign_off.user ? link_to(sign_off.user_name, sign_off.user) : sign_off.user_name %></td>
+              <td><%= sign_off.certification ? link_to(sign_off.certification.name, sign_off.certification) : "Missing tool" %></td>
+              <td><%= by %></td>
+              <td class="actions">
+                <%= link_to "Remove", sign_off, method: :delete, class: "btn small danger",
+                      data: { confirm: "Remove this certification?" } if can? :destroy, sign_off %>
+              </td>
+            </tr>
           <% end %>
-        </ul>
-      </details>
-    <% end %>
-  </div>
-  <p class="empty" data-filter-target="none" hidden>Nothing matches.</p>
-  <% if @grouped_user_certs.empty? %><%= render EmptyStateComponent.new("Nobody is certified on anything yet.") %><% end %>
+        </tbody>
+      </table>
+    </div>
+    <p class="empty" data-filter-target="none" hidden>Nothing matches.</p>
+  <% else %>
+    <%= render EmptyStateComponent.new("Nobody is certified on anything yet.") %>
+  <% end %>
 </div>

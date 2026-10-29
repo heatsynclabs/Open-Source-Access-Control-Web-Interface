@@ -1,68 +1,66 @@
 <% welcome = params[:flash] == "welcome_msg" %>
-<%= render PageHeaderComponent.new(eyebrow: "Your account", title: "Profile") do |header| %>
-  <% header.with_action { link_to "Your public page", user_path(resource), class: "btn" } if can? :read, resource %>
-<% end %>
+<% payments = can?(:read, resource.payments.first) ? resource.payments.sort_by(&:date).reverse : [] %>
+<% content_for :title, "Profile" %>
+
+<div class="person-head">
+  <%= person_avatar(resource, 72) %>
+  <div>
+    <p class="eyebrow">Your profile</p>
+    <h1><%= resource.name %></h1>
+    <div class="contact-links">
+      <%= render MemberBadgeComponent.new(resource) %>
+      <span class="small muted"><%= resource.email %></span>
+      <%= link_to "Change your photo at Gravatar", "https://www.gravatar.com", class: "small" %>
+      <%= link_to "Your public page", user_path(resource), class: "small" if can? :read, resource %>
+    </div>
+  </div>
+</div>
 
 <% if welcome %>
   <div class="msg ok welcome">
     <p><strong>Thank you for becoming a HeatSync Labs member.</strong> Every member matters to this community of learning, science and the arts.</p>
-    <p>Start your dues with the payment button on this page, or talk to any member. <strong>Recurring electronic payments help a lot:</strong> the lab has no paid staff. If you pay by cash or check, think about paying 3, 6 or 12 months ahead to save volunteers some work.</p>
+    <p>Start your dues under Dues and payments, or talk to any member. <strong>Recurring electronic payments help a lot:</strong> the lab has no paid staff. If you pay by cash or check, think about paying 3, 6 or 12 months ahead to save volunteers some work.</p>
     <p><strong>To claim member benefits</strong> such as storage, find a volunteer on your next visit or set up a time ahead. Someone will email you soon to book a new member orientation. After that, this site becomes a lot more useful.</p>
     <p>Some privileges, like 24/7 card access, need the community's approval.</p>
     <p>Thanks again, and happy hacking.</p>
   </div>
 <% end %>
 
-<div class="grid side profile-top">
-  <section class="card <%= 'payment-highlighted' if welcome %>">
-    <h2>Paying your dues</h2>
-    <% case resource.payment_method %>
-    <% when "PayPal" %>
-      <% paypal_buttons = { 25 => ["Associate", "SZWVLPAG79XCN"], 50 => ["Basic", "GEAMCMZZKC4AW"], 100 => ["Plus", "L7XVC2GUJJR5A"] } %>
-      <% level_name, button_id = paypal_buttons[resource.member_level] %>
-      <% if button_id %>
-        <p><strong><%= level_name %> membership, $<%= resource.member_level %> a month,</strong> by PayPal subscription:</p>
-        <form class="paypal-form" action="https://www.paypal.com/cgi-bin/webscr" method="post">
-          <input type="hidden" name="cmd" value="_s-xclick">
-          <input type="hidden" name="hosted_button_id" value="<%= button_id %>">
-          <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif" name="submit" alt="Subscribe with PayPal">
-          <img alt="" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-        </form>
-      <% else %>
-        <p>Your level is not one of $25, $50 or $100, so there is no PayPal button for it. Pick a level below, or ask the treasurer.</p>
-      <% end %>
-    <% when "Dwolla" %>
-      <p>Dwolla no longer takes payments. Choose another way to pay below, or ask the treasurer.</p>
-    <% when "BillPay" %>
-      <p>Have your bank send a monthly check to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201. <strong>Electronic or advance payments are appreciated.</strong></p>
-    <% when "Check" %>
-      <p>Mail it to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201, or put it in the drop safe at the lab with a deposit slip attached, each month. <strong>Electronic or advance payments are appreciated.</strong></p>
-    <% when "Cash" %>
-      <p>Put it in the drop safe at the lab with a deposit slip attached, each month. <strong>Electronic or advance payments are appreciated.</strong></p>
-    <% else %>
-      <p>Choose how you pay below, and the payment button or instructions show up here.</p>
-    <% end %>
+<div data-controller="tabs" data-tabs-default-value="<%= welcome ? 'dues' : 'details' %>">
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" data-tabs-target="tab" data-name="details" data-action="tabs#select">Your details</button>
+    <button type="button" role="tab" data-tabs-target="tab" data-name="dues" data-action="tabs#select">Dues and payments <span class="count"><%= payments.size %></span></button>
+    <button type="button" role="tab" data-tabs-target="tab" data-name="data" data-action="tabs#select">Your data</button>
+  </div>
 
-    <% if can? :read, resource.payments.first %>
-      <h3>Recorded payments</h3>
-      <ul class="plain">
-        <% resource.payments.sort_by(&:date).reverse.each do |payment| %>
-          <li><span><%= payment.date.strftime("%B %-d, %Y") %></span><span class="muted small"><%= number_to_currency(payment.amount) if payment.amount %></span></li>
-        <% end %>
-      </ul>
-    <% end %>
+  <section role="tabpanel" data-tabs-target="panel" data-name="details">
+    <%= render partial: "user", locals: { resource: resource, html: { method: :put }, button_label: "Update profile" } %>
   </section>
 
-  <div class="stack">
-    <section class="card photo-card">
-      <h2>Your photo</h2>
-      <div class="person-cell">
-        <%= person_avatar(resource, 64) %>
-        <p class="small muted">Your picture comes from <%= link_to "Gravatar", "https://www.gravatar.com", title: "Change your photo at Gravatar.com" %>, using your email address.</p>
-      </div>
-    </section>
-    <%= render "/statistics/index" unless welcome %>
-  </div>
-</div>
+  <section role="tabpanel" data-tabs-target="panel" data-name="dues" hidden>
+    <div class="grid two">
+      <%= render "devise/registrations/paying_dues", member: resource %>
+      <section class="card">
+        <h2>Recorded payments</h2>
+        <% if payments.any? %>
+          <div class="table-wrap short">
+            <table>
+              <thead><tr><th>Date</th><th class="num">Amount</th></tr></thead>
+              <tbody>
+                <% payments.each do |payment| %>
+                  <tr><td><%= payment.date.strftime("%B %-d, %Y") %></td><td class="num"><%= number_to_currency(payment.amount) if payment.amount %></td></tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <%= render EmptyStateComponent.new("No payments recorded yet. The treasurer records them, usually within a few weeks.") %>
+        <% end %>
+      </section>
+    </div>
+  </section>
 
-<%= render partial: "user", locals: { resource: resource, html: { method: :put }, button_label: "Update profile" } %>
+  <section role="tabpanel" data-tabs-target="panel" data-name="data" hidden>
+    <%= render "/statistics/index" %>
+  </section>
+</div>

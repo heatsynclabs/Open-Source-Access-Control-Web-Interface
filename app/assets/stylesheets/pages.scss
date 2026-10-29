@@ -1,4 +1,4 @@
-// Styles that belong to one page.
+// Styles for the home pages. Each area's pages have their own file in pages/.
 @layer pages {
 
   // ---------------------------------------------------------- signed-out home
@@ -39,51 +39,4 @@
     .hero-actions .btn { flex: 1 1 100%; }
     .signin { padding: var(--space-6); box-shadow: var(--shadow-sm); }
   }
-
-  // ---------------------------------------------------------- tools
-  .tool-grid { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
-  .tool-card {
-    display: grid;
-    grid-template-rows: auto 1fr;
-    background: var(--slab);
-    border: 2px solid var(--steel-hi);
-    color: inherit;
-    text-decoration: none;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-    &:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-sm); color: inherit; }
-    .pic { aspect-ratio: 4 / 3; background: var(--slab-hi); display: grid; place-items: center; overflow: hidden; color: var(--smoke); }
-    .pic img { width: 100%; height: 100%; object-fit: cover; }
-    .pic svg.lucide { width: 40px; height: 40px; }
-    .body { padding: var(--space-3) var(--space-4); display: grid; gap: var(--space-1); align-content: start; }
-    .name { font-weight: 700; }
-    &.gone { opacity: 0.6; }
-  }
-
-  // ---------------------------------------------------------- certifications
-  .cert-tools { display: grid; border: 2px solid var(--steel-hi); background: var(--slab); align-self: start; }
-  .cert-tools a {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-3);
-    min-height: 44px;
-    padding: 0 var(--space-4);
-    border-bottom: 1px solid var(--steel);
-    color: var(--bone);
-    text-decoration: none;
-    font-size: var(--text-sm);
-    &:last-child { border-bottom: 0; }
-    &:hover { background: var(--hazard-dim); }
-    &.on { background: var(--hazard); color: var(--tape-dark); font-weight: 700; }
-  }
-  .cert-count { font-family: var(--font-ui); font-size: var(--text-xs); opacity: 0.8; font-variant-numeric: tabular-nums; }
-  @media (max-width: 799px) {
-    .cert-tools { display: flex; overflow-x: auto; }
-    .cert-tools a { flex: none; border-bottom: 0; border-right: 1px solid var(--steel); }
-  }
-
-  // ---------------------------------------------------------- remote door page
-  .remote { max-width: 560px; margin: 0 auto; }
-  .remote .door .state { font-size: var(--text-5xl); }
-  .remote .door .actions .btn, .remote .door .actions button { flex: 1 1 120px; min-height: 56px; }
 }

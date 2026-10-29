@@ -1,4 +1,4 @@
-// Page styles for the people pages. Kept in their own file so each area can change without touching the others.
+// Page styles for the people pages.
 @layer pages {
   // ---------------------------------------------------------- person page
   .person-actions { margin: calc(-1 * var(--space-4)) 0 var(--space-6); }
@@ -56,12 +56,9 @@
     font-size: var(--text-sm);
   }
   .welcome p:last-child { margin-bottom: 0; }
-  .profile-top { margin-bottom: var(--space-8); }
-  .payment-highlighted { border-color: var(--hazard); box-shadow: var(--shadow); }
-  .photo-card .person-cell p { margin: 0; }
   .paypal-form { margin: 0 0 var(--space-4); }
-  .paypal-form input[type="image"] { width: auto; min-height: 0; padding: 0; border: 0; background: none; }
-  .pay-ways { margin-top: var(--space-1); summary { cursor: pointer; } dl.facts { margin-top: var(--space-2); } }
+  .pay-notes { margin: 0; padding-left: var(--space-5); display: grid; gap: var(--space-2); font-size: var(--text-sm); }
+  .pay-ways { margin-top: var(--space-1); dl.facts { margin-top: var(--space-2); } }
 
   // ---------------------------------------------------------- your data
   .stats-table { margin-top: var(--space-6); }

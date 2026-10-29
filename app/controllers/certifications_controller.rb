@@ -9,7 +9,7 @@ class CertificationsController < ApplicationController
     @certifications = @certifications.sort_by(&:name)
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { load_board }
       format.json { render :json => @certifications }
     end
   end
@@ -17,15 +17,8 @@ class CertificationsController < ApplicationController
   # GET /certifications/1
   # GET /certifications/1.json
   def show
-    @certification_users = []
-
-    #TODO: make a better SQL query for this
-    @certification.users.sort_by(&:name).each do |user|
-      @certification_users.push user if can? :read, user
-    end
-
     respond_to do |format|
-      format.html # show.html.erb
+      format.html { load_board(@certification) }
       format.json { render :json => @certification }
     end
   end
@@ -86,5 +79,21 @@ class CertificationsController < ApplicationController
 
   def certification_params
     params.require(:certification).permit(:description, :name, :slug)
+  end
+
+  # The certifications page: every tool with its holder count (busiest
+  # first), the chosen tool's holders, the latest sign-offs, and the members
+  # an instructor can sign off. Only holders the viewer may see are counted.
+  def load_board(selected = nil)
+    sign_offs = UserCertification.accessible_by(current_ability).includes(:user).to_a
+      .select { |sign_off| sign_off.user && can?(:read, sign_off.user) }
+    @holders = sign_offs.group_by(&:certification_id)
+    @tools = Certification.accessible_by(current_ability).to_a
+      .sort_by { |tool| [-@holders.fetch(tool.id, []).size, tool.name.to_s.downcase] }
+    @tool = selected || @tools.first
+    @newest_first = params[:order] == "new"
+    @recent_sign_offs = sign_offs.sort_by(&:created_at).last(30).reverse
+    @signed_off_by = User.where(id: sign_offs.map(&:created_by).compact.uniq).pluck(:id, :name).to_h
+    @members = User.where(:hidden => [false, nil]).accessible_by(current_ability).order(:name).pluck(:name, :id) if can?(:create, UserCertification)
   end
 end
