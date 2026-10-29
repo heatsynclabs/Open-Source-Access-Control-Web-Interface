@@ -67,3 +67,8 @@ gem 'gravtastic'
 gem 'passenger'
 
 gem 'rails-settings-cached'
+
+group :test do
+  # Rails 7.2's test runner does not support Minitest 6 yet.
+  gem 'minitest', '~> 5.25'
+end

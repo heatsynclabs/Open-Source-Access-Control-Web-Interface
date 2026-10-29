@@ -89,6 +89,14 @@ Dooraccess::Application.routes.draw do
     end
   end
 
+  # The lab calendar (from the public Google Calendar feed) and the week card
+  # that other pages load into a Turbo Frame.
+  get 'calendar' => 'calendar#index', :as => :calendar
+  get 'calendar/week' => 'calendar#week', :as => :calendar_week
+
+  # Aggregate charts for the board and the treasurer.
+  get 'analytics' => 'analytics#index', :as => :analytics
+
   match 'more_info' => 'home#more_info', via: [:get, :post]
   root :to => "home#index"
 end

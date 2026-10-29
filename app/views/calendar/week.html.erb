@@ -1,0 +1,10 @@
+<%= turbo_frame_tag "lab-week", target: "_top" do %>
+  <% if @events %>
+    <%= render Calendar::WeekComponent.new(days: @days, events: @events) %>
+  <% else %>
+    <section class="card week-card">
+      <div class="card-head"><h2>This week at the lab</h2><%= link_to "Full calendar", calendar_path %></div>
+      <%= render EmptyStateComponent.new("The lab calendar did not load. Try again in a few minutes.") %>
+    </section>
+  <% end %>
+<% end %>

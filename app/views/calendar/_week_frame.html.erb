@@ -1,0 +1,7 @@
+<%# The this-week card, loaded after the page has drawn so a slow answer from Google never holds the page up. %>
+<%= turbo_frame_tag "lab-week", src: calendar_week_path, target: "_top" do %>
+  <section class="card week-card" aria-busy="true">
+    <div class="card-head"><h2>This week at the lab</h2><%= link_to "Full calendar", calendar_path %></div>
+    <div class="skeleton" role="presentation"></div>
+  </section>
+<% end %>

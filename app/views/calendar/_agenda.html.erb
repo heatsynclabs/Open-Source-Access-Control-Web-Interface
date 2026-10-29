@@ -1,0 +1,14 @@
+<% if events.empty? %>
+  <%= render EmptyStateComponent.new("Nothing on the calendar for these days.") %>
+<% else %>
+  <div class="agenda">
+    <% events.group_by(&:day).each do |day, day_events| %>
+      <section class="agenda-day <%= 'today' if day == Date.current %>">
+        <h3><span><%= event_day_label(day) %></span> <span class="muted"><%= day.strftime("%B %-d") %></span></h3>
+        <% day_events.each do |event| %>
+          <%= render Calendar::EventComponent.new(event: event) %>
+        <% end %>
+      </section>
+    <% end %>
+  </div>
+<% end %>

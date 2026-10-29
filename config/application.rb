@@ -20,6 +20,8 @@ module Dooraccess
   class Application < Rails::Application
     config.load_defaults 7.2
     config.time_zone = 'America/Phoenix'
+    # Weeks start on Sunday, as on the lab's calendar and heatsynclabs.org.
+    config.beginning_of_week = :sunday
 
     config.autoload_lib(ignore: %w[assets tasks])
 

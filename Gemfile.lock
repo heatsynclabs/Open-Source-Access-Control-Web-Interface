@@ -205,9 +205,7 @@ GEM
       mime-types-data (~> 3.2025, >= 3.2025.0507)
     mime-types-data (3.2026.1020)
     mini_mime (1.1.5)
-    minitest (6.0.6)
-      drb (~> 2.0)
-      prism (~> 1.5)
+    minitest (5.27.0)
     net-imap (0.6.8)
       date
       net-protocol
@@ -398,6 +396,7 @@ DEPENDENCIES
   json (~> 2.7)
   kt-paperclip (~> 7.2)
   lucide-rails (~> 0.7)
+  minitest (~> 5.25)
   passenger
   pg
   puma

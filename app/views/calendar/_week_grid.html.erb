@@ -1,0 +1,9 @@
+<%# simple_calendar's week layout: one column per day, stacked on phones. %>
+<div class="week-grid">
+  <% date_range.each do |day| %>
+    <section class="<%= calendar.td_classes_for(day).join(' ') %>">
+      <h3 class="week-day-head"><span class="dow"><%= day.strftime("%a") %></span> <span class="date"><%= day.strftime("%b %-d") %></span></h3>
+      <% instance_exec(day, calendar.sorted_events_for(day), &passed_block) %>
+    </section>
+  <% end %>
+</div>

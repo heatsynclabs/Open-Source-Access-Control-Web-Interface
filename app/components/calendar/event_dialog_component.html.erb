@@ -1,0 +1,19 @@
+<dialog id="<%= @id %>" class="event-dialog cat-<%= @event.category.key %>" data-action="click->dialog#backdrop" aria-labelledby="<%= @id %>-title">
+  <button type="button" class="icon-btn dialog-close" data-action="dialog#close" aria-label="Close"><%= helpers.lucide_icon("x") %></button>
+  <p class="eyebrow"><span class="cat-dot"></span><%= @event.category.label %></p>
+  <h2 id="<%= @id %>-title"><%= @event.display_title %></h2>
+  <dl class="facts">
+    <dt>When</dt><dd><%= when_text %></dd>
+    <% if @event.location.present? %><dt>Where</dt><dd><%= @event.location %></dd><% end %>
+    <% if @event.cost %><dt>Cost</dt><dd><%= @event.cost %></dd><% end %>
+  </dl>
+  <% if @event.description.present? %>
+    <div class="prose small event-description"><%= description_html %></div>
+  <% end %>
+  <div class="actions-row">
+    <% if @event.registration_url %>
+      <%= link_to "Sign up", @event.registration_url, class: "btn primary", target: "_blank", rel: "noopener" %>
+    <% end %>
+    <%= link_to @event.add_to_google_url, class: "btn", target: "_blank", rel: "noopener" do %><%= helpers.lucide_icon("calendar-plus") %> Add to my calendar<% end %>
+  </div>
+</dialog>

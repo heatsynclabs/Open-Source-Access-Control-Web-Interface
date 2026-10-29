@@ -2,8 +2,10 @@
 
 one:
   name: MyString
+  email: one@example.invalid
   postal_code: 12345
 
 two:
   name: MyString2
+  email: two@example.invalid
   postal_code: 23456
