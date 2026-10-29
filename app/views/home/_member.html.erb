@@ -1,78 +1,75 @@
+<% content_for :title, "Home" %>
+<% can_control = current_user.card_access_enabled && can?(:access_doors_remotely, :door_access) %>
 <p class="eyebrow"><%= Time.zone.now.strftime("%A, %B %-d") %></p>
 <h1>Hi, <%= current_user.name.to_s.split.first %></h1>
 
-<div class="g-grid side">
-  <div class="g-grid">
-    <% if @steps && @steps.any? { |s| !s[1] } %>
-      <section class="g-card">
+<div class="grid side">
+  <div class="stack">
+    <% if @steps && @steps.any? { |_what, done, _hint| !done } %>
+      <section class="card">
         <h2>Getting started</h2>
         <ul class="checklist">
           <% @steps.each do |what, done, hint| %>
             <li class="<%= 'done' if done %>">
-              <span class="box"><%= raw("&#10003;") if done %></span>
-              <span><span class="what"><%= what %></span><% unless done %><br><span class="small muted"><%= hint %></span><% end %></span>
+              <span class="box"><%= lucide_icon("check") if done %></span>
+              <span>
+                <span class="what"><%= what %></span>
+                <% unless done %><br><span class="small muted"><%= hint %></span><% end %>
+              </span>
             </li>
           <% end %>
         </ul>
       </section>
     <% end %>
 
-    <section class="g-card">
-      <div class="split-head">
+    <section class="card">
+      <div class="card-head">
         <h2>Doors</h2>
-        <% if current_user.card_access_enabled && can?(:access_doors_remotely, :door_access) %>
-          <%= link_to "Remote door access", space_api_access_path, class: "small" %>
-        <% end %>
+        <%= link_to "Remote door access", space_api_access_path if can_control %>
       </div>
-      <%# Door controls only for people with an active card (admins without a card see status only). %>
-      <% can_control = current_user.card_access_enabled && can?(:access_doors_remotely, :door_access) %>
       <% if @door_status && !@door_status[:door_1_locked].nil? %>
-        <div class="g-grid two">
-          <% [["Front door", @door_status[:door_1_locked], "open-front"], ["Rear door", @door_status[:door_2_locked], "open-rear"]].each do |name, locked, command| %>
-            <div class="door <%= locked ? 'locked' : 'unlocked' %>">
-              <span class="eyebrow"><%= name %></span>
-              <span class="state"><%= locked ? "Locked" : "Unlocked" %></span>
-              <% if can_control %>
-                <%= button_to "Open for 5 seconds", space_api_access_path, params: { cmd: command }, class: "btn btn-default btn-sm", form: { style: "margin-top: var(--space-2)" } %>
-              <% end %>
-            </div>
-          <% end %>
+        <div class="doors">
+          <%= render DoorTileComponent.new(name: "Front door", locked: @door_status[:door_1_locked], open_command: "open-front", can_control: can_control) %>
+          <%= render DoorTileComponent.new(name: "Rear door", locked: @door_status[:door_2_locked], open_command: "open-rear", can_control: can_control) %>
         </div>
       <% else %>
-        <p class="empty">No door status yet.</p>
+        <%= render EmptyStateComponent.new("No door status yet.") %>
       <% end %>
-      <% unless can_control %>
-        <p class="note">Door controls come with card access.</p>
-      <% end %>
+      <%# Door controls only for people with an active card (admins without a card see status only). %>
+      <% unless can_control %><p class="note">Door controls come with card access.</p><% end %>
     </section>
 
+    <%= render "calendar/week_frame" %>
+
     <% if Setting.member_resources_inset.present? %>
-      <section class="g-card">
+      <section class="card prose">
         <h2>Member resources</h2>
         <%= simple_format Setting.member_resources_inset %>
       </section>
     <% end %>
   </div>
 
-  <div class="g-grid">
+  <div class="stack">
     <% if (can? :read, User) && @recent_user_names.present? %>
-      <section class="g-card">
-        <h3>New people <span class="muted small">say hi</span></h3>
-        <ul class="plain-people">
+      <section class="card">
+        <div class="card-head">
+          <h3>New people <span class="muted small">say hi</span></h3>
+          <%= link_to "Everyone", users_path %>
+        </div>
+        <ul class="plain">
           <% @recent_user_names.each do |user| %>
             <% next unless can? :read, user %>
             <li>
-              <%= link_to user do %><%= person_avatar(user, 32) %><span class="who"><%= user.name %></span><% end %>
-              <span class="small muted">joined <%= user.created_at.strftime("%b %-d") %></span>
+              <%= link_to user, class: "person-cell" do %><%= person_avatar(user, 32) %><span><%= user.name %></span><% end %>
+              <span class="small muted nowrap">joined <%= user.created_at.strftime("%b %-d") %></span>
             </li>
           <% end %>
         </ul>
-        <p class="note"><%= link_to "Everyone", users_path %></p>
       </section>
     <% end %>
 
     <% if @featured_resource.present? %>
-      <section class="g-card featured">
+      <section class="card">
         <h3>Featured tool</h3>
         <%= render @featured_resource %>
       </section>

@@ -1,0 +1,159 @@
+// The frame every page shares: header, nav, caution tape, page width, footer.
+@layer layout {
+  .top { background: var(--nav-bg); border-bottom: 2px solid var(--steel-hi); }
+
+  .top-inner {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .brand { display: inline-flex; align-items: center; gap: var(--space-3); text-decoration: none; }
+  .brand .lockup { height: 34px; width: auto; display: block; }
+  .brand .lockup.reverse { display: none; }
+  :root[data-theme="dark"] .brand .lockup { display: none; }
+  :root[data-theme="dark"] .brand .lockup.reverse { display: block; }
+
+  .app-name {
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--accent-text);
+    border-left: 2px solid var(--steel-hi);
+    padding-left: var(--space-3);
+    white-space: nowrap;
+  }
+
+  .spacer { flex: 1; }
+
+  .who {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    color: var(--ash);
+    text-decoration: none;
+    white-space: nowrap;
+    &:hover { color: var(--bone); }
+  }
+
+  .icon-btn {
+    width: var(--tap);
+    height: var(--tap);
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    color: var(--bone);
+    border: 2px solid var(--steel-hi);
+    cursor: pointer;
+    svg.lucide { width: 20px; height: 20px; vertical-align: 0; }
+    &:hover { background: var(--hazard); color: var(--tape-dark); }
+  }
+
+  nav.main {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 var(--space-4);
+
+    a {
+      font-family: var(--font-ui);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      letter-spacing: var(--tracking-ui);
+      text-transform: uppercase;
+      color: var(--ash);
+      text-decoration: none;
+      padding: var(--space-3);
+      border-bottom: 3px solid transparent;
+      &:hover { color: var(--bone); }
+      &.on { color: var(--bone); border-bottom-color: var(--hazard); }
+    }
+
+    .group {
+      align-self: center;
+      font-family: var(--font-ui);
+      font-size: 10px;
+      letter-spacing: var(--tracking-ui);
+      text-transform: uppercase;
+      color: var(--ink-ghost);
+      padding: var(--space-3) var(--space-2) var(--space-3) var(--space-4);
+      &:first-child { padding-left: var(--space-3); }
+    }
+
+    &.manage { border-top: 1px solid var(--steel); }
+    &.manage a { font-size: 11px; padding-block: var(--space-2); }
+  }
+
+  // The role links fold behind a "Manage" summary on narrow screens.
+  .manage-menu { max-width: var(--maxw); margin: 0 auto; }
+  .manage-menu summary {
+    display: none;
+    cursor: pointer;
+    list-style: none;
+    padding: var(--space-2) var(--space-4);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: var(--tracking-ui);
+    text-transform: uppercase;
+    color: var(--ash);
+    border-top: 1px solid var(--steel);
+    &::-webkit-details-marker { display: none; }
+    &::after { content: " +"; }
+  }
+  .manage-menu[open] summary::after { content: " \2212"; }
+
+  .tape {
+    height: 12px;
+    background: repeating-linear-gradient(-45deg, var(--hazard) 0 14px, var(--tape-dark) 14px 28px);
+  }
+
+  body > main {
+    flex: 1 0 auto;
+    width: 100%;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-4) var(--space-16);
+    &.narrow { max-width: 560px; }
+    &.wide { max-width: 1440px; }
+  }
+
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2) var(--space-5);
+    border-top: 2px solid var(--steel-hi);
+    padding: var(--space-6) var(--space-4);
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    color: var(--smoke);
+    a { color: var(--ash); }
+  }
+
+  @media (max-width: 799px) {
+    .manage-menu summary { display: block; }
+    nav.main.manage .group { flex-basis: 100%; padding-left: var(--space-3); }
+  }
+
+  @media (max-width: 640px) {
+    .top-inner { gap: var(--space-2); }
+    .brand .lockup { height: 28px; }
+    .app-name, .who span { display: none; }
+    nav.main { padding: 0 var(--space-2); }
+    nav.main a { padding: var(--space-3) var(--space-2); }
+    body > main { padding-top: var(--space-6); }
+  }
+}

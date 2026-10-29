@@ -1,0 +1,204 @@
+// The lab calendar: month grid, week grid, agenda list, the this-week card
+// and event dialogs. Each event category sets --cat from the GANTRY
+// category tokens, the same colours heatsynclabs.org uses.
+@layer calendar {
+  .cat-class { --cat: var(--cat-class); }
+  .cat-open { --cat: var(--cat-open); }
+  .cat-hack { --cat: var(--cat-hack); }
+  .cat-group { --cat: var(--cat-group); }
+  .cat-recurring { --cat: var(--cat-recurring); }
+  .cat-default { --cat: var(--cat-default); }
+
+  .cat-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--cat, var(--smoke)); flex: none; }
+  .eyebrow .cat-dot { margin-right: var(--space-2); vertical-align: 0; }
+
+  // ---------------------------------------------------------- toolbar
+  .calendar-views { margin: 0; border-bottom: 0; }
+  .calendar-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+    .filters { margin: 0; }
+  }
+
+  // ---------------------------------------------------------- events
+  a.event { color: inherit; text-decoration: none; }
+
+  // A row: icon in the category colour, title, then time and tags.
+  a.event.row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3);
+    align-items: start;
+    padding: var(--space-2) var(--space-3);
+    margin: 0 0 var(--space-2);
+    background: var(--char);
+    border: 1.5px solid var(--steel);
+    border-left: 4px solid var(--cat);
+    &:hover { background: var(--hazard-dim); }
+    .icon { color: var(--cat); padding-top: 2px; }
+    .body { display: grid; min-width: 0; }
+    .title { font-weight: 600; font-size: var(--text-sm); line-height: 1.3; }
+    .meta { font-family: var(--font-ui); font-size: 11px; letter-spacing: var(--tracking-wide); color: var(--ash); text-transform: uppercase; }
+    .tag { margin-left: var(--space-1); border-color: var(--cat); }
+  }
+
+  // A pill in a month cell.
+  a.event.pill {
+    display: flex;
+    gap: 4px;
+    align-items: baseline;
+    min-width: 0;
+    padding: 1px 6px;
+    margin-top: 3px;
+    font-size: 12px;
+    line-height: 1.35;
+    background: color-mix(in srgb, var(--cat) 16%, transparent);
+    border-left: 3px solid var(--cat);
+    &:hover { background: color-mix(in srgb, var(--cat) 30%, transparent); }
+    .time { font-family: var(--font-ui); font-size: 10px; color: var(--ash); flex: none; }
+    .title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+
+  // ---------------------------------------------------------- month grid
+  .month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    border: 2px solid var(--steel-hi);
+    background: var(--slab);
+    container-type: inline-size;
+    .dow {
+      padding: var(--space-2);
+      font-family: var(--font-ui);
+      font-size: var(--text-xs);
+      letter-spacing: var(--tracking-ui);
+      text-transform: uppercase;
+      color: var(--ash);
+      background: var(--slab-hi);
+      border-bottom: 2px solid var(--steel-hi);
+    }
+    .day {
+      min-height: 118px;
+      min-width: 0;
+      padding: var(--space-1) var(--space-2) var(--space-2);
+      border-right: 1px solid var(--steel);
+      border-bottom: 1px solid var(--steel);
+      &:nth-child(7n) { border-right: 0; }
+      &.prev-month, &.next-month { background: var(--char); .day-num { color: var(--ink-ghost); } }
+      &.past:not(.today) a.event.pill { opacity: 0.7; }
+      &.today { box-shadow: inset 0 0 0 2px var(--hazard); }
+      &.today .day-num { background: var(--hazard); color: var(--tape-dark); }
+    }
+    .day-num {
+      display: inline-grid;
+      place-items: center;
+      min-width: 24px;
+      height: 24px;
+      font-family: var(--font-ui);
+      font-size: var(--text-xs);
+      font-weight: 600;
+    }
+    .more { display: block; margin-top: 3px; font-size: 11px; font-family: var(--font-ui); }
+    .dots { display: none; gap: 3px; margin-top: 2px; }
+    .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--cat); }
+  }
+  .month-agenda { display: none; margin-top: var(--space-6); }
+
+  // Too narrow for titles: the grid shows dots and the list follows it.
+  @container (max-width: 700px) {
+    .month-grid .day { min-height: 56px; padding: var(--space-1); }
+    .month-grid a.event.pill, .month-grid .more { display: none; }
+    .month-grid .dots { display: flex; flex-wrap: wrap; }
+  }
+  @media (max-width: 760px) {
+    .month-agenda { display: block; }
+  }
+
+  // ---------------------------------------------------------- week grid
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    border: 2px solid var(--steel-hi);
+    background: var(--slab);
+    > section { padding: var(--space-3); border-right: 1px solid var(--steel); min-width: 0; min-height: 280px; }
+    > section:last-child { border-right: 0; }
+    > section.today { box-shadow: inset 0 3px 0 var(--hazard); }
+    a.event.row { grid-template-columns: 1fr; .icon { display: none; } }
+  }
+  .week-day-head {
+    display: flex;
+    gap: var(--space-2);
+    align-items: baseline;
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-sm);
+    .dow { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; }
+    .date { font-family: var(--font-ui); font-size: var(--text-xs); color: var(--ash); text-transform: uppercase; letter-spacing: var(--tracking-wide); }
+  }
+  @media (max-width: 900px) {
+    .week-grid { grid-template-columns: 1fr; }
+    .week-grid > section { border-right: 0; border-bottom: 1px solid var(--steel); min-height: 0; }
+    .week-grid a.event.row { grid-template-columns: auto 1fr; .icon { display: block; } }
+  }
+
+  // ---------------------------------------------------------- agenda list
+  .agenda { display: grid; gap: var(--space-5); max-width: 760px; }
+  .agenda-day h3 { font-size: var(--text-base); margin: 0 0 var(--space-2); display: flex; gap: var(--space-2); align-items: baseline; }
+  .agenda-day h3 .muted { font-family: var(--font-ui); font-size: var(--text-xs); letter-spacing: var(--tracking-wide); }
+  .agenda-day.today h3 span:first-child { color: var(--accent-text); }
+
+  // ---------------------------------------------------------- this-week card
+  // Lays out by its own width: seven columns when wide, rows when narrow.
+  .week-card { container: week-card / inline-size; }
+  .week-days { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .week-day {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: var(--space-1) var(--space-4);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--steel);
+    > :not(.week-day-head) { grid-column: 2; }
+    .week-day-head { flex-direction: column; gap: 0; margin: 0; grid-row: 1 / span 20; }
+    a.event.row { margin: 0; }
+    &.today .dow { color: var(--accent-text); }
+    &.quiet { opacity: 0.75; }
+  }
+  .open-line {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    margin: 0;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ash);
+  }
+  @container week-card (min-width: 960px) {
+    .week-days { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+    .week-day {
+      grid-template-columns: 1fr;
+      align-content: start;
+      padding: var(--space-3);
+      border-top: 0;
+      border-left: 1px solid var(--steel);
+      &:first-child { border-left: 0; padding-left: 0; }
+      > :not(.week-day-head) { grid-column: 1; }
+      .week-day-head { grid-row: auto; margin-bottom: var(--space-2); }
+      a.event.row { grid-template-columns: 1fr; .icon { display: none; } }
+    }
+  }
+  @container week-card (max-width: 420px) {
+    .week-day { grid-template-columns: 1fr; > :not(.week-day-head) { grid-column: 1; } .week-day-head { grid-row: auto; flex-direction: row; } }
+  }
+
+  // ---------------------------------------------------------- dialog
+  .event-dialog {
+    border-top: 6px solid var(--cat);
+    h2 { margin: 0 0 var(--space-4); padding-right: var(--space-10); }
+    dl.facts { margin-bottom: var(--space-4); }
+    .event-description { max-height: 40vh; overflow: auto; margin-bottom: var(--space-5); overflow-wrap: anywhere; }
+  }
+}

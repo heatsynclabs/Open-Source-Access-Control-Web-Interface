@@ -1,5 +1,4 @@
 class HomeController < ApplicationController
-  layout 'resources'
 
   def index
     # Door state and address for both views, from the same data as /space_api.

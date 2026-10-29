@@ -1,7 +1,7 @@
 <% if @door_status && !@door_status[:door_1_locked].nil? %>
   <% if @door_status[:unlocked] %>
-    <span class="chip ok live-status">Doors open now</span>
+    <%= render ChipComponent.new("Doors open now", tone: :ok, dot: true) %>
   <% else %>
-    <span class="chip idle live-status">Closed right now</span>
+    <%= render ChipComponent.new("Closed right now", dot: true) %>
   <% end %>
 <% end %>

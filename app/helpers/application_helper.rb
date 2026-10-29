@@ -8,36 +8,17 @@ module ApplicationHelper
     link_to_unless condition, title, request.parameters.merge( {:sort => column, :dir => sort_dir} )
   end
 
-  def li_link_to(name = nil, options = nil, html_options = nil, &block)
-    html_options, options, name = options, name, block if block_given?
-    options ||= {}
-  
-    html_options = convert_options_to_data_attributes(options, html_options)
-  
-    url = url_for(options)
-    html_options['href'] ||= url
-  
-    if current_page?(url)
-      content_tag(:li, class: "active") do
-        content_tag(:a, name || url, html_options, &block)
-      end
-    else
-      content_tag(:li) do
-        content_tag(:a, name || url, html_options, &block)
-      end
-    end
+  # A round avatar with initials and Gravatar (see AvatarComponent).
+  def person_avatar(user, size = 40)
+    render AvatarComponent.new(name: user.name, email: user.email, size: size)
   end
 
-  # A round avatar: the person's initials on a colour derived from their name,
-  # with their Gravatar on top when they have one (d=404 makes Gravatar fail
-  # for people without one, and the image removes itself).
-  def person_avatar(user, size = 40)
-    name = user.name.to_s
-    initials = name.split(/\s+/).reject(&:blank?).first(2).map { |w| w[0] }.join.upcase
-    hue = name.each_char.reduce(7) { |h, c| (h * 31 + c.ord) % 360 }
-    hash = Digest::MD5.hexdigest(user.email.to_s.strip.downcase)
-    img = tag.img(src: "https://www.gravatar.com/avatar/#{hash}?s=#{size * 2}&d=404", alt: "", loading: "lazy", onerror: "this.remove()")
-    tag.span(tag.span(initials) + img, class: "avatar", style: "--s:#{size}px;--h:#{hue}", "aria-hidden": "true")
+  # Charts draw with Chart.js, which only pages with a chart need. The first
+  # chart on a page adds the script to the head; later calls do nothing.
+  def load_chart_scripts
+    return if @chart_scripts_loaded
+    @chart_scripts_loaded = true
+    content_for :head, javascript_import_module_tag("charts")
   end
 
   # The first sentence or line of a free-text field, for one-line summaries.

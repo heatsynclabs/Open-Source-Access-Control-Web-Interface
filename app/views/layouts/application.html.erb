@@ -1,54 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <title>hsl_members(<%= controller.controller_name %>.<%= controller.action_name %><%=  "["+params[:id]+"]" unless params[:id].blank? %>)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= page_title %></title>
+  <%# Apply the saved theme before anything paints, so dark mode never flashes light. %>
+  <script>
+    try {
+      var saved = localStorage.getItem("gantry-theme");
+      var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.dataset.theme = saved || (prefersDark ? "dark" : "light");
+    } catch (e) {}
+  </script>
   <link rel="icon" href="/favicon.ico">
-  <% if params[:controller] == "resources" %>
-    <link href="/bootstrap/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-    <link href="/bootstrap/css/bootstrap-theme.min.css" type="text/css" rel="stylesheet" />
-    <script src="/bootstrap/js/bootstrap.min.js" type="text/javascript" ></script>
-  <% else %>
-    <%= stylesheet_link_tag    "application", :media => "all" %>
-  <% end %>
-  <%= javascript_include_tag "application" %>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <%= stylesheet_link_tag "application", media: "all" %>
+  <%= javascript_include_tag "legacy" %>
+  <%= javascript_importmap_tags %>
   <%= csrf_meta_tags %>
+  <%= yield :head %>
 </head>
-<body>
-  <div id="header">
-    <%= link_to root_path, id: "home_nav_link", title: "Home" do %><%= image_tag "hsl-lockup-h.svg", class: "nav-logo logo-light", alt: "HeatSync Labs" %><%= image_tag "hsl-lockup-h-reverse.svg", class: "nav-logo logo-dark", alt: "HeatSync Labs" %><% end %>
-    <button type="button" id="nav-toggle" class="nav-toggle" aria-label="Toggle menu" aria-controls="header-menu" aria-expanded="false"><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span></button>
-    <nav class="header-links" id="header-menu">
-    <%= link_to 'People', users_path if can? :read, User %>
-    <%= link_to 'Tools & Resources', resources_path if can? :read, Resource %>
-    <%= link_to 'Access Cards', cards_path if can? :manage, Card %>
-    <% if can? :create, UserCertification %>
-      <%= link_to 'Cert Classes', certifications_path if can? :read, Certification %>
-      <%= link_to 'User Certs', user_certifications_path if can? :create, UserCertification %>
-    <% else %>
-      <%= link_to 'Certifications', certifications_path if can? :read, Certification %>
-    <% end %>
-    <%= link_to 'Waivers', contracts_path if can? :read, Contract %>
-    <%= link_to 'Payments', payments_path if can? :create, Payment %>
-    <%= link_to 'Computers', macs_path if user_signed_in? || (can? :read, Mac) %>
-    <%= link_to 'Settings', settings_path if can? :read, Setting %>
-    <% if user_signed_in? then %><%= link_to 'Profile', edit_user_registration_path %><% end %>
-    <%= link_to 'Logout', destroy_user_session_path, :method => :delete if user_signed_in? %>
-    <%= link_to 'Login', new_user_session_path unless user_signed_in? %>
-    <%= link_to 'Membership Application', new_user_registration_path unless user_signed_in? %>
-    </nav>
-  </div>
-  <div class="g-tape" role="presentation"></div>
-  <div id="content">
-    <% if notice %>
-      <p class="notice"><%= raw(notice) %></p>
-    <% end %>
-    <% if alert %>
-      <p class="alert"><%= raw(alert) %></p>
-    <% end %>
+<body data-controller="dialog">
+  <header class="top">
+    <div class="top-inner">
+      <%= link_to root_path, class: "brand", title: "Members home" do %>
+        <%= image_tag "hsl-lockup-h.svg", class: "lockup", alt: "HeatSync Labs" %>
+        <%= image_tag "hsl-lockup-h-reverse.svg", class: "lockup reverse", alt: "" %>
+        <span class="app-name">Members</span>
+      <% end %>
+      <span class="spacer"></span>
+      <% if user_signed_in? %>
+        <%= link_to edit_user_registration_path, class: "who", title: "Your profile" do %>
+          <%= person_avatar(current_user, 28) %><span><%= current_user.name %></span>
+        <% end %>
+      <% end %>
+      <button type="button" class="icon-btn" data-controller="theme" data-action="theme#toggle">
+        <span data-theme-target="sun" hidden><%= lucide_icon "sun" %></span>
+        <span data-theme-target="moon"><%= lucide_icon "moon" %></span>
+      </button>
+      <% if user_signed_in? %>
+        <%= link_to destroy_user_session_path, method: :delete, class: "icon-btn", title: "Sign out", "aria-label": "Sign out" do %><%= lucide_icon "log-out" %><% end %>
+      <% else %>
+        <%= link_to new_user_session_path, class: "icon-btn", title: "Sign in", "aria-label": "Sign in" do %><%= lucide_icon "log-in" %><% end %>
+      <% end %>
+    </div>
 
+    <nav class="main" aria-label="Main">
+      <%= nav_link "Home", root_path, controllers: :home %>
+      <%= nav_link "Calendar", calendar_path, controllers: :calendar %>
+      <%= nav_link "People", users_path, controllers: :users if can? :read, User %>
+      <%= nav_link "Tools", resources_path, controllers: [:resources, :resource_categories] if can? :read, Resource %>
+      <% if user_signed_in? && !can?(:create, UserCertification) %>
+        <%= nav_link "Certifications", certifications_path, controllers: :certifications if can? :read, Certification %>
+      <% end %>
+      <%= nav_link "Computers", macs_path, controllers: [:macs, :mac_logs] %>
+      <% if user_signed_in? %>
+        <%= nav_link "Me", edit_user_registration_path, controllers: [:registrations, :statistics] %>
+      <% else %>
+        <%= nav_link "Join", new_user_registration_path, controllers: :registrations %>
+      <% end %>
+    </nav>
+
+    <% groups = manage_nav_groups %>
+    <% if groups.any? %>
+      <details class="manage-menu" open data-controller="menu">
+        <summary>Manage</summary>
+        <nav class="main manage" aria-label="Manage">
+          <% groups.each do |label, links| %>
+            <span class="group"><%= label %></span>
+            <% links.each do |link_label, path, controllers| %>
+              <%= nav_link link_label, path, controllers: controllers %>
+            <% end %>
+          <% end %>
+        </nav>
+      </details>
+    <% end %>
+  </header>
+  <div class="tape" role="presentation"></div>
+
+  <main class="<%= yield :main_class %>">
+    <%# Flash text is set by the app itself, some of it with markup (links, line breaks). %>
+    <% if notice.present? %><p class="msg ok" role="status"><%= raw notice %></p><% end %>
+    <% if alert.present? %><p class="msg err" role="alert"><%= raw alert %></p><% end %>
     <%= yield %>
-  </div>
+  </main>
+
+  <footer class="foot">
+    <span>HeatSync Labs, Mesa, Arizona</span>
+    <%= link_to "heatsynclabs.org", "https://www.heatsynclabs.org" %>
+    <%= link_to "Wiki", "https://wiki.heatsynclabs.org" %>
+    <%= link_to "Calendar", calendar_path %>
+    <%= link_to "Space API", space_api_path %>
+  </footer>
 <%= raw Setting.analytics_code if Setting.present? %>
 </body>
 </html>

@@ -1,7 +1,6 @@
 class AuditEventsController < ApplicationController
   before_action :authenticate_user!
   authorize_resource :class => "AuditEvent"   # admins only, per ability.rb
-  layout 'resources'
 
   def index
     @events = AuditEvent.recent

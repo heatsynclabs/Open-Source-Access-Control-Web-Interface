@@ -1,0 +1,14 @@
+<div class="page-head">
+  <div>
+    <% if @eyebrow %>
+      <p class="eyebrow"><%= @eyebrow_path ? link_to(@eyebrow, @eyebrow_path) : @eyebrow %></p>
+    <% end %>
+    <h1><%= @title %></h1>
+    <% if @lead %><p class="lead"><%= @lead %></p><% end %>
+  </div>
+  <% if actions? %>
+    <div class="actions-row">
+      <% actions.each do |action| %><%= action %><% end %>
+    </div>
+  <% end %>
+</div>

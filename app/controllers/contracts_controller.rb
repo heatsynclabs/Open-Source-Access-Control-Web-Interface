@@ -1,7 +1,6 @@
 class ContractsController < ApplicationController
   load_and_authorize_resource :contract
   before_action :authenticate_user!, :load_users
-  layout 'resources'
 
   def index
     if params[:user_id].present?

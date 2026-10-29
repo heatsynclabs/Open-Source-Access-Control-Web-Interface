@@ -1,6 +1,5 @@
 class ResourceCategoriesController < ApplicationController
   load_and_authorize_resource
-  layout 'resources'
 
   def create
     authorize! :create, @resource_category

@@ -1,7 +1,6 @@
 class UsersController < ApplicationController
   load_and_authorize_resource
   before_action :authenticate_user!
-  layout 'resources'
 
   def sort_by_cert(certs,id)
     result = 0
@@ -26,7 +25,7 @@ class UsersController < ApplicationController
 #.joins(:payments).where("payments.date > ? OR ", (DateTime.now - 60.days)).uniq
 
       respond_to do |format|
-        format.html { render 'summary', layout: 'resources' }
+        format.html { render 'summary' }
         format.json { render :json => @users }
       end
 
