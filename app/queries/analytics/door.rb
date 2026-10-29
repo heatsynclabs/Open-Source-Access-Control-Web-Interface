@@ -3,7 +3,6 @@ module Analytics
   # so distinct codes count distinct cards without naming anyone.
   class Door
     GRANTED = "G"
-    DENIED = "D"
 
     def initialize(period)
       @period = period
@@ -15,10 +14,6 @@ module Analytics
 
     def entries_by_period
       by_period(granted)
-    end
-
-    def denied_by_period
-      by_period(DoorLog.where(key: DENIED, created_at: @period.range))
     end
 
     def distinct_cards_by_period

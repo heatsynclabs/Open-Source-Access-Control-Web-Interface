@@ -1,7 +1,8 @@
-# Aggregate charts for anyone, signed in or not: members, door use and the
+# Aggregate charts for signed-in members: members, door use and the
 # calendar, plus dues for the treasurer and admins. Counts only; nothing on
 # this page names a person.
 class AnalyticsController < ApplicationController
+  before_action :authenticate_user!
 
   CACHE_FOR = 10.minutes
 
@@ -40,7 +41,7 @@ class AnalyticsController < ApplicationController
   def door_section(door)
     {
       entries: door.entries_total,
-      entries_by_period: door.entries_by_period, denied_by_period: door.denied_by_period,
+      entries_by_period: door.entries_by_period,
       cards_by_period: door.distinct_cards_by_period, by_day: door.entries_by_day,
       grid: door.weekday_hour_grid, remote: door.remote_by_source,
     }

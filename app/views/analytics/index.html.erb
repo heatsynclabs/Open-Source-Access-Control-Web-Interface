@@ -84,17 +84,12 @@
 
 <%# ---------------------------------------------------------------- door %>
 <div class="section-head"><p class="eyebrow">The door</p><h2>When people come in</h2></div>
-<div class="grid two">
-  <%= render ChartCardComponent.new(title: "Card entries and distinct cards", note: "Entries are door opens with a card; distinct cards counts each card once per #{@period.unit}.") do %>
-    <%= line_chart [
-          { name: "Entries", data: by_bucket(@door[:entries_by_period], @period) },
-          { name: "Distinct cards", data: by_bucket(@door[:cards_by_period], @period) },
-        ], height: "240px", curve: false, points: false %>
-  <% end %>
-  <%= render ChartCardComponent.new(title: "Denied at the door", note: "A card the board did not accept.", rows: by_bucket(@door[:denied_by_period], @period), columns: ["When", "Denied"]) do %>
-    <%= column_chart by_bucket(@door[:denied_by_period], @period), height: "240px" %>
-  <% end %>
-</div>
+<%= render ChartCardComponent.new(title: "Card entries and distinct cards", note: "Entries are door opens with a card; distinct cards counts each card once per #{@period.unit}.") do %>
+  <%= line_chart [
+        { name: "Entries", data: by_bucket(@door[:entries_by_period], @period) },
+        { name: "Distinct cards", data: by_bucket(@door[:cards_by_period], @period) },
+      ], height: "240px", curve: false, points: false %>
+<% end %>
 
 <section class="card">
   <h3>Busiest hours</h3>
