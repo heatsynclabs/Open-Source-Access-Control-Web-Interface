@@ -18,10 +18,6 @@ module NavigationHelper
   def role_nav_groups
     analytics = NavLink.new("Analytics", analytics_path, %w[analytics]) if can?(:read, :analytics)
     groups = [
-      ["Instructor", [
-        (NavLink.new("Sign-offs", user_certifications_path, %w[]) if can?(:create, UserCertification)),
-        (NavLink.new("Add member", new_user_path, %w[]) if can?(:create, User)),
-      ]],
       ["Treasurer", [
         (NavLink.new("Payments", payments_path, %w[payments]) if can?(:create, Payment)),
         (NavLink.new("PayPal", paypal_csvs_path, %w[paypal_csvs]) if can?(:manage, PaypalCsv)),
