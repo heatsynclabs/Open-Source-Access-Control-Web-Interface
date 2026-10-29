@@ -12,7 +12,9 @@
 @layer components {
   $text-inputs: 'input:not([type="submit"], [type="button"], [type="checkbox"], [type="radio"], [type="hidden"], [type="file"])';
 
-  #{$text-inputs}, select, textarea {
+  // :where() keeps these at zero specificity, so any class (.search-box input,
+  // .mono) can adjust a control without a fight.
+  :where(#{$text-inputs}, select, textarea) {
     width: 100%;
     min-height: var(--tap);
     font: inherit;
@@ -25,8 +27,8 @@
     &:focus { outline: 2px solid var(--hazard); outline-offset: 1px; border-color: var(--hazard); }
     &::placeholder { color: var(--ink-ghost); }
   }
-  textarea { min-height: 112px; resize: vertical; }
-  select { width: auto; max-width: 100%; }
+  :where(textarea) { min-height: 112px; resize: vertical; }
+  :where(select) { width: auto; max-width: 100%; }
   .field select, .filters select { width: 100%; }
   input[type="file"] { font: inherit; font-size: var(--text-sm); max-width: 100%; }
   input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; margin: 0; accent-color: var(--hazard); flex: none; }

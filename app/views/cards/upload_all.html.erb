@@ -1,12 +1,18 @@
-
-<p>
-<b>Upload results:</b>
-<ul>
-  <% @upload_result.each do |r| %>
-    <li><%= r[0] %> <%= r[1] %></li>
-  <% end %>
-</ul>
-</p>
-
-
-<%= link_to 'Back', cards_path %>
+<%= render PageHeaderComponent.new(eyebrow: "Access cards", eyebrow_path: cards_path, title: "Upload all cards") %>
+<% failed = @upload_result.count { |_slot, result| result != "OK" } %>
+<% if failed.zero? %>
+  <p class="msg ok">All <%= @upload_result.size %> cards are on the door board.</p>
+<% else %>
+  <p class="msg err"><%= failed %> of <%= @upload_result.size %> cards did not upload.</p>
+<% end %>
+<div class="table-wrap tall">
+  <table>
+    <thead><tr><th>Slot</th><th>Result</th></tr></thead>
+    <tbody>
+      <% @upload_result.each do |slot, result| %>
+        <tr><td class="mono"><%= slot %></td><td><%= result == "OK" ? render(ChipComponent.new("OK", tone: :ok)) : render(ChipComponent.new("Failed", tone: :err)) %></td></tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<%= link_to "All cards", cards_path, class: "btn" %>

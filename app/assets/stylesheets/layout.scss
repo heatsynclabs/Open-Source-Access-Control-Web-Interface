@@ -43,22 +43,6 @@
     &:hover { color: var(--bone); }
   }
 
-  .icon-btn {
-    width: var(--tap);
-    height: var(--tap);
-    flex: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    background: transparent;
-    color: var(--bone);
-    border: 2px solid var(--steel-hi);
-    cursor: pointer;
-    svg.lucide { width: 20px; height: 20px; vertical-align: 0; }
-    &:hover { background: var(--hazard); color: var(--tape-dark); }
-  }
-
   nav.main {
     max-width: var(--maxw);
     margin: 0 auto;

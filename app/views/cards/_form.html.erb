@@ -1,38 +1,36 @@
-<%= form_for(@card) do |f| %>
-  <% if @card.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@card.errors.count, "error") %> prohibited this card from being saved:</h2>
-
-      <ul>
-      <% @card.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+<% @card.user_id = params[:user] if params[:user].present? %>
+<%= form_for(@card, html: { class: "form" }) do |f| %>
+  <%= render FormErrorsComponent.new(@card) %>
+  <fieldset>
+    <legend>Card</legend>
+    <div class="fields">
+      <div class="field">
+        <%= f.label :user_id, "Holder" %>
+        <%= collection_select(:card, :user_id, User.all.sort_by(&:name), :id, :name, include_blank: true) %>
+      </div>
+      <div class="field">
+        <%= f.label :name, "Note" %>
+        <%= f.text_field :name %>
+        <p class="hint">What the card is: a fob, a key tag, a replacement.</p>
+      </div>
+      <div class="field">
+        <%= f.label :card_number, "Card number" %>
+        <%= f.text_field :card_number, class: "mono", autocomplete: "off" %>
+        <p class="hint">As the reader shows it, in hex.</p>
+      </div>
+      <div class="field">
+        <%= f.label :id, "Slot (DB ID)" %>
+        <%= f.number_field :id, in: 10...201 %>
+        <p class="hint">The card's slot on the door board, 10 to 200.</p>
+      </div>
+      <div class="field">
+        <%= f.label :card_permissions, "Access" %>
+        <%= f.select :card_permissions, [["Enabled", 1], ["Disabled", 255]] %>
+      </div>
     </div>
-  <% end %>
-
-  <% @card.user_id = params[:user] if params[:user].present? %>
-  <div class="field">
-    <%= f.label :user %><br />
-    <%= collection_select(:card, :user_id, User.all.sort_by(&:name), :id, :name, :include_blank => true) %>
-  </div>
-  <div class="field">
-    <%= f.label :name, "Card Note" %><br />
-    <%= f.text_field :name %>
-  </div>
-  <div class="field">
-    <%= f.label :id, "Card DB ID" %><br />
-    <%= f.number_field :id, :in => 10...201 %>
-  </div>
-  <div class="field">
-    <%= f.label :card_number, "Card Number" %><br />
-    <%= f.text_field :card_number %>
-  </div>
-  <div class="field">
-    <%= f.label :card_permissions %><br />
-    <%= f.select :card_permissions, [["Enabled",1],["Disabled",255]]  %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
+  </fieldset>
+  <div class="form-actions">
+    <%= f.submit @card.new_record? ? "Create card" : "Save card", class: "primary" %>
+    <%= link_to "Cancel", @card.new_record? ? cards_path : card_path(@card), class: "btn" %>
   </div>
 <% end %>

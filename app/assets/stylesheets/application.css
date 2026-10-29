@@ -13,4 +13,8 @@
  *= require calendar
  *= require charts
  *= require pages
+ *= require pages/people
+ *= require pages/records
+ *= require pages/money
+ *= require pages/admin
  */

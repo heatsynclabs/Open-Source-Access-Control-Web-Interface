@@ -1,5 +1,5 @@
 # One number with its label, for the row of tiles at the top of a page.
-# tone: :hero for the headline figure, :alert for something needing attention.
+# tone: :headline for the main figure, :alert for something needing attention.
 class StatTileComponent < ViewComponent::Base
   def initialize(value:, label:, sub: nil, tone: nil, href: nil)
     @value = value

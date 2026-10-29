@@ -20,6 +20,7 @@
   .note { font-size: var(--text-sm); color: var(--ash); margin: var(--space-3) 0 0; }
   .empty { color: var(--smoke); font-style: italic; margin: 0; }
   .nowrap { white-space: nowrap; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .prose { max-width: 70ch; }
   .prose > :first-child { margin-top: 0; }
   .prose img { height: auto; }
@@ -108,15 +109,17 @@
       color: var(--ash);
     }
     .sub { margin-top: var(--space-1); font-size: var(--text-xs); color: var(--smoke); }
-    &.hero { background: var(--hazard); color: var(--tape-dark); border-color: var(--tape-dark); }
-    &.hero .label, &.hero .sub { color: #3d3120; }
+    &.headline { background: var(--hazard); color: var(--tape-dark); border-color: var(--tape-dark); }
+    &.headline .label, &.headline .sub { color: #3d3120; }
     &.alert { border-color: var(--fault); }
     &.alert .num { color: var(--ink-err); }
     a.tile-link { color: inherit; text-decoration: none; }
   }
 
   // ---------------------------------------------------------- buttons
-  .btn, button, input[type="submit"], input[type="button"] {
+  // Bare buttons get the look at zero specificity (:where) so classed
+  // buttons (.toggle, .icon-btn, tabs) restyle them without a fight.
+  .btn, :where(button, input[type="submit"], input[type="button"]) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -140,7 +143,7 @@
     &:active { transform: none; box-shadow: none; }
     &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
   }
-  .btn.primary, button.primary, input[type="submit"] {
+  .btn.primary, button.primary, :where(input[type="submit"]) {
     background: var(--hazard);
     color: var(--tape-dark);
     border-color: var(--tape-dark);
@@ -159,6 +162,23 @@
   }
   // button_to renders a form; keep it inline with its neighbours.
   form.button_to { display: inline-flex; margin: 0; }
+
+  // A square button holding one icon (theme, sign out, close).
+  .icon-btn {
+    width: var(--tap);
+    height: var(--tap);
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    color: var(--bone);
+    border: 2px solid var(--steel-hi);
+    cursor: pointer;
+    svg.lucide { width: 20px; height: 20px; vertical-align: 0; }
+    &:hover { background: var(--hazard); color: var(--tape-dark); }
+  }
 
   // ---------------------------------------------------------- messages
   .msg {

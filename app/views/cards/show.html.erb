@@ -1,39 +1,33 @@
-<p>
-  <b>User:</b>
-  <%= link_to @card.user.name, @card.user unless @card.user.blank? %>
-</p>
-
-<p>
-  <b>Card Note:</b>
-  <%= @card.name %>
-</p>
-
-<p>
-  <b>Card DB ID:</b>
-  <%= @card.id %>
-</p>
-
-<p>
-  <b>Card Number:</b>
-  <%= @card.card_number %>
-</p>
-
-<p>
-  <b>Card Permissions:</b>
-  <%= if @card.card_permissions == 1 then "Enabled" else "Disabled" end %>
-</p>
-
-<% if can? :read, DoorLog %>
-<p>
-  <b>Access attempts:</b>
-<ul>
-<% @door_logs.each do |log| %>
-  <li><%= log.created_at %></li>
-<% end %>
-</ul>
-</p>
+<%= render PageHeaderComponent.new(eyebrow: "Access cards", eyebrow_path: cards_path, title: @card.user ? "#{@card.user.name}'s card" : "Card #{@card.card_number}") do |header| %>
+  <% header.with_action { link_to "Upload to door", upload_path(@card), class: "btn primary" } if can? :upload, @card %>
+  <% header.with_action { link_to "Edit", edit_card_path(@card), class: "btn" } if can? :update, @card %>
 <% end %>
 
-<%= link_to 'Upload to Door', upload_path(@card) if can? :upload, @card %>
-<% if can? :update, @card then %><%= link_to 'Edit', edit_card_path(@card) %> |<% end %>
-<%= link_to 'Back', cards_path %>
+<div class="grid side">
+  <section class="card">
+    <h2>Details</h2>
+    <dl class="facts">
+      <dt>Holder</dt><dd><%= @card.user ? link_to(@card.user.name, @card.user) : "No holder" %></dd>
+      <dt>Note</dt><dd><%= @card.name.presence || "None" %></dd>
+      <dt>Slot</dt><dd><%= @card.id %></dd>
+      <dt>Card number</dt><dd class="mono"><%= @card.card_number %></dd>
+      <dt>Access</dt><dd><%= @card.card_permissions == 1 ? render(ChipComponent.new("Enabled", tone: :ok)) : render(ChipComponent.new("Disabled")) %></dd>
+    </dl>
+  </section>
+
+  <% if can? :read, DoorLog %>
+    <section class="card">
+      <div class="card-head"><h2>Times it opened the door</h2><span class="muted small"><%= @door_logs.size %></span></div>
+      <% if @door_logs.any? %>
+        <ul class="plain">
+          <% @door_logs.first(50).each do |log| %>
+            <li><span><%= log.created_at.strftime("%a %b %-d, %Y") %></span><span class="muted small"><%= log.created_at.strftime("%-l:%M%P") %></span></li>
+          <% end %>
+        </ul>
+        <% if @door_logs.size > 50 %><p class="note">Showing the latest 50.</p><% end %>
+      <% else %>
+        <%= render EmptyStateComponent.new("This card has not opened the door.") %>
+      <% end %>
+    </section>
+  <% end %>
+</div>

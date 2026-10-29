@@ -1,5 +1,2 @@
-<h1>New card</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Back', cards_path %>
+<%= render PageHeaderComponent.new(eyebrow: "Access cards", eyebrow_path: cards_path, title: "New card") %>
+<%= render "form" %>

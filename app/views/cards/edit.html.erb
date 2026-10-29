@@ -1,6 +1,3 @@
-<h1>Editing card</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Show', @card %> |
-<%= link_to 'Back', cards_path %>
+<%= render PageHeaderComponent.new(eyebrow: "Access cards", eyebrow_path: cards_path, title: "Edit card") %>
+<%= render "form" %>
+<p class="note">Saving changes the card here only. Upload it afterwards so the door board has the change.</p>

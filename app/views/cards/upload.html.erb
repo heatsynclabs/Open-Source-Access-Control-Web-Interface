@@ -1,14 +1,10 @@
-
+<%= render PageHeaderComponent.new(eyebrow: "Access cards", eyebrow_path: cards_path, title: "Upload to the door") %>
 <% if @upload_result %>
-<p>
-  <b>Upload result:</b>
-  <%= @card.card_number %> uploaded successfully.
-</p>
+  <p class="msg ok">Card <span class="mono"><%= @card.card_number %></span> is on the door board.</p>
 <% else %>
-<p>
-  <b>Upload result:</b>
-  Error uploading <%= @card.card_number %>.
-</p>
+  <p class="msg err">The door board did not take card <span class="mono"><%= @card.card_number %></span>. Try again, or check that the board is online.</p>
 <% end %>
-
-<%= link_to 'Back', cards_path %>
+<div class="actions-row">
+  <%= link_to "Back to the card", card_path(@card), class: "btn" %>
+  <%= link_to "All cards", cards_path, class: "btn" %>
+</div>

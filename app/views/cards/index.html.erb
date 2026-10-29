@@ -1,60 +1,74 @@
-<h1>Access Cards</h1>
-
-<%= link_to 'New Card', new_card_path, :class => "btn" if can? :create, Card %>
-<%= link_to 'Upload all cards', upload_all_path, :class => "btn" if can? :upload_all, Card %>
-<%= link_to 'Door Logs', door_logs_path, :class => "btn" if can? :read, DoorLog %>
-<%= link_to 'Space API', space_api_path, :class => "btn" %>
-<%= link_to 'Remote Door Access', space_api_access_path, :class => "btn" if can? :access_doors_remotely, :door_access %>
-<p>
-<b>Most Active Card Last Month:</b> <%= @most_active_card.user.name unless @most_active_card.user.blank? %> (<%= @most_active_card.accesses_this_week unless @most_active_card.blank? %> days)
-</p>
-<p>
-<% unless @runner_up_card.blank? || @runner_up_card.user.blank? %>
-<b>Runner Up:</b> <%= @runner_up_card.user.name %> (<%= @runner_up_card.accesses_this_week %> days)
+<%= render PageHeaderComponent.new(eyebrow: "Admin", title: "Access cards", lead: "Every card the door board knows. Disable a card and upload it before deleting it: deleting here does not remove it from the board.") do |header| %>
+  <% header.with_action { link_to "New card", new_card_path, class: "btn primary" } if can? :create, Card %>
+  <% header.with_action { link_to "Upload all cards", upload_all_path, class: "btn", data: { confirm: "Send every card to the door board now?" } } if can? :upload_all, Card %>
+  <% header.with_action { link_to "Door log", door_logs_path, class: "btn" } if can? :read, DoorLog %>
+  <% header.with_action { link_to "Remote door access", space_api_access_path, class: "btn" } if can? :access_doors_remotely, :door_access %>
 <% end %>
-</p>
 
-<table class="lined-table">
-  <col />
-  <col />
-  <col class="col_highlight" />
-  <col />
-  <col class="col_highlight" />
-  <tr>
-    <th>User</th>
-    <th>Note</th>
-    <th>DB ID</th>
-    <th>Card #</th>
-    <th>Access?</th>
-    <th>Days Accessed Last Month</th>
-    <th class="actions">Actions</th>
-  </tr>
-  
-<% if !@cards.blank? %>
-  <% @cards.each do |card| %>
-  <tr>
-    <td>
-      <% if card.user.nil? %>
-        n/a
-      <% else %>
-        <%= raw(card.user.member_status_symbol) %>
-        <%= link_to card.user.name , card %>
-      <% end %>
-    </td>
-    <td><%= card.name %></td>
-    <td><%= card.id %></td>
-    <td><%= card.card_number %></td>
-    <td><%= if card.card_permissions == 1 then "Access" end %></td>
-    <td><%= card.accesses_this_week unless card.accesses_this_week < 1 %></td>
-    <td class="actions">
-      <%= link_to 'Upload', upload_path(card) if can? :upload, card %>
-      <%= link_to 'Edit', edit_card_path(card) if can? :update, card %>
-      <%= link_to 'Destroy', card, :confirm => 'Are you sure? WARNING: THIS DOES NOT REMOVE THE CARD FROM THE DOOR SYSTEM! DISABLE AND UPLOAD IT FIRST.', :method => :delete if can? :destroy, card %>
-    </td>
-  </tr>
+<% enabled = @cards.count { |card| card.card_permissions == 1 } %>
+<div class="tiles">
+  <%= render StatTileComponent.new(value: enabled, label: "Cards with access", tone: :headline) %>
+  <%= render StatTileComponent.new(value: @cards.size - enabled, label: "Disabled") %>
+  <% if @most_active_card&.user %>
+    <%= render StatTileComponent.new(value: @most_active_card.accesses_this_week, label: "Days, most active card", sub: @most_active_card.user.name) %>
   <% end %>
-<% end %>
-</table>
+  <% if @runner_up_card&.user %>
+    <%= render StatTileComponent.new(value: @runner_up_card.accesses_this_week, label: "Days, runner up", sub: @runner_up_card.user.name) %>
+  <% end %>
+</div>
 
-<br />
+<div data-controller="filter" data-filter-noun-value="cards">
+  <div class="filters">
+    <label class="search-box">
+      <%= lucide_icon "search" %>
+      <input type="search" placeholder="Holder, note or card number" aria-label="Search cards" data-filter-target="query" data-action="filter#apply">
+    </label>
+    <button type="button" class="toggle" data-filter-target="toggle" data-key="enabled" aria-pressed="false" data-action="filter#flip">With access only</button>
+  </div>
+  <p class="count-line" data-filter-target="count" aria-live="polite"></p>
 
+  <div class="table-wrap tall">
+    <table>
+      <thead>
+        <tr>
+          <th>Holder</th>
+          <th>Note</th>
+          <th class="num">DB ID</th>
+          <th>Card number</th>
+          <th>Access</th>
+          <th class="num">Days used, last month</th>
+          <th><span class="visually-hidden">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @cards.each do |card| %>
+          <tr data-filter-target="item" data-enabled="<%= card.card_permissions == 1 %>"
+              data-filter-text="<%= [card.user&.name, card.name, card.card_number].compact.join(' ') %>">
+            <td>
+              <% if card.user %>
+                <%= link_to card, class: "person-cell" do %><%= person_avatar(card.user, 28) %><span><%= card.user.name %></span><% end %>
+                <%= render MemberBadgeComponent.new(card.user) %>
+              <% else %>
+                <span class="muted">No holder</span>
+              <% end %>
+            </td>
+            <td class="wrap"><%= card.name %></td>
+            <td class="num"><%= card.id %></td>
+            <td class="mono"><%= card.card_number %></td>
+            <td><%= card.card_permissions == 1 ? render(ChipComponent.new("Access", tone: :ok)) : render(ChipComponent.new("Disabled")) %></td>
+            <td class="num"><%= card.accesses_this_week if card.accesses_this_week.to_i > 0 %></td>
+            <td class="actions">
+              <div class="actions-row">
+                <%= link_to "Upload", upload_path(card), class: "btn small" if can? :upload, card %>
+                <%= link_to "Edit", edit_card_path(card), class: "btn small" if can? :update, card %>
+                <%= link_to "Delete", card, method: :delete, class: "btn small danger",
+                      data: { confirm: "Delete this card? This does not remove it from the door board. Disable and upload it first." } if can? :destroy, card %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <p class="empty" data-filter-target="none" hidden>No card matches.</p>
+</div>
