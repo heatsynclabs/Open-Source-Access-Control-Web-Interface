@@ -20,6 +20,13 @@ function applyTheme() {
   Chart.defaults.plugins.legend.labels.boxWidth = 12
 }
 
+// Series colours in a fixed order, mid-tone so they read on both the paper
+// and the dark ground. The first is the GANTRY amber; one-series charts use it.
+window.Chartkick.options = {
+  colors: ["#c98714", "#4f86b8", "#3f9b74", "#8a6cc4", "#c2542c", "#8c8372"],
+  thousands: ",",
+}
+
 // Charts that drew before this ran pick up the theme on a redraw.
 applyTheme()
 window.Chartkick.eachChart((chart) => chart.redraw())
