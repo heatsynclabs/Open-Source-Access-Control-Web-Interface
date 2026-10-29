@@ -1,3 +1,60 @@
-// Chart cards and the colours charts read.
+// Chart cards and the colours charts read (charts.js reads --chart-grid).
 @layer charts {
+  :root, :root[data-theme="light"] { --chart-grid: rgb(28 24 18 / 0.12); }
+  :root[data-theme="dark"] { --chart-grid: rgb(236 227 211 / 0.12); }
+
+  .chart-card {
+    h3 { margin-bottom: var(--space-1); }
+    .chart-note { margin: 0 0 var(--space-3); }
+    .chart-body { margin-top: var(--space-3); min-height: 200px; }
+  }
+  .chart-data {
+    margin-top: var(--space-3);
+    summary { cursor: pointer; color: var(--ash); font-size: var(--text-sm); }
+    .table-wrap { margin: var(--space-3) 0 0; max-height: 320px; }
+  }
+
+  // A 7 x 24 grid of door use: each cell is the amber mixed into the card at
+  // the cell's share of the busiest hour.
+  .heatmap {
+    display: grid;
+    grid-template-columns: 3rem repeat(24, minmax(0, 1fr));
+    gap: 2px;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    color: var(--ash);
+    .cell {
+      aspect-ratio: 1;
+      background: color-mix(in srgb, var(--hazard) calc(var(--v) * 100%), var(--slab-hi));
+    }
+    .row-label { align-self: center; text-transform: uppercase; letter-spacing: var(--tracking-wide); }
+    .hour { text-align: center; }
+  }
+  .heatmap-scale { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-3); font-size: var(--text-xs); color: var(--ash); }
+  .heatmap-scale i { width: 80px; height: 10px; background: linear-gradient(90deg, var(--slab-hi), var(--hazard)); }
+
+  // Horizontal bars for ranked lists (top certifications, recurring events).
+  .bar-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  .bar-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-1) var(--space-3); font-size: var(--text-sm); }
+  .bar-list .bar { grid-column: 1 / -1; height: 8px; background: var(--slab-hi); }
+  .bar-list .bar span { display: block; height: 100%; width: calc(var(--v) * 100%); background: var(--cat, var(--hazard)); }
+  .bar-list .value { font-variant-numeric: tabular-nums; color: var(--ash); }
+
+  // The membership funnel: one bar per step, widths relative to the first.
+  .funnel { display: grid; gap: var(--space-3); }
+  .funnel-step { display: grid; grid-template-columns: 11rem 1fr 4rem; gap: var(--space-3); align-items: center; font-size: var(--text-sm); }
+  .funnel-step .bar { height: 22px; background: var(--slab-hi); }
+  .funnel-step .bar span { display: block; height: 100%; width: calc(var(--v) * 100%); background: var(--hazard); }
+  .funnel-step .value { text-align: right; font-variant-numeric: tabular-nums; }
+  @container (max-width: 480px) { .funnel-step { grid-template-columns: 1fr 4rem; .bar { grid-column: 1 / -1; grid-row: 2; } } }
+
+  // Analytics page rhythm: cards and grids in a section sit a gap apart.
+  .analytics {
+    .grid + .grid, .grid + .card, .card + .grid { margin-top: var(--space-6); }
+    .funnel, .bar-list, .heatmap, .table-wrap.short { margin-top: var(--space-4); }
+    .table-wrap.short { max-height: 320px; }
+  }
+
+  .range-picker { margin-bottom: var(--space-6); }
+  .section-head { margin: var(--space-12) 0 var(--space-4); padding-top: var(--space-6); border-top: 2px solid var(--steel-hi); h2 { margin: 0; } }
 }
