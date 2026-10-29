@@ -6,20 +6,24 @@
 <% resources = @resources.sort_by { |resource| [resource.resource_category_name.to_s, resource.name.to_s.downcase] } %>
 <% categories = resources.filter_map(&:resource_category_name).uniq %>
 
+<% if @featured_resource %>
+  <section class="featured-tool">
+    <p class="eyebrow">Featured</p>
+    <div class="tool-grid"><%= render @featured_resource %></div>
+  </section>
+<% end %>
+
 <% if resources.empty? %>
   <%= render EmptyStateComponent.new("No tools listed yet.") %>
 <% else %>
   <div data-controller="filter" data-filter-noun-value="tools">
     <div class="filters">
-      <label class="search-box">
-        <%= lucide_icon "search" %>
-        <input type="search" placeholder="Tool, serial, specs or owner" aria-label="Search tools" data-filter-target="query" data-action="filter#apply">
-      </label>
+      <%= render "shared/search", placeholder: "Tool, serial, specs or owner", label: "Search tools" %>
       <select aria-label="Category" data-filter-target="select" data-key="category" data-action="filter#apply">
         <option value="">Every category</option>
         <% categories.each do |name| %><option><%= name %></option><% end %>
       </select>
-      <button type="button" class="toggle" data-filter-target="toggle" data-key="here" aria-pressed="true" data-action="filter#flip">Hide gone</button>
+      <button type="button" class="toggle" data-filter-target="toggle" data-key="here" aria-pressed="false" data-action="filter#flip">Hide gone</button>
     </div>
     <p class="count-line" data-filter-target="count" aria-live="polite"></p>
 

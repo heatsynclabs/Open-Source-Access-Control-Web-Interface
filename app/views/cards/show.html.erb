@@ -9,7 +9,7 @@
     <dl class="facts">
       <dt>Holder</dt><dd><%= @card.user ? link_to(@card.user.name, @card.user) : "No holder" %></dd>
       <dt>Note</dt><dd><%= @card.name.presence || "None" %></dd>
-      <dt>Slot</dt><dd><%= @card.id %></dd>
+      <dt>DB ID (slot)</dt><dd><%= @card.id %></dd>
       <dt>Card number</dt><dd class="mono"><%= @card.card_number %></dd>
       <dt>Access</dt><dd><%= @card.card_permissions == 1 ? render(ChipComponent.new("Enabled", tone: :ok)) : render(ChipComponent.new("Disabled")) %></dd>
     </dl>
@@ -19,12 +19,11 @@
     <section class="card">
       <div class="card-head"><h2>Times it opened the door</h2><span class="muted small"><%= @door_logs.size %></span></div>
       <% if @door_logs.any? %>
-        <ul class="plain">
-          <% @door_logs.first(50).each do |log| %>
+        <ul class="plain scroll-box">
+          <% @door_logs.each do |log| %>
             <li><span><%= log.created_at.strftime("%a %b %-d, %Y") %></span><span class="muted small"><%= log.created_at.strftime("%-l:%M%P") %></span></li>
           <% end %>
         </ul>
-        <% if @door_logs.size > 50 %><p class="note">Showing the latest 50.</p><% end %>
       <% else %>
         <%= render EmptyStateComponent.new("This card has not opened the door.") %>
       <% end %>

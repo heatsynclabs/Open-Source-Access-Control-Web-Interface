@@ -7,7 +7,7 @@
   <dl class="facts">
     <dt>Member</dt>
     <dd><%= @user_certification.user ? link_to(@user_certification.user.name, @user_certification.user) : @user_certification.user_name %></dd>
-    <dt>Certified on</dt>
+    <dt>Certification</dt>
     <dd><%= link_to @user_certification.certification.name, @user_certification.certification %></dd>
     <dt>Granted</dt>
     <dd>

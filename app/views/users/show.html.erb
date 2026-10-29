@@ -25,13 +25,18 @@
 
 <div class="tiles">
   <% if @user.member_level.to_i >= 25 %>
-    <%= render StatTileComponent.new(value: @user.payment_status ? "Paid up" : "Overdue", label: @user.member_level_string, tone: (@user.payment_status ? :headline : :alert)) %>
+    <%# Only admins get the alert colour; other members see the same plain fact the old coin icon showed. %>
+    <%= render StatTileComponent.new(value: @user.payment_status ? "Paid up" : "Overdue", label: @user.member_level_string, tone: (@user.payment_status ? :headline : (:alert if admin))) %>
   <% else %>
     <%= render StatTileComponent.new(value: @user.member_level_string.presence || "None", label: "Membership level") %>
   <% end %>
-  <%= render StatTileComponent.new(value: @user.certifications.size, label: "Certifications") %>
-  <%= render StatTileComponent.new(value: @user.cards.size, label: "Cards") %>
-  <%= render StatTileComponent.new(value: @user.created_at.year, label: "Joined", sub: @user.created_at.strftime("%B %-d, %Y")) %>
+  <%= render StatTileComponent.new(value: @user.certifications.size, label: "Certification".pluralize(@user.certifications.size)) %>
+  <% if admin %>
+    <%= render StatTileComponent.new(value: @user.cards.size, label: "Card".pluralize(@user.cards.size)) %>
+    <%= render StatTileComponent.new(value: @user.created_at.year, label: "Joined", sub: @user.created_at.strftime("%B %-d, %Y")) %>
+  <% else %>
+    <%= render StatTileComponent.new(value: @user.cards.any? ? "Yes" : "No", label: "Has a card") %>
+  <% end %>
 </div>
 
 <div class="grid side">
@@ -62,14 +67,7 @@
         <%= link_to "Add", new_resource_path, class: "btn small" if can? :create, Resource %>
       </div>
       <% if @user.resources.any? %>
-        <div class="tool-grid">
-          <% @user.resources.each do |resource| %>
-            <%= link_to resource, class: "tool-card #{'gone' if resource.disposed_at}" do %>
-              <span class="pic"><%= resource.picture? ? image_tag(resource.picture.url(:thumb), alt: "") : lucide_icon("wrench") %></span>
-              <span class="body"><span class="name"><%= resource.name %></span></span>
-            <% end %>
-          <% end %>
-        </div>
+        <div class="tool-grid"><%= render @user.resources %></div>
       <% else %>
         <%= render EmptyStateComponent.new("Nothing listed.") %>
       <% end %>
@@ -111,7 +109,7 @@
         <dt>Instructor</dt><dd><%= @user.instructor? ? "Yes" : "No" %></dd>
         <% unless admin %>
           <dt>Last payment</dt>
-          <dd><% months = @user.delinquency %><%= months < 30 ? "Less than a month ago" : "#{months / 30} months ago" %></dd>
+          <dd><% days = @user.delinquency %><%= days < 30 ? "Less than a month ago" : "#{days / 30} months ago" %></dd>
         <% end %>
       </dl>
     </section>

@@ -1,5 +1,4 @@
 <% signing_up = ['new', 'create'].include?(params[:action]) %>
-<% level_options = [[nil], ["None", 0], ["Unable", 1], ["Volunteer", 10], ["Associate ($25)", 25], ["Basic ($50)", 50], ["Plus ($100)", 100]] %>
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: (html || {}).merge(class: "form")) do |f| %>
   <%= render FormErrorsComponent.new(resource) %>
   <p class="hint">Fields marked * go out on the lab's public mailing list when you join.</p>
@@ -9,8 +8,8 @@
     <div class="fields">
       <div class="field">
         <%= f.label :member_level, "Membership level" %>
-        <%= f.select :member_level, level_options %>
-        <p class="hint">Associate $25, Basic $50 or Plus $100 a month. Volunteer and unable-to-pay levels are agreed with the board.</p>
+        <%= f.select :member_level, member_level_options %>
+        <p class="hint">Associate $25, Basic $50 or Plus $100 a month.</p>
       </div>
       <div class="field">
         <%= render partial: "/users/payment_methods", locals: { g: f } %>

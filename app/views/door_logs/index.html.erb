@@ -1,27 +1,20 @@
 <%= render PageHeaderComponent.new(eyebrow: "Admin", title: "Door log", lead: "What the door board recorded: cards read, granted and denied, remote commands, and the lock state it reports every few minutes.") do |header| %>
-  <% header.with_action { link_to "Read the board now", download_path, class: "btn", data: { confirm: "Read the door board's log now? The board clears its log after it is read." } } %>
+  <% header.with_action { link_to "Download door logs", download_path, class: "btn", data: { confirm: "Read the door board's log now? The board clears its log after it is read." } } %>
   <% header.with_action { link_to "Access cards", cards_path, class: "btn" } if can? :manage, Card %>
 <% end %>
 
-<%= form_tag(nil, method: :get, id: "doorLogFilters", class: "inline-form door-log-filters") do %>
+<%= form_tag(nil, method: :get, id: "doorLogFilters", class: "inline-form", data: { controller: "autosubmit" }) do %>
   <div class="field">
     <%= label_tag :type, "Show" %>
-    <%= select_tag :type, options_for_select(DoorLog::TYPE_OPTIONS, @door_log_type) %>
+    <%= select_tag :type, options_for_select(DoorLog::TYPE_OPTIONS, @door_log_type), data: { action: "autosubmit#submit" } %>
   </div>
-  <div class="field">
-    <label for="start">Lock chart from</label>
-    <input id="start" name="start" type="date" value="<%= @start_date.to_date.to_s %>">
-  </div>
-  <div class="field">
-    <label for="end">To</label>
-    <input id="end" name="end" type="date" value="<%= @end_date.to_date.to_s %>">
-  </div>
+  <%= render "shared/date_range", from_label: "Lock chart from" %>
   <%= submit_tag "Update", name: nil, class: "primary" %>
 <% end %>
 
 <%# The controller hands lock history as [milliseconds, 1 when unlocked] pairs per door. %>
 <% lock_series = [["Front door", @door_log_graph[0]], ["Rear door", @door_log_graph[1]]].map do |name, points| %>
-  <% { name: name, data: points.map { |ms, open| [Time.zone.at(ms / 1000), open] } } %>
+  <% { name: name, data: points.map { |ms, open| [time_from_js(ms), open] } } %>
 <% end %>
 <%= render ChartCardComponent.new(title: "Doors unlocked",
       note: "From #{@start_date.to_date.strftime('%b %-d')} to #{@end_date.to_date.strftime('%b %-d, %Y')}. Up means unlocked.") do %>
@@ -62,51 +55,12 @@ Card numbers are stored in two parts: cardnum = (R + (r * 32767)), shown in hex.
   <table class="door-log">
     <thead><tr><th>When</th><th>Key</th><th class="num">Data</th><th>What happened</th></tr></thead>
     <tbody>
-      <% divided_tmp = nil %>
-      <% @door_logs.each do |door_log| %>
-        <%
-          meaning = nil
-          tone = nil
-          icon = nil
-
-          # Remote commands carry the member's id as data (468 is the automatic lock).
-          if door_log.key.start_with?("rem_", "api_rem_")
-            if door_log.data.present? && door_log.data.to_s.match(/\A\d+\z/)
-              if door_log.data.to_i == 468
-                meaning = "Automatic locking"
-                tone = "tone-quiet"
-              else
-                user = User.find_by_id(door_log.data)
-                access_source, _access_class, access_action = extract_access_info(door_log)
-                if user && access_source && access_action
-                  meaning = "Granted #{access_source}: #{user.name} (#{access_action})"
-                  icon = access_source_icon(access_source)
-                  tone = "tone-info"
-                end
-              end
-            else
-              Rails.logger.warn "###### Invalid or missing user ID: #{door_log.data}"
-            end
-          end
-
-          # Card events arrive as two rows: the lower-case half first, then the upper-case one.
-          if %w[r d g].include?(door_log.key)
-            divided_tmp = door_log.data.to_i
-          elsif %w[R D G].include?(door_log.key) && !divided_tmp.nil?
-            card_number = (door_log.data.to_i + (divided_tmp * 32767)).to_s(16)
-            card = Card.where(["lower(card_number) = ?", card_number.downcase]).first
-            verb = { "R" => "Read", "D" => "Denied", "G" => "Granted" }[door_log.key]
-            meaning = "#{verb} card #{card_number}#{" (#{card.user.name})" if card&.user}"
-            tone = { "G" => "tone-ok", "D" => "tone-err" }[door_log.key]
-          else
-            divided_tmp = nil
-          end
-        %>
-        <tr class="<%= tone %>">
-          <td><%= door_log.created_at.strftime("%a %b %-d, %Y %-l:%M:%S%P") %></td>
-          <td class="mono"><%= door_log.key %></td>
-          <td class="num mono"><%= door_log.data %></td>
-          <td class="wrap"><% if icon %><%= lucide_icon icon %> <% end %><%= meaning %></td>
+      <% door_log_lines(@door_logs).each do |line| %>
+        <tr class="<%= line.tone %>">
+          <td class="nowrap"><%= line.log.created_at.strftime("%a %b %-d, %Y %-l:%M:%S%P") %></td>
+          <td class="mono"><%= line.log.key %></td>
+          <td class="num mono"><%= line.log.data %></td>
+          <td><% if line.icon %><%= lucide_icon line.icon %> <% end %><%= line.meaning %></td>
         </tr>
       <% end %>
     </tbody>

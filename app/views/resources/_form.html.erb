@@ -12,7 +12,7 @@
         <%= select(:resource, :resource_category_id, options_from_collection_for_select(ResourceCategory.all.sort_by(&:name), :id, :name, @resource.resource_category_id), {}) %>
       </div>
       <div class="field">
-        <%= f.label :status, "Where it lives" %>
+        <%= f.label :status, "Status / location" %>
         <%= f.text_field :status %>
         <p class="hint">A room, a shelf, or its condition.</p>
       </div>

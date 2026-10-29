@@ -3,7 +3,7 @@
   payment_methods = [[nil], ["PayPal"], ["Dwolla"], ["Bill Pay", "BillPay"], ["Check"], ["Cash"], ["Other"]]
   payment_instructions = {
     "PayPal" => "Set up a monthly recurring payment to hslfinances@gmail.com, or use the button on your profile.",
-    "Dwolla" => "Dwolla no longer takes payments. Pick another way, or ask the treasurer.",
+    "Dwolla" => "The Dwolla button no longer works. Pick another way, or ask the treasurer.",
     "Bill Pay" => "Have your bank send a monthly check to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201.",
     "Check" => "Mail it to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201, or put it in the drop safe at the lab with a deposit slip attached, each month.",
     "Cash" => "Put it in the drop safe at the lab with a deposit slip attached, each month.",
@@ -13,7 +13,8 @@
 <%= g.label :payment_method, "Pays by" %>
 <%= g.select :payment_method, payment_methods %>
 <% if params[:action] != "new" %><p class="hint">After changing this, update your payment service too. It does not change by itself.</p><% end %>
-<details class="hint pay-ways">
+<%# Open when signing up, where people choose; folded on the profile. %>
+<details class="hint pay-ways" <%= "open" if params[:action] == "new" %>>
   <summary>How each way works</summary>
   <dl class="facts">
     <% payment_instructions.each do |method, text| %><dt><%= method %></dt><dd><%= text %></dd><% end %>

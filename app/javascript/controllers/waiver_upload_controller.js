@@ -39,6 +39,7 @@ export default class extends Controller {
 
   async selectMember() {
     const name = `${this.field("contract_first_name").value} ${this.field("contract_last_name").value}`.trim()
+    if (!name) return
     const select = this.field("contract_user_id")
     const option = [...select.options].find((candidate) => candidate.text === name)
     if (!option) return

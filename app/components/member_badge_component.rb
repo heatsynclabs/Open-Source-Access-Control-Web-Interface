@@ -39,10 +39,6 @@ class MemberBadgeComponent < ViewComponent::Base
     return "Volunteer" if level.between?(10, 24)
     return "No payments recorded" if @user.payments_count.zero?
     return "#{@user.member_level_string}, paid up" if paying_level? && @user.payment_status
-    "Last payment #{months_since_last_payment} months ago"
-  end
-
-  def months_since_last_payment
-    (Date.today - @user.last_payment_date).to_i / 30
+    "Last payment #{@user.delinquency / 30} months ago"
   end
 end

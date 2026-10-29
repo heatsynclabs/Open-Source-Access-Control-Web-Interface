@@ -7,7 +7,7 @@
 <% end %>
 <div class="table-wrap tall">
   <table>
-    <thead><tr><th>Slot</th><th>Result</th></tr></thead>
+    <thead><tr><th>DB ID</th><th>Result</th></tr></thead>
     <tbody>
       <% @upload_result.each do |slot, result| %>
         <tr><td class="mono"><%= slot %></td><td><%= result == "OK" ? render(ChipComponent.new("OK", tone: :ok)) : render(ChipComponent.new("Failed", tone: :err)) %></td></tr>

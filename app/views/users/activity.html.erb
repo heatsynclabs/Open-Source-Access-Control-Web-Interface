@@ -1,14 +1,16 @@
+<%# Hidden members stay out of these lists, as they always have, except for admins. %>
+<% visible = ->(people) { people = people.includes(:payments, :cards).to_a; current_user.admin? ? people : people.reject(&:hidden?) } %>
+<% new_users, cardless_users, user_logins, zombie_members = [@new_users, @cardless_users, @user_logins, @zombie_members].map(&visible) %>
 <%= render PageHeaderComponent.new(eyebrow: "People", eyebrow_path: users_path, title: "Onboarding and activity") %>
 <%= render "tabs", current: :activity %>
 
 <% missing = render(ChipComponent.new("None", tone: :err)) %>
-<% ago = ->(time) { "#{distance_of_time_in_words(DateTime.now, time)} ago" } %>
 
 <div class="tiles">
-  <%= render StatTileComponent.new(value: @new_users.size, label: "New in 3 months", href: "#new_users") %>
-  <%= render StatTileComponent.new(value: @cardless_users.size, label: "Basic and up, no card", href: "#members_without_cards") %>
-  <%= render StatTileComponent.new(value: @user_logins.size, label: "Signed in, 2 months", href: "#logins") %>
-  <%= render StatTileComponent.new(value: @zombie_members.size, label: "Members never signed in", href: "#zombies") %>
+  <%= render StatTileComponent.new(value: new_users.size, label: "New in 3 months", href: "#new_users") %>
+  <%= render StatTileComponent.new(value: cardless_users.size, label: "Basic and up, no card", href: "#members_without_cards") %>
+  <%= render StatTileComponent.new(value: user_logins.size, label: "Signed in, 2 months", href: "#logins") %>
+  <%= render StatTileComponent.new(value: zombie_members.size, label: "Members never signed in", href: "#zombies") %>
 </div>
 
 <section class="activity-section" id="new_users">
@@ -17,20 +19,20 @@
     <table>
       <thead><tr><th>Name</th><th>Level</th><th>Account made</th><th>Waiver</th><th>Orientation</th><th>Last payment</th></tr></thead>
       <tbody>
-        <% @new_users.sort_by(&:created_at).reverse.each do |user| %>
+        <% new_users.sort_by(&:created_at).reverse.each do |user| %>
           <tr class="<%= 'tone-quiet' if user.hidden? %>">
             <td><%= link_to user.name, user %> <%= render ChipComponent.new("Hidden") if user.hidden? %></td>
             <td><%= user.member_level_string %></td>
-            <td><%= user.created_at.present? ? ago.(user.created_at.to_date) : missing %></td>
-            <td><%= user.waiver.present? ? ago.(user.waiver.to_date) : missing %></td>
-            <td><%= user.orientation.present? ? ago.(user.orientation.to_date) : missing %></td>
-            <td><%= user.payments.present? ? "#{distance_of_time_in_words(Date.today, user.payments.maximum(:date))} ago" : missing %></td>
+            <td><%= user.created_at.present? ? "#{time_ago_in_words(user.created_at.to_date)} ago" : missing %></td>
+            <td><%= user.waiver.present? ? "#{time_ago_in_words(user.waiver.to_date)} ago" : missing %></td>
+            <td><%= user.orientation.present? ? "#{time_ago_in_words(user.orientation.to_date)} ago" : missing %></td>
+            <td><%= user.last_payment_date ? "#{distance_of_time_in_words(Date.today, user.last_payment_date)} ago" : missing %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
   </div>
-  <% if @new_users.blank? %><%= render EmptyStateComponent.new("Nobody new in the last three months.") %><% end %>
+  <% if new_users.blank? %><%= render EmptyStateComponent.new("Nobody new in the last three months.") %><% end %>
 </section>
 
 <section class="activity-section" id="members_without_cards">
@@ -39,14 +41,13 @@
     <table>
       <thead><tr><th>Name</th><th>Account made</th><th>Level</th><th>Last payment</th><th>Card</th></tr></thead>
       <tbody>
-        <% @cardless_users.sort_by(&:created_at).reverse.each do |user| %>
+        <% cardless_users.sort_by(&:created_at).reverse.each do |user| %>
           <tr class="<%= 'tone-quiet' if user.hidden? %>">
             <td><%= link_to user.name, user %> <%= render ChipComponent.new("Hidden") if user.hidden? %></td>
-            <td><%= ago.(user.created_at) %></td>
+            <td><%= "#{time_ago_in_words(user.created_at)} ago" %></td>
             <td><%= user.member_level_string %></td>
             <td>
-              <% if user.payments.present? %>
-                <% last_payment = user.payments.maximum(:date) %>
+              <% if (last_payment = user.last_payment_date) %>
                 <%= render ChipComponent.new("#{distance_of_time_in_words(Date.today, last_payment)} ago", tone: (Date.today - last_payment > 90 ? :err : :ok)) %>
               <% else %>
                 <%= missing %>
@@ -58,7 +59,7 @@
       </tbody>
     </table>
   </div>
-  <% if @cardless_users.blank? %><%= render EmptyStateComponent.new("Every Basic and Plus member has a card.") %><% end %>
+  <% if cardless_users.blank? %><%= render EmptyStateComponent.new("Every Basic and Plus member has a card.") %><% end %>
 </section>
 
 <section class="activity-section" id="logins">
@@ -67,19 +68,19 @@
     <table>
       <thead><tr><th>Name</th><th>This sign in</th><th>Sign in before</th><th class="num">Sign ins</th><th>Account made</th></tr></thead>
       <tbody>
-        <% @user_logins.sort_by(&:current_sign_in_at).reverse.each do |user| %>
+        <% user_logins.sort_by(&:current_sign_in_at).reverse.each do |user| %>
           <tr class="<%= 'tone-quiet' if user.hidden? %>">
             <td><%= link_to user.name, user %> <%= render ChipComponent.new("Hidden") if user.hidden? %></td>
-            <td><%= ago.(user.current_sign_in_at) %></td>
-            <td><%= ago.(user.last_sign_in_at) if user.last_sign_in_at && user.last_sign_in_at != user.current_sign_in_at %></td>
+            <td><%= "#{time_ago_in_words(user.current_sign_in_at)} ago" %></td>
+            <td><%= "#{time_ago_in_words(user.last_sign_in_at)} ago" if user.last_sign_in_at && user.last_sign_in_at != user.current_sign_in_at %></td>
             <td class="num"><%= user.sign_in_count %></td>
-            <td><%= ago.(user.created_at) %></td>
+            <td><%= "#{time_ago_in_words(user.created_at)} ago" %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
   </div>
-  <% if @user_logins.blank? %><%= render EmptyStateComponent.new("Nobody has signed in more than once lately.") %><% end %>
+  <% if user_logins.blank? %><%= render EmptyStateComponent.new("Nobody has signed in more than once lately.") %><% end %>
 </section>
 
 <section class="activity-section" id="zombies">
@@ -89,15 +90,15 @@
     <table>
       <thead><tr><th>Name</th><th>Level</th><th>Account made</th></tr></thead>
       <tbody>
-        <% @zombie_members.sort_by(&:created_at).reverse.each do |user| %>
+        <% zombie_members.sort_by(&:created_at).reverse.each do |user| %>
           <tr class="<%= 'tone-quiet' if user.hidden? %>">
             <td><%= link_to user.name, user %> <%= render ChipComponent.new("Hidden") if user.hidden? %></td>
             <td><%= user.member_level_string %></td>
-            <td><%= ago.(user.created_at) %></td>
+            <td><%= "#{time_ago_in_words(user.created_at)} ago" %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
   </div>
-  <% if @zombie_members.blank? %><%= render EmptyStateComponent.new("Every member has signed in at least once.") %><% end %>
+  <% if zombie_members.blank? %><%= render EmptyStateComponent.new("Every member has signed in at least once.") %><% end %>
 </section>

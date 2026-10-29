@@ -5,8 +5,11 @@ class ResourceCategory < ActiveRecord::Base
 
   private
 
+  # A category that still holds tools stays. Since Rails 5 a callback must
+  # throw :abort to stop the delete (returning false no longer does).
   def has_resources?
-    errors.add(:base, "Cannot delete category with associated resources") unless resources.count == 0
-    errors.blank? #return false, to not destroy the element, otherwise, it will delete.
+    return if resources.count == 0
+    errors.add(:base, "Cannot delete category with associated resources")
+    throw :abort
   end
 end

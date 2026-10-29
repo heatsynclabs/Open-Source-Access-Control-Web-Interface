@@ -1,4 +1,4 @@
-<%= render PageHeaderComponent.new(eyebrow: "Admin", title: "Access cards", lead: "Every card the door board knows. Disable a card and upload it before deleting it: deleting here does not remove it from the board.") do |header| %>
+<%= render PageHeaderComponent.new(eyebrow: (can?(:manage, Card) ? "Admin" : "Your account"), title: "Access cards", lead: "Every card the door board knows. Disable a card and upload it before deleting it: deleting here does not remove it from the board.") do |header| %>
   <% header.with_action { link_to "New card", new_card_path, class: "btn primary" } if can? :create, Card %>
   <% header.with_action { link_to "Upload all cards", upload_all_path, class: "btn", data: { confirm: "Send every card to the door board now?" } } if can? :upload_all, Card %>
   <% header.with_action { link_to "Door log", door_logs_path, class: "btn" } if can? :read, DoorLog %>
@@ -19,10 +19,7 @@
 
 <div data-controller="filter" data-filter-noun-value="cards">
   <div class="filters">
-    <label class="search-box">
-      <%= lucide_icon "search" %>
-      <input type="search" placeholder="Holder, note or card number" aria-label="Search cards" data-filter-target="query" data-action="filter#apply">
-    </label>
+    <%= render "shared/search", placeholder: "Holder, note or card number", label: "Search cards" %>
     <button type="button" class="toggle" data-filter-target="toggle" data-key="enabled" aria-pressed="false" data-action="filter#flip">With access only</button>
   </div>
   <p class="count-line" data-filter-target="count" aria-live="polite"></p>
@@ -46,7 +43,7 @@
               data-filter-text="<%= [card.user&.name, card.name, card.card_number].compact.join(' ') %>">
             <td>
               <% if card.user %>
-                <%= link_to card, class: "person-cell" do %><%= person_avatar(card.user, 28) %><span><%= card.user.name %></span><% end %>
+                <%= person_link(card.user, size: 28, to: card) %>
                 <%= render MemberBadgeComponent.new(card.user) %>
               <% else %>
                 <span class="muted">No holder</span>

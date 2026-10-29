@@ -1,7 +1,7 @@
-<%= render PageHeaderComponent.new(eyebrow: "Treasurer", title: "Payments", lead: "Dues recorded for members, by hand or from PayPal. The charts count every payment; the table shows the latest.") do |header| %>
-  <% header.with_action { link_to "Record a payment", new_payment_path, class: "btn primary" } %>
-  <% header.with_action { link_to "PayPal CSV", paypal_csvs_path, class: "btn" } %>
-  <% header.with_action { link_to "IPN", ipns_path, class: "btn" } %>
+<%= render PageHeaderComponent.new(eyebrow: (can?(:create, Payment) ? "Treasurer" : "Your account"), title: "Payments", lead: "Dues recorded for members, by hand or from PayPal. The charts count every payment; the table shows the latest.") do |header| %>
+  <% header.with_action { link_to "Record a payment", new_payment_path, class: "btn primary" } if can? :create, Payment %>
+  <% header.with_action { link_to "PayPal CSV", paypal_csvs_path, class: "btn" } if can? :manage, PaypalCsv %>
+  <% header.with_action { link_to "IPN", ipns_path, class: "btn" } if can? :manage, Ipn %>
 <% end %>
 
 <%
@@ -12,13 +12,14 @@
   basic = by_month.call(@graph[:basic])
   associate = by_month.call(@graph[:associate])
   members = by_month.call(@graph[:members])
+  total = by_month.call(@graph[:total])
   month_label = ->(date) { date.strftime("%b %Y") }
 %>
 
 <% if members.any? %>
   <div class="tiles">
     <%= render StatTileComponent.new(value: members.last.last, label: "Paying members, #{month_label.call(members.last.first)}", tone: :headline, sub: ("This month is still filling in" if members.last.first == Date.current.beginning_of_month)) %>
-    <%= render StatTileComponent.new(value: number_to_currency(basic.last.last + associate.last.last, precision: 0), label: "Basic and Associate dues, #{month_label.call(members.last.first)}") %>
+    <%= render StatTileComponent.new(value: number_to_currency(total.last.last, precision: 0), label: "Dues, #{month_label.call(total.last.first)}") %>
     <% if members.size > 1 %>
       <%= render StatTileComponent.new(value: members[-2].last, label: "Paying members, #{month_label.call(members[-2].first)}") %>
     <% end %>
@@ -29,7 +30,7 @@
           rows: basic.zip(associate).map { |(month, b), (_m, a)| [month_label.call(month), [b, a]] }.reverse,
           columns: ["Month", "Basic", "Associate"]) do %>
       <%= column_chart [{ name: "Basic", data: basic }, { name: "Associate", data: associate }],
-            stacked: true, prefix: "$", thousands: ",", height: "260px" %>
+            stacked: true, prefix: "$", height: "260px" %>
     <% end %>
     <%= render ChartCardComponent.new(title: "Paying members by month", note: "Payments at $25, $50 or $100 in each month.",
           rows: members.map { |month, count| [month_label.call(month), count] }.reverse,
@@ -50,10 +51,7 @@
   </div>
   <div data-controller="filter" data-filter-noun-value="payments">
     <div class="filters">
-      <label class="search-box">
-        <%= lucide_icon "search" %>
-        <input type="search" placeholder="Member, payee or date" aria-label="Search payments" data-filter-target="query" data-action="filter#apply">
-      </label>
+      <%= render "shared/search", placeholder: "Member, payee or date", label: "Search payments" %>
     </div>
     <p class="count-line" data-filter-target="count" aria-live="polite"></p>
     <div class="table-wrap tall">
@@ -66,7 +64,7 @@
             <tr data-filter-target="item" data-filter-text="<%= [payment.user&.name, payment.user&.payee, payment.date].compact.join(' ') %>">
               <td>
                 <% if payment.user %>
-                  <%= link_to payment.user, class: "person-cell" do %><%= person_avatar(payment.user, 28) %><span><%= payment.user.name %></span><% end %>
+                  <%= person_link(payment.user, size: 28) %>
                 <% else %>
                   <span class="muted">No member</span>
                 <% end %>

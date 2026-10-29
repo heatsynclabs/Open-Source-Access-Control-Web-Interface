@@ -16,7 +16,7 @@
 
 <% if can?(:read_details, Mac) && @mac_time_start_date.present? %>
   <div class="tiles">
-    <%= render StatTileComponent.new(value: @active_macs.size, label: "Here now", tone: :headline) %>
+    <%= render StatTileComponent.new(value: @active_macs.length, label: "Here now", tone: :headline) %>
     <% [[@most_active_mac, @most_active, "Most active"], [@runner_up_mac, @runner_up, "Runner up"]].each do |mac, entry, label| %>
       <% next unless mac && entry %>
       <%= render StatTileComponent.new(value: "#{(entry.last[:time] / 1.hour).round} hrs",
@@ -28,7 +28,7 @@
 
 <div class="grid side">
   <section class="card">
-    <div class="card-head"><h2>Here now</h2><span class="muted small"><%= pluralize(@active_macs.size, "computer") %></span></div>
+    <div class="card-head"><h2>Here now</h2><span class="muted small"><%= pluralize(@active_macs.length, "computer") %></span></div>
     <% if @active_macs.any? %>
       <ul class="plain">
         <% @active_macs.each do |mac| %>
@@ -74,10 +74,7 @@
     <h2>All registered computers</h2>
     <div data-controller="filter" data-filter-noun-value="computers">
       <div class="filters">
-        <label class="search-box">
-          <%= lucide_icon "search" %>
-          <input type="search" placeholder="MAC, owner or note" aria-label="Search computers" data-filter-target="query" data-action="filter#apply">
-        </label>
+        <%= render "shared/search", placeholder: "MAC, owner or note", label: "Search computers" %>
         <button type="button" class="toggle" data-filter-target="toggle" data-key="here" aria-pressed="false" data-action="filter#flip">Here now</button>
       </div>
       <p class="count-line" data-filter-target="count" aria-live="polite"></p>

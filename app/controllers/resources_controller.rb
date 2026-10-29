@@ -3,6 +3,7 @@ class ResourcesController < ApplicationController
   before_action :load_users
 
   def index
+    @resources = @resources.includes(:user, :resource_category)
     @featured_resource = @resources.where("picture_file_name IS NOT NULL").sample
   end
 
@@ -28,11 +29,11 @@ class ResourcesController < ApplicationController
 
   def update
     @resource.modified_by = current_user.id # log who modified this last
-    @resource.assign_attributes(resources_params)
+    @resource.assign_attributes(resource_params)
     authorize! :update, @resource
 
     respond_to do |format|
-      if @resource.update(resources_params)
+      if @resource.update(resource_params)
         format.html { redirect_to resource_path(@resource), :notice => "Resource was successfully updated." }
         format.json { head :no_content }
       else
@@ -61,7 +62,7 @@ class ResourcesController < ApplicationController
 
   private
 
-  def resources_params
+  def resource_params
     params.require(:resource).permit(:supercategory, :user_id, :resource_category_id, :name, :serial, :specs, :status, :donatable,
       :picture, :picture_file_name, :picture_content_type, :picture_file_size, :picture_updated_at,
       :picture2, :picture2_file_name, :picture2_content_type, :picture2_file_size, :picture2_updated_at,

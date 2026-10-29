@@ -24,7 +24,7 @@
       <tbody>
         <% @users.each do |user| %>
           <tr class="<%= 'tone-quiet' if user.hidden? %>">
-            <td><%= link_to user, class: "person-cell" do %><%= person_avatar(user, 24) %><span><%= user.name %></span><% end %><%= render ChipComponent.new("Hidden") if user.hidden? %></td>
+            <td><%= person_link(user, size: 24) %><%= render ChipComponent.new("Hidden") if user.hidden? %></td>
             <% if admin %><td><%= user.email %></td><% end %>
             <td class="wrap"><%= safe_join(user.certifications.map { |cert| link_to(cert.name, cert) }, ", ") %></td>
             <% if admin %><td><%= user.orientation.strftime("%b %-d, %Y") if user.orientation.present? %></td><% end %>
@@ -32,8 +32,7 @@
             <td><%= user.payment_method %></td>
             <td class="num"><%= user.member_level %></td>
             <td>
-              <% delinquency = user.delinquency %>
-              <%= delinquency == 9999 ? "No payments" : "#{delinquency / 30} months ago" %>
+              <%= user.payments_count.zero? ? "No payments" : "#{user.delinquency / 30} months ago" %>
             </td>
             <td><%= user.created_at.to_date %></td>
           </tr>
