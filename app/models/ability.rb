@@ -50,7 +50,6 @@ class Ability
         can :manage, Payment
         can :manage, Ipn
         can :manage, PaypalCsv
-        can :read, :analytics
       end
 
       # Admins can manage all

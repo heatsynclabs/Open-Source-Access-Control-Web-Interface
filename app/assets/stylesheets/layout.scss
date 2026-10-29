@@ -149,6 +149,11 @@
     a { color: var(--ash); }
   }
 
+  // Tablets and small laptops: tighter links so the nav stays on one row.
+  @media (min-width: 800px) and (max-width: 1099px) {
+    .site-nav a, .nav-group-toggle { padding: 0 var(--space-2); letter-spacing: 0.04em; }
+  }
+
   // ---------------------------------------------------------- phones and small tablets
   @media (max-width: 799px) {
     .app-name { display: none; }

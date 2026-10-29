@@ -35,7 +35,7 @@ HeatSync's production members app, brought off Rails 3.2. Now Ruby 3.3 / Rails 7
 
 ## Analytics
 
-`/analytics` is for admins and treasurers: members, dues, door use and the calendar, as counts only. The queries are in `app/queries/analytics`, one small class per subject, grouped in lab time with `groupdate`, and cached for 10 minutes per period.
+`/analytics` is open to everyone and linked in the main nav: members, door use and the calendar, as counts only, plus dues for treasurers and admins. The queries are in `app/queries/analytics`, one small class per subject, grouped in lab time with `groupdate`, and cached for 10 minutes per period.
 
 
 ## Run locally (Docker)

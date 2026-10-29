@@ -1,8 +1,7 @@
-# Aggregate charts for the board and the treasurer: members, dues, door use
-# and the calendar. Counts only; nothing on this page names a person.
+# Aggregate charts for anyone, signed in or not: members, door use and the
+# calendar, plus dues for the treasurer and admins. Counts only; nothing on
+# this page names a person.
 class AnalyticsController < ApplicationController
-  before_action :authenticate_user!
-  before_action { authorize! :read, :analytics }
 
   CACHE_FOR = 10.minutes
 
