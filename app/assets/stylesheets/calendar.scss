@@ -191,7 +191,7 @@
     }
   }
   @container week-card (max-width: 420px) {
-    .week-day { grid-template-columns: 1fr; > :not(.week-day-head) { grid-column: 1; } .week-day-head { grid-row: auto; flex-direction: row; } }
+    .week-day { grid-template-columns: 1fr; > :not(.week-day-head) { grid-column: 1; } .week-day-head { grid-row: auto; flex-direction: row; gap: var(--space-2); } }
   }
 
   // ---------------------------------------------------------- dialog

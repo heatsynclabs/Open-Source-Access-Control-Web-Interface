@@ -4,7 +4,7 @@ module LabCalendar
   # "(registration required)" note comes off the title, and the sign-up link
   # and price are pulled out of the description.
   class Event < Data.define(:id, :title, :description, :location, :starts_at, :ends_at, :all_day, :repeating)
-    REGISTRATION_NOTE = /[\s·•|,–—-]*\(?registration required\)?[\s·•|,–—-]*/i
+    REGISTRATION_NOTE = /[\s\u00b7\u2022|,\u2013\u2014-]*\(?registration required\)?[\s\u00b7\u2022|,\u2013\u2014-]*/i
     GUESTLIST_URL = %r{https?://guestli(?:\.st|st\.co)/[^\s<>"')]+}i
     SIGNUP_URL = /guestli|eventbrite|meetup\.com|lu\.ma|luma\.com|tickettailor|ti\.to|humanitix|forms\.gle|docs\.google\.com\/forms|signup|sign-up|register|rsvp|ticket/i
     PRICE = /\$\d+(?:\.\d{2})?/

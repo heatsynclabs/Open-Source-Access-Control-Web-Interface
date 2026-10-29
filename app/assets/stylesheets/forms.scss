@@ -10,7 +10,7 @@
 //     <div class="form-actions"> submit, cancel </div>
 //   </form>
 @layer components {
-  $text-inputs: 'input:not([type="submit"], [type="button"], [type="checkbox"], [type="radio"], [type="hidden"], [type="file"])';
+  $text-inputs: 'input:not([type="submit"], [type="button"], [type="checkbox"], [type="radio"], [type="hidden"], [type="file"], [type="image"])';
 
   // :where() keeps these at zero specificity, so any class (.search-box input,
   // .mono) can adjust a control without a fight.
