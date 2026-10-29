@@ -2,7 +2,7 @@
   <% header.with_action { link_to "Download JSON", mac_statistics_path + ".json", class: "btn" } %>
 <% end %>
 
-<% series = @mac_log_graph.map { |mac, points| { name: mac, data: points.to_h { |ms, hours| [Time.zone.at(ms / 1000).to_date, hours] } } } %>
+<% series = @mac_log_graph.map { |mac, points| { name: mac, data: points.to_h { |ms, hours| [time_from_js(ms).to_date, hours] } } } %>
 <% if series.any? { |s| s[:data].any? } %>
   <%= render ChartCardComponent.new(title: "Hours on the network by day") do %>
     <%= column_chart series, stacked: true, height: "240px", suffix: " h" %>

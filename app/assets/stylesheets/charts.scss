@@ -10,7 +10,7 @@
   }
   .chart-data {
     margin-top: var(--space-3);
-    summary { cursor: pointer; color: var(--ash); font-size: var(--text-sm); }
+    summary { color: var(--ash); font-size: var(--text-sm); }
     .table-wrap { margin: var(--space-3) 0 0; max-height: 320px; }
   }
 
@@ -53,8 +53,8 @@
     .grid + .grid, .grid + .card, .card + .grid { margin-top: var(--space-6); }
     .funnel, .bar-list, .heatmap, .table-wrap.short { margin-top: var(--space-4); }
     .table-wrap.short { max-height: 320px; }
+    .table-wrap.short th { white-space: normal; }
   }
 
-  .range-picker { margin-bottom: var(--space-6); }
   .section-head { margin: var(--space-12) 0 var(--space-4); padding-top: var(--space-6); border-top: 2px solid var(--steel-hi); h2 { margin: 0; } }
 }

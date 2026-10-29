@@ -9,7 +9,7 @@
         <table>
           <thead><tr><% @columns.each_with_index do |column, i| %><th class="<%= 'num' if i > 0 %>"><%= column %></th><% end %></tr></thead>
           <tbody>
-            <% table_rows.each do |key, value| %>
+            <% @rows.each do |key, value| %>
               <tr>
                 <td><%= key %></td>
                 <% Array(value).each do |cell| %><td class="num"><%= cell.is_a?(Numeric) ? number_with_delimiter(cell.round(2)) : cell %></td><% end %>

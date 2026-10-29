@@ -6,6 +6,7 @@ class ContractsController < ApplicationController
     if params[:user_id].present?
       @contracts = Contract.where(user_id: params[:user_id])
     end
+    @contracts = @contracts.includes(:user)
     respond_to do |format|
       format.html
       format.json { render :json => @contracts }

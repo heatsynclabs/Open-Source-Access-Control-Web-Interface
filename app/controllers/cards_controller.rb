@@ -7,7 +7,7 @@ class CardsController < ApplicationController
   def index
     #@cards = Card.all
     #authorize! :read, @cards
-    @cards = @cards.sort_by{|e| e[:id]}
+    @cards = @cards.includes(user: :payments).sort_by{|e| e[:id]}
 
     if can? :read, DoorLog then
       most_active_count = 0

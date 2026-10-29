@@ -43,10 +43,6 @@ gem 'icalendar', '~> 2.13'
 gem 'icalendar-recurrence', '~> 1.2'
 gem 'simple_calendar', '~> 3.1'
 
-# Asset compilation uses the Node runtime (installed in the Docker image)
-# via execjs. therubyracer/libv8 no longer build on modern toolchains.
-gem 'uglifier'
-
 gem 'jquery-rails'
 
 gem 'devise'

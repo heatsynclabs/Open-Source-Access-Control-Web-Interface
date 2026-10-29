@@ -1,5 +1,8 @@
 # Formatting for calendar events, in the lab's style: "7pm", "6:30 to 9pm".
 module CalendarHelper
+  # Events shown in one month-grid day before "N more".
+  DAY_CELL_EVENTS = 4
+
   def event_clock(time)
     format = time.min.zero? ? "%-l%P" : "%-l:%M%P"
     time.strftime(format)

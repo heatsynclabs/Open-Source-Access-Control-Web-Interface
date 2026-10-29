@@ -3,10 +3,13 @@
 class CalendarController < ApplicationController
   VIEWS = %w[month week list].freeze
   LIST_DAYS = 30
+  # How far the earlier and later buttons move each view.
+  STEPS = { "month" => 1.month, "week" => 1.week, "list" => LIST_DAYS.days }.freeze
 
   def index
     @view = VIEWS.include?(params[:view]) ? params[:view] : "month"
     @date = selected_date
+    @step = STEPS[@view]
     @category = LabCalendar::Category.find(params[:cat])
     @show_open_hours = params[:open] == "1" || @category&.key == "open"
     @events = visible(LabCalendar.between(range_for(@view, @date)))
@@ -45,7 +48,7 @@ class CalendarController < ApplicationController
   end
 
   def visible(events)
-    events = events.reject { |event| event.category.key == "open" } unless @show_open_hours
+    events = events.reject { |event| event.open_hours? } unless @show_open_hours
     events = events.select { |event| event.category == @category } if @category
     events
   end

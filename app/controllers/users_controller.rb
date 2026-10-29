@@ -18,8 +18,7 @@ class UsersController < ApplicationController
     unless params[:full] # by default, show summary
 
       # sort in SQL instead of loading every user and sorting in Ruby;
-      # eager-load payments because the badges partial's member_status_symbol
-      # reads them for every user rendered
+      # eager-load payments because each row's membership badge reads them
       @users = @users.active.includes(:payments, :cards, :certifications).order('users.member_level DESC, LOWER(users.name) ASC')
 #@users.paying + @users.volunteer
 #.joins(:payments).where("payments.date > ? OR ", (DateTime.now - 60.days)).uniq
@@ -31,7 +30,7 @@ class UsersController < ApplicationController
 
     else # show full
 
-      # eager-load what the view touches per row (member_status_symbol reads
+      # eager-load what the view touches per row (the membership badge reads
       # payments; the table shows cards and certifications) so the page runs
       # a handful of queries instead of several per user
       @users = @users.includes(:payments, :cards, :user_certifications, :contracts)

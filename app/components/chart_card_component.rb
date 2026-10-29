@@ -6,19 +6,14 @@
 #     <%= column_chart data %>
 #   <% end %>
 class ChartCardComponent < ViewComponent::Base
-  def initialize(title:, rows: nil, columns: nil, note: nil, format_key: nil)
+  def initialize(title:, rows: nil, columns: nil, note: nil)
     @title = title
     @rows = rows
     @columns = columns
     @note = note
-    @format_key = format_key
   end
 
   def before_render
     helpers.load_chart_scripts
-  end
-
-  def table_rows
-    @rows.map { |key, value| [@format_key ? @format_key.call(key) : key, value] }
   end
 end

@@ -1,6 +1,6 @@
 <%= render PageHeaderComponent.new(eyebrow: "Admin", title: "Audit log", lead: "Administrative actions: edits to other members' profiles, certification changes and payment changes. Members editing their own profile are not logged.") %>
 
-<%= form_tag audit_events_path, method: :get, class: "inline-form audit-filters" do %>
+<%= form_tag audit_events_path, method: :get, class: "inline-form" do %>
   <div class="field">
     <%= label_tag :event_type, "Event type" %>
     <%= select_tag :event_type, options_for_select([["All", ""]] + @event_types.map { |t| [t.tr("_", " "), t] }, params[:event_type]) %>

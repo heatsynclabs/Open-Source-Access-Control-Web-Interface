@@ -1,15 +1,14 @@
 <%
   # The controller builds Highcharts-style [milliseconds, count] pairs (also
   # served as JSON); Chartkick takes time => count.
-  computers_by_hour = @mac_log_graph.to_h { |ms, count| [Time.zone.at(ms / 1000), count] }
+  computers_by_hour = @mac_log_graph.to_h { |ms, count| [time_from_js(ms), count] }
 %>
 <%= render PageHeaderComponent.new(eyebrow: "Computers", eyebrow_path: macs_path, title: "Computers over time") do |header| %>
   <% header.with_action { link_to "Download JSON", macs_history_path + ".json", class: "btn" } %>
 <% end %>
 
-<%= form_tag(nil, method: :get, class: "inline-form history-range") do %>
-  <div class="field"><label for="start">From</label><input id="start" name="start" type="date" value="<%= @start_date.to_date %>"></div>
-  <div class="field"><label for="end">To</label><input id="end" name="end" type="date" value="<%= @end_date.to_date %>"></div>
+<%= form_tag(nil, method: :get, class: "inline-form") do %>
+  <%= render "shared/date_range", from_label: "From" %>
   <%= submit_tag "Show", name: nil, class: "primary" %>
 <% end %>
 

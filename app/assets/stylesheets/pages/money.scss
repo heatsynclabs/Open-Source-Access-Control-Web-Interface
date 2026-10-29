@@ -1,21 +1,19 @@
 // Page styles for the money pages (payments, PayPal, IPN) and the door
-// pages (door log, remote access, space API). Kept in their own file so each
-// area can change without touching the others.
+// pages (door log, remote access, space API).
 @layer pages {
   .payments-list { margin-top: var(--space-8); }
 
-  // The "how to pay" notes under the payment method select.
-  .payment-instructions summary { cursor: pointer; margin-top: var(--space-1); }
-  .payment-instructions dl.facts { margin-top: var(--space-2); }
-
   // Door log: filters above the lock chart, the key guide, the log table.
-  .door-log-filters { margin-bottom: var(--space-6); }
   .log-guide { margin: var(--space-6) 0; }
-  .log-guide summary { cursor: pointer; color: var(--ash); font-size: var(--text-sm); }
+  .log-guide summary { color: var(--ash); font-size: var(--text-sm); }
   .log-guide pre { font-size: 12px; line-height: 1.5; }
   table.door-log td svg.lucide { color: var(--ink-info); }
 
   // Remote door page.
+  // Remote door access, phone first.
+  .remote { max-width: 560px; margin: 0 auto; }
+  .remote .door .state { font-size: var(--text-5xl); }
+  .remote .door .actions .btn, .remote .door .actions button { flex: 1 1 120px; min-height: 56px; }
   .remote .doors { grid-template-columns: 1fr; margin-bottom: var(--space-4); }
   .remote-extra { margin-top: var(--space-6); }
   .webcam { width: 100%; height: auto; display: block; border: 2px solid var(--steel-hi); }

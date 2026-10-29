@@ -13,10 +13,6 @@ module Analytics
       granted.count
     end
 
-    def distinct_cards_total
-      granted.distinct.count(:data)
-    end
-
     def entries_by_period
       by_period(granted)
     end

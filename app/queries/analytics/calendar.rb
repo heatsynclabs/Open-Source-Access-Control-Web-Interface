@@ -7,7 +7,7 @@ module Analytics
     end
 
     def events
-      @events ||= LabCalendar.between(@period.range).reject { |event| event.category.key == "open" }
+      @events ||= LabCalendar.between(@period.range).reject { |event| event.open_hours? }
     end
 
     def total
@@ -29,10 +29,6 @@ module Analytics
         counts = events.select { |event| event.category == category }.group_by { |event| bucket_of(event.day) }
         { name: category.label, data: buckets.to_h { |bucket| [bucket, counts.fetch(bucket, []).size] } }
       end
-    end
-
-    def by_category_totals
-      events.group_by(&:category).sort_by { |_category, list| -list.size }.map { |category, list| [category, list.size] }
     end
 
     def by_weekday

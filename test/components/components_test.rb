@@ -38,10 +38,10 @@ class ComponentsTest < ViewComponent::TestCase
     assert_none html, "span.chip"
   end
 
-  test "the avatar shows initials and a Gravatar that removes itself when missing" do
+  test "the avatar shows initials under a Gravatar that is transparent when missing" do
     html = render_inline AvatarComponent.new(name: "Ada Lovelace", email: "ada@example.invalid", size: 32)
     assert_has html, "span.avatar span", text: "AL"
-    assert_has html, "img[src*='d=404'][onerror]"
+    assert_has html, "img[src*='d=blank']"
   end
 
   test "form errors render only for an invalid record" do

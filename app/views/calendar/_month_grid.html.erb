@@ -8,7 +8,7 @@
     <div role="gridcell" class="<%= calendar.td_classes_for(day).join(' ') %>">
       <% instance_exec(day, day_events, &passed_block) %>
       <% if day_events.any? %>
-        <span class="dots" aria-hidden="true"><% day_events.first(4).each do |event| %><i class="cat-<%= event.category.key %>"></i><% end %></span>
+        <span class="dots" aria-hidden="true"><% day_events.first(CalendarHelper::DAY_CELL_EVENTS).each do |event| %><i class="cat-<%= event.category.key %>"></i><% end %></span>
       <% end %>
     </div>
   <% end %>

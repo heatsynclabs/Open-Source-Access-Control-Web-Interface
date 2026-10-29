@@ -13,6 +13,22 @@ module ApplicationHelper
     render AvatarComponent.new(name: user.name, email: user.email, size: size)
   end
 
+  # The choices for a member's level, as the membership forms offer them.
+  def member_level_options
+    [[nil], ["None", 0], ["Unable", 1], ["Volunteer", 10], ["Associate ($25)", 25], ["Basic ($50)", 50], ["Plus ($100)", 100]]
+  end
+
+  # A person's avatar and name together, linking to their page (or to `to`).
+  def person_link(user, size: 28, to: user)
+    link_to(to, class: "person-cell") { person_avatar(user, size) + tag.span(user.name) }
+  end
+
+  # Several controllers hand chart data as [JavaScript milliseconds, value]
+  # pairs (the shape Highcharts took); this reads one back as lab time.
+  def time_from_js(milliseconds)
+    Time.zone.at(milliseconds / 1000)
+  end
+
   # Charts draw with Chart.js, which only pages with a chart need. The first
   # chart on a page adds the script to the head; later calls do nothing.
   def load_chart_scripts

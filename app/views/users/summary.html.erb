@@ -8,10 +8,7 @@
 <% cert_names = @users.flat_map { |u| u.certifications.map(&:name) }.uniq.sort %>
 <div data-controller="filter" data-filter-noun-value="people">
   <div class="filters">
-    <label class="search-box">
-      <%= lucide_icon "search" %>
-      <input type="search" placeholder="Search names, skills, tools" aria-label="Search people" data-filter-target="query" data-action="filter#apply">
-    </label>
+    <%= render "shared/search", placeholder: "Search names, skills, tools", label: "Search people" %>
     <button type="button" class="toggle" data-filter-target="toggle" data-key="cards" aria-pressed="false" data-action="filter#flip">Cardholders</button>
     <button type="button" class="toggle" data-filter-target="toggle" data-key="teach" aria-pressed="false" data-action="filter#flip">Instructors</button>
     <select aria-label="Certified on" data-filter-target="select" data-key="certs" data-action="filter#apply">

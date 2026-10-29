@@ -2,7 +2,7 @@
   <% header.with_action { link_to "Download JSON", door_statistics_path + ".json", class: "btn" } %>
 <% end %>
 
-<% opens_by_day = @door_log_graph.to_h { |ms, count| [Time.zone.at(ms / 1000).to_date, count] } %>
+<% opens_by_day = @door_log_graph.to_h { |ms, count| [time_from_js(ms).to_date, count] } %>
 <% if opens_by_day.any? %>
   <%= render ChartCardComponent.new(title: "Days you opened the door", rows: opens_by_day.to_a.reverse, columns: ["Day", "Opens"]) do %>
     <%= column_chart opens_by_day, height: "220px", library: { scales: { y: { ticks: { precision: 0 } } } } %>

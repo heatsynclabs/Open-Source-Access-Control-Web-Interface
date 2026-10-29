@@ -1,25 +1,19 @@
 <% content_for :title, "Calendar" %>
-
-<div class="page-head">
-  <div>
-    <p class="eyebrow">HeatSync Labs calendar</p>
-    <h1><%= @view == "list" ? "Coming up" : @date.strftime("%B %Y") %></h1>
-  </div>
-  <div class="actions-row">
+<%= render PageHeaderComponent.new(eyebrow: "HeatSync Labs calendar", title: @view == "list" ? "Coming up" : @date.strftime("%B %Y")) do |header| %>
+  <% header.with_action do %>
     <nav class="tabs calendar-views" aria-label="Calendar view">
       <% { "month" => "Month", "week" => "Week", "list" => "List" }.each do |key, label| %>
         <%= link_to label, calendar_path(calendar_link_params(view: key)), class: ("on" if @view == key), "aria-current": ("page" if @view == key) %>
       <% end %>
     </nav>
-  </div>
-</div>
+  <% end %>
+<% end %>
 
 <div class="calendar-toolbar">
   <div class="actions-row">
-    <% step = { "month" => 1.month, "week" => 1.week, "list" => 30.days }[@view] %>
-    <%= link_to calendar_path(calendar_link_params(start_date: (@date - step).iso8601)), class: "btn small", "aria-label": "Earlier" do %><%= lucide_icon "chevron-left" %><% end %>
+    <%= link_to calendar_path(calendar_link_params(start_date: (@date - @step).iso8601)), class: "btn small", "aria-label": "Earlier" do %><%= lucide_icon "chevron-left" %><% end %>
     <%= link_to "Today", calendar_path(calendar_link_params(start_date: nil)), class: "btn small" %>
-    <%= link_to calendar_path(calendar_link_params(start_date: (@date + step).iso8601)), class: "btn small", "aria-label": "Later" do %><%= lucide_icon "chevron-right" %><% end %>
+    <%= link_to calendar_path(calendar_link_params(start_date: (@date + @step).iso8601)), class: "btn small", "aria-label": "Later" do %><%= lucide_icon "chevron-right" %><% end %>
   </div>
   <nav class="filters category-filters" aria-label="Show">
     <%= link_to "Everything", calendar_path(calendar_link_params(cat: nil)), class: ["toggle", ("on" unless @category)] %>
@@ -45,11 +39,11 @@
   <% when "month" %>
     <%= month_calendar(events: @events, attribute: :starts_at, end_attribute: :last_day, start_date: @date, partial: "calendar/month_grid") do |day, events| %>
       <span class="day-num"><%= day.day %></span>
-      <% events.first(4).each do |event| %>
+      <% events.first(CalendarHelper::DAY_CELL_EVENTS).each do |event| %>
         <%= render Calendar::EventComponent.new(event: event, style: :pill) %>
       <% end %>
-      <% if events.size > 4 %>
-        <%= link_to "#{events.size - 4} more", calendar_path(calendar_link_params(view: "list", start_date: day.iso8601)), class: "more" %>
+      <% if events.size > CalendarHelper::DAY_CELL_EVENTS %>
+        <%= link_to "#{events.size - CalendarHelper::DAY_CELL_EVENTS} more", calendar_path(calendar_link_params(view: "list", start_date: day.iso8601)), class: "more" %>
       <% end %>
     <% end %>
     <%# On phones the grid only shows dots, so the month's events follow as a list. %>

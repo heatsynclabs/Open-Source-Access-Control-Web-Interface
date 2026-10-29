@@ -97,7 +97,9 @@
 
   .form-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; margin: var(--space-2) 0 var(--space-8); }
 
-  // One row of inputs with a button at the end (search, quick add).
+  // One row of inputs with a button at the end (filters above a list or
+  // chart, a quick add).
+  main > .inline-form { margin-bottom: var(--space-6); }
   .inline-form {
     display: flex;
     flex-wrap: wrap;

@@ -1,10 +1,8 @@
-// Page styles for the admin pages (computers, settings, audit log). Kept in
-// their own file so each area can change without touching the others.
+// Page styles for the admin pages (computers, settings, audit log).
 @layer pages {
   .mac-label { display: inline-flex; flex-wrap: wrap; gap: var(--space-2); align-items: baseline; min-width: 0; }
   .all-macs { margin-top: var(--space-10); }
 
-  .history-range, .audit-filters { margin-bottom: var(--space-6); }
 
   // The audit summary is a "field: old => new" block, one change per line.
   .audit-summary {

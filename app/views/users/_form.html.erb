@@ -1,5 +1,4 @@
 <% form_url = @user.id.blank? ? users_create_path : user_path(@user) %>
-<% level_options = [[nil], ["None", 0], ["Unable", 1], ["Volunteer", 10], ["Associate ($25)", 25], ["Basic ($50)", 50], ["Plus ($100)", 100]] %>
 <%= form_for @user, url: form_url, html: { class: "form" } do |f| %>
   <%= render FormErrorsComponent.new(@user) %>
 
@@ -68,7 +67,7 @@
       </div>
       <div class="field">
         <%= f.label :member_level, "Membership level" %>
-        <%= f.select :member_level, level_options %>
+        <%= f.select :member_level, member_level_options %>
       </div>
       <div class="field">
         <%= render partial: "/users/payment_methods", locals: { g: f } %>

@@ -3,15 +3,24 @@ module LabCalendar
   # heatsynclabs.org does it (new-hsl src/services/calendarService.ts): the
   # "(registration required)" note comes off the title, and the sign-up link
   # and price are pulled out of the description.
-  class Event < Data.define(:id, :title, :description, :location, :starts_at, :ends_at, :all_day, :repeating)
+  #
+  # Category and icon are worked out once, when the feed is expanded, and
+  # kept on the event (category_key, icon_name); events built by hand work
+  # them out on first use.
+  class Event < Data.define(:id, :title, :description, :location, :starts_at, :ends_at, :all_day, :repeating, :category_key, :icon_name)
     REGISTRATION_NOTE = /[\s\u00b7\u2022|,\u2013\u2014-]*\(?registration required\)?[\s\u00b7\u2022|,\u2013\u2014-]*/i
     GUESTLIST_URL = %r{https?://guestli(?:\.st|st\.co)/[^\s<>"')]+}i
     SIGNUP_URL = /guestli|eventbrite|meetup\.com|lu\.ma|luma\.com|tickettailor|ti\.to|humanitix|forms\.gle|docs\.google\.com\/forms|signup|sign-up|register|rsvp|ticket/i
     PRICE = /\$\d+(?:\.\d{2})?/
 
+    def initialize(category_key: nil, icon_name: nil, **fields)
+      super
+    end
+
     def self.from_ics(uid:, summary:, description:, location:, starts_at:, ends_at:, all_day:, repeating:)
-      new(id: "#{uid}@#{starts_at.to_i}", title: summary.presence || "Untitled event", description: description,
-          location: location, starts_at: starts_at, ends_at: ends_at, all_day: all_day, repeating: repeating)
+      event = new(id: "#{uid}@#{starts_at.to_i}", title: summary.presence || "Untitled event", description: description,
+                  location: location, starts_at: starts_at, ends_at: ends_at, all_day: all_day, repeating: repeating)
+      event.with(category_key: event.category.key, icon_name: event.icon)
     end
 
     def display_title
@@ -45,11 +54,15 @@ module LabCalendar
     end
 
     def category
-      Category.for(self)
+      Category.find(category_key) || Category.for(self)
     end
 
     def icon
-      Category.icon_for(self)
+      icon_name || Category.icon_for(self)
+    end
+
+    def open_hours?
+      category.key == "open"
     end
 
     def day

@@ -1,6 +1,6 @@
 # A round avatar: the person's initials on a colour derived from their name,
-# with their Gravatar on top when they have one. Gravatar answers 404 for
-# people without one (d=404) and the image then removes itself.
+# with their Gravatar on top when they have one. For people without one,
+# Gravatar sends a transparent image (d=blank), so the initials show through.
 #
 # Pass gravatar_hash when the email is deliberately not loaded (the active
 # cardholders list computes the hash in SQL).
@@ -29,7 +29,6 @@ class AvatarComponent < ViewComponent::Base
   end
 
   def gravatar
-    tag.img(src: "https://www.gravatar.com/avatar/#{@hash}?s=#{@size * 2}&d=404",
-            alt: "", loading: "lazy", onerror: "this.remove()")
+    tag.img(src: "https://www.gravatar.com/avatar/#{@hash}?s=#{@size * 2}&d=blank", alt: "", loading: "lazy")
   end
 end

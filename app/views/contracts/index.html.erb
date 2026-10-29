@@ -12,10 +12,7 @@
 
 <div data-controller="filter" data-filter-noun-value="waivers">
   <div class="filters">
-    <label class="search-box">
-      <%= lucide_icon "search" %>
-      <input type="search" placeholder="Signer, cosigner or member" aria-label="Search waivers" data-filter-target="query" data-action="filter#apply">
-    </label>
+    <%= render "shared/search", placeholder: "Signer, cosigner or member", label: "Search waivers" %>
     <button type="button" class="toggle" data-filter-target="toggle" data-key="unlinked" aria-pressed="false" data-action="filter#flip">Not linked only</button>
   </div>
   <p class="count-line" data-filter-target="count" aria-live="polite"></p>
@@ -35,7 +32,7 @@
             </td>
             <td>
               <% if contract.user %>
-                <%= link_to contract.user, class: "person-cell" do %><%= person_avatar(contract.user, 28) %><span><%= contract.user.name %></span><% end %>
+                <%= person_link(contract.user, size: 28) %>
               <% else %>
                 <span class="muted">Not linked</span>
               <% end %>

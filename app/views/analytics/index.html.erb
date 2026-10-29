@@ -1,11 +1,11 @@
 <div class="analytics">
 <%= render PageHeaderComponent.new(eyebrow: "Admin", title: "Analytics", lead: "How the lab is doing, from the members database, the door log and the lab calendar. Counts only: nothing here names a person.") %>
 
-<nav class="filters range-picker" aria-label="Period">
+<nav class="filters" aria-label="Period">
   <% Analytics::Period::CHOICES.each do |key, choice| %>
     <%= link_to choice[:label], analytics_path(period: key), class: ["toggle", ("on" if @period.key == key)], "aria-current": ("page" if @period.key == key) %>
   <% end %>
-  <span class="muted small">Grouped by <%= @period.unit %>. Figures refresh every 10 minutes.</span>
+  <span class="muted small">Grouped by <%= @period.unit %>. Figures refresh every <%= distance_of_time_in_words(AnalyticsController::CACHE_FOR) %>.</span>
 </nav>
 
 <div class="tiles">
@@ -22,7 +22,7 @@
 <div class="section-head"><p class="eyebrow">Members</p><h2>Joining and staying</h2></div>
 <div class="grid two">
   <%= render ChartCardComponent.new(title: "Signups", note: "New accounts on the members site.", rows: by_bucket(@members[:signups], @period), columns: ["When", "Signups"]) do %>
-    <%= column_chart by_bucket(@members[:signups], @period), height: "220px" %>
+    <%= column_chart by_bucket(@members[:signups], @period) %>
   <% end %>
 
   <section class="card">
@@ -45,27 +45,18 @@
           { name: "Orientations", data: by_bucket(@members[:orientations], @period) },
           { name: "Waivers signed", data: by_bucket(@members[:waivers], @period) },
           { name: "Certifications", data: by_bucket(@members[:certifications], @period) },
-        ], height: "220px", curve: false, points: false %>
+        ], curve: false, points: false %>
   <% end %>
 
   <%= render ChartCardComponent.new(title: "Member levels now", note: "Everyone on a member level today, whether or not they are paid up.", rows: @members[:level_mix], columns: ["Level", "Members"]) do %>
-    <%= bar_chart @members[:level_mix], height: "220px" %>
+    <%= bar_chart @members[:level_mix] %>
   <% end %>
 </div>
 
 <div class="grid two">
   <section class="card">
     <h3>Most granted certifications</h3>
-    <% if @members[:top_certifications].any? %>
-      <% top = @members[:top_certifications].first.last %>
-      <ul class="bar-list">
-        <% @members[:top_certifications].each do |name, count| %>
-          <li><span><%= name %></span><span class="value"><%= count %></span><span class="bar" role="presentation"><span style="--v: <%= share(count, top) %>"></span></span></li>
-        <% end %>
-      </ul>
-    <% else %>
-      <%= render EmptyStateComponent.new("No certifications granted in this period.") %>
-    <% end %>
+    <%= render "bar_list", rows: @members[:top_certifications], empty: "No certifications granted in this period." %>
   </section>
 
   <section class="card">
@@ -98,10 +89,10 @@
   </div>
   <div class="grid two">
     <%= render ChartCardComponent.new(title: "Dues per #{@period.unit}", rows: by_bucket(@payments[:dues], @period), columns: ["When", "Dollars"]) do %>
-      <%= column_chart by_bucket(@payments[:dues], @period), prefix: "$", thousands: ",", height: "220px" %>
+      <%= column_chart by_bucket(@payments[:dues], @period), prefix: "$" %>
     <% end %>
     <%= render ChartCardComponent.new(title: "People paying per #{@period.unit}", rows: by_bucket(@payments[:payers], @period), columns: ["When", "Payers"]) do %>
-      <%= line_chart by_bucket(@payments[:payers], @period), height: "220px", curve: false %>
+      <%= line_chart by_bucket(@payments[:payers], @period), curve: false %>
     <% end %>
     <%= render ChartCardComponent.new(title: "Payments by amount", rows: @payments[:tiers], columns: ["Amount", "Payments"]) do %>
       <%= bar_chart @payments[:tiers], height: "200px" %>
@@ -132,12 +123,12 @@
   <% busiest = @door[:grid].values.max.to_i %>
   <div class="heatmap" role="table" aria-label="Card entries by weekday and hour">
     <span></span>
-    <% 24.times do |hour| %><span class="hour"><%= hour % 3 == 0 ? Time.zone.local(2000, 1, 1, hour).strftime("%-l%P") : "" %></span><% end %>
+    <% 24.times do |hour| %><span class="hour"><%= hour % 3 == 0 ? hour_label(hour) : "" %></span><% end %>
     <% Date::ABBR_DAYNAMES.each_with_index do |day_name, wday| %>
       <span class="row-label"><%= day_name %></span>
       <% 24.times do |hour| %>
         <% count = @door[:grid].fetch([wday, hour], 0) %>
-        <span class="cell" style="--v: <%= share(count, busiest) %>" title="<%= day_name %> <%= Time.zone.local(2000, 1, 1, hour).strftime('%-l%P') %>: <%= count %> entries"></span>
+        <span class="cell" style="--v: <%= share(count, busiest) %>" title="<%= day_name %> <%= hour_label(hour) %>: <%= count %> entries"></span>
       <% end %>
     <% end %>
   </div>
@@ -146,7 +137,7 @@
 
 <div class="grid two">
   <%= render ChartCardComponent.new(title: "Remote door commands", note: "Opens, unlocks and locks sent from the website and the phone app.") do %>
-    <%= column_chart @door[:remote].map { |series| series.merge(data: by_bucket(series[:data], @period)) }, stacked: true, height: "220px" %>
+    <%= column_chart by_bucket_series(@door[:remote], @period), stacked: true %>
   <% end %>
   <% if @calendar %>
     <%= render ChartCardComponent.new(title: "Does the calendar bring people in?", note: "Average card entries per day, on days with an event against days with nothing on.", rows: @calendar[:door_on_event_days], columns: ["Days", "Entries per day"]) do %>
@@ -164,24 +155,15 @@
     <%= render StatTileComponent.new(value: @calendar[:hyh], label: "Hack Your Hackerspace meetings") %>
   </div>
   <%= render ChartCardComponent.new(title: "Events per #{@period.unit}, by kind") do %>
-    <%= column_chart @calendar[:series].map { |series| series.merge(data: by_bucket(series[:data], @period)) }, stacked: true, height: "260px", paletteOrder: calendar_palette_order(@calendar[:series]) %>
+    <%= column_chart by_bucket_series(@calendar[:series], @period), stacked: true, height: "260px", paletteOrder: calendar_palette_order(@calendar[:series]) %>
   <% end %>
   <div class="grid two">
     <section class="card">
       <h3>Most frequent events</h3>
-      <% if @calendar[:top].any? %>
-        <% most = @calendar[:top].first[1] %>
-        <ul class="bar-list">
-          <% @calendar[:top].each do |title, count, category| %>
-            <li class="cat-<%= category.key %>"><span><%= title %></span><span class="value"><%= count %></span><span class="bar" role="presentation"><span style="--v: <%= share(count, most) %>"></span></span></li>
-          <% end %>
-        </ul>
-      <% else %>
-        <%= render EmptyStateComponent.new("Nothing on the calendar in this period.") %>
-      <% end %>
+      <%= render "bar_list", rows: @calendar[:top].map { |title, count, category| [title, count, category.key] }, empty: "Nothing on the calendar in this period." %>
     </section>
     <%= render ChartCardComponent.new(title: "Events by day of the week", rows: @calendar[:weekdays], columns: ["Day", "Events"]) do %>
-      <%= column_chart @calendar[:weekdays], height: "220px" %>
+      <%= column_chart @calendar[:weekdays] %>
     <% end %>
   </div>
 <% else %>

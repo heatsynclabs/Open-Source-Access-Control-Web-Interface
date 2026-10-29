@@ -23,7 +23,7 @@ class AnalyticsController < ApplicationController
   def members_section(members)
     {
       paid_up: members.paid_up_count, active: members.active_count,
-      cardholders: members.cardholder_count, new_this_month: members.new_this_month_count,
+      cardholders: members.cardholder_count,
       signups: members.signups, orientations: members.orientations, waivers: members.waivers_signed,
       certifications: members.certifications_granted, level_mix: members.level_mix,
       top_certifications: members.top_certifications, funnel: members.funnel, retention: members.payer_retention,
@@ -40,7 +40,7 @@ class AnalyticsController < ApplicationController
 
   def door_section(door)
     {
-      entries: door.entries_total, cards: door.distinct_cards_total,
+      entries: door.entries_total,
       entries_by_period: door.entries_by_period, denied_by_period: door.denied_by_period,
       cards_by_period: door.distinct_cards_by_period, by_day: door.entries_by_day,
       grid: door.weekday_hour_grid, remote: door.remote_by_source,
@@ -54,7 +54,7 @@ class AnalyticsController < ApplicationController
       calendar = Analytics::Calendar.new(@period)
       {
         total: calendar.total, hyh: calendar.hack_your_hackerspace_count, classes: calendar.classes_count,
-        series: calendar.by_category_series, totals: calendar.by_category_totals,
+        series: calendar.by_category_series,
         weekdays: calendar.by_weekday, top: calendar.top_series,
         door_on_event_days: calendar.door_entries_on_event_days(@door[:by_day]),
       }

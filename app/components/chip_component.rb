@@ -1,4 +1,4 @@
-# A small uppercase status label. tone: :ok, :warn, :err, :info, :fill or nil.
+# A small uppercase status label. tone: :ok, :warn, :err, :info or nil.
 class ChipComponent < ViewComponent::Base
   def initialize(text, tone: nil, dot: false, title: nil)
     @text = text

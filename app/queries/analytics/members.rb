@@ -27,10 +27,6 @@ module Analytics
       Card.where(card_permissions: 1).where.not(user_id: nil).distinct.count(:user_id)
     end
 
-    def new_this_month_count
-      User.where(created_at: Time.zone.now.beginning_of_month..).count
-    end
-
     def signups
       group(User, :created_at)
     end

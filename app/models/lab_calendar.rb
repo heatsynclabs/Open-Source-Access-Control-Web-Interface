@@ -1,7 +1,6 @@
 # The lab's public Google Calendar, read from its ICS feed.
 #
 #   LabCalendar.between(Time.zone.today.all_week)   # events starting this week
-#   LabCalendar.upcoming(5)
 #
 # The feed is fetched at most every 15 minutes (LabCalendar::Feed), and the
 # repeating events in it are expanded once per version of the feed
@@ -23,14 +22,23 @@ module LabCalendar
     events.select { |event| event.starts_at >= from && event.starts_at <= to }
   end
 
-  def upcoming(limit, after: Time.zone.now)
-    events.lazy.select { |event| event.ends_at > after }.first(limit)
-  end
+  # Each server process keeps the expanded list for a minute, so a page does
+  # not reload thousands of events from the cache on every request.
+  MEMO_FOR = 1.minute
+  MEMO_LOCK = Mutex.new
 
   def events
-    feed = Feed.new
-    text = feed.text
-    Rails.cache.fetch(["lab_calendar/events", Digest::SHA256.hexdigest(text)], expires_in: 1.day) do
+    MEMO_LOCK.synchronize do
+      @memo = nil if @memo && @memo[:until] < Time.current
+      @memo ||= { events: expanded_events, until: MEMO_FOR.from_now }
+      @memo[:events]
+    end
+  end
+
+  # Expanded once per version of the feed.
+  def expanded_events
+    text = Feed.new.text
+    Rails.cache.fetch(["lab_calendar/events/v2", Digest::SHA256.hexdigest(text)], expires_in: 1.day) do
       Occurrences.new(text).between(HISTORY_START.in_time_zone, LOOKAHEAD.from_now)
     end
   end
