@@ -18,6 +18,69 @@
   <% end %>
 </div>
 
+<%# ---------------------------------------------------------------- door %>
+<div class="section-head"><p class="eyebrow">The door</p><h2>When people come in</h2></div>
+<%= render ChartCardComponent.new(title: "Card entries and distinct cards", note: "Entries are door opens with a card; distinct cards counts each card once per #{@period.unit}.") do %>
+  <%= line_chart [
+        { name: "Entries", data: by_bucket(@door[:entries_by_period], @period) },
+        { name: "Distinct cards", data: by_bucket(@door[:cards_by_period], @period) },
+      ], height: "240px", curve: false, points: false %>
+<% end %>
+
+<section class="card">
+  <h3>Busiest hours</h3>
+  <p class="note">Card entries by day of the week and hour, lab time. Darker is busier.</p>
+  <% busiest = @door[:grid].values.max.to_i %>
+  <div class="heatmap" role="table" aria-label="Card entries by weekday and hour">
+    <span></span>
+    <% 24.times do |hour| %><span class="hour"><%= hour % 3 == 0 ? hour_label(hour) : "" %></span><% end %>
+    <% Date::ABBR_DAYNAMES.each_with_index do |day_name, wday| %>
+      <span class="row-label"><%= day_name %></span>
+      <% 24.times do |hour| %>
+        <% count = @door[:grid].fetch([wday, hour], 0) %>
+        <span class="cell" style="--v: <%= share(count, busiest) %>" title="<%= day_name %> <%= hour_label(hour) %>: <%= count %> entries"></span>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="heatmap-scale"><span>Quiet</span><i></i><span>Busiest, <%= busiest %> entries</span></div>
+</section>
+
+<div class="grid two">
+  <%= render ChartCardComponent.new(title: "Remote door commands", note: "Opens, unlocks and locks sent from the website and the phone app.") do %>
+    <%= column_chart by_bucket_series(@door[:remote], @period), stacked: true %>
+  <% end %>
+  <% if @calendar %>
+    <%= render ChartCardComponent.new(title: "Does the calendar bring people in?", note: "Average card entries per day, on days with an event against days with nothing on.", rows: @calendar[:door_on_event_days], columns: ["Days", "Entries per day"]) do %>
+      <%= bar_chart @calendar[:door_on_event_days], height: "160px" %>
+    <% end %>
+  <% end %>
+</div>
+
+<%# ---------------------------------------------------------------- calendar %>
+<div class="section-head"><p class="eyebrow">The calendar</p><h2>What the lab puts on</h2></div>
+<% if @calendar %>
+  <div class="tiles">
+    <%= render StatTileComponent.new(value: @calendar[:total], label: "Events", sub: "Open hours not counted") %>
+    <%= render StatTileComponent.new(value: @calendar[:classes], label: "Workshops with sign up") %>
+    <%= render StatTileComponent.new(value: @calendar[:hyh], label: "Hack Your Hackerspace meetings") %>
+  </div>
+  <%= render ChartCardComponent.new(title: "Events per #{@period.unit}, by kind") do %>
+    <%= column_chart by_bucket_series(@calendar[:series], @period), stacked: true, height: "260px", paletteOrder: calendar_palette_order(@calendar[:series]) %>
+  <% end %>
+  <div class="grid two">
+    <section class="card">
+      <h3>Most frequent events</h3>
+      <%= render "bar_list", rows: @calendar[:top].map { |title, count, category| [title, count, category.key] }, empty: "Nothing on the calendar in this period." %>
+    </section>
+    <%= render ChartCardComponent.new(title: "Events by day of the week", rows: @calendar[:weekdays], columns: ["Day", "Events"]) do %>
+      <%= column_chart @calendar[:weekdays] %>
+    <% end %>
+  </div>
+<% else %>
+  <p class="msg warn">The lab calendar could not be read from Google just now, so this section is missing. The rest of the page is current.</p>
+<% end %>
+</div>
+
 <%# ---------------------------------------------------------------- members %>
 <div class="section-head"><p class="eyebrow">Members</p><h2>Joining and staying</h2></div>
 <div class="grid two">
@@ -81,66 +144,3 @@
     <% end %>
   </div>
 <% end %>
-
-<%# ---------------------------------------------------------------- door %>
-<div class="section-head"><p class="eyebrow">The door</p><h2>When people come in</h2></div>
-<%= render ChartCardComponent.new(title: "Card entries and distinct cards", note: "Entries are door opens with a card; distinct cards counts each card once per #{@period.unit}.") do %>
-  <%= line_chart [
-        { name: "Entries", data: by_bucket(@door[:entries_by_period], @period) },
-        { name: "Distinct cards", data: by_bucket(@door[:cards_by_period], @period) },
-      ], height: "240px", curve: false, points: false %>
-<% end %>
-
-<section class="card">
-  <h3>Busiest hours</h3>
-  <p class="note">Card entries by day of the week and hour, lab time. Darker is busier.</p>
-  <% busiest = @door[:grid].values.max.to_i %>
-  <div class="heatmap" role="table" aria-label="Card entries by weekday and hour">
-    <span></span>
-    <% 24.times do |hour| %><span class="hour"><%= hour % 3 == 0 ? hour_label(hour) : "" %></span><% end %>
-    <% Date::ABBR_DAYNAMES.each_with_index do |day_name, wday| %>
-      <span class="row-label"><%= day_name %></span>
-      <% 24.times do |hour| %>
-        <% count = @door[:grid].fetch([wday, hour], 0) %>
-        <span class="cell" style="--v: <%= share(count, busiest) %>" title="<%= day_name %> <%= hour_label(hour) %>: <%= count %> entries"></span>
-      <% end %>
-    <% end %>
-  </div>
-  <div class="heatmap-scale"><span>Quiet</span><i></i><span>Busiest, <%= busiest %> entries</span></div>
-</section>
-
-<div class="grid two">
-  <%= render ChartCardComponent.new(title: "Remote door commands", note: "Opens, unlocks and locks sent from the website and the phone app.") do %>
-    <%= column_chart by_bucket_series(@door[:remote], @period), stacked: true %>
-  <% end %>
-  <% if @calendar %>
-    <%= render ChartCardComponent.new(title: "Does the calendar bring people in?", note: "Average card entries per day, on days with an event against days with nothing on.", rows: @calendar[:door_on_event_days], columns: ["Days", "Entries per day"]) do %>
-      <%= bar_chart @calendar[:door_on_event_days], height: "160px" %>
-    <% end %>
-  <% end %>
-</div>
-
-<%# ---------------------------------------------------------------- calendar %>
-<div class="section-head"><p class="eyebrow">The calendar</p><h2>What the lab puts on</h2></div>
-<% if @calendar %>
-  <div class="tiles">
-    <%= render StatTileComponent.new(value: @calendar[:total], label: "Events", sub: "Open hours not counted") %>
-    <%= render StatTileComponent.new(value: @calendar[:classes], label: "Workshops with sign up") %>
-    <%= render StatTileComponent.new(value: @calendar[:hyh], label: "Hack Your Hackerspace meetings") %>
-  </div>
-  <%= render ChartCardComponent.new(title: "Events per #{@period.unit}, by kind") do %>
-    <%= column_chart by_bucket_series(@calendar[:series], @period), stacked: true, height: "260px", paletteOrder: calendar_palette_order(@calendar[:series]) %>
-  <% end %>
-  <div class="grid two">
-    <section class="card">
-      <h3>Most frequent events</h3>
-      <%= render "bar_list", rows: @calendar[:top].map { |title, count, category| [title, count, category.key] }, empty: "Nothing on the calendar in this period." %>
-    </section>
-    <%= render ChartCardComponent.new(title: "Events by day of the week", rows: @calendar[:weekdays], columns: ["Day", "Events"]) do %>
-      <%= column_chart @calendar[:weekdays] %>
-    <% end %>
-  </div>
-<% else %>
-  <p class="msg warn">The lab calendar could not be read from Google just now, so this section is missing. The rest of the page is current.</p>
-<% end %>
-</div>
