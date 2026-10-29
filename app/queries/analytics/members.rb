@@ -68,35 +68,10 @@ module Analytics
       }
     end
 
-    # Payers grouped by the month of their first payment, and the share of
-    # each group still paying 3, 6 and 12 months later (nil until that
-    # month has come).
-    def payer_retention
-      months_paid = Hash.new { |hash, user| hash[user] = Set.new }
-      Payment.where.not(user_id: nil).pluck(:user_id, :date).each do |user_id, date|
-        months_paid[user_id] << month_index(date) if date
-      end
-
-      cohorts = months_paid.group_by { |_user, months| months.min }
-      first_month = month_index(@period.starts_at.to_date)
-      this_month = month_index(Date.current)
-      cohorts.select { |month, _payers| month >= first_month }.sort.map do |month, payers|
-        still_paying = [3, 6, 12].map do |later|
-          next nil if month + later > this_month
-          payers.count { |_user, months| months.include?(month + later) } * 100.0 / payers.size
-        end
-        [Date.new(month / 12, month % 12 + 1, 1), payers.size, *still_paying]
-      end
-    end
-
     private
 
     def group(scope, column)
       scope.where(column => @period.range).group_by_period(@period.unit, column, range: @period.range).count
-    end
-
-    def month_index(date)
-      date.year * 12 + date.month - 1
     end
   end
 end

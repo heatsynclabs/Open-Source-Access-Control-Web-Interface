@@ -26,7 +26,7 @@ class AnalyticsController < ApplicationController
       cardholders: members.cardholder_count,
       signups: members.signups, orientations: members.orientations, waivers: members.waivers_signed,
       certifications: members.certifications_granted, level_mix: members.level_mix,
-      top_certifications: members.top_certifications, funnel: members.funnel, retention: members.payer_retention,
+      top_certifications: members.top_certifications, funnel: members.funnel,
     }
   end
 

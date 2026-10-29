@@ -25,10 +25,6 @@ module AnalyticsHelper
     series.map { |line| CATEGORY_PALETTE_SLOTS.fetch(LabCalendar::Category.all.find { |c| c.label == line[:name] }&.key, 1) }
   end
 
-  def percent(value)
-    value.nil? ? "not yet" : "#{value.round}%"
-  end
-
   def share(value, max)
     max.to_f.zero? ? 0 : (value.to_f / max).round(3)
   end

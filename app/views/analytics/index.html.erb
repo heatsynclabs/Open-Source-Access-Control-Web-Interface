@@ -53,31 +53,10 @@
   <% end %>
 </div>
 
-<div class="grid two">
-  <section class="card">
-    <h3>Most granted certifications</h3>
-    <%= render "bar_list", rows: @members[:top_certifications], empty: "No certifications granted in this period." %>
-  </section>
-
-  <section class="card">
-    <h3>Do payers keep paying?</h3>
-    <p class="note">People grouped by the month of their first dues payment, and the share who paid again 3, 6 and 12 months later.</p>
-    <% if @members[:retention].any? %>
-      <div class="table-wrap short">
-        <table>
-          <thead><tr><th>First paid</th><th class="num">Payers</th><th class="num">3 months</th><th class="num">6 months</th><th class="num">12 months</th></tr></thead>
-          <tbody>
-            <% @members[:retention].reverse_each do |month, payers, three, six, twelve| %>
-              <tr><td><%= month.strftime("%b %Y") %></td><td class="num"><%= payers %></td><td class="num"><%= percent(three) %></td><td class="num"><%= percent(six) %></td><td class="num"><%= percent(twelve) %></td></tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    <% else %>
-      <%= render EmptyStateComponent.new("No first payments in this period.") %>
-    <% end %>
-  </section>
-</div>
+<section class="card">
+  <h3>Most granted certifications</h3>
+  <%= render "bar_list", rows: @members[:top_certifications], empty: "No certifications granted in this period." %>
+</section>
 
 <%# ---------------------------------------------------------------- dues %>
 <% if @payments %>

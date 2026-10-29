@@ -51,9 +51,7 @@
   // Analytics page rhythm: cards and grids in a section sit a gap apart.
   .analytics {
     .grid + .grid, .grid + .card, .card + .grid { margin-top: var(--space-6); }
-    .funnel, .bar-list, .heatmap, .table-wrap.short { margin-top: var(--space-4); }
-    .table-wrap.short { max-height: 320px; }
-    .table-wrap.short th { white-space: normal; }
+    .funnel, .bar-list, .heatmap { margin-top: var(--space-4); }
   }
 
   .section-head { margin: var(--space-12) 0 var(--space-4); padding-top: var(--space-6); border-top: 2px solid var(--steel-hi); h2 { margin: 0; } }
