@@ -1,48 +1,28 @@
-<style type="text/css">
- #user_to_merge_details, #user_to_keep_details,
- #user_to_merge_details p, #user_to_keep_details p {
-   font-size: 12px;
-   margin: 0;
- }
-</style>
+<%= render PageHeaderComponent.new(eyebrow: "People", eyebrow_path: users_path, title: "Merge two people") %>
+<p class="msg warn">Everything except the email, password, name, id, hidden flag and blank values moves to the person you keep, unless they already have a value there. Their cards, certifications and payments move too. The other person is then deleted.</p>
 
-<h1>Merging users</h1>
-
-<%= form_tag('/users/merge', :method => :post) do %>
-<b>Everything except the email, password, name, id, hidden, and blank values will be moved to the "user to keep" UNLESS there is a value already there. The "user to merge" will be deleted.</b>
-<table>
-<tr>
-<td>
-  <div class="field">
-    <%= label_tag :user_to_keep, "User to Keep" %><br />
-    <%= collection_select(:user, :to_keep, @users, :id, :name_with_email_and_visibility, :include_blank => true) %>
+<%= form_tag("/users/merge", method: :post, class: "form") do %>
+  <div class="merge-pair">
+    <fieldset data-controller="preview" data-preview-url-value="/user_summary/">
+      <legend>Keep</legend>
+      <div class="field">
+        <%= label_tag :user_to_keep, "Person to keep" %>
+        <%= collection_select(:user, :to_keep, @users, :id, :name_with_email_and_visibility, { include_blank: true }, { data: { action: "preview#load" } }) %>
+      </div>
+      <div class="merge-details" id="user_to_keep_details" data-preview-target="panel"></div>
+    </fieldset>
+    <span class="merge-arrow" aria-hidden="true"><%= lucide_icon "arrow-left" %></span>
+    <fieldset data-controller="preview" data-preview-url-value="/user_summary/">
+      <legend>Merge in and delete</legend>
+      <div class="field">
+        <%= label_tag :user_to_merge, "Person to merge" %>
+        <%= collection_select(:user, :to_merge, @users, :id, :name_with_email_and_visibility, { include_blank: true }, { data: { action: "preview#load" } }) %>
+      </div>
+      <div class="merge-details" id="user_to_merge_details" data-preview-target="panel"></div>
+    </fieldset>
   </div>
-  <div id="user_to_keep_details"></div>
-</td>
-<td style="font-size: 16px">&#x25C0;&#x25C0;</td>
-<td>
-  <div class="field">
-    <%= label_tag :user_to_merge, "User to Merge" %><br />
-    <%= collection_select(:user, :to_merge, @users, :id, :name_with_email_and_visibility, :include_blank => true) %>
-  </div>
-  <div id="user_to_merge_details"></div>
-</td>
-</tr>
-</table>
-
-<hr/>
-  <div class="actions">
-    <%= submit_tag "Merge" %>
+  <div class="form-actions">
+    <%= submit_tag "Merge", class: "primary", data: { confirm: "Merge these two people? The second one is deleted." } %>
+    <%= link_to "Cancel", users_path, class: "btn" %>
   </div>
 <% end %>
-
-<%= link_to 'Back', users_path %>
-
-<script>
-$("#user_to_keep").change(function(event,handler){
-  $("#user_to_keep_details").load("/user_summary/"+event.target.value);
-});
-$("#user_to_merge").change(function(event,handler){
-  $("#user_to_merge_details").load("/user_summary/"+event.target.value);
-});
-</script>

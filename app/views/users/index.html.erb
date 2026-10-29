@@ -1,86 +1,51 @@
-<h1>HeatSync People</h1>
-
-<p>
-<% if can? :create, User %>
-  <%= link_to 'New User', new_user_path, class: "btn btn-success" %>
+<%= render PageHeaderComponent.new(eyebrow: "People", eyebrow_path: users_path, title: "Full table") do |header| %>
+  <% header.with_action { link_to "New user", new_user_path, class: "btn small" } if can? :create, User %>
+  <% header.with_action { link_to "Merge users", users_merge_path, class: "btn small" } if can? :manage, User %>
 <% end %>
-<% if can? :manage, User %>
-  <%= link_to 'Merge Users', users_merge_path, class: "btn btn-primary" %>
-<% end %>
-<% if current_user.admin? %>
-  <%= link_to 'Inactive Users', users_inactive_path, class: "btn btn-default" %>
-<% end %>
-<% if can? :activity, User %>
-  <%= link_to 'Recent Activity', users_activity_path, class: "btn btn-default" %>
-<% end %>
-<% if can? :new_member_report, User %>
-  <%= link_to 'New Members Report', users_new_member_report_path, class: "btn btn-default" %>
-<% end %>
-</p>
+<%= render "tabs", current: :full %>
+<%= render "orientation_note" %>
 
 <% @certifications = Certification.all.sort_by(&:id) %>
-<table class="table table-hover">
-  <col />
-  <col />
-  <% if current_user.admin? then %><col /><% end %>
-  <col class="col_highlight" />
-  <% if current_user.admin? %><col />
-  <col class="col_highlight" /><% end %>
-  <col />
-  <col class="col_highlight" />
-  <col />
-  <% col_count = 0 %>
-  <% @certifications.each do |c| %>
-    <col <% if col_count.even? %>class="col_highlight"<% end %> />
-    <% col_count = col_count + 1 %>
-  <% end %>
-  <tr>
-    <th></th>
-    <th><a href="?full=full&sort=name">Name</a></th>
-    <th><a href="?full=full&sort=member">Member?</a></th>
-    <% if current_user.admin? then %><th><a href="?sort=email">Email</a></th><% end %>
-    <% if current_user.admin? then %>
-    <th><a href="?full=full&sort=orientation">Orientation?</a></th>
-    <% end %>
-    <th><a href="?full=full&sort=waiver">Waiver?</a></th>
-    <th><a href="?full=full&sort=card">Card?</a></th>
-    <th><a href="?full=full&sort=instructor">Instructor?</a></th>
-    <% if current_user.admin? then %><th><a href="?sort=admin">Admin?</a></th><% end %>
-    <% @certifications.each do |c| %>
-      <th><a href="?full=full&sort=cert&cert=<%= c.id %>"><%= c.name %></a></th>
-    <% end %>
-  </tr>
-  
-<% if !@users.blank? %>
-  <% @users.each do |user| %>
-  <tr<%= ' class=hidden' if user.hidden? %>>
-    <td><%= image_tag user.gravatar_url(:size => 25, :default => "http://members.heatsynclabs.org/assets/nil.png"), :class => :avatar %></td>
-    <td><%= link_to user.name, user %></td>
-    <td><%= raw(user.member_status_symbol) %></td>
-    <% if current_user.admin? then %><td><%= user.email %></td><% end %>
-    <% if current_user.admin? then %><td>
-      <%= unless user.orientation.blank? then raw("<span class='hoverinfo' title='"+user.orientation.strftime("%B %d %Y")+"'>&#x2713;</span>") end %>
-    </td><% end %>
-    <td><%= unless user.contracts.blank? then raw("<span class='hoverinfo' title='"+user.contracts.first.signed_at.strftime("%B %d %Y")+"'>&#x2713;</span>") end %></td>
-    <td><%= unless user.cards.blank? then raw("<span class='iconinfo'>&#x2713;</span>") end %></td>
-    <td><%= if user.instructor? then raw("<span class='iconinfo'>&#x2713;</a>") end %></td>
-    <% if current_user.admin? then %><td><%= if user.admin? then raw("<span class='iconinfo'>&#x2713;</a>") end %></td><% end %>
-    <% @certifications.each do |c| %>
-    <td>
-      <% user.user_certifications.each do |u| %>
-        <% if u.certification_id == c.id %>
-          <%= link_to raw("<span class='iconinfo'>&#x2713;</span>"), u %>
+<% admin = current_user.admin? %>
+<% check = lucide_icon("check") %>
+<p class="count-line"><%= pluralize(@users.size, "person") %>. Click a heading to sort.</p>
+<div class="table-wrap tall">
+  <table>
+    <thead>
+      <tr>
+        <th><%= sort_link "Name", "name" %></th>
+        <th><%= sort_link "Member", "member" %></th>
+        <% if admin %><th>Email</th><% end %>
+        <% if admin %><th><%= sort_link "Orientation", "orientation" %></th><% end %>
+        <th><%= sort_link "Waiver", "waiver" %></th>
+        <th><%= sort_link "Card", "card" %></th>
+        <th><%= sort_link "Instructor", "instructor" %></th>
+        <% if admin %><th><%= sort_link "Admin", "admin" %></th><% end %>
+        <% @certifications.each do |cert| %>
+          <th><%= link_to cert.name, request.parameters.merge(sort: "cert", cert: cert.id) %></th>
         <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr class="<%= 'tone-quiet' if user.hidden? %>">
+          <td><%= link_to user, class: "person-cell" do %><%= person_avatar(user, 24) %><span><%= user.name %></span><% end %><%= render ChipComponent.new("Hidden") if user.hidden? %></td>
+          <td><%= render MemberBadgeComponent.new(user) %></td>
+          <% if admin %><td><%= user.email %></td><% end %>
+          <% if admin %><td><% if user.orientation.present? %><span title="<%= user.orientation.strftime('%B %d %Y') %>"><%= check %></span><% end %></td><% end %>
+          <td><% if user.contracts.present? %><span title="<%= user.contracts.first.signed_at.strftime('%B %d %Y') %>"><%= check %></span><% end %></td>
+          <td><%= check if user.cards.present? %></td>
+          <td><%= check if user.instructor? %></td>
+          <% if admin %><td><%= check if user.admin? %></td><% end %>
+          <% @certifications.each do |cert| %>
+            <td>
+              <% user.user_certifications.select { |uc| uc.certification_id == cert.id }.each do |uc| %>
+                <%= link_to check, uc, title: "#{cert.name} certification" %>
+              <% end %>
+            </td>
+          <% end %>
+        </tr>
       <% end %>
-    </td>
-    <% end %>
-  </tr>
-  <% end %>
-<% end %>
-</table>
-
-<% if current_user.orientation.blank? then %>
-<p class="alert">There's a lot more to see here, but our records show you haven't completed the new member orientation yet. If that's incorrect, please contact a volunteer.</p>
-<% end %>
-
-<br />
+    </tbody>
+  </table>
+</div>

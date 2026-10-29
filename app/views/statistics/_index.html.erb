@@ -1,7 +1,8 @@
-<h2>Your Statistical Data</h2>
-<em>Data is power, and you've got the most: this system is programmed such that nobody else can see the graphs below but you! Use the JSON dumps to make something cool!</em>
-
-<ul>
-  <li><%= link_to 'MAC Address Data', mac_statistics_path %></li>
-  <li><%= link_to 'Card Access Data', door_statistics_path %></li>
-</ul>
+<section class="card">
+  <h2>Your data</h2>
+  <p class="small muted">Only you can see these pages. Each has a JSON download if you want to build something with it.</p>
+  <ul class="plain">
+    <li><%= link_to "Computer presence", mac_statistics_path %><%= lucide_icon "chevron-right" %></li>
+    <li><%= link_to "Card use at the door", door_statistics_path %><%= lucide_icon "chevron-right" %></li>
+  </ul>
+</section>

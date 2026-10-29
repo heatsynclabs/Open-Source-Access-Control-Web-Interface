@@ -1,125 +1,91 @@
-<% if params[:flash] == "welcome_msg" then %>
-<p class="notice"><strong>Thank for you choosing to become a HeatSync Labs member!</strong> As we foster this community of learning, science, and the arts every member is important. <br/><br/>
-You can get your payments started by clicking the payment button on this page or contacting a HeatSync member. <strong>Please note electronic recurring payments are -highly- encouraged</strong>-- we do not have paid staff. If you must pay via cash/check, please consider prepaying for 3, 6 or 12 months up front to reduce volunteer workload.<br/><br/>
-<strong>To claim member benefits</strong> such as storage, grab a volunteer during your next stop into HeatSync or schedule a time to meet up in advance. Someone should also be contacting you shortly via the email address you provided to schedule a New Member Orientation as well. After the orientation, you'll be equipped to be an awesome member of our community, and this website will get a lot more useful.<br/><br/>
-Please also note that certain privileges like 24/7 card access require community approval.<br/><br/>
-Thanks again, and happy hacking!</p>
-<% end %>
-
-<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => html) do |f| %>
-<div class="g-form">
-  <p class="form-note"><i><%= f.label :public_notice, "* denoted fields will be published to our public mailing list" %></i></p>
+<% signing_up = ['new', 'create'].include?(params[:action]) %>
+<% level_options = [[nil], ["None", 0], ["Unable", 1], ["Volunteer", 10], ["Associate ($25)", 25], ["Basic ($50)", 50], ["Plus ($100)", 100]] %>
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: (html || {}).merge(class: "form")) do |f| %>
+  <%= render FormErrorsComponent.new(resource) %>
+  <p class="hint">Fields marked * go out on the lab's public mailing list when you join.</p>
 
   <fieldset>
     <legend>Membership</legend>
-    <div class="fieldset-grid">
+    <div class="fields">
       <div class="field">
-        <%= f.label :member_level, "Membership Level" %>
-        <%= f.select :member_level, [[nil],["None",0],["Unable",1],["Volunteer",10],["Associate ($25)",25],["Basic ($50)",50],["Plus ($100)",100]]  %>
+        <%= f.label :member_level, "Membership level" %>
+        <%= f.select :member_level, level_options %>
+        <p class="hint">Associate $25, Basic $50 or Plus $100 a month. Volunteer and unable-to-pay levels are agreed with the board.</p>
       </div>
       <div class="field">
-        <%= render :partial => "/users/payment_methods", :locals => { :g => f } %>
+        <%= render partial: "/users/payment_methods", locals: { g: f } %>
       </div>
     </div>
   </fieldset>
 
   <fieldset>
     <legend>Account</legend>
-    <div class="fieldset-grid">
+    <div class="fields">
       <div class="field">
-        <%= f.label :name, "Full Name *" %>
-        <%= f.text_field :name %>
+        <%= f.label :name, "Full name *" %>
+        <%= f.text_field :name, autocomplete: "name" %>
       </div>
       <div class="field">
         <%= f.label :email %>
-        <%= f.email_field :email %>
-        <span class="field-inline"><%= f.check_box :email_visible %> <%= f.label :email_visible, "Show Email to All Members?" %></span>
+        <%= f.email_field :email, autocomplete: "email" %>
+        <div class="check"><%= f.check_box :email_visible %><%= f.label :email_visible, "Show my email to all members" %></div>
       </div>
       <div class="field">
-        <%= f.label :password %><% unless ['new','create'].include?(params[:action]) %> <em>(Only if you want to change your password)</em><% end %>
-        <%= f.password_field :password %>
+        <%= f.label :password %>
+        <%= f.password_field :password, autocomplete: "new-password" %>
+        <% unless signing_up %><p class="hint">Only if you want to change it.</p><% end %>
       </div>
       <div class="field">
-        <%= f.label :password_confirmation %>
-        <%= f.password_field :password_confirmation %>
+        <%= f.label :password_confirmation, "Password again" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
       </div>
-      <% unless ['new','create'].include?(params[:action]) %>
-      <div class="field">
-        <%= f.label :current_password, "Type Your Current Password" %> <em>(For your account's security)</em>
-        <%= f.password_field :current_password %>
-      </div>
+      <% unless signing_up %>
+        <div class="field">
+          <%= f.label :current_password, "Your current password" %>
+          <%= f.password_field :current_password, autocomplete: "current-password" %>
+          <p class="hint">Needed to save any change, to keep your account safe.</p>
+        </div>
       <% end %>
     </div>
   </fieldset>
 
   <fieldset>
     <legend>Contact</legend>
-    <div class="fieldset-grid">
+    <div class="fields">
       <div class="field">
         <%= f.label :phone %>
-        <%= f.text_field :phone %>
-        <span class="field-inline"><%= f.check_box :phone_visible %> <%= f.label :phone_visible, "Show Phone to All Members?" %></span>
+        <%= f.text_field :phone, autocomplete: "tel" %>
+        <div class="check"><%= f.check_box :phone_visible %><%= f.label :phone_visible, "Show my phone to all members" %></div>
       </div>
       <div class="field">
-        <%= f.label :postal_code, "Residential Postal Code" %>
-        <%= f.text_field :postal_code %>
-        <span class="field-hint">(we'd like to know where you're commuting from!)</span>
+        <%= f.label :postal_code, "Home postal code" %>
+        <%= f.text_field :postal_code, autocomplete: "postal-code" %>
+        <p class="hint">We like to know where people commute from.</p>
       </div>
-      <div class="field field-wide">
-        <%= f.label :twitter_url %>
-        <%= f.text_field :twitter_url, :placeholder => "https://twitter.com/heatsynclabs" %>
-      </div>
-      <div class="field field-wide">
-        <%= f.label :facebook_url %>
-        <%= f.text_field :facebook_url, :placeholder => "https://www.facebook.com/HeatSyncLabs" %>
-      </div>
-      <div class="field field-wide">
-        <%= f.label :github_url %>
-        <%= f.text_field :github_url, :placeholder => "https://github.com/heatsynclabs" %>
-      </div>
-      <div class="field field-wide">
-        <%= f.label :website_url %>
-        <%= f.text_field :website_url, :placeholder => "http://www.heatsynclabs.org" %>
-      </div>
+      <div class="field"><%= f.label :twitter_url %><%= f.text_field :twitter_url, placeholder: "https://twitter.com/heatsynclabs" %></div>
+      <div class="field"><%= f.label :facebook_url %><%= f.text_field :facebook_url, placeholder: "https://www.facebook.com/HeatSyncLabs" %></div>
+      <div class="field"><%= f.label :github_url %><%= f.text_field :github_url, placeholder: "https://github.com/heatsynclabs" %></div>
+      <div class="field"><%= f.label :website_url %><%= f.text_field :website_url, placeholder: "https://www.heatsynclabs.org" %></div>
     </div>
   </fieldset>
 
   <fieldset>
-    <legend>Emergency Contact</legend>
-    <div class="fieldset-grid">
-      <div class="field">
-        <%= f.label :emergency_name, "Emergency Contact Name" %>
-        <%= f.text_field :emergency_name %>
-      </div>
-      <div class="field">
-        <%= f.label :emergency_phone %>
-        <%= f.text_field :emergency_phone %>
-      </div>
-      <div class="field">
-        <%= f.label :emergency_email %>
-        <%= f.text_field :emergency_email %>
-      </div>
+    <legend>Emergency contact</legend>
+    <div class="fields">
+      <div class="field"><%= f.label :emergency_name, "Name" %><%= f.text_field :emergency_name %></div>
+      <div class="field"><%= f.label :emergency_phone, "Phone" %><%= f.text_field :emergency_phone %></div>
+      <div class="field"><%= f.label :emergency_email, "Email" %><%= f.text_field :emergency_email %></div>
     </div>
   </fieldset>
 
   <fieldset>
-    <legend>About You</legend>
-    <div class="fieldset-grid">
-      <div class="field field-wide">
-        <%= f.label :current_skills, "What skills, knowledge and experience do you bring to the community? *" %>
-        <%= f.text_area :current_skills %>
-      </div>
-      <div class="field field-wide">
-        <%= f.label :desired_skills, "What skills, knowledge and experiences are you looking for in HeatSync? *" %>
-        <%= f.text_area :desired_skills %>
-      </div>
-      <div class="field field-wide">
-        <%= f.label :marketing_source, "How'd you find out about HeatSync? *" %>
-        <%= f.text_area :marketing_source %>
-      </div>
+    <legend>About you</legend>
+    <div class="fields">
+      <div class="field wide"><%= f.label :current_skills, "What skills, knowledge and experience do you bring to the community? *" %><%= f.text_area :current_skills %></div>
+      <div class="field wide"><%= f.label :desired_skills, "What skills, knowledge and experiences are you looking for at HeatSync? *" %><%= f.text_area :desired_skills %></div>
+      <div class="field wide"><%= f.label :marketing_source, "How did you find out about HeatSync? *" %><%= f.text_area :marketing_source %></div>
     </div>
   </fieldset>
 
-  <div class="form-actions"><%= f.submit button_label %></div>
-</div>
+  <div class="form-actions"><%= f.submit button_label, class: "primary" %></div>
 <% end %>

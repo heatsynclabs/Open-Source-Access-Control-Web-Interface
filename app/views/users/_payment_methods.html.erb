@@ -1,15 +1,21 @@
-<%   @payment_methods = [[nil],["PayPal"],["Dwolla"],["Bill Pay","BillPay"],["Check"],["Cash"],["Other"]]
-  @payment_instructions = {nil => nil, 
-:PayPal => "Set up a monthly recurring payment to hslfinances@gmail.com or via the button on the next page.", 
-:Dwolla => "Set up a monthly recurring payment to hslfinances@gmail.com or via the button on the next page.", 
-:BillPay =>  "Have your bank send a monthly check to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201", 
-:Check => "Mail to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201 OR put in the drop safe at the Lab with a deposit slip firmly attached each month.", 
-:Cash => "Put in the drop safe at the Lab with a deposit slip firmly attached each month.", 
-:Other => "Hmm... talk to a Treasurer!"} %>
-
-<%= g.label :payment_method %><% if params[:action] != 'new' %> <i>(after changing this, please make sure you update your payment service, it's not automatic.)</i><% end %><br />
-<%= g.select :payment_method, @payment_methods  %>
-<% @payment_instructions.each_pair do |key, value| %>
-  <span class="payment_instructions" id="pmt_<%= key %>"><%= value %></span>
-<% end %>
-
+<%# The pays-by select and what each choice means. Values are what the treasurer's records use. %>
+<%
+  payment_methods = [[nil], ["PayPal"], ["Dwolla"], ["Bill Pay", "BillPay"], ["Check"], ["Cash"], ["Other"]]
+  payment_instructions = {
+    "PayPal" => "Set up a monthly recurring payment to hslfinances@gmail.com, or use the button on your profile.",
+    "Dwolla" => "Dwolla no longer takes payments. Pick another way, or ask the treasurer.",
+    "Bill Pay" => "Have your bank send a monthly check to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201.",
+    "Check" => "Mail it to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201, or put it in the drop safe at the lab with a deposit slip attached, each month.",
+    "Cash" => "Put it in the drop safe at the lab with a deposit slip attached, each month.",
+    "Other" => "Talk to the treasurer.",
+  }
+%>
+<%= g.label :payment_method, "Pays by" %>
+<%= g.select :payment_method, payment_methods %>
+<% if params[:action] != "new" %><p class="hint">After changing this, update your payment service too. It does not change by itself.</p><% end %>
+<details class="hint pay-ways">
+  <summary>How each way works</summary>
+  <dl class="facts">
+    <% payment_instructions.each do |method, text| %><dt><%= method %></dt><dd><%= text %></dd><% end %>
+  </dl>
+</details>

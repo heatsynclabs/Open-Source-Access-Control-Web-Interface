@@ -1,14 +1,12 @@
-<h3>Send Email to <%= @user.name %></h3>
-<%= form_tag do %>
-  <div class="field">
-  	<%= label_tag :subject %><br/>
-    <%= text_field_tag :subject, @subject, :size => 52 %>
-  </div>
-  <div class="field">
-  	<%= label_tag :body %><br/>
-    <%= text_area_tag :body, @body, :cols => 40  %>
-  </div>
-  <div class="field">
-    <%= submit_tag "Send", :class => "btn" %>
+<%= render PageHeaderComponent.new(eyebrow: @user.name, eyebrow_path: user_path(@user), title: "Send an email", lead: "It goes to #{@user.name.to_s.split.first} from the members site, with your name on it.") %>
+<%= form_tag({}, class: "form narrow") do %>
+  <fieldset>
+    <legend>Message</legend>
+    <div class="field"><%= label_tag :subject %><%= text_field_tag :subject, @subject %></div>
+    <div class="field"><%= label_tag :body, "Message" %><%= text_area_tag :body, @body, rows: 10 %></div>
+  </fieldset>
+  <div class="form-actions">
+    <%= submit_tag "Send", class: "primary" %>
+    <%= link_to "Cancel", user_path(@user), class: "btn" %>
   </div>
 <% end %>

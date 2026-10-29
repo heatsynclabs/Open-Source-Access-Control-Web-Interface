@@ -1,209 +1,180 @@
-<h2>
-  <%= image_tag @user.gravatar_url(:default => "http://members.heatsynclabs.org/assets/nil.png"), :class => 'avatar-large' %>
-  <%= @user.name %>
-  <%= raw(@user.member_status_symbol) %>
-  <%= link_to image_tag('/twitter.png', :class => 'social-icon', :title => "Twitter"), @user.twitter_url, :class => 'social-link' if @user.twitter_url.present? %>
-  <%= link_to image_tag('/facebook.png', :class => 'social-icon', :title => "Facebook"), @user.facebook_url, :class => 'social-link' if @user.facebook_url.present? %>
-  <%= link_to image_tag('/github.png', :class => 'social-icon', :title => "Github"), @user.github_url, :class => 'social-link' if @user.github_url.present? %>
-  <%= link_to image_tag('/website.png', :class => 'social-icon', :title => "Website"), @user.website_url, :class => 'social-link' if @user.website_url.present? %>
+<% admin = current_user.admin? %>
+<% content_for :title, @user.name %>
+<p class="eyebrow"><%= link_to "People", users_path %></p>
+<div class="person-head">
+  <%= person_avatar(@user, 72) %>
+  <div>
+    <h1><%= @user.name %></h1>
+    <div class="contact-links">
+      <%= render MemberBadgeComponent.new(@user) %>
+      <% if @user.instructor? %><%= render ChipComponent.new("Instructor", tone: :info) %><% end %>
+      <% if @user.hidden? %><%= render ChipComponent.new("Hidden") %><% end %>
+      <% if (admin || @user.email_visible) && @user.email.present? %><%= mail_to @user.email do %><%= lucide_icon "mail" %><%= @user.email %><% end %><% end %>
+      <% if (admin || @user.phone_visible) && @user.phone.present? %><%= link_to "tel:#{@user.phone}" do %><%= lucide_icon "phone" %><%= @user.phone %><% end %><% end %>
+      <%= render "social_links", user: @user %>
+    </div>
+  </div>
+</div>
 
-  <%= link_to 'Back', :back, :class => 'btn btn-default' %>
-  <%= link_to 'Email User', user_compose_email_path(@user), :class => 'btn btn-default' %>
-  <%= link_to 'Edit', edit_user_path(@user), class: "btn btn-primary" if can? :update, @user %>
-  <%= link_to 'Destroy', @user, class: "btn btn-danger", :confirm => 'Are you sure? WARNING: THIS DOES NOT REMOVE THE USER FROM THE DOOR SYSTEM! DISABLE THEM FIRST.', :method => :delete if can? :destroy, @user %>
-</h2>
+<div class="actions-row person-actions">
+  <%= link_to user_compose_email_path(@user), class: "btn" do %><%= lucide_icon "send" %> Email <%= @user.name.to_s.split.first %><% end %>
+  <%= link_to "Edit", edit_user_path(@user), class: "btn primary" if can? :update, @user %>
+  <%= link_to "Delete", @user, method: :delete, class: "btn danger",
+        data: { confirm: "Delete this person? This does not remove them from the door system. Disable their cards first." } if can? :destroy, @user %>
+</div>
 
-<% if current_user.admin? || @user.email_visible %>
-  <p>
-    <b>Email:</b>
-    <%= @user.email %>
-  </p>
-<% end %>
-
-<% if current_user.admin? || @user.phone_visible %>
-  <p>
-    <b>Phone:</b>
-    <%= @user.phone %>
-  </p>
-<% end %>
- <p>
-    <b>Current Skills:</b>
-    <%= simple_format @user.current_skills %>
-  </p>
-  <p>
-    <b>Desired Skills:</b>
-    <%= simple_format @user.desired_skills %>
-  </p>
-
-<% if current_user.admin? then %>
-<p>
-  <b>Orientation?</b>
-  <%= @user.orientation.strftime("%B %d %Y") unless @user.orientation.blank? %>
-  <% unless @user.oriented_by.blank? %>
-    <em>(recorded by <%= link_to @user.oriented_by.name, @user.oriented_by %>)</em>
-  <% end %>
-</p>
-  <p>
-    <b>Emergency Name:</b>
-    <%= @user.emergency_name %>
-  </p>
-  <p>
-    <b>Emergency Phone:</b>
-    <%= @user.emergency_phone %>
-  </p>
-  <p>
-    <b>Emergency Email:</b>
-    <%= @user.emergency_email %>
-  </p>
-  <p>
-    <b>Desired Member Level:</b>
-    <%= @user.member_level_string %>
-  </p>
-  <p>
-    <b>Payment Method:</b>
-    <%= @user.payment_method %>
-  </p>
-  <p>
-    <b>Payee:</b>
-    <%= @user.payee %>
-  </p>
-<% end %>
-
-<% if current_user.admin? then %>
-  <p>
-    <b>Found HeatSync via:</b>
-    <%= simple_format @user.marketing_source %>
-  </p>
-  <p>
-    <b>Left HeatSync because:</b>
-    <%= simple_format @user.exit_reason %>
-  </p>
-<% end %>
-
-<b>Certifications:  </b><%= link_to "+ Add", (new_user_certification_path+"?user="+@user.id.to_s), :class => 'btn btn-default' if can? :create, UserCertification %>
-<ul>
-  <% @user.certifications.each do |certification| %>
-    <li><%= link_to certification.name, certification %></li>
-  <% end %>
-  <% if @user.certifications.blank? %><li>n/a</li><% end %>
-</ul>
-<p>
-  <b>Card:  </b><%= link_to "+ Add", (new_card_path+"?user="+@user.id.to_s), :class => 'btn btn-default' if can? :create, Card %>
-  <% if current_user.admin? then %>
-    <ul>
-    <% @user.cards.each do |c| %>
-      <li><%= link_to c.card_number, c %><%= "," unless c == @user.cards.last %></li>
-    <% end %>
-    </ul>
+<div class="tiles">
+  <% if @user.member_level.to_i >= 25 %>
+    <%= render StatTileComponent.new(value: @user.payment_status ? "Paid up" : "Overdue", label: @user.member_level_string, tone: (@user.payment_status ? :headline : :alert)) %>
   <% else %>
-    <%= unless @user.cards.blank? then raw("&#x2713;") end %>
+    <%= render StatTileComponent.new(value: @user.member_level_string.presence || "None", label: "Membership level") %>
   <% end %>
-</p>
+  <%= render StatTileComponent.new(value: @user.certifications.size, label: "Certifications") %>
+  <%= render StatTileComponent.new(value: @user.cards.size, label: "Cards") %>
+  <%= render StatTileComponent.new(value: @user.created_at.year, label: "Joined", sub: @user.created_at.strftime("%B %-d, %Y")) %>
+</div>
 
-<b>Computers: </b><%= link_to "+ Add", new_mac_path, :class => 'btn btn-default' if can? :create, Mac %>
-<ul>
-  <% @user.macs.each do |mac| %>
-    <li><%= link_to mac.mac, mac %></li>
-  <% end %>
-  <% if @user.macs.blank? %><li>n/a</li><% end %>
-</ul>
+<div class="grid side">
+  <div class="stack">
+    <section class="card prose">
+      <h2>Skills</h2>
+      <h3>Brings</h3>
+      <%= simple_format @user.current_skills %>
+      <h3>Wants to learn</h3>
+      <%= simple_format @user.desired_skills %>
+    </section>
 
-<p>
-  <% if current_user.admin? then %>
-    <b>Payments:</b>
-    <ul>
-    <% @payments.each do |payment| %>
-      <li><%= link_to payment.date, payment %></li>
+    <section class="card">
+      <div class="card-head">
+        <h2>Certifications</h2>
+        <%= link_to "Add", new_user_certification_path + "?user=#{@user.id}", class: "btn small" if can? :create, UserCertification %>
+      </div>
+      <% if @user.certifications.any? %>
+        <div class="row-tags"><% @user.certifications.each do |cert| %><%= link_to cert.name, cert, class: "tag" %><% end %></div>
+      <% else %>
+        <%= render EmptyStateComponent.new("No certifications yet.") %>
+      <% end %>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Tools and resources</h2>
+        <%= link_to "Add", new_resource_path, class: "btn small" if can? :create, Resource %>
+      </div>
+      <% if @user.resources.any? %>
+        <div class="tool-grid">
+          <% @user.resources.each do |resource| %>
+            <%= link_to resource, class: "tool-card #{'gone' if resource.disposed_at}" do %>
+              <span class="pic"><%= resource.picture? ? image_tag(resource.picture.url(:thumb), alt: "") : lucide_icon("wrench") %></span>
+              <span class="body"><span class="name"><%= resource.name %></span></span>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <%= render EmptyStateComponent.new("Nothing listed.") %>
+      <% end %>
+    </section>
+
+    <% if admin %>
+      <section class="card prose">
+        <h2>Joining and leaving</h2>
+        <h3>Found HeatSync through</h3>
+        <%= simple_format @user.marketing_source %>
+        <h3>Left HeatSync because</h3>
+        <%= @user.exit_reason.present? ? simple_format(@user.exit_reason) : tag.p("Not recorded.", class: "empty") %>
+      </section>
     <% end %>
-    </ul>
-  <% else %>
-    <b>Last Payment:</b>
-    <% last_payment = @user.delinquency %>
-    <% if last_payment < 30 %>
-      Less than a month ago
-    <% else %>
-      <%= last_payment/30 %> months ago
-    <% end %>
-  <% end %>
-</p>
+  </div>
 
-<p> 
-  <style>
-.row {
-margin-left: -15px;
-margin-right: -15px;
-}
-.col-sm-2 {
-width: 16.666666666666664%;
-float: left;
-position: relative;
-min-height: 1px;
-padding-left: 15px;
-padding-right: 15px;
-}
-    .thumbnail {
-display: block;
-padding: 4px;
-margin-bottom: 20px;
-line-height: 1.428571429;
-background-color: #fff;
-border: 1px solid #ddd;
-border-radius: 4px;
--webkit-transition: all .2s ease-in-out;
-transition: all .2s ease-in-out;
-}
-.thumbnail a>img {
-display: block;
-max-width: 100%;
-height: auto;
-margin-left: auto;
-margin-right: auto;
-}
-.thumbnail a:hover { color: black; }
-
-  .thumbnail { height: 150px; position: relative; }
-  .thumbnail .ownership,
-  .thumbnail .disposed
-  { display: none; }
-  .thumbnail h4 { position: absolute; bottom: 1px; margin-bottom: 1px; }
-
-  .clearfix { clear: both }
-  </style>
-  <b>Resources: </b><%= link_to "+ Add", new_resource_path, :class => 'btn btn-default' if can? :create, Resource %>
-  <div class="row"><%= render @user.resources if @user.resources %></div>
-  <div class="clearfix"></div>
-</p>
-
-<p>
-  <b>Waiver?</b>
-  <%= @user.waiver.strftime("%B %d %Y") unless @user.waiver.blank? %><br/>
-  <b>Contracts:</b> <%= link_to "+ Add", new_contract_path, :class => 'btn btn-default' if can? :create, Contract %>
-  <ul>
-    <% @user.contracts.each do |contract| %>
-      <li>
-        <% if can? :read, contract %>
-          <%= link_to contract.signed_at.strftime("%B %d %Y"), contract %>
-        <% else %>
-          <%= contract.signed_at.strftime("%B %d %Y") %>
+  <div class="stack">
+    <section class="card">
+      <h2>Standing</h2>
+      <dl class="facts">
+        <dt>Waiver</dt>
+        <dd>
+          <%= @user.waiver.present? ? @user.waiver.strftime("%B %-d, %Y") : "Not on file" %>
+          <% @user.contracts.each do |contract| %>
+            <br><%= can?(:read, contract) ? link_to("Signed #{contract.signed_at.strftime('%B %-d, %Y')}", contract) : "Signed #{contract.signed_at.strftime('%B %-d, %Y')}" %>
+          <% end %>
+          <% if can? :create, Contract %><br><%= link_to "Add a waiver", new_contract_path %><% end %>
+        </dd>
+        <% if admin %>
+          <dt>Orientation</dt>
+          <dd>
+            <%= @user.orientation.present? ? @user.orientation.strftime("%B %-d, %Y") : "Not yet" %>
+            <% if @user.oriented_by.present? %><span class="muted small">recorded by <%= link_to @user.oriented_by.name, @user.oriented_by %></span><% end %>
+          </dd>
+          <dt>Level</dt><dd><%= @user.member_level_string %></dd>
+          <dt>Pays by</dt><dd><%= @user.payment_method %></dd>
+          <dt>Payee</dt><dd><%= @user.payee %></dd>
         <% end %>
-      </li>
+        <dt>Instructor</dt><dd><%= @user.instructor? ? "Yes" : "No" %></dd>
+        <% unless admin %>
+          <dt>Last payment</dt>
+          <dd><% months = @user.delinquency %><%= months < 30 ? "Less than a month ago" : "#{months / 30} months ago" %></dd>
+        <% end %>
+      </dl>
+    </section>
+
+    <% if admin %>
+      <section class="card">
+        <h2>Emergency contact</h2>
+        <dl class="facts">
+          <dt>Name</dt><dd><%= @user.emergency_name %></dd>
+          <dt>Phone</dt><dd><%= @user.emergency_phone %></dd>
+          <dt>Email</dt><dd><%= @user.emergency_email %></dd>
+        </dl>
+      </section>
     <% end %>
-  </ul>
-</p>
 
-<p>
-  <b>Instructor?</b>
-  <%= @user.instructor? %>
-</p>
+    <section class="card">
+      <div class="card-head">
+        <h2>Cards</h2>
+        <%= link_to "Add", new_card_path + "?user=#{@user.id}", class: "btn small" if can? :create, Card %>
+      </div>
+      <% if admin %>
+        <% if @user.cards.any? %>
+          <ul class="plain"><% @user.cards.each do |card| %><li><%= link_to card.card_number, card, class: "mono" %><span class="muted small"><%= card.name %></span></li><% end %></ul>
+        <% else %>
+          <%= render EmptyStateComponent.new("No cards.") %>
+        <% end %>
+      <% else %>
+        <p><%= @user.cards.any? ? "Has a card" : "No card" %></p>
+      <% end %>
+    </section>
 
+    <% if admin %>
+      <section class="card">
+        <h2>Payments</h2>
+        <% if @payments.any? %>
+          <ul class="plain"><% @payments.each do |payment| %><li><%= link_to payment.date, payment %><span class="muted small"><%= number_to_currency(payment.amount) if payment.amount %></span></li><% end %></ul>
+          <p class="note">The latest ten.</p>
+        <% else %>
+          <%= render EmptyStateComponent.new("No payments recorded.") %>
+        <% end %>
+      </section>
+    <% end %>
 
-<% if current_user.admin? then %>
-<p>
-  <b>Created:</b>
-  <%= @user.created_at %>
-</p>
-<p>
-  <b>Last signed in:</b>
-  <%= @user.current_sign_in_at %>
-</p>
-<% end %>
+    <section class="card">
+      <div class="card-head">
+        <h2>Computers</h2>
+        <%= link_to "Add", new_mac_path, class: "btn small" if can? :create, Mac %>
+      </div>
+      <% if @user.macs.any? %>
+        <ul class="plain"><% @user.macs.each do |mac| %><li><%= link_to mac.mac, mac, class: "mono" %></li><% end %></ul>
+      <% else %>
+        <%= render EmptyStateComponent.new("None listed.") %>
+      <% end %>
+    </section>
+
+    <% if admin %>
+      <section class="card">
+        <h2>Account</h2>
+        <dl class="facts">
+          <dt>Created</dt><dd><%= @user.created_at.strftime("%B %-d, %Y %-l:%M%P") %></dd>
+          <dt>Last signed in</dt><dd><%= @user.current_sign_in_at ? @user.current_sign_in_at.strftime("%B %-d, %Y %-l:%M%P") : "Never" %></dd>
+        </dl>
+      </section>
+    <% end %>
+  </div>
+</div>

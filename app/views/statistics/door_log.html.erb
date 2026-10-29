@@ -1,52 +1,25 @@
-<script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script type="text/javascript">
-$(function() {
+<%= render PageHeaderComponent.new(eyebrow: "Your data", eyebrow_path: edit_user_registration_path, title: "Your card at the door", lead: "Only you can see this page.") do |header| %>
+  <% header.with_action { link_to "Download JSON", door_statistics_path + ".json", class: "btn" } %>
+<% end %>
 
-  $('#graph').highcharts({
-      chart: {
-        type: 'column',
-        zoomType : 'x'   
-      },
-      title: { 
-        style : { fontSize: '10px' },
-        text: "Click and Drag to Zoom." 
-      },
-      xAxis: {
-        title : { text : "Days" },
-        type : 'datetime'
-      },
-      yAxis : { 
-        title : {
-          text : "Accesses"
-        }
-      },
-      series: [{
-        name: "Accesses",
-        data: <%= raw @door_log_graph.to_json %>
-      }]
-  });
-    
-
-});
-</script>
-
-
-<h2>Your Card Access Data</h2>
-<%= link_to 'Download JSON', door_statistics_path+".json", :class => 'btn' %>
-<div id="graph" title="MAC Presence by Day" style="height: 250px; width: 500px; float: right;"></div>
-<table>
-  <tr>
-    <th>Date</th>
-    <th>Action</th>
-    <th>Card # (hex)</th>
-  </tr>
-  <% @door_logs.each do |log| %>
-  <tr>
-    <td><%= log.created_at %></td>
-    <td><%= log.key %></td>
-    <td><%= log.data.to_s(16) %></td>
-  </tr>
+<% opens_by_day = @door_log_graph.to_h { |ms, count| [Time.zone.at(ms / 1000).to_date, count] } %>
+<% if opens_by_day.any? %>
+  <%= render ChartCardComponent.new(title: "Days you opened the door", rows: opens_by_day.to_a.reverse, columns: ["Day", "Opens"]) do %>
+    <%= column_chart opens_by_day, height: "220px", library: { scales: { y: { ticks: { precision: 0 } } } } %>
   <% end %>
-</table>
+<% end %>
+
+<% if @door_logs.any? %>
+  <div class="table-wrap tall stats-table">
+    <table>
+      <thead><tr><th>When</th><th>What</th><th>Card (hex)</th></tr></thead>
+      <tbody>
+        <% @door_logs.reverse_each do |log| %>
+          <tr><td><%= log.created_at.strftime("%a %b %-d, %Y %-l:%M%P") %></td><td><%= log.key %></td><td class="mono"><%= log.data.to_s(16) %></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <%= render EmptyStateComponent.new("No door records for your cards yet.") %>
+<% end %>

@@ -1,83 +1,68 @@
-<h2>Profile:</h2>
-
-<%= devise_error_messages! %>
-
-<div class="payment_links <%= "payment-highlighted" if params[:flash] == "welcome_msg" %>">
-
-  <%= render '/statistics/index' unless params[:flash] == "welcome_msg" %>
-  <% if can? :read, resource.payments.first then %>
-  <h3>Recorded Payments:</h3>
-  <ul>
-    <% resource.payments.sort_by(&:date).reverse!.each do |payment| %>
-      <li><%= payment.date %></li>
-    <% end %>
-  </ul>
-  <hr/>
-  <% end %>
-
-<% if resource.payment_method == "Dwolla" %>
-<h3>Dwolla Payment Link</h3>
-  <% if resource.member_level == 25 %>
-    <strong>Associate Membership ($25/mo):</strong>
-    <a href="http://members.heatsynclabs.org/users/edit" class="dwolla_button" data-name="Associate Membership" data-desc="$25/month membership" data-amount=25 data-shipping="0" data-tax="0" data-key="8nMi2WmI7F8uXVlSNNDmX2o2Cgh9Af8dfJGIrd7ZrgyjNfLIxj">Subscribe</a>
-  <% elsif resource.member_level == 50 %>
-    <strong>Basic Membership ($50/mo):</strong>
-    <a href="http://members.heatsynclabs.org/users/edit" class="dwolla_button" data-name="Basic Membership" data-desc="$50/month membership" data-amount=50 data-shipping="0" data-tax="0" data-key="8nMi2WmI7F8uXVlSNNDmX2o2Cgh9Af8dfJGIrd7ZrgyjNfLIxj">Subscribe</a>
-  <% elsif resource.member_level == 100 %>
-    <strong>Plus Membership ($100/mo):</strong>
-    <a href="http://members.heatsynclabs.org/users/edit" class="dwolla_button" data-name="Plus Membership" data-desc="$100/month membership" data-amount=100 data-shipping="0" data-tax="0" data-key="8nMi2WmI7F8uXVlSNNDmX2o2Cgh9Af8dfJGIrd7ZrgyjNfLIxj">Subscribe</a>
-  <% else %>
-    Hmm, your membership level doesn't appear to be at $25/50/100...
-  <% end %>
-<script type="text/javascript" src="https://www.dwolla.com/scripts/button.min.js"> </script>
-<% elsif resource.payment_method == "PayPal" %>
-<h3>PayPal Payment Link</h3>
-  <% if resource.member_level == 25 %>
-    <strong>Associate Membership ($25/mo):</strong>
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-    <input type="hidden" name="cmd" value="_s-xclick">
-    <input type="hidden" name="hosted_button_id" value="SZWVLPAG79XCN">
-    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-    </form>
-  <% elsif resource.member_level == 50 %>
-    <strong>Basic Membership ($50/mo):</strong>
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-    <input type="hidden" name="cmd" value="_s-xclick">
-    <input type="hidden" name="hosted_button_id" value="GEAMCMZZKC4AW">
-    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-    </form>
-  <% elsif resource.member_level == 100 %>
-    <strong>Plus Membership ($100/mo):</strong>
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-    <input type="hidden" name="cmd" value="_s-xclick">
-    <input type="hidden" name="hosted_button_id" value="L7XVC2GUJJR5A">
-    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-    </form>
-  <% else %>
-    Hmm, your membership level doesn't appear to be at $25/50/100...
-  <% end %>
-<% elsif resource.payment_method == "BillPay" %>
-<h3>Bill Pay Info</h3>
-<p>Have your bank send a monthly check to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201 <strong>Electronic or advance payments are appreciated!</strong></p>
-<% elsif resource.payment_method == "Check" %>
-<h3>Check Payment Info</h3>
-<p>Mail to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201 OR put in the drop safe at the Lab with a deposit slip firmly attached each month. <strong>Electronic or advance payments are appreciated!</strong></p>
-<% elsif resource.payment_method == "Cash" %>
-<p>Put in the drop safe at the Lab with a deposit slip firmly attached each month.  <strong>Electronic or advance payments are appreciated!</strong></p>
-<% else %>
-<h3>Payment Links</h3>
-<p>Normally you'd see payment buttons here, but you don't seem to have an electronic payment option selected...</p>
+<% welcome = params[:flash] == "welcome_msg" %>
+<%= render PageHeaderComponent.new(eyebrow: "Your account", title: "Profile") do |header| %>
+  <% header.with_action { link_to "Your public page", user_path(resource), class: "btn" } if can? :read, resource %>
 <% end %>
+
+<% if welcome %>
+  <div class="msg ok welcome">
+    <p><strong>Thank you for becoming a HeatSync Labs member.</strong> Every member matters to this community of learning, science and the arts.</p>
+    <p>Start your dues with the payment button on this page, or talk to any member. <strong>Recurring electronic payments help a lot:</strong> the lab has no paid staff. If you pay by cash or check, think about paying 3, 6 or 12 months ahead to save volunteers some work.</p>
+    <p><strong>To claim member benefits</strong> such as storage, find a volunteer on your next visit or set up a time ahead. Someone will email you soon to book a new member orientation. After that, this site becomes a lot more useful.</p>
+    <p>Some privileges, like 24/7 card access, need the community's approval.</p>
+    <p>Thanks again, and happy hacking.</p>
+  </div>
+<% end %>
+
+<div class="grid side profile-top">
+  <section class="card <%= 'payment-highlighted' if welcome %>">
+    <h2>Paying your dues</h2>
+    <% case resource.payment_method %>
+    <% when "PayPal" %>
+      <% paypal_buttons = { 25 => ["Associate", "SZWVLPAG79XCN"], 50 => ["Basic", "GEAMCMZZKC4AW"], 100 => ["Plus", "L7XVC2GUJJR5A"] } %>
+      <% level_name, button_id = paypal_buttons[resource.member_level] %>
+      <% if button_id %>
+        <p><strong><%= level_name %> membership, $<%= resource.member_level %> a month,</strong> by PayPal subscription:</p>
+        <form class="paypal-form" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+          <input type="hidden" name="cmd" value="_s-xclick">
+          <input type="hidden" name="hosted_button_id" value="<%= button_id %>">
+          <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif" name="submit" alt="Subscribe with PayPal">
+          <img alt="" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+        </form>
+      <% else %>
+        <p>Your level is not one of $25, $50 or $100, so there is no PayPal button for it. Pick a level below, or ask the treasurer.</p>
+      <% end %>
+    <% when "Dwolla" %>
+      <p>Dwolla no longer takes payments. Choose another way to pay below, or ask the treasurer.</p>
+    <% when "BillPay" %>
+      <p>Have your bank send a monthly check to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201. <strong>Electronic or advance payments are appreciated.</strong></p>
+    <% when "Check" %>
+      <p>Mail it to HeatSync Labs Treasurer, 140 W Main St, Mesa AZ 85201, or put it in the drop safe at the lab with a deposit slip attached, each month. <strong>Electronic or advance payments are appreciated.</strong></p>
+    <% when "Cash" %>
+      <p>Put it in the drop safe at the lab with a deposit slip attached, each month. <strong>Electronic or advance payments are appreciated.</strong></p>
+    <% else %>
+      <p>Choose how you pay below, and the payment button or instructions show up here.</p>
+    <% end %>
+
+    <% if can? :read, resource.payments.first %>
+      <h3>Recorded payments</h3>
+      <ul class="plain">
+        <% resource.payments.sort_by(&:date).reverse.each do |payment| %>
+          <li><span><%= payment.date.strftime("%B %-d, %Y") %></span><span class="muted small"><%= number_to_currency(payment.amount) if payment.amount %></span></li>
+        <% end %>
+      </ul>
+    <% end %>
+  </section>
+
+  <div class="stack">
+    <section class="card photo-card">
+      <h2>Your photo</h2>
+      <div class="person-cell">
+        <%= person_avatar(resource, 64) %>
+        <p class="small muted">Your picture comes from <%= link_to "Gravatar", "https://www.gravatar.com", title: "Change your photo at Gravatar.com" %>, using your email address.</p>
+      </div>
+    </section>
+    <%= render "/statistics/index" unless welcome %>
+  </div>
 </div>
 
-<div class="caption">
-<%= link_to image_tag(resource.gravatar_url), "https://www.gravatar.com", :title => "Adjust your photo at Gravatar.com" %><br/>
-Adjust your photo <br/>at Gravatar.com
-</div>
-
-<%= render :partial => "user", :locals => { :resource => resource, :html => { :method => :put }, :button_label => "Update Profile" } %>
-
-<%= link_to "Back", :back %>
+<%= render partial: "user", locals: { resource: resource, html: { method: :put }, button_label: "Update profile" } %>

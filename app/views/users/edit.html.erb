@@ -1,6 +1,2 @@
-<h1>Editing user</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Show', @user %> |
-<%= link_to 'Back', users_path %>
+<%= render PageHeaderComponent.new(eyebrow: "People", eyebrow_path: user_path(@user), title: "Edit #{@user.name}") %>
+<%= render "form" %>

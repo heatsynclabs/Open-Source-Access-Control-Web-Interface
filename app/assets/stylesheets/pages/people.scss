@@ -1,3 +1,69 @@
 // Page styles for the people pages. Kept in their own file so each area can change without touching the others.
 @layer pages {
+  // ---------------------------------------------------------- person page
+  .person-actions { margin: calc(-1 * var(--space-4)) 0 var(--space-6); }
+  .person-head .contact-links { align-items: center; }
+
+  // ---------------------------------------------------------- reports
+  .activity-section { margin-top: var(--space-10); scroll-margin-top: var(--space-4); }
+  .activity-section h2 { margin-bottom: var(--space-3); }
+  .new-members-month { margin-top: var(--space-8); }
+  .new-members-month h2 .muted { font-family: var(--font-ui); text-transform: none; letter-spacing: 0; }
+  .new-member-name { margin-bottom: var(--space-4); h3 { margin: 0; } }
+
+  .cardholder-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    li {
+      display: grid;
+      justify-items: center;
+      gap: var(--space-2);
+      padding: var(--space-4) var(--space-2);
+      background: var(--slab);
+      border: 2px solid var(--steel-hi);
+      min-width: 0;
+    }
+    .name { font-size: var(--text-sm); text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+
+  // ---------------------------------------------------------- merge
+  .merge-pair {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--space-4);
+    align-items: start;
+    fieldset { margin: 0; }
+  }
+  .merge-arrow { align-self: center; color: var(--accent-text); svg.lucide { width: 28px; height: 28px; } }
+  .merge-details { font-size: var(--text-sm); margin-bottom: var(--space-4); }
+  @media (max-width: 800px) {
+    .merge-pair { grid-template-columns: 1fr; }
+    .merge-arrow { transform: rotate(90deg); justify-self: center; }
+  }
+
+  // ---------------------------------------------------------- sign in and profile
+  .auth-wrap { display: grid; place-items: start center; padding: var(--space-6) 0; }
+  .auth-card { width: 100%; max-width: 440px; h1 { font-size: var(--text-4xl); } }
+  .auth-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin-top: var(--space-5);
+    font-size: var(--text-sm);
+  }
+  .welcome p:last-child { margin-bottom: 0; }
+  .profile-top { margin-bottom: var(--space-8); }
+  .payment-highlighted { border-color: var(--hazard); box-shadow: var(--shadow); }
+  .photo-card .person-cell p { margin: 0; }
+  .paypal-form { margin: 0 0 var(--space-4); }
+  .paypal-form input[type="image"] { width: auto; min-height: 0; padding: 0; border: 0; background: none; }
+  .pay-ways { margin-top: var(--space-1); summary { cursor: pointer; } dl.facts { margin-top: var(--space-2); } }
+
+  // ---------------------------------------------------------- your data
+  .stats-table { margin-top: var(--space-6); }
+  .card ul.plain li svg.lucide { color: var(--smoke); }
 }

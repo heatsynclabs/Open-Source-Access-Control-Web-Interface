@@ -1,37 +1,27 @@
-<div class="g-page">
-  <div class="split-head">
-    <div>
-      <p class="eyebrow">Who's in the lab community</p>
-      <h1>People</h1>
-    </div>
-    <div class="head-actions">
-      <%= link_to 'New user', new_user_path, class: "btn btn-default btn-sm" if can? :create, User %>
-      <%= link_to 'Merge users', users_merge_path, class: "btn btn-default btn-sm" if can? :manage, User %>
-      <%= link_to 'Full table', users_path(full: "full"), class: "btn btn-default btn-sm" %>
-    </div>
-  </div>
-  <p class="small muted" style="margin: 0 0 var(--space-4)">Find someone who knows the thing you're stuck on.</p>
+<%= render PageHeaderComponent.new(eyebrow: "Who's in the lab community", title: "People", lead: "Find someone who knows the thing you're stuck on.") do |header| %>
+  <% header.with_action { link_to "New user", new_user_path, class: "btn small" } if can? :create, User %>
+  <% header.with_action { link_to "Merge users", users_merge_path, class: "btn small" } if can? :manage, User %>
+<% end %>
+<%= render "tabs", current: :summary %>
+<%= render "orientation_note" %>
 
-  <% if current_user.orientation.blank? %>
-    <p class="alert">There's a lot more to see here, but our records show you haven't completed the new member orientation yet. If that's incorrect, please contact a volunteer.</p>
-  <% end %>
-
-  <% cert_names = @users.flat_map { |u| u.certifications.map(&:name) }.uniq.sort %>
+<% cert_names = @users.flat_map { |u| u.certifications.map(&:name) }.uniq.sort %>
+<div data-controller="filter" data-filter-noun-value="people">
   <div class="filters">
     <label class="search-box">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>
-      <input id="people-q" type="search" placeholder="Search names, skills, tools" aria-label="Search people">
+      <%= lucide_icon "search" %>
+      <input type="search" placeholder="Search names, skills, tools" aria-label="Search people" data-filter-target="query" data-action="filter#apply">
     </label>
-    <button type="button" class="toggle" id="f-cards" aria-pressed="false">Cardholders</button>
-    <button type="button" class="toggle" id="f-teach" aria-pressed="false">Instructors</button>
-    <select id="f-cert" aria-label="Certified on">
+    <button type="button" class="toggle" data-filter-target="toggle" data-key="cards" aria-pressed="false" data-action="filter#flip">Cardholders</button>
+    <button type="button" class="toggle" data-filter-target="toggle" data-key="teach" aria-pressed="false" data-action="filter#flip">Instructors</button>
+    <select aria-label="Certified on" data-filter-target="select" data-key="certs" data-action="filter#apply">
       <option value="">Certified on any tool</option>
-      <% cert_names.each do |c| %><option><%= c %></option><% end %>
+      <% cert_names.each do |name| %><option><%= name %></option><% end %>
     </select>
   </div>
-  <p class="small muted" id="people-count" aria-live="polite"><%= @users.size %> people</p>
+  <p class="count-line" data-filter-target="count" aria-live="polite"><%= @users.size %> people</p>
 
-  <ul class="people-list" id="people-list">
+  <ul class="row-list">
     <% @users.each do |user| %>
       <%
         certs = user.certifications.map(&:name).sort
@@ -39,52 +29,34 @@
         wants_line = first_sentence(user.desired_skills)
         cardholder = user.cards.any?
       %>
-      <li data-text="<%= [user.name, user.current_skills, user.desired_skills, certs.join(' ')].join(' ').downcase %>"
+      <li data-filter-target="item"
+          data-filter-text="<%= [user.name, user.current_skills, user.desired_skills, certs.join(' ')].join(' ') %>"
           data-cards="<%= cardholder %>" data-teach="<%= user.instructor? %>" data-certs="<%= certs.join('|') %>">
-        <a class="person-row" href="<%= user_path(user) %>">
+        <a class="row-link" href="<%= user_path(user) %>">
           <%= person_avatar(user, 44) %>
-          <div style="min-width:0">
-            <div class="who-line">
-              <span class="name"><%= user.name %></span>
-              <%= raw(user.member_status_symbol) %>
-              <% if user.instructor? %><span class="chip info">instructor</span><% end %>
-              <% if cardholder %><span class="chip ok">cardholder</span><% end %>
+          <div class="row-main">
+            <div class="row-title">
+              <span><%= user.name %></span>
+              <%= render MemberBadgeComponent.new(user) %>
+              <% if user.instructor? %><%= render ChipComponent.new("Instructor", tone: :info) %><% end %>
+              <% if cardholder %><%= render ChipComponent.new("Cardholder", tone: :ok) %><% end %>
             </div>
             <% if can_line.present? %>
-              <div class="skills"><span class="inline-label">Skills</span><%= can_line %></div>
+              <div class="row-sub"><span class="inline-label">Skills</span><%= can_line %></div>
             <% elsif wants_line.present? %>
-              <div class="skills"><span class="inline-label">Learning</span><%= wants_line %></div>
+              <div class="row-sub"><span class="inline-label">Learning</span><%= wants_line %></div>
             <% end %>
             <% if certs.any? %>
-              <div class="tags"><% certs.first(4).each do |c| %><span class="tag"><%= c %></span><% end %><% if certs.size > 4 %><span class="tag">+<%= certs.size - 4 %></span><% end %></div>
+              <div class="row-tags">
+                <% certs.first(4).each do |name| %><span class="tag"><%= name %></span><% end %>
+                <% if certs.size > 4 %><span class="tag">+<%= certs.size - 4 %></span><% end %>
+              </div>
             <% end %>
           </div>
-          <span class="chev" aria-hidden="true">&rsaquo;</span>
+          <span class="row-end" aria-hidden="true"><%= lucide_icon "chevron-right" %></span>
         </a>
       </li>
     <% end %>
   </ul>
-  <p class="empty" id="people-none" hidden>Nobody matches. Try fewer words, or clear a filter.</p>
+  <p class="empty" data-filter-target="none" hidden>Nobody matches. Try fewer words, or clear a filter.</p>
 </div>
-
-<script>
-  (function () {
-    var q = document.getElementById("people-q"), cert = document.getElementById("f-cert");
-    var cards = document.getElementById("f-cards"), teach = document.getElementById("f-teach");
-    var rows = Array.prototype.slice.call(document.querySelectorAll("#people-list > li"));
-    function render() {
-      var words = q.value.trim().toLowerCase().split(/\s+/).filter(Boolean), shown = 0;
-      rows.forEach(function (li) {
-        var ok = words.every(function (w) { return li.dataset.text.indexOf(w) !== -1; }) &&
-          (cards.getAttribute("aria-pressed") !== "true" || li.dataset.cards === "true") &&
-          (teach.getAttribute("aria-pressed") !== "true" || li.dataset.teach === "true") &&
-          (!cert.value || li.dataset.certs.split("|").indexOf(cert.value) !== -1);
-        li.hidden = !ok; if (ok) shown++;
-      });
-      document.getElementById("people-count").textContent = shown === rows.length ? rows.length + " people" : shown + " of " + rows.length + " people";
-      document.getElementById("people-none").hidden = shown !== 0;
-    }
-    [cards, teach].forEach(function (b) { b.addEventListener("click", function () { b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") === "true" ? "false" : "true"); render(); }); });
-    q.addEventListener("input", render); cert.addEventListener("change", render);
-  })();
-</script>

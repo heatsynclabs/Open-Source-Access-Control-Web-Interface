@@ -1,7 +1,3 @@
-<h2>Membership Application</h2>
-
-  <%= devise_error_messages! %>
-
-  <%= render :partial => "user", :locals => { :resource => resource, :button_label => "Sign Up", :html => nil } %>
-
+<%= render PageHeaderComponent.new(eyebrow: "Join HeatSync Labs", title: "Membership application", lead: "Make an account, then sign the waiver and come to an orientation night. It takes about five minutes.") %>
+<%= render partial: "user", locals: { resource: resource, button_label: "Sign up", html: nil } %>
 <%= render "devise/shared/links" %>

@@ -1,95 +1,34 @@
-<% user ||= @user #unless @user.blank? %>
-
-<p>
-  <b>Name:</b>
-  <%= user.name %>
-</p>
-
-<% if current_user.admin? then %>
-<p>
-  <b>Email:</b>
-  <%= user.email %>
-</p>
-
-<p>
-  <b>Orientation?</b>
-  <%= user.orientation.strftime("%B %d %Y") unless user.orientation.blank? %>
-</p>
-<% end %>
-
-<p>
-  <b>Waiver?</b>
-  <%= user.waiver.strftime("%B %d %Y") unless user.waiver.blank? %>
-</p>
-
-<p>
-  <b>Current Member?</b>
-  <%= raw(user.member_status_symbol) %>
-</p>
-
-<% if current_user.admin? then %>
-  <p>
-    <b>Desired Member Level:</b>
-    <%= user.member_level %>
-  </p>
-  <p>
-    <b>Payment Method:</b>
-    <%= user.payment_method %>
-  </p>
-  <p>
-    <b>Payee:</b>
-    <%= user.payee %>
-  </p>
-  <p>
-    <b>Phone:</b>
-    <%= user.phone %>
-  </p>
-<% end %>
-  <p>
-    <b>Current Skills:</b>
-    <%= simple_format user.current_skills %>
-  </p>
-  <p>
-    <b>Desired Skills:</b>
-    <%= simple_format user.desired_skills %>
-  </p>
-<p>
-  <b>Card:</b>
-  <% if current_user.admin? then %>
-    <% user.cards.each do |c| %>
-      <%= link_to c.card_number, c %><%= "," unless c == user.cards.last %>
+<%# One person's details, loaded next to the pickers on the merge page. %>
+<% user ||= @user %>
+<% admin = current_user.admin? %>
+<dl class="facts">
+  <dt>Name</dt><dd><%= user.name %></dd>
+  <% if admin %>
+    <dt>Email</dt><dd><%= user.email %></dd>
+    <dt>Orientation</dt><dd><%= user.orientation.strftime("%B %-d, %Y") if user.orientation.present? %></dd>
+  <% end %>
+  <dt>Waiver</dt><dd><%= user.waiver.strftime("%B %-d, %Y") if user.waiver.present? %></dd>
+  <dt>Member</dt><dd><%= render MemberBadgeComponent.new(user) %></dd>
+  <% if admin %>
+    <dt>Level</dt><dd><%= user.member_level %></dd>
+    <dt>Pays by</dt><dd><%= user.payment_method %></dd>
+    <dt>Payee</dt><dd><%= user.payee %></dd>
+    <dt>Phone</dt><dd><%= user.phone %></dd>
+  <% end %>
+  <dt>Brings</dt><dd><%= simple_format user.current_skills %></dd>
+  <dt>Wants</dt><dd><%= simple_format user.desired_skills %></dd>
+  <dt>Cards</dt>
+  <dd>
+    <% if admin %>
+      <%= safe_join(user.cards.map { |card| link_to(card.card_number, card) }, ", ") %>
+    <% else %>
+      <%= "Has a card" if user.cards.present? %>
     <% end %>
-  <% else %>
-    <%= unless user.cards.blank? then raw("&#x2713;") end %>
+  </dd>
+  <dt>Certifications</dt><dd><%= user.certifications.any? ? safe_join(user.certifications.map { |cert| link_to(cert.name, cert) }, ", ") : "None" %></dd>
+  <% if admin %>
+    <dt>Payments</dt><dd><%= user.payments.map(&:date).join(", ").presence || "None" %></dd>
+    <dt>Created</dt><dd><%= user.created_at %></dd>
+    <dt>Last signed in</dt><dd><%= user.current_sign_in_at %></dd>
   <% end %>
-</p>
-
-<b>Certifications:</b>
-<ul>
-  <% user.certifications.each do |certification| %>
-    <li><%= link_to certification.name, certification %></li>
-  <% end %>
-  <% if user.certifications.blank? %><li>n/a</li><% end %>
-</ul>
-
-<% if current_user.admin? then %>
-<p>
-  <b>Payments:</b>
-  <ul>
-  <% user.payments.each do |payment| %>
-    <li><%= payment.date %></li>
-  <% end %>
-  </ul>
-</p>
-<% end %>
-
-<% if current_user.admin? then %>
-<p>
-  <b>Created:</b>
-  <%= user.created_at %>
-</p>
-<p>
-  <b>Last signed in:</b>
-  <%= user.current_sign_in_at %>
-</p>
-<% end %>
+</dl>

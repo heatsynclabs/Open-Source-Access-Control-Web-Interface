@@ -1,12 +1,13 @@
-<h2>Resend unlock instructions</h2>
-
-<%= form_for(resource, :as => resource_name, :url => unlock_path(resource_name), :html => { :method => :post }) do |f| %>
-  <%= devise_error_messages! %>
-
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email %></div>
-
-  <div><%= f.submit "Resend unlock instructions" %></div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+<% content_for :title, "Resend unlock" %>
+<div class="auth-wrap">
+  <div class="card auth-card">
+    <p class="eyebrow">Members</p>
+    <h1>Resend the unlock email</h1>
+    <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>
+      <%= render FormErrorsComponent.new(resource) %>
+      <div class="field"><%= f.label :email %><%= f.email_field :email, autocomplete: "email" %></div>
+      <%= f.submit "Resend unlock instructions", class: "wide" %>
+    <% end %>
+    <%= render "devise/shared/links" %>
+  </div>
+</div>

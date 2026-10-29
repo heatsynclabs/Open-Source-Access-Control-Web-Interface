@@ -1,0 +1,6 @@
+<%# A person's own links, each with its icon. %>
+<% links = [[user.twitter_url, "twitter", "Twitter"], [user.facebook_url, "facebook", "Facebook"],
+            [user.github_url, "github", "GitHub"], [user.website_url, "globe", "Website"]].select { |url, _icon, _label| url.present? } %>
+<% links.each do |url, icon, label| %>
+  <%= link_to url, rel: "noopener", target: "_blank" do %><%= lucide_icon icon %><%= label %><% end %>
+<% end %>

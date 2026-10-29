@@ -1,0 +1,15 @@
+<%# The people pages, as tabs. Each tab shows only for those who may open it. %>
+<% current = local_assigns.fetch(:current) %>
+<nav class="tabs" aria-label="People pages">
+  <% [
+       ["People", users_path, :summary, can?(:read, User)],
+       ["Full table", users_path(full: "full"), :full, can?(:read, User)],
+       ["Cardholders", users_active_cardholders_path, :cardholders, can?(:active_cardholders, User)],
+       ["New members", users_new_member_report_path, :new_members, can?(:new_member_report, User)],
+       ["Activity", users_activity_path, :activity, can?(:activity, User)],
+       ["Inactive", users_inactive_path, :inactive, can?(:inactive_report, User)],
+     ].each do |label, path, key, allowed| %>
+    <% next unless allowed %>
+    <%= link_to label, path, class: ("on" if key == current), "aria-current": ("page" if key == current) %>
+  <% end %>
+</nav>
