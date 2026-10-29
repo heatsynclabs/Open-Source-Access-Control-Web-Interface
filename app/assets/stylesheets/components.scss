@@ -1,3 +1,5 @@
+@use "buttons";
+
 // Building blocks used across pages. Patterns follow the PocketBase rewrite
 // (hsl-members-pb, pb_public/css/app.css) so both look like one product.
 @layer components {
@@ -52,9 +54,7 @@
   @media (min-width: 800px) {
     .grid.two { grid-template-columns: 1fr 1fr; }
     .grid.three { grid-template-columns: repeat(3, 1fr); }
-    .grid.four { grid-template-columns: repeat(4, 1fr); }
     .grid.side { grid-template-columns: 1.4fr 1fr; }
-    .grid.rail { grid-template-columns: 260px 1fr; }
   }
   .stack { display: grid; gap: var(--space-6); align-content: start; min-width: 0; }
 
@@ -66,9 +66,6 @@
     min-width: 0;
     container-type: inline-size;
     > h2:first-child, > h3:first-child { margin-top: 0; }
-    &.flush { padding: 0; }
-    &.danger-zone { border-color: var(--fault); }
-    &.danger-zone h2, &.danger-zone h3 { color: var(--ink-err); }
   }
   .card-head {
     display: flex;
@@ -110,56 +107,21 @@
     }
     .sub { margin-top: var(--space-1); font-size: var(--text-xs); color: var(--smoke); }
     &.headline { background: var(--hazard); color: var(--tape-dark); border-color: var(--tape-dark); }
-    &.headline .label, &.headline .sub { color: #3d3120; }
+    &.headline .label, &.headline .sub { color: var(--on-hazard-muted); }
     &.alert { border-color: var(--fault); }
     &.alert .num { color: var(--ink-err); }
     a.tile-link { color: inherit; text-decoration: none; }
   }
 
   // ---------------------------------------------------------- buttons
-  // Bare buttons get the look at zero specificity (:where) so classed
-  // buttons (.toggle, .icon-btn, tabs) restyle them without a fight.
-  .btn, :where(button, input[type="submit"], input[type="button"]) {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
-    min-height: var(--tap);
-    padding: 0 var(--space-5);
-    font-family: var(--font-ui);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    letter-spacing: var(--tracking-ui);
-    text-transform: uppercase;
-    text-decoration: none;
-    line-height: 1.1;
-    background: transparent;
-    color: var(--bone);
-    border: 2px solid var(--steel-hi);
-    border-radius: 0;
-    cursor: pointer;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-    &:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-sm); color: var(--bone); }
-    &:active { transform: none; box-shadow: none; }
-    &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-  }
-  .btn.primary, button.primary, :where(input[type="submit"]) {
-    background: var(--hazard);
-    color: var(--tape-dark);
-    border-color: var(--tape-dark);
-    box-shadow: var(--shadow-sm);
-    &:hover { color: var(--tape-dark); box-shadow: var(--shadow); }
-  }
+  .btn { @include buttons.look; }
+  .btn.primary, button.primary { @include buttons.primary; }
   .btn.danger, button.danger { border-color: var(--fault); color: var(--ink-err); }
   .btn.small, button.small { min-height: 34px; padding: 0 var(--space-3); font-size: var(--text-xs); }
+  // Fingers need the full 44px.
+  @media (pointer: coarse) { .btn.small, button.small { min-height: var(--tap); } }
   .btn.big { min-height: 56px; padding: 0 var(--space-8); font-size: var(--text-base); }
   .btn.wide, button.wide, input[type="submit"].wide { width: 100%; }
-  .btn.link {
-    border: 0; box-shadow: none; min-height: 0; padding: 0;
-    text-transform: none; letter-spacing: 0; font-family: var(--font-body);
-    color: var(--accent-text); text-decoration: underline;
-    &:hover { transform: none; box-shadow: none; }
-  }
   // button_to renders a form; keep it inline with its neighbours.
   form.button_to { display: inline-flex; margin: 0; }
 
@@ -214,7 +176,6 @@
     &.warn { border-color: var(--hazard-deep); color: var(--ink-warn); }
     &.err { border-color: var(--fault); color: var(--ink-err); }
     &.info { border-color: var(--info); color: var(--ink-info); }
-    &.fill { background: var(--hazard); color: var(--tape-dark); border-color: var(--tape-dark); }
     &.dot::before {
       content: "";
       width: 8px;
@@ -254,14 +215,13 @@
     border-radius: var(--radius-full);
     overflow: hidden;
     background: hsl(var(--h) 35% 42%);
-    color: #fff;
+    color: var(--on-dark);
     font-family: var(--font-ui);
     font-weight: 600;
     font-size: calc(var(--s) * 0.38);
     letter-spacing: 0;
     img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   }
-  .avatar-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
   // ---------------------------------------------------------- tabs
   .tabs {
@@ -328,6 +288,8 @@
 
   // ---------------------------------------------------------- lists
   ul.plain { list-style: none; padding: 0; margin: 0; }
+  // A long list that scrolls inside its card instead of stretching the page.
+  .scroll-box { max-height: 420px; overflow-y: auto; }
   ul.plain > li {
     padding: var(--space-2) 0;
     border-bottom: 1px solid var(--steel);
@@ -416,34 +378,18 @@
     .actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
     &.locked .state { color: var(--ink-ok); }
     &.unlocked { background: var(--hazard); color: var(--tape-dark); border-color: var(--tape-dark); }
-    &.unlocked .muted { color: #3d3120; }
+    &.unlocked .muted { color: var(--on-hazard-muted); }
     &.unlocked .btn, &.unlocked button { color: var(--tape-dark); border-color: var(--tape-dark); }
     &.unknown .state { color: var(--smoke); }
   }
 
-  // ---------------------------------------------------------- newcomer checklist
-  .checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
-  .checklist li { display: flex; gap: var(--space-3); align-items: flex-start; }
-  .checklist .box {
-    flex: none;
-    width: 22px;
-    height: 22px;
-    border: 2px solid var(--steel-hi);
-    display: grid;
-    place-items: center;
-    svg.lucide { width: 14px; height: 14px; vertical-align: 0; }
-  }
-  .checklist .done .box { background: var(--live); border-color: var(--live); color: #fff; }
-  .checklist .done .what { color: var(--ash); text-decoration: line-through; }
-
-  // ---------------------------------------------------------- pictures, pager
+  // ---------------------------------------------------------- pictures
   .pictures {
     display: grid;
     gap: var(--space-3);
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     img { width: 100%; aspect-ratio: 1; object-fit: cover; border: 2px solid var(--steel-hi); display: block; }
   }
-  .pager { display: flex; gap: var(--space-2); align-items: center; justify-content: flex-end; margin-top: var(--space-3); }
 
   // ---------------------------------------------------------- dialogs
   dialog {
@@ -454,7 +400,7 @@
     color: var(--bone);
     border: 2px solid var(--steel-hi);
     box-shadow: var(--shadow-lg);
-    &::backdrop { background: rgb(20 17 13 / 0.6); }
+    &::backdrop { background: color-mix(in srgb, var(--tape-dark) 60%, transparent); }
     .dialog-close { position: absolute; top: var(--space-3); right: var(--space-3); }
   }
 

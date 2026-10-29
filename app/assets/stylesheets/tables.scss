@@ -1,5 +1,10 @@
-// Data tables. Wrap every table in .table-wrap: it scrolls sideways on
-// small screens and keeps the header row in view on long tables.
+// Data tables. Wrap every table in .table-wrap: it keeps the header row in
+// view on long tables, and scrolls sideways only as a last resort. Text cells
+// wrap; numbers, dates (.nowrap) and action buttons stay on one line.
+//
+// On phones, tables with three or more columns turn into a stack of cards,
+// one per row, each value with its column name (tables_controller.js copies
+// the header names into data-label). Add .no-stack to keep a table as is.
 @layer components {
   .table-wrap {
     max-width: 100%;
@@ -35,18 +40,29 @@
     padding: var(--space-3);
     border-bottom: 1px solid var(--steel);
     vertical-align: top;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
   }
-  td.wrap { white-space: normal; min-width: 220px; max-width: 32rem; overflow-wrap: anywhere; }
+  td.nowrap, td.num, td.actions, td.mono { white-space: nowrap; overflow-wrap: normal; }
+  td.wrap { min-width: 14rem; max-width: 32rem; }
   tr:last-child td { border-bottom: 0; }
   tbody tr:hover { background: var(--hazard-dim); }
   th.num, td.num { text-align: right; font-variant-numeric: tabular-nums; }
-  td.actions { text-align: right; }
+  td.actions { text-align: right; width: 1%; }
   td.actions .actions-row { justify-content: flex-end; flex-wrap: nowrap; }
   td .avatar { vertical-align: middle; margin-right: var(--space-2); }
 
   // A cell that links a person: avatar and name together.
   .person-cell { display: inline-flex; align-items: center; gap: var(--space-2); }
+
+  // A wide grid of people by tool (the full people table): the name column
+  // stays put while the rest scrolls, and tool names run upwards so each
+  // column is only as wide as its check mark.
+  table.sheet {
+    th:first-child, td:first-child { position: sticky; left: 0; z-index: 1; background: var(--slab); box-shadow: inset -2px 0 0 var(--steel); }
+    thead th:first-child { z-index: 2; background: var(--slab-hi); }
+    th.vertical { writing-mode: vertical-rl; transform: rotate(180deg); vertical-align: bottom; padding: var(--space-3) var(--space-2); max-height: 12rem; }
+    td { white-space: nowrap; }
+  }
 
   // Row tints for log tables (door log). The tint is a mix of the status
   // colour into the surface, so it reads in both themes.
@@ -54,4 +70,36 @@
   tr.tone-err td { background: color-mix(in srgb, var(--fault) 14%, transparent); }
   tr.tone-info td { background: color-mix(in srgb, var(--info) 14%, transparent); }
   tr.tone-quiet td { color: var(--ash); }
+
+  @media (max-width: 640px) {
+    .table-wrap:has(> table.stack) { overflow: visible; max-height: none; border: 0; background: none; }
+    table.stack {
+      thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+      tbody, tr, td { display: block; }
+      tr { margin-bottom: var(--space-3); padding: var(--space-2) 0; background: var(--slab); border: 2px solid var(--steel-hi); }
+      // Label on the left, whatever the cell holds (a name, a chip, buttons) beside it.
+      td {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: var(--space-1) var(--space-2);
+        padding: var(--space-1) var(--space-3);
+        border: 0;
+        text-align: left;
+        white-space: normal;
+        &::before {
+          content: attr(data-label);
+          flex: 0 0 7.5rem;
+          font-family: var(--font-ui);
+          font-size: 10px;
+          letter-spacing: var(--tracking-wide);
+          text-transform: uppercase;
+          color: var(--ash);
+        }
+        &:empty { display: none; }
+        &[data-label=""]::before { display: none; }
+      }
+      td.actions { width: auto; padding-top: var(--space-2); .actions-row { justify-content: flex-start; flex-wrap: wrap; } }
+    }
+  }
 }

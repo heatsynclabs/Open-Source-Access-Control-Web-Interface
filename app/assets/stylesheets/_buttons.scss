@@ -1,0 +1,35 @@
+// The GANTRY button look, shared by bare <button> elements (base layer, so
+// any classed button can restyle them) and the .btn class (components).
+
+@mixin look {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-5);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: var(--tracking-ui);
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 1.1;
+  background: transparent;
+  color: var(--bone);
+  border: 2px solid var(--steel-hi);
+  border-radius: 0;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  &:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-sm); color: var(--bone); }
+  &:active { transform: none; box-shadow: none; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+}
+
+@mixin primary {
+  background: var(--hazard);
+  color: var(--tape-dark);
+  border-color: var(--tape-dark);
+  box-shadow: var(--shadow-sm);
+  &:hover { color: var(--tape-dark); box-shadow: var(--shadow); }
+}

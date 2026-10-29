@@ -21,64 +21,10 @@
   <%= yield :head %>
 </head>
 <body data-controller="dialog">
-  <header class="top">
-    <div class="top-inner">
-      <%= link_to root_path, class: "brand", title: "Members home" do %>
-        <%= image_tag "hsl-lockup-h.svg", class: "lockup", alt: "HeatSync Labs" %>
-        <%= image_tag "hsl-lockup-h-reverse.svg", class: "lockup reverse", alt: "" %>
-        <span class="app-name">Members</span>
-      <% end %>
-      <span class="spacer"></span>
-      <% if user_signed_in? %>
-        <%= link_to edit_user_registration_path, class: "who", title: "Your profile" do %>
-          <%= person_avatar(current_user, 28) %><span><%= current_user.name %></span>
-        <% end %>
-      <% end %>
-      <button type="button" class="icon-btn" data-controller="theme" data-action="theme#toggle">
-        <span data-theme-target="sun" hidden><%= lucide_icon "sun" %></span>
-        <span data-theme-target="moon"><%= lucide_icon "moon" %></span>
-      </button>
-      <% if user_signed_in? %>
-        <%= link_to destroy_user_session_path, method: :delete, class: "icon-btn", title: "Sign out", "aria-label": "Sign out" do %><%= lucide_icon "log-out" %><% end %>
-      <% else %>
-        <%= link_to new_user_session_path, class: "icon-btn", title: "Sign in", "aria-label": "Sign in" do %><%= lucide_icon "log-in" %><% end %>
-      <% end %>
-    </div>
+  <a class="skip-link" href="#main">Skip to the page</a>
+  <%= render "layouts/header" %>
 
-    <nav class="main" aria-label="Main">
-      <%= nav_link "Home", root_path, controllers: :home %>
-      <%= nav_link "Calendar", calendar_path, controllers: :calendar %>
-      <%= nav_link "People", users_path, controllers: :users if can? :read, User %>
-      <%= nav_link "Tools", resources_path, controllers: [:resources, :resource_categories] if can? :read, Resource %>
-      <% if user_signed_in? && !can?(:create, UserCertification) %>
-        <%= nav_link "Certifications", certifications_path, controllers: :certifications if can? :read, Certification %>
-      <% end %>
-      <%= nav_link "Computers", macs_path, controllers: [:macs, :mac_logs] %>
-      <% if user_signed_in? %>
-        <%= nav_link "Me", edit_user_registration_path, controllers: [:registrations, :statistics] %>
-      <% else %>
-        <%= nav_link "Join", new_user_registration_path, controllers: :registrations %>
-      <% end %>
-    </nav>
-
-    <% groups = manage_nav_groups %>
-    <% if groups.any? %>
-      <details class="manage-menu" open data-controller="menu">
-        <summary>Manage</summary>
-        <nav class="main manage" aria-label="Manage">
-          <% groups.each do |label, links| %>
-            <span class="group"><%= label %></span>
-            <% links.each do |link_label, path, controllers| %>
-              <%= nav_link link_label, path, controllers: controllers %>
-            <% end %>
-          <% end %>
-        </nav>
-      </details>
-    <% end %>
-  </header>
-  <div class="tape" role="presentation"></div>
-
-  <main class="<%= yield :main_class %>">
+  <main id="main" class="<%= yield :main_class %>" data-controller="tables">
     <%# Flash text is set by the app itself, some of it with markup (links, line breaks). %>
     <% if notice.present? %><p class="msg ok" role="status"><%= raw notice %></p><% end %>
     <% if alert.present? %><p class="msg err" role="alert"><%= raw alert %></p><% end %>

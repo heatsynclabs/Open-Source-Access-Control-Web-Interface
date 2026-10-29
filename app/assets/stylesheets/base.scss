@@ -1,9 +1,15 @@
+@use "buttons";
+
 // Layer order for the whole site. Later layers win over earlier ones no
 // matter how specific a selector is, so a page style never needs !important
 // to beat a component.
-@layer base, layout, components, calendar, charts, pages;
+@layer base, layout, components, calendar, charts, pages, utilities;
 
 @layer base {
+  // Secondary text on the amber (headline tiles, an unlocked door, today):
+  // the tape ink with a little amber in it, as GANTRY's hazard ground does.
+  :root { --on-hazard-muted: color-mix(in srgb, var(--tape-dark) 80%, var(--hazard)); }
+
   *, *::before, *::after { box-sizing: border-box; }
   [hidden] { display: none !important; }
 
@@ -43,6 +49,7 @@
 
   p { margin: 0 0 var(--space-4); text-wrap: pretty; }
   img { max-width: 100%; }
+  summary { cursor: pointer; }
   hr { border: 0; border-top: 2px solid var(--steel); margin: var(--space-8) 0; }
 
   code, kbd, samp, pre { font-family: var(--font-mono); font-size: 0.92em; }
@@ -53,6 +60,11 @@
     overflow-x: auto;
     border: 2px solid var(--steel-hi);
   }
+
+  // Bare buttons look like GANTRY buttons. Being in the lowest layer, any
+  // classed button (.btn, .toggle, nav menus, tabs) restyles them freely.
+  :where(button, input[type="submit"], input[type="button"]) { @include buttons.look; }
+  :where(input[type="submit"]) { @include buttons.primary; }
 
   // Lucide icons sit on the text line and take the text colour.
   svg.lucide { width: 1.15em; height: 1.15em; vertical-align: -0.18em; flex: none; stroke-width: 2; }

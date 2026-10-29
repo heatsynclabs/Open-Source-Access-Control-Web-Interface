@@ -10,7 +10,7 @@
 <% check = lucide_icon("check") %>
 <p class="count-line"><%= pluralize(@users.size, "person") %>. Click a heading to sort.</p>
 <div class="table-wrap tall">
-  <table>
+  <table class="sheet no-stack">
     <thead>
       <tr>
         <th><%= sort_link "Name", "name" %></th>
@@ -22,14 +22,14 @@
         <th><%= sort_link "Instructor", "instructor" %></th>
         <% if admin %><th><%= sort_link "Admin", "admin" %></th><% end %>
         <% @certifications.each do |cert| %>
-          <th><%= link_to cert.name, request.parameters.merge(sort: "cert", cert: cert.id) %></th>
+          <th class="vertical"><%= link_to cert.name, request.parameters.merge(sort: "cert", cert: cert.id) %></th>
         <% end %>
       </tr>
     </thead>
     <tbody>
       <% @users.each do |user| %>
         <tr class="<%= 'tone-quiet' if user.hidden? %>">
-          <td><%= link_to user, class: "person-cell" do %><%= person_avatar(user, 24) %><span><%= user.name %></span><% end %><%= render ChipComponent.new("Hidden") if user.hidden? %></td>
+          <td><%= person_link(user, size: 24) %><%= render ChipComponent.new("Hidden") if user.hidden? %></td>
           <td><%= render MemberBadgeComponent.new(user) %></td>
           <% if admin %><td><%= user.email %></td><% end %>
           <% if admin %><td><% if user.orientation.present? %><span title="<%= user.orientation.strftime('%B %d %Y') %>"><%= check %></span><% end %></td><% end %>

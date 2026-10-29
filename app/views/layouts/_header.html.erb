@@ -1,0 +1,65 @@
+<%# Site header. Wide screens: a row of main links, with one menu per role
+    (Instructor, Treasurer, Admin) at the end. Phones: a Menu button that opens
+    every link as one list. Behaviour is in app/javascript/controllers/nav_controller.js. %>
+<% groups = role_nav_groups %>
+<header class="top" data-controller="nav" data-action="keydown.esc@window->nav#closeAll click@window->nav#closeOutside">
+  <div class="top-inner">
+    <%= link_to root_path, class: "brand", title: "Members home" do %>
+      <%= image_tag "hsl-lockup-h.svg", class: "lockup", alt: "HeatSync Labs" %>
+      <%= image_tag "hsl-lockup-h-reverse.svg", class: "lockup reverse", alt: "" %>
+      <span class="app-name">Members</span>
+    <% end %>
+    <span class="spacer"></span>
+    <% if user_signed_in? %>
+      <%= link_to edit_user_registration_path, class: ["who", "wide-only", ("on" if controller_name == "registrations")], title: "Your profile" do %>
+        <%= person_avatar(current_user, 28) %><span><%= current_user.name %></span>
+      <% end %>
+    <% end %>
+    <button type="button" class="icon-btn" data-controller="theme" data-action="theme#toggle">
+      <span data-theme-target="sun" hidden><%= lucide_icon "sun" %></span>
+      <span data-theme-target="moon"><%= lucide_icon "moon" %></span>
+    </button>
+    <% if user_signed_in? %>
+      <%= link_to destroy_user_session_path, method: :delete, class: "btn small wide-only" do %><%= lucide_icon "log-out" %> Sign out<% end %>
+    <% else %>
+      <%= link_to new_user_session_path, class: "btn small primary" do %><%= lucide_icon "log-in" %> Sign in<% end %>
+    <% end %>
+    <button type="button" class="btn small menu-toggle" aria-expanded="false" aria-controls="site-nav"
+            data-nav-target="menuButton" data-action="nav#toggleMenu">
+      <%= lucide_icon "menu" %> Menu
+    </button>
+  </div>
+
+  <nav id="site-nav" class="site-nav" aria-label="Main">
+    <ul class="nav-links">
+      <% primary_nav_links.each do |link| %><li><%= nav_link link %></li><% end %>
+      <% unless user_signed_in? %><li><%= link_to "Join", new_user_registration_path, class: ("on" if controller_name == "registrations") %></li><% end %>
+    </ul>
+
+    <% if groups.any? %>
+      <ul class="nav-groups">
+        <% groups.each do |label, links| %>
+          <% id = "nav-#{label.parameterize}" %>
+          <li class="nav-group">
+            <button type="button" class="nav-group-toggle <%= 'on' if links.any? { |link| nav_current?(link) } %>"
+                    aria-expanded="false" aria-controls="<%= id %>" data-action="nav#toggleGroup">
+              <%= label %> <%= lucide_icon "chevron-down" %>
+            </button>
+            <span class="nav-group-label"><%= label %></span>
+            <ul class="nav-group-links" id="<%= id %>">
+              <% links.each do |link| %><li><%= nav_link link %></li><% end %>
+            </ul>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <% if user_signed_in? %>
+      <ul class="nav-account narrow-only">
+        <li><%= link_to edit_user_registration_path, class: "who" do %><%= person_avatar(current_user, 28) %><span>Profile, <%= current_user.name %></span><% end %></li>
+        <li><%= link_to destroy_user_session_path, method: :delete do %><%= lucide_icon "log-out" %> Sign out<% end %></li>
+      </ul>
+    <% end %>
+  </nav>
+</header>
+<div class="tape" role="presentation"></div>
