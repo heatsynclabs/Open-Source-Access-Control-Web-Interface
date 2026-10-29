@@ -1,6 +1,4 @@
-<h1>Editing MAC</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Show', @mac %> |
-<%= link_to 'Back', macs_path %>
+<%= render PageHeaderComponent.new(eyebrow: "Computers", eyebrow_path: macs_path, title: "Edit computer") do |header| %>
+  <% header.with_action { link_to "View", @mac, class: "btn" } %>
+<% end %>
+<%= render "form" %>

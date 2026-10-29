@@ -1,5 +1,2 @@
-<h1>New MAC</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Back', macs_path %>
+<%= render PageHeaderComponent.new(eyebrow: "Computers", eyebrow_path: macs_path, title: "Register a computer", lead: "Register your laptop's network address and the Computers page shows your name when it is on the lab network.") %>
+<%= render "form" %>

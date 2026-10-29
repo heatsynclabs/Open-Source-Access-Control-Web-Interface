@@ -171,7 +171,7 @@ end
 
   # GET /macs/1/edit
   def edit
-    @mac = Mac.find(macs_params)
+    @mac = Mac.find(params[:id])
     if can? :manage, Mac then
       @users = User.accessible_by(current_ability).sort_by(&:name)
     else
@@ -215,7 +215,7 @@ end
   def update
     #Log who updated this
     @mac = Mac.find(params[:id])
-    @mac.assign_attributes(params[:mac])
+    @mac.assign_attributes(macs_params)
     #@mac.user_id = params[:mac][:user_id]
     authorize! :update, @mac
 

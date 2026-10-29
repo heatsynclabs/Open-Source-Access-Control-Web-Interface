@@ -1,38 +1,31 @@
-<p>
-  <b>User:</b>
-  <%= @mac.user.name unless @mac.user.blank? %>
-</p>
-
-<p>
-  <b>MAC:</b>
-  <%= @mac.mac %>
-</p>
-
-<p>
-  <b>Note:</b>
-  <%= @mac.note %>
-</p>
-
-<p>
-  <b>Hidden:</b>
-  <%= @mac.hidden %>
-</p>
-
-<p>
-  <b>IP:</b>
-  <%= @mac.ip %>
-</p>
-
-<% if can? :read, MacLog %>
-<p>
-  <b>Recent Log Entries:</b>
-<ul>
-<% @mac_logs.each do |log| %>
-  <li><%= log.created_at %></li>
-<% end %>
-</ul>
-</p>
+<%= render PageHeaderComponent.new(eyebrow: "Computers", eyebrow_path: macs_path, title: @mac.user ? "#{@mac.user.name}'s computer" : @mac.mac) do |header| %>
+  <% header.with_action { link_to "Edit", edit_mac_path(@mac), class: "btn" } %>
 <% end %>
 
-<%= link_to 'Edit', edit_mac_path(@mac) %> |
-<%= link_to 'Back', macs_path %>
+<div class="grid side">
+  <section class="card">
+    <h2>Details</h2>
+    <dl class="facts">
+      <dt>Owner</dt><dd><%= @mac.user ? link_to(@mac.user.name, @mac.user) : "Nobody yet" %></dd>
+      <dt>MAC</dt><dd class="mono"><%= @mac.mac %></dd>
+      <dt>Note</dt><dd><%= @mac.note.presence || "None" %></dd>
+      <dt>Hidden</dt><dd><%= @mac.hidden ? "Yes" : "No" %></dd>
+      <dt>IP</dt><dd class="mono"><%= @mac.ip.presence || "Unknown" %></dd>
+    </dl>
+  </section>
+
+  <% if can? :read, MacLog %>
+    <section class="card">
+      <div class="card-head"><h2>Recent log entries</h2><span class="muted small"><%= @mac_logs.size %></span></div>
+      <% if @mac_logs.any? %>
+        <ul class="plain">
+          <% @mac_logs.each do |log| %>
+            <li><span><%= log.created_at.strftime("%a %b %-d, %Y") %></span><span class="muted small"><%= log.created_at.strftime("%-l:%M%P") %></span></li>
+          <% end %>
+        </ul>
+      <% else %>
+        <%= render EmptyStateComponent.new("No log entries for this computer.") %>
+      <% end %>
+    </section>
+  <% end %>
+</div>

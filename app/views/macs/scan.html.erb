@@ -1,7 +1,14 @@
-Scanning...
-<% if can? :read_details, Mac
- @macs.each do |key, value| %>
-  <%= key %> =
-  <%= value %><br/>
-<% end 
-end %>
+<%= render PageHeaderComponent.new(eyebrow: "Computers", eyebrow_path: macs_path, title: "Network scan") %>
+<p class="msg info">Scanning...</p>
+<% if can? :read_details, Mac %>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>MAC</th><th>Result</th></tr></thead>
+      <tbody>
+        <% @macs.each do |key, value| %>
+          <tr><td class="mono"><%= key %></td><td><%= value %></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

@@ -1,38 +1,28 @@
-<style>
-  td { border-bottom: 1px solid #ccc; }
-</style>
-<table>
-<% @mac_logs.each do |mac_log| %>
-  <tr>
-  <td>
-    <% if @macs[mac_log.mac].blank? || @macs[mac_log.mac].user_id.blank? %>
-    <% else %>
-      <%= link_to @macs[mac_log.mac].user.name, @macs[mac_log.mac].user %><br/>
-    <% end %>
-  </td>
-  <td>
-      <% if @macs[mac_log.mac].blank? %>
-        <%= mac_log.mac %>
-      <% else %>
-        <% if @macs[mac_log.mac].note.blank? %>
-          <%= link_to mac_log.mac, @macs[mac_log.mac] %><br/>
-        <% else %>
-          <%= link_to @macs[mac_log.mac].note, @macs[mac_log.mac] %><br/>
-          <small><%= mac_log.mac %></small>
-        <% end %>
+<%= render PageHeaderComponent.new(eyebrow: "Computers", eyebrow_path: macs_path, title: "Network log", lead: "The latest 1,000 times a computer joined or left the lab network.") %>
+
+<div class="table-wrap tall">
+  <table>
+    <thead><tr><th>Owner</th><th>Computer</th><th>IP</th><th>Event</th><th>When</th></tr></thead>
+    <tbody>
+      <% @mac_logs.each do |mac_log| %>
+        <% mac = @macs[mac_log.mac] %>
+        <tr>
+          <td><%= link_to mac.user.name, mac.user if mac && mac.user_id.present? %></td>
+          <td>
+            <% if mac.blank? %>
+              <span class="mono"><%= mac_log.mac %></span>
+            <% elsif mac.note.blank? %>
+              <%= link_to mac_log.mac, mac, class: "mono" %>
+            <% else %>
+              <%= link_to mac.note, mac %><br><span class="mono small muted"><%= mac_log.mac %></span>
+            <% end %>
+          </td>
+          <td class="mono"><%= mac_log.ip %></td>
+          <td><%= render ChipComponent.new(mac_log.action, tone: mac_log.action == "activate" ? :ok : :err) %></td>
+          <td><%= mac_log.created_at.strftime("%Y-%m-%d %-l:%M%P") %></td>
+        </tr>
       <% end %>
-</td>
-  <td><%= mac_log.ip %></td>
-  <td>
-    <% if mac_log.action == "activate" %>
-      <span style="background-color: green">
-    <% else %>
-      <span style="background-color: red">
-    <% end %>
-    <%= mac_log.action %>
-    </span>
-  </td>
-  <td><%= mac_log.created_at %></td>
-  </tr>
-<% end %>
-</table>
+    </tbody>
+  </table>
+</div>
+<%= render EmptyStateComponent.new("Nothing logged yet.") if @mac_logs.empty? %>

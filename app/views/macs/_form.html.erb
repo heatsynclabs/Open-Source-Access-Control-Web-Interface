@@ -1,34 +1,34 @@
-<%= form_for(@mac) do |f| %>
-  <% if @mac.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@mac.errors.count, "error") %> prohibited this MAC from being saved:</h2>
-
-      <ul>
-      <% @mac.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+<%= form_for(@mac, html: { class: "form" }) do |f| %>
+  <%= render FormErrorsComponent.new(@mac) %>
+  <fieldset>
+    <legend>Computer</legend>
+    <div class="fields">
+      <div class="field">
+        <%= f.label :user_id, "Owner" %>
+        <%= collection_select(:mac, :user_id, @users, :id, :name, include_blank: true) %>
+      </div>
+      <div class="field">
+        <%= f.label :mac, "MAC address" %>
+        <%= f.text_field :mac, value: (@mac.mac || @arp || nil), class: "mono", autocomplete: "off" %>
+        <% if @arp.present? %>
+          <p class="hint">Found from your IP address, <%= @ip %>.</p>
+        <% else %>
+          <p class="hint">Six pairs of hex digits, like 00:1a:2b:3c:4d:5e.</p>
+        <% end %>
+      </div>
+      <div class="field wide">
+        <%= f.label :note %>
+        <%= f.text_field :note %>
+        <p class="hint">Which machine this is. Your Twitter handle (like @janedoe) links to your profile.</p>
+      </div>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= f.label :user_id, "User" %><br />
-    <%= collection_select(:mac, :user_id, @users, :id, :name, :include_blank => true) %>
-  </div>
-  <div class="field">
-    <%= f.label :mac %><br />
-    <%= f.text_field :mac, :value => (@mac.mac || @arp || nil) %>
-    <% if @arp.present? %><br/><em>Autodetected from your IP of <%= @ip %></em><% end %>
-  </div>
-  <div class="field">
-    <%= f.label :note %> (Set as your Twitter handle for automatic linking, i.e. @janedoe)<br />
-    <%= f.text_field :note %>
-  </div>
-  <div class="field">
-    <%= f.label :hidden %><br />
-    <%= f.check_box :hidden %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
+    <div class="check">
+      <%= f.check_box :hidden %>
+      <%= f.label :hidden, "Hide this computer from the public list" %>
+    </div>
+  </fieldset>
+  <div class="form-actions">
+    <%= f.submit @mac.new_record? ? "Register computer" : "Save computer", class: "primary" %>
+    <%= link_to "Cancel", macs_path, class: "btn" %>
   </div>
 <% end %>

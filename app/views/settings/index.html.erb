@@ -1,16 +1,16 @@
-<h2>Site-Wide Settings</h2>
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Value</th>
-  </tr>
-  <% @settings.each do |setting| %>
-  <tr>
-    <td><%= setting.first.titleize %></td>
-    <td>"<%= setting.last.truncate(140) %>"</td>
-    <% if can? :update, Setting %>
-    <td><%= link_to 'Edit', edit_setting_path(setting.first) %></td>
-    <% end %>
-  </tr>
-  <% end %>
-</table>
+<%= render PageHeaderComponent.new(eyebrow: "Admin", title: "Site settings", lead: "Text and templates used across the members site: the welcome page, the more information page, member resources, the Space API template and the analytics snippet.") %>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Setting</th><th>Current value</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+    <tbody>
+      <% @settings.each do |key, value| %>
+        <tr>
+          <td><strong><%= key.titleize %></strong></td>
+          <td class="wrap"><% if value.present? %><span class="mono small"><%= value.truncate(140) %></span><% else %><span class="muted">Empty</span><% end %></td>
+          <td class="actions"><%= link_to "Edit", edit_setting_path(key), class: "btn small" if can? :update, Setting %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

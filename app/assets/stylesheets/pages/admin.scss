@@ -1,3 +1,25 @@
-// Page styles for the admin pages. Kept in their own file so each area can change without touching the others.
+// Page styles for the admin pages (computers, settings, audit log). Kept in
+// their own file so each area can change without touching the others.
 @layer pages {
+  .mac-label { display: inline-flex; flex-wrap: wrap; gap: var(--space-2); align-items: baseline; min-width: 0; }
+  .all-macs { margin-top: var(--space-10); }
+
+  .history-range, .audit-filters { margin-bottom: var(--space-6); }
+
+  // The audit summary is a "field: old => new" block, one change per line.
+  .audit-summary {
+    margin: 0;
+    padding: 0;
+    background: none;
+    color: inherit;
+    border: 0;
+    white-space: pre-wrap;
+    font-size: var(--text-xs);
+    max-width: 32rem;
+  }
+
+  // wymeditor draws its own toolbar and iframe; give it the page's colours.
+  .settings-form .wym_box { background: var(--char); border: 2px solid var(--steel-hi); }
+  .settings-form .wym_iframe iframe { width: 100%; min-height: 360px; background: #fff; }
+  .settings-form .wym_area_top, .settings-form .wym_area_right { font-family: var(--font-ui); font-size: var(--text-xs); }
 }

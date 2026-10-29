@@ -1,18 +1,25 @@
-<script src="https://code.jquery.com/jquery-migrate-1.2.1.js"></script>
-<script type="text/javascript" src="/wymeditor/wymeditor/jquery.wymeditor.min.js"></script>
-<script type="text/javascript">
-$(function(){
-  $('.wysiwyg').wymeditor();
-});
-</script>
-<%= form_tag(setting_path(@setting[:var]), :method => :put) do %>
-  <h3>Editing <%= @setting[:var].titleize %></h3>
-  <div class="field">
-    <%= text_area_tag :value, @setting[:value], :cols => 50, :class => "wysiwyg" %><br/>
-  </div>
-  <em>Note: there is a /more_info page you can link to for wysiwyg purposes.</em>
-  <div class="field">
-    <%= submit_tag "Save", {:class => "wymupdate"} %><br/>
-    <%= link_to "Back", settings_path %>
+<%# wymeditor is an old jQuery plugin and needs jquery-migrate. Both load only on this page. %>
+<% content_for :head do %>
+  <script src="https://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+  <script src="/wymeditor/wymeditor/jquery.wymeditor.min.js"></script>
+  <script>
+    $(function () { $(".wysiwyg").wymeditor(); });
+  </script>
+<% end %>
+
+<%= render PageHeaderComponent.new(eyebrow: "Site settings", eyebrow_path: settings_path, title: "Edit #{@setting[:var].titleize.downcase}") %>
+
+<%= form_tag(setting_path(@setting[:var]), method: :put, class: "form settings-form") do %>
+  <fieldset>
+    <legend><%= @setting[:var].titleize %></legend>
+    <div class="field wide">
+      <%= label_tag :value, "Value", class: "visually-hidden" %>
+      <%= text_area_tag :value, @setting[:value], cols: 50, class: "wysiwyg" %>
+      <p class="hint">Saved as HTML. The /more_info page is there to link to for longer text.</p>
+    </div>
+  </fieldset>
+  <div class="form-actions">
+    <%= submit_tag "Save", class: "wymupdate primary" %>
+    <%= link_to "Cancel", settings_path, class: "btn" %>
   </div>
 <% end %>
