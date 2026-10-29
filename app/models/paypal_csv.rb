@@ -12,10 +12,11 @@ require 'bigdecimal'
 class PaypalCsv < ActiveRecord::Base
   belongs_to :payment
 
-  # Who the lab receives dues at, and the dues tiers. Overridable by env so the
+  # Who the lab receives dues at (both addresses are on the one PayPal
+  # account), and the dues tiers. Overridable by env so the
   # code does not need editing when these change. Tiers are for reporting only;
   # linking records the actual amount paid (grandfathered amounts still count).
-  RECEIVER_EMAILS = (ENV['PAYPAL_RECEIVER_EMAILS'] || 'hslfinances@gmail.com')
+  RECEIVER_EMAILS = (ENV['PAYPAL_RECEIVER_EMAILS'] || 'finances@heatsynclabs.org,hslfinances@gmail.com')
                       .downcase.split(/[\s,]+/).reject(&:empty?)
   CURRENT_TIERS   = (ENV['MEMBERSHIP_TIERS'] || '25,50,100')
                       .split(',').map { |s| s.strip.to_i }.reject(&:zero?)
