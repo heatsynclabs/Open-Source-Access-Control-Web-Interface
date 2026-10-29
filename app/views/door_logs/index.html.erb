@@ -1,222 +1,114 @@
-<script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<style type="text/css">
-    .access-web-granted { }
-    .access-card-granted { background-color: lightgreen; }
-    .access-card-denied { background-color: lightcoral; }
-    .access-auto-lock { background-color: lightgray; }
-    #doorLogActions {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-        gap: 2rem;
-        padding: 1rem 0;
-    }
-    .webAccessOpen { background-color: green; color: whitesmoke; }
-    .webAccessLock { background-color: darkgray; color: black; }
-    .webAccessUnlock { background-color: lightblue; color: black; }
-    .mobileAccessOpen { background-color: darkolivegreen; color: whitesmoke; border: 1px solid black; }
-    .mobileAccessLock { background-color: darkgray; color: black; border: 1px solid lightgray; }
-    .mobileAccessUnlock { background-color: lightsteelblue; color: black; border: 1px solid cadetblue; }
-</style>
-
-<script type="text/javascript">
-    graph_data = <%= raw @door_log_graph.to_json %>;
-
-    plot_band_start_hour = 16;
-    plot_band_end_hour = 22;
-
-    $(function() {
-        $( "#graph-dialog" ).dialog({
-            autoOpen: false,
-            height: 700,
-            width: 825,
-            modal: true,
-        });
-
-        $( "#graph-button" ).click(function() {
-            $( "#graph-dialog" ).dialog( "open" );
-        });
-
-        $('#graph').highcharts({
-            chart: { type: 'line', zoomType : 'x' },
-            colors: ['#2f7ed8','#910000'],
-            title: { style : { fontSize: '12px' }, text: "Click a Door in the Legend to Hide" },
-            subtitle: { style : { fontSize: '10px' }, text: "Click and Drag to Zoom." },
-            xAxis: {
-                type : 'datetime',
-                plotBands: generatePlotBands(graph_data[0][0][0], graph_data[0][graph_data[0].length-1][0]),
-                labels : { align : "left" }
-            },
-            yAxis : { title : { text : "Door Open History" } },
-            series: [
-                { name: "Door 1", data: graph_data[0] },
-                { name: "Door 2", data: graph_data[1] }
-            ],
-            tooltip: {
-                shared: true,
-                xDateFormat: '%A %B %e, %l:%M %P',
-                formatter: function() {
-                    output = '<b>'+ Highcharts.dateFormat(this.points[0].series.tooltipOptions.xDateFormat,this.x) +'</b><br/>';
-                    this.points.forEach(function(e){
-                        var val = (e.y == 1 ? "Open" : "Closed");
-                        output += '<b><span style="color:'+e.series.color+'">'+e.series.name +'</span>: ' + val +'</b><br/>';
-                    });
-                    return output;
-                }
-            },
-            plotOptions: { line: { marker: { enabled: false } } }
-        });
-
-        Highcharts.setOptions({ global : { useUTC : false } });
-    });
-
-    function generatePlotBands(start,end){
-        plotBands = [];
-        for (var d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-            if(d.getDay()%6==0){
-                plotBands.push({ color: '#eee', from: d.setHours(0), to: d.setHours(23) });
-                plotBands.push({ color: '#94C9EC', from: d.setHours(12), to: d.setHours(18) });
-            }
-            else if(d.getDay()==3){
-                plotBands.push({ color: '#94C9EC', from: d.setHours(12), to: d.setHours(plot_band_end_hour) });
-            }
-            else {
-                plotBands.push({ color: '#82DAC9', from: d.setHours(plot_band_start_hour), to: d.setHours(plot_band_end_hour) });
-            }
-        }
-        return plotBands;
-    }
-</script>
-
-<div id="graph-dialog" title="Door Status">
-  <div id="graph" style="height: 600px; width: 800px; float: right;"></div>
-</div>
-
-<h1>Door Logs <button id="graph-button" class="btn">View Graph</button></h1>
-<div id="doorLogActions">
-  <%= link_to 'Download Door Logs', download_path %>
-  <a href="#" onclick="$('#log-guide').toggle();">Show Log Guide</a>
-</div>
-
-<%= form_tag(nil, :method => :get, :id => 'doorLogFilters', :style => 'margin: 10px 0;') do %>
-  <label>Show
-    <%= select_tag :type, options_for_select(DoorLog::TYPE_OPTIONS, @door_log_type),
-          :onchange => "this.form.submit()" %>
-  </label>
-  &nbsp;
-  <label>From
-    <input id="start" name="start" type="date" value="<%= @start_date.to_date.to_s %>" />
-  </label>
-  <label>To
-    <input id="end" name="end" type="date" value="<%= @end_date.to_date.to_s %>" />
-  </label>
-  <%= submit_tag("Update", :name => nil, :class => 'btn') %>
+<%= render PageHeaderComponent.new(eyebrow: "Admin", title: "Door log", lead: "What the door board recorded: cards read, granted and denied, remote commands, and the lock state it reports every few minutes.") do |header| %>
+  <% header.with_action { link_to "Read the board now", download_path, class: "btn", data: { confirm: "Read the door board's log now? The board clears its log after it is read." } } %>
+  <% header.with_action { link_to "Access cards", cards_path, class: "btn" } if can? :manage, Card %>
 <% end %>
 
-<div id="log-guide" style="display: none;">
-<pre>
-Guide to Card Number storage:
-cardnum = (R+(r*32767)), convert to hex
+<%= form_tag(nil, method: :get, id: "doorLogFilters", class: "inline-form door-log-filters") do %>
+  <div class="field">
+    <%= label_tag :type, "Show" %>
+    <%= select_tag :type, options_for_select(DoorLog::TYPE_OPTIONS, @door_log_type) %>
+  </div>
+  <div class="field">
+    <label for="start">Lock chart from</label>
+    <input id="start" name="start" type="date" value="<%= @start_date.to_date.to_s %>">
+  </div>
+  <div class="field">
+    <label for="end">To</label>
+    <input id="end" name="end" type="date" value="<%= @end_date.to_date.to_s %>">
+  </div>
+  <%= submit_tag "Update", name: nil, class: "primary" %>
+<% end %>
 
-Guide to log keys and data:
- * A=alarm armed (# level)
- * a=added user (# usernum)
- * C=keypad command (# command)
- * c=second half
- * c=checked user (0=failed, #=found usernum)
- * D=denied access (# card num)
- * d=second half
- * d=deleted user (# usernum)
- * E=second (#=second)
- * F=priv fail (0=wrong pw, 1=too many attempts, 2=not logged in)
- * f=second half
- * f=card fail (#=usermask)
- * G=granted access (# card num)
- * g=second half of card
- * H=hour (#=hour)
- * i=attempt to write to invalid eeprom address (# usernum)
- * I=attempt to delete from invalid eeprom address (# usernum)
- * L=locked (1=door1, 2=door2, 3=bedtime)
- * M=minute (#=minute)
- * m=alarm state (# level)
- * R=read tag (# card num)
- * r=second half of tag
- * Q=superuser authed (#=superuser)
- * S=auth (0=privileged mode enabled)
- * s=alarm sensor (# zone)
- * t=alarm trained (#=sensor value)
- * T=alarm triggered (0)
- * U=unlocked door (1=door1, 2=door2, # card num)
- * u=second half of card
- * Z=user db cleared (0)
- * z=log cleared (0)
-</pre>
-</div>
-
-<table>
-  <tr>
-    <th>Date</th>
-    <th>Key</th>
-    <th>Data</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-
-  <% @divided_tmp = nil %>
-  <% @door_logs.each do |door_log| %>
-    <tr>
-      <td><%= door_log.created_at %></td>
-      <td><%= door_log.key %></td>
-      <td><%= door_log.data %></td>
-
-      <% if door_log.key.start_with?('rem_', 'api_rem_') %>
-        <% if door_log.data.present? && door_log.data.to_s.match(/\A\d+\z/) %>
-
-          <% if door_log.data.to_i == 468 %>
-            <td class="access-auto-lock">Automatic Locking</td>
-          <% else %>
-            <% user = User.find_by_id(door_log.data) %>
-            <% access_source, access_class, access_action = extract_access_info(door_log) %>
-
-            <% if user && access_source && access_action %>
-              <% Rails.logger.info "Web App User name: #{user.name} (#{door_log.data})" %>
-              <td class="access-web-granted <%= access_class %>">
-                Granted <%= access_source %>: <%= user.name %> (<%= access_action %>)
-              </td>
-            <% end %>
-          <% end %>
-
-        <% else %>
-          <% Rails.logger.warn "###### Invalid or missing user ID: #{door_log.data}" %>
-        <% end %>
-      <% end %>
-
-      <% if door_log.key == 'r' || door_log.key == 'd' || door_log.key == 'g' %>
-        <% @divided_tmp = door_log.data.to_i %>
-      <% elsif (door_log.key == 'R' || door_log.key == 'D' || door_log.key == 'G') && !@divided_tmp.nil? %>
-        <td class="<%= case door_log.key
-                       when 'G' then 'access-card-granted'
-                       when 'D' then 'access-card-denied'
-                       else ''
-                       end %>">
-          <%= case door_log.key
-              when 'R' then "Read"
-              when 'D' then "Denied"
-              when 'G' then "Granted"
-              end %>
-          <% @cardnum = (door_log.data.to_i + (@divided_tmp*32767)).to_s(16) %>
-          <%= "Card: " + @cardnum %>
-          <% @card = Card.where(['lower(card_number) = ?', @cardnum.downcase]).first %>
-          <%= "(" + @card.user.name + ")" unless @card.nil? %>
-        </td>
-      <% else %>
-        <% @divided_tmp = nil %>
-      <% end %>
-    </tr>
+<%# The controller hands lock history as [milliseconds, 1 when unlocked] pairs per door. %>
+<% lock_series = [["Front door", @door_log_graph[0]], ["Rear door", @door_log_graph[1]]].map do |name, points| %>
+  <% { name: name, data: points.map { |ms, open| [Time.zone.at(ms / 1000), open] } } %>
+<% end %>
+<%= render ChartCardComponent.new(title: "Doors unlocked",
+      note: "From #{@start_date.to_date.strftime('%b %-d')} to #{@end_date.to_date.strftime('%b %-d, %Y')}. Up means unlocked.") do %>
+  <% if lock_series.all? { |series| series[:data].empty? } %>
+    <%= render EmptyStateComponent.new("No lock reports in these dates.") %>
+  <% else %>
+    <%= line_chart lock_series, height: "220px", points: false, min: 0, max: 1,
+          library: { elements: { line: { stepped: true } }, scales: { y: { ticks: { stepSize: 1 } } } } %>
   <% end %>
-</table>
+<% end %>
 
-<br />
+<details class="log-guide">
+  <summary>What the keys mean</summary>
+  <pre>
+Card numbers are stored in two parts: cardnum = (R + (r * 32767)), shown in hex.
+
+ A  alarm armed (level)             a  added user (user number)
+ C  keypad command (command)        c  second half, or checked user (0 failed, else user number)
+ D  denied access (card number)     d  second half, or deleted user (user number)
+ E  second                          F  privilege fail (0 wrong password, 1 too many tries, 2 not logged in)
+ f  second half, or card fail (user mask)
+ G  granted access (card number)    g  second half of card
+ H  hour                            i  write to invalid eeprom address (user number)
+ I  delete from invalid eeprom address (user number)
+ L  locked (1 door 1, 2 door 2, 3 bedtime)
+ M  minute                          m  alarm state (level)
+ R  read tag (card number)          r  second half of tag
+ Q  superuser authed (superuser)    S  auth (0 privileged mode enabled)
+ s  alarm sensor (zone)             t  alarm trained (sensor value)
+ T  alarm triggered (0)             U  unlocked door (1 door 1, 2 door 2, else card number)
+ u  second half of card             Z  user database cleared (0)
+ z  log cleared (0)
+  </pre>
+</details>
+
+<p class="count-line">The latest <%= number_with_delimiter(@door_logs.size) %> entries, newest first.</p>
+<div class="table-wrap tall">
+  <table class="door-log">
+    <thead><tr><th>When</th><th>Key</th><th class="num">Data</th><th>What happened</th></tr></thead>
+    <tbody>
+      <% divided_tmp = nil %>
+      <% @door_logs.each do |door_log| %>
+        <%
+          meaning = nil
+          tone = nil
+          icon = nil
+
+          # Remote commands carry the member's id as data (468 is the automatic lock).
+          if door_log.key.start_with?("rem_", "api_rem_")
+            if door_log.data.present? && door_log.data.to_s.match(/\A\d+\z/)
+              if door_log.data.to_i == 468
+                meaning = "Automatic locking"
+                tone = "tone-quiet"
+              else
+                user = User.find_by_id(door_log.data)
+                access_source, _access_class, access_action = extract_access_info(door_log)
+                if user && access_source && access_action
+                  meaning = "Granted #{access_source}: #{user.name} (#{access_action})"
+                  icon = access_source_icon(access_source)
+                  tone = "tone-info"
+                end
+              end
+            else
+              Rails.logger.warn "###### Invalid or missing user ID: #{door_log.data}"
+            end
+          end
+
+          # Card events arrive as two rows: the lower-case half first, then the upper-case one.
+          if %w[r d g].include?(door_log.key)
+            divided_tmp = door_log.data.to_i
+          elsif %w[R D G].include?(door_log.key) && !divided_tmp.nil?
+            card_number = (door_log.data.to_i + (divided_tmp * 32767)).to_s(16)
+            card = Card.where(["lower(card_number) = ?", card_number.downcase]).first
+            verb = { "R" => "Read", "D" => "Denied", "G" => "Granted" }[door_log.key]
+            meaning = "#{verb} card #{card_number}#{" (#{card.user.name})" if card&.user}"
+            tone = { "G" => "tone-ok", "D" => "tone-err" }[door_log.key]
+          else
+            divided_tmp = nil
+          end
+        %>
+        <tr class="<%= tone %>">
+          <td><%= door_log.created_at.strftime("%a %b %-d, %Y %-l:%M:%S%P") %></td>
+          <td class="mono"><%= door_log.key %></td>
+          <td class="num mono"><%= door_log.data %></td>
+          <td class="wrap"><% if icon %><%= lucide_icon icon %> <% end %><%= meaning %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

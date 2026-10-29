@@ -1,29 +1,26 @@
-<%= form_for(@payment) do |f| %>
-  <% if @payment.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@payment.errors.count, "error") %> prohibited this payment from being saved:</h2>
-
-      <ul>
-      <% @payment.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+<%= form_for(@payment, html: { class: "form" }) do |f| %>
+  <%= render FormErrorsComponent.new(@payment) %>
+  <fieldset>
+    <legend>Payment</legend>
+    <div class="fields">
+      <div class="field wide">
+        <%= f.label :user_id, "Member" %>
+        <%= collection_select(:payment, :user_id, @users, :id, :name_with_payee_and_member_level) %>
+        <p class="hint">Inactive and hidden members are not listed.</p>
+      </div>
+      <div class="field">
+        <%= f.label :date, "Paid for the month beginning" %>
+        <div class="date-select"><%= f.date_select :date, default: (DateTime.now - 1.month) %></div>
+      </div>
+      <div class="field">
+        <%= f.label :amount %>
+        <%= f.number_field :amount %>
+        <p class="hint">In dollars.</p>
+      </div>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= f.label :user_id, "User" %><br />
-    <%= collection_select(:payment, :user_id, @users, :id, :name_with_payee_and_member_level) %> (inactive members are not shown.)
-  </div>
-  <div class="field">
-    <%= f.label :date, "Paid for month beginning" %><br />
-    <%= f.date_select :date, :default => (DateTime.now - 1.month) %>
-  </div>
-  <div class="field">
-    <%= f.label :amount %><br />
-    <%= f.number_field :amount %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
+  </fieldset>
+  <div class="form-actions">
+    <%= f.submit @payment.new_record? ? "Record payment" : "Save payment", class: "primary" %>
+    <%= link_to "Cancel", @payment.new_record? ? payments_path : payment_path(@payment), class: "btn" %>
   </div>
 <% end %>

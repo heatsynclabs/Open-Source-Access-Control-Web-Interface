@@ -1,11 +1,8 @@
-
-<p>
-  <b>Download results:</b>
-  <%= !@results.nil? %>
-</p>
-
-<p>
-  <b>Door status:</b>
-  <%= @status %>
-</p>
-
+<%# Called every few minutes by the door log import task; nobody reads this page by hand. %>
+<%= render PageHeaderComponent.new(eyebrow: "Door log", title: "Automatic import") %>
+<section class="card">
+  <dl class="facts">
+    <dt>Download results</dt><dd><%= !@results.nil? %></dd>
+    <dt>Door status</dt><dd class="mono"><%= @status %></dd>
+  </dl>
+</section>

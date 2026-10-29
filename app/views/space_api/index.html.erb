@@ -1,14 +1,14 @@
-<% content_for :header do %>
-<h2>Space Status API
-<%= link_to 'JSON', space_api_path( :format => :json ), :class => 'btn' %> 
-<%= link_to 'Door Access', space_api_access_path, :class => 'btn' %> 
-</h2>
+<%= render PageHeaderComponent.new(eyebrow: "For other sites and apps", title: "Space status API",
+      lead: "The lab's open or closed state in the SpaceAPI format, read from the door locks.") do |header| %>
+  <% header.with_action { link_to "JSON", space_api_path(format: :json), class: "btn primary" } %>
+  <% header.with_action { link_to "Remote door access", space_api_access_path, class: "btn" } %>
 <% end %>
 
-<dl>
-<% @json.each do |key,value| %>
-  <dt><%= key.humanize.capitalize %>:</dt>
-  <dd><%= value %></dd>
-<% end %>
-</dl>
-
+<section class="card">
+  <dl class="facts">
+    <% @json.each do |key, value| %>
+      <dt><%= key.humanize %></dt>
+      <dd><%= value.is_a?(Hash) || value.is_a?(Array) ? tag.code(value.to_json) : value %></dd>
+    <% end %>
+  </dl>
+</section>

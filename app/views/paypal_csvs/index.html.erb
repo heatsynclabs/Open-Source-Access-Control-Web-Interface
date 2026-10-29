@@ -1,22 +1,22 @@
-<h2>PayPal CSV Records</h2>
-<p>
-  <%= link_to "Upload CSV", new_paypal_csv_path %> |
-  <% if @needs_review %>
-    <%= link_to "Show all records", paypal_csvs_path %>
-  <% else %>
-    <%= link_to "Needs review", paypal_csvs_path(:needs_review => 1) %>
-  <% end %>
-</p>
+<%= render PageHeaderComponent.new(eyebrow: "Treasurer", title: "PayPal imports",
+      lead: "Rows from PayPal's activity download. A row links to a payment when its sender's address belongs to a member, or to a member whose payee is that address.") do |header| %>
+  <% header.with_action { link_to "Upload CSV", new_paypal_csv_path, class: "btn primary" } %>
+  <% header.with_action { link_to "Payments", payments_path, class: "btn" } %>
+<% end %>
+
+<nav class="tabs" aria-label="PayPal rows">
+  <%= link_to "Needs review", paypal_csvs_path(needs_review: 1), class: ("on" if @needs_review), "aria-current": ("page" if @needs_review) %>
+  <%= link_to "All records", paypal_csvs_path, class: ("on" unless @needs_review), "aria-current": ("page" unless @needs_review) %>
+</nav>
 
 <% if @needs_review %>
   <% rows = @paypal_csvs.reject { |r| r.payment.present? } %>
   <% by_payer = rows.group_by(&:payer_email) %>
-  <p>
-    <strong><%= rows.size %></strong> payments received by the lab are not linked to a member,
-    from <strong><%= by_payer.size %></strong> PayPal addresses. Map each address to a member and
-    it will link now and every month after. For one address that pays for several members,
-    map it to each of them.
-  </p>
+  <div class="tiles">
+    <%= render StatTileComponent.new(value: rows.size, label: "Payments not linked to a member", tone: (rows.any? ? :alert : nil)) %>
+    <%= render StatTileComponent.new(value: by_payer.size, label: "PayPal addresses") %>
+  </div>
+  <p class="muted">Map each address to a member and it links now and every month after. For an address that pays for several members, map it to each of them.</p>
 
   <datalist id="member_emails">
     <% User.where("email is not null").order(:email).pluck(:email).each do |e| %>
@@ -24,53 +24,60 @@
     <% end %>
   </datalist>
 
-  <table border="1" cellpadding="6" cellspacing="0">
-    <tr>
-      <th>PayPal address</th>
-      <th>Payments</th>
-      <th>Total</th>
-      <th>Most recent</th>
-      <th>Assign to member</th>
-    </tr>
-    <% by_payer.sort_by { |_e, rs| -rs.size }.each do |email, rs| %>
-      <tr>
-        <td><%= email %><br><span style="color:#888"><%= rs.first._name %></span></td>
-        <td><%= rs.size %></td>
-        <td>$<%= rs.sum { |r| r.gross_amount || 0 }.to_f %></td>
-        <td><%= rs.map(&:date_value).compact.max %></td>
-        <td>
-          <%= form_tag assign_paypal_csv_path, :method => :post do %>
-            <%= hidden_field_tag :payer_email, email %>
-            <%= text_field_tag :member_email, nil, :list => "member_emails",
-                  :placeholder => "member email", :size => 28 %>
-            <%= submit_tag "Map & link" %>
+  <% if by_payer.empty? %>
+    <%= render EmptyStateComponent.new("Every incoming payment is linked to a member.") %>
+  <% else %>
+    <div class="table-wrap tall">
+      <table>
+        <thead>
+          <tr><th>PayPal address</th><th class="num">Payments</th><th class="num">Total</th><th>Most recent</th><th>Assign to member</th></tr>
+        </thead>
+        <tbody>
+          <% by_payer.sort_by { |_e, rs| -rs.size }.each do |email, rs| %>
+            <tr>
+              <td><%= email %><br><span class="small muted"><%= rs.first._name %></span></td>
+              <td class="num"><%= rs.size %></td>
+              <td class="num"><%= number_to_currency(rs.sum { |r| r.gross_amount || 0 }.to_f) %></td>
+              <td><%= rs.map(&:date_value).compact.max %></td>
+              <td>
+                <%= form_tag assign_paypal_csv_path, method: :post, class: "inline-form" do %>
+                  <%= hidden_field_tag :payer_email, email %>
+                  <%= text_field_tag :member_email, nil, list: "member_emails", placeholder: "member email", size: 28, "aria-label": "Member email for #{email}" %>
+                  <%= submit_tag "Map and link", class: "small" %>
+                <% end %>
+              </td>
+            </tr>
           <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </table>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
 
 <% else %>
-  <% unless params[:all] %>
-    <p>Showing the 1,000 most recent imports. <%= link_to "Show all", paypal_csvs_path(:all => 1) %></p>
-  <% end %>
-  <table border="1" cellpadding="4" cellspacing="0">
-    <tr><th>Date</th><th>Name</th><th>Item</th><th>Amount</th><th>Status</th><th></th></tr>
-    <% @paypal_csvs.sort_by(&:date_parsed).reverse.each do |paypal_csv| %>
-      <tr>
-        <td><%= paypal_csv.date %></td>
-        <td><%= paypal_csv._name %></td>
-        <td><%= paypal_csv._item_title %></td>
-        <td><%= paypal_csv._gross.blank? ? paypal_csv._type : paypal_csv._gross %></td>
-        <td>
-          <% if paypal_csv.payment.present? %>
-            <%= link_to "Linked", paypal_csv.payment %>
-          <% else %>
-            <span style="color:#a00"><%= paypal_csv.unlinked_reason %></span>
-          <% end %>
-        </td>
-        <td><%= link_to "Details", paypal_csv %></td>
-      </tr>
-    <% end %>
-  </table>
+  <p class="count-line">
+    <% if params[:all] %>All <%= @paypal_csvs.size %> imports.<% else %>The 1,000 most recent imports. <%= link_to "Show all", paypal_csvs_path(all: 1) %><% end %>
+  </p>
+  <div class="table-wrap tall">
+    <table>
+      <thead><tr><th>Date</th><th>Name</th><th>Item</th><th class="num">Amount</th><th>Status</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+      <tbody>
+        <% @paypal_csvs.sort_by(&:date_parsed).reverse.each do |paypal_csv| %>
+          <tr>
+            <td><%= paypal_csv.date %></td>
+            <td><%= paypal_csv._name %></td>
+            <td class="wrap"><%= paypal_csv._item_title %></td>
+            <td class="num"><%= paypal_csv._gross.blank? ? paypal_csv._type : paypal_csv._gross %></td>
+            <td>
+              <% if paypal_csv.payment.present? %>
+                <%= link_to paypal_csv.payment do %><%= render ChipComponent.new("Linked", tone: :ok) %><% end %>
+              <% else %>
+                <%= render ChipComponent.new(paypal_csv.unlinked_reason, tone: :warn) %>
+              <% end %>
+            </td>
+            <td class="actions"><%= link_to "Details", paypal_csv, class: "btn small" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 <% end %>

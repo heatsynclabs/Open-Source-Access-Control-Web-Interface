@@ -1,35 +1,38 @@
-<h2>PayPal IPN Records</h2>
-<p>
-  <em>Automatically loaded from PayPal's servers</em>
-</p>
+<%= render PageHeaderComponent.new(eyebrow: "Treasurer", title: "PayPal IPN",
+      lead: "Notifications PayPal sent this site directly. Dues are now recorded through the PayPal CSV import.") do |header| %>
+  <% header.with_action { link_to "PayPal CSV", paypal_csvs_path, class: "btn" } %>
+  <% header.with_action { link_to "Payments", payments_path, class: "btn" } %>
+<% end %>
+
+<% if @ipns.empty? %>
+  <%= render EmptyStateComponent.new("No IPN records.") %>
+<% else %>
+  <div class="table-wrap tall">
     <table>
-      <tr>
-        <th>Date</th>
-        <th>Name</th>
-        <th>Item</th>
-        <th>Amount</th>
-      </tr>
-    <% @ipns.sort_by(&:date_parsed).reverse!.each do |ipn| %>
-      <tr>
-        <td><%= ipn.payment_date %></td>
-        <td><%= ipn.first_name %> <%= ipn.last_name %></td> 
-        <td><%= ipn.item_name %></td>
-        <td>
-          <% if ipn.payment_gross.blank? %>
-            <%= ipn.txn_type %>
-          <% else %>
-            <%= ipn.payment_gross %>
-          <% end %>
-        </td>
-        <td>
-          <% if ipn.payment.present? %>
-            <%= link_to "Linked Payment", ipn.payment %>
-          <% else %>
-            <%= link_to "Try to link email '#{ipn.payer_email}' at membership level '#{ipn.payment_gross.to_i}'", link_ipn_path(ipn) %>
-          <% end %>
-        </td>
-        <td><%= link_to "Details", ipn %></td>
-        <td><%= link_to "Validate", validate_ipn_path(ipn) %></td>
-      </tr>
-    <% end %>
-  </table>
+      <thead><tr><th>Date</th><th>Name</th><th>Item</th><th class="num">Amount</th><th>Payment</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+      <tbody>
+        <% @ipns.sort_by(&:date_parsed).reverse!.each do |ipn| %>
+          <tr>
+            <td><%= ipn.payment_date %></td>
+            <td><%= ipn.first_name %> <%= ipn.last_name %></td>
+            <td class="wrap"><%= ipn.item_name %></td>
+            <td class="num"><%= ipn.payment_gross.blank? ? ipn.txn_type : ipn.payment_gross %></td>
+            <td class="wrap">
+              <% if ipn.payment.present? %>
+                <%= link_to ipn.payment do %><%= render ChipComponent.new("Linked", tone: :ok) %><% end %>
+              <% else %>
+                <%= link_to "Try to link email '#{ipn.payer_email}' at membership level '#{ipn.payment_gross.to_i}'", link_ipn_path(ipn) %>
+              <% end %>
+            </td>
+            <td class="actions">
+              <div class="actions-row">
+                <%= link_to "Details", ipn, class: "btn small" %>
+                <%= link_to "Validate", validate_ipn_path(ipn), class: "btn small" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

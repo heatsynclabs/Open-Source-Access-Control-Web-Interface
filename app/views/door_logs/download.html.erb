@@ -1,7 +1,11 @@
-
-<p>
-  <b>Download results:</b>
-  <%= @results.inspect %>
-</p>
-
-<%= link_to 'Back', door_logs_path %>
+<%= render PageHeaderComponent.new(eyebrow: "Door log", eyebrow_path: door_logs_path, title: "Read the door board") %>
+<% if @results %>
+  <p class="msg ok">Read <%= @results.size %> <%= "entry".pluralize(@results.size) %> from the board.</p>
+<% else %>
+  <p class="msg err">The board did not answer, or had nothing to send.</p>
+<% end %>
+<details class="log-guide">
+  <summary>What the board sent</summary>
+  <pre><%= @results.inspect %></pre>
+</details>
+<%= link_to "Back to the door log", door_logs_path, class: "btn" %>

@@ -1,18 +1,17 @@
-<h2>IPN Details</h2>
+<%= render PageHeaderComponent.new(eyebrow: "PayPal IPN", eyebrow_path: ipns_path, title: "IPN record") %>
 
-<% @ipn.attributes.except("data","payment_id").each do |attr| %>
-<p>
-  <b><%= attr.first.to_s %>:</b>
-  <%= @ipn.attributes[attr.first] %>
-</p>
+<% if @ipn.payment.present? %>
+  <p class="msg ok">Linked to a payment. <%= link_to "See the payment", @ipn.payment %>.</p>
+<% else %>
+  <p class="msg warn">This record could not be linked on its own. Record the payment by hand, or fix the member's account and try again to
+    <%= link_to "link email '#{@ipn.payer_email}' at membership level '#{@ipn.payment_gross.to_i}'", link_ipn_path(@ipn) %>.</p>
 <% end %>
-<p>
-  <% if @ipn.payment.present? %>
-    <%= link_to "Linked Payment", @ipn.payment %>
-  <% else %>
-    <span class="alert">Couldn't link automatically. Please create payment manually or adjust the user account and try again to <%= link_to "link email '#{@ipn.payer_email}' at membership level '#{@ipn.payment_gross.to_i}'", link_ipn_path(@ipn) %>.</span>
-  <% end %>
 
-</p>
-
-<%= link_to "Back", ipns_path %>
+<section class="card">
+  <dl class="facts">
+    <% @ipn.attributes.except("data", "payment_id").each do |name, value| %>
+      <dt><%= name.to_s.humanize %></dt>
+      <dd><%= value %></dd>
+    <% end %>
+  </dl>
+</section>

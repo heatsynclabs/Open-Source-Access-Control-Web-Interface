@@ -1,5 +1,2 @@
-<h1>New door_log</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Back', door_logs_path %>
+<%= render PageHeaderComponent.new(eyebrow: "Door log", eyebrow_path: door_logs_path, title: "New log entry") %>
+<%= render "form" %>

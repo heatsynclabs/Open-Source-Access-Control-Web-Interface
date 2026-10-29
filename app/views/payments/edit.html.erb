@@ -1,6 +1,2 @@
-<h1>Editing payment</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Show', @payment %> |
-<%= link_to 'Back', payments_path %>
+<%= render PageHeaderComponent.new(eyebrow: "Payments", eyebrow_path: payments_path, title: "Edit payment") %>
+<%= render "form" %>

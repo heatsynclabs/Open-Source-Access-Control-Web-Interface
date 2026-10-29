@@ -1,14 +1,10 @@
-
-<p>
-  <b>Key:</b>
-  <%= @door_log.key %>
-</p>
-
-<p>
-  <b>Data:</b>
-  <%= @door_log.data %>
-</p>
-
-
-<%= link_to 'Edit', edit_door_log_path(@door_log) %> |
-<%= link_to 'Back', door_logs_path %>
+<%= render PageHeaderComponent.new(eyebrow: "Door log", eyebrow_path: door_logs_path, title: "Log entry") do |header| %>
+  <% header.with_action { link_to "Edit", edit_door_log_path(@door_log), class: "btn" } %>
+<% end %>
+<section class="card">
+  <dl class="facts">
+    <dt>Key</dt><dd class="mono"><%= @door_log.key %></dd>
+    <dt>Data</dt><dd class="mono"><%= @door_log.data %></dd>
+    <dt>Recorded</dt><dd><%= @door_log.created_at&.strftime("%b %-d, %Y %-l:%M:%S%P") %></dd>
+  </dl>
+</section>

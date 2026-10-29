@@ -1,51 +1,30 @@
-<p>
-  <b>User:</b>
-  <%= link_to @payment.user.name_with_payee_and_member_level, @payment.user unless @payment.user.blank? %>
-</p>
+<%= render PageHeaderComponent.new(eyebrow: "Payments", eyebrow_path: payments_path,
+      title: @payment.amount ? "#{number_to_currency(@payment.amount)} payment" : "Payment") do |header| %>
+  <% header.with_action { link_to "Edit", edit_payment_path(@payment), class: "btn" } %>
+  <% header.with_action { link_to "Delete", @payment, method: :delete, class: "btn danger", data: { confirm: "Delete this payment?" } } if can? :destroy, @payment %>
+<% end %>
 
-<p>
-  <b>Paid for month beginning:</b>
-  <%= @payment.date %>
-</p>
-
-<p>
-  <b>Amount:</b>
-  <%= @payment.amount %>
-</p>
-
-<p>
-  <b>Last Modified by:</b>
-  <% user = @users.find{|u| u.id == @payment.created_by} %>
-  <% if user.blank? %>
-    n/a
-  <% else %>
-    <%= link_to user.name, user %>
+<% recorder = @users.find { |u| u.id == @payment.created_by } %>
+<div class="grid side">
+  <section class="card">
+    <h2>Details</h2>
+    <dl class="facts">
+      <dt>Member</dt>
+      <dd><%= @payment.user ? link_to(@payment.user.name_with_payee_and_member_level, @payment.user) : "No member" %></dd>
+      <dt>Paid for</dt><dd>The month beginning <%= @payment.date&.strftime("%B %-d, %Y") %></dd>
+      <dt>Amount</dt><dd><%= @payment.amount ? number_to_currency(@payment.amount) : "Not recorded" %></dd>
+      <dt>Last changed by</dt><dd><%= recorder ? link_to(recorder.name, recorder) : "Not recorded" %></dd>
+      <dt>Created</dt><dd><%= @payment.created_at&.strftime("%b %-d, %Y %-l:%M%P") %></dd>
+      <dt>Updated</dt><dd><%= @payment.updated_at&.strftime("%b %-d, %Y %-l:%M%P") %></dd>
+    </dl>
+  </section>
+  <% if @payment.ipn.present? || @payment.paypal_csv.present? %>
+    <section class="card">
+      <h2>Source</h2>
+      <ul class="plain">
+        <% if @payment.ipn.present? %><li><%= link_to "Paid through PayPal (IPN)", @payment.ipn %></li><% end %>
+        <% if @payment.paypal_csv.present? %><li><%= link_to "Paid through PayPal (CSV import)", @payment.paypal_csv %></li><% end %>
+      </ul>
+    </section>
   <% end %>
-</p>
-
-<p>
-  <b>Created date:</b>
-  <%= @payment.created_at %>
-</p>
-
-<p>
-  <b>Updated date:</b>
-  <%= @payment.updated_at %>
-</p>
-
-<% if @payment.ipn.present? %>
-  <p>
-    <%= link_to "Paid via PayPal (IPN)", @payment.ipn %>
-  </p>
-<% end %>
-<% if @payment.paypal_csv.present? %>
-  <p>
-    <%= link_to "Paid via PayPal (CSV)", @payment.paypal_csv %>
-  </p>
-<% end %>
-
-
-
-<%= link_to 'Edit', edit_payment_path(@payment) %> |
-<%= link_to 'Destroy', @payment, :confirm => 'Are you sure you want to destroy this payment?', :method => :delete if can? :destroy, @payment %> | 
-<%= link_to 'Back', payments_path %>
+</div>

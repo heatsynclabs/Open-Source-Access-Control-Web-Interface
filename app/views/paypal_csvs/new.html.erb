@@ -1,15 +1,15 @@
-<style type="text/css">
-  label { 
-    width: 10em;
-    display: inline-block;}
-</style>
-
-<%= form_tag('/paypal_csvs', :multipart => true) do |f| %>
-  <div class="field">
-    <%= label_tag :file %>
-    <%= file_field_tag :file %>
-  </div>
-  <div class="actions">
-    <%= submit_tag %>
+<%= render PageHeaderComponent.new(eyebrow: "PayPal imports", eyebrow_path: paypal_csvs_path, title: "Upload a PayPal CSV",
+      lead: "Download Activity from PayPal as a CSV and upload it here. Rows already imported are skipped, so overlapping downloads are fine.") %>
+<%= form_tag("/paypal_csvs", multipart: true, class: "form narrow") do %>
+  <fieldset>
+    <legend>File</legend>
+    <div class="field">
+      <%= label_tag :file, "PayPal activity CSV" %>
+      <%= file_field_tag :file, accept: ".csv,text/csv" %>
+    </div>
+  </fieldset>
+  <div class="form-actions">
+    <%= submit_tag "Import", class: "primary" %>
+    <%= link_to "Cancel", paypal_csvs_path, class: "btn" %>
   </div>
 <% end %>

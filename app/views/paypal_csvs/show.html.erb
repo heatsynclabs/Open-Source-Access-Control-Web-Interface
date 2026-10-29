@@ -1,17 +1,17 @@
-<h2>PayPal CSV Item Details</h2>
-<% @paypal_csv.attributes.except("data","payment_id").each do |attr| %>
-<p>
-  <b><%= attr.first.to_s %>:</b>
-  <%= @paypal_csv.attributes[attr.first] %>
-</p>
+<%= render PageHeaderComponent.new(eyebrow: "PayPal imports", eyebrow_path: paypal_csvs_path, title: "PayPal row") %>
+
+<% if @paypal_csv.payment.present? %>
+  <p class="msg ok">Linked to a payment. <%= link_to "See the payment", @paypal_csv.payment %>.</p>
+<% else %>
+  <p class="msg warn">This row could not be linked on its own. Record the payment by hand, or fix the member's email or payee and
+    <%= link_to "link email '#{@paypal_csv._from_email_address}' at membership level '#{@paypal_csv._gross.to_i}'", link_paypal_csv_path(@paypal_csv) %>.</p>
 <% end %>
 
-<p>
-  <% if @paypal_csv.payment.present? %>
-    <%= link_to "Linked Payment", @paypal_csv.payment %>
-  <% else %>
-    <span class="alert">Couldn't link automatically. Please create payment manually or adjust the user account and try again to <%= link_to "link email '#{@paypal_csv._from_email_address}' at membership level '#{@paypal_csv._gross.to_i}'", link_paypal_csv_path(@paypal_csv) %>.</span>
-  <% end %>
-
-</p>
-<%= link_to "Back", paypal_csvs_path %>
+<section class="card">
+  <dl class="facts">
+    <% @paypal_csv.attributes.except("data", "payment_id").each do |name, value| %>
+      <dt><%= name.to_s.delete_prefix("_").humanize %></dt>
+      <dd><%= value %></dd>
+    <% end %>
+  </dl>
+</section>

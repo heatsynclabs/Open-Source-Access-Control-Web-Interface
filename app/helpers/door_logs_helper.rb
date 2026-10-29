@@ -1,7 +1,6 @@
-# encoding: utf-8
 module DoorLogsHelper
   PREFIX_SOURCES = {
-    'api_rem_' => 'Mobile App 📱',  # no emoji for safety in Rails 3
+    'api_rem_' => 'Mobile App',
     'rem_'     => 'Web'
   }.freeze
 
@@ -10,6 +9,11 @@ module DoorLogsHelper
     'o' => { action: 'open',     klass_suffix: 'AccessOpen'   },
     'u' => { action: 'unlocked', klass_suffix: 'AccessUnlock' }
   }.freeze
+
+  # A Lucide icon name for where a remote command came from.
+  def access_source_icon(source)
+    source == PREFIX_SOURCES['api_rem_'] ? "smartphone" : "monitor"
+  end
 
   def extract_access_info(door_log)
     key_base = door_log.key.split('=').first  # remove trailing "=1"
