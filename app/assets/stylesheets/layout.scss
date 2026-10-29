@@ -90,6 +90,8 @@
     &.on { color: var(--bone); border-bottom-color: var(--hazard); }
   }
 
+  .nav-profile .avatar { flex: none; }
+
   // A role menu: the button, and its links in a panel under it.
   .nav-group { position: relative; }
   .nav-group-toggle {

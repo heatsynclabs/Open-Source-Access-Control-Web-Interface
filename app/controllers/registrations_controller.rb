@@ -20,7 +20,7 @@ class RegistrationsController < Devise::RegistrationsController
 
   # After signup
   def after_sign_up_path_for(resource)
-    '/users/edit/?flash=welcome_msg'
+    '/users/edit?flash=welcome_msg#dues'
   end
 
   # After edit
