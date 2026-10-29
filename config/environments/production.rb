@@ -16,6 +16,8 @@ Dooraccess::Application.configure do
   # No minifiers: the Sass-based CSS compressor cannot parse modern CSS such as
   # max(var(--space-4), var(--safe-l)) in the GANTRY theme and aborts the
   # precompile. Cloudflare compresses responses in transit.
+  # Dart Sass writes compressed CSS itself; nothing re-parses it afterwards.
+  config.sass.style = :compressed
   config.assets.css_compressor = nil
   config.assets.js_compressor = nil
 
