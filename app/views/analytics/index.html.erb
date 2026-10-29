@@ -1,5 +1,6 @@
 <div class="analytics">
 <%= render PageHeaderComponent.new(eyebrow: "The lab", title: "Analytics", lead: "How the lab is doing, from the members database, the door log and the lab calendar. Counts only: nothing here names a person.") %>
+<p class="msg info"><strong>Some of this is incomplete.</strong> The numbers only cover what got recorded. Dues paid in cash, by check or outside PayPal are missing unless the treasurer entered them, there are gaps of years in the PayPal imports, and waivers, orientations and sign-offs were not always written down. Read the charts as trends, not exact counts.</p>
 
 <nav class="filters" aria-label="Period">
   <% Analytics::Period::CHOICES.each do |key, choice| %>
