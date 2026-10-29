@@ -1,4 +1,2 @@
-<h1>Edit Resource
-<%= link_to 'Back', resources_path, class: "btn btn-default" %>
-</h1>
-<%= render 'form' %>
+<%= render PageHeaderComponent.new(eyebrow: "Tools and resources", eyebrow_path: resources_path, title: "Edit #{@resource.name}") %>
+<%= render "form" %>

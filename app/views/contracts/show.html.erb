@@ -1,43 +1,34 @@
-<div class="row">
-  <h1 class="col-md-8">
-    Contract
-    <%= link_to 'Back', contracts_path, :class => "btn btn-default" %>
-    <%= link_to 'New', new_contract_path, :class => "btn btn-success" %>
-    <%= link_to 'Edit', edit_contract_path(@contract), :class => "btn btn-primary" %>
-    <%= link_to 'Delete', contract_path(@contract), {:confirm => 'Are you sure you want to delete this forever?', :method => :delete, :class => "btn btn-danger"} if can? :destroy, @contract %>
-  </h1>
+<% signer = [@contract.first_name, @contract.last_name].compact_blank.join(" ") %>
+<%= render PageHeaderComponent.new(eyebrow: "Waivers", eyebrow_path: contracts_path, title: signer.presence || "Waiver") do |header| %>
+  <% header.with_action { link_to "Edit", edit_contract_path(@contract), class: "btn" } %>
+  <% header.with_action { link_to "New waiver", new_contract_path, class: "btn" } %>
+  <% header.with_action { link_to "Delete", contract_path(@contract), method: :delete, class: "btn danger", data: { confirm: "Delete this waiver for good?" } } if can? :destroy, @contract %>
+<% end %>
+
+<div class="grid side">
+  <section class="card">
+    <h2>Details</h2>
+    <dl class="facts">
+      <dt>Signed by</dt><dd><%= signer %><%= " and #{@contract.cosigner}" if @contract.cosigner.present? %></dd>
+      <dt>Member</dt><dd><%= @contract.user ? link_to(@contract.user.name, @contract.user) : "Not linked" %></dd>
+      <dt>Signed</dt><dd><%= @contract.signed_at ? @contract.signed_at.to_date.to_fs(:long) : "Unknown" %></dd>
+      <% if @contract.created_by %><dt>Entered by</dt><dd><%= @contract.created_by.name %></dd><% end %>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2>Scan</h2>
+    <% if @contract.document.blank? %>
+      <%= render EmptyStateComponent.new("No document uploaded.") %>
+    <% else %>
+      <% begin %>
+        <p><%= link_to "Download", @contract.document.url, class: "btn small" %></p>
+        <div class="contract-doc">
+          <iframe src="<%= @contract.document.url %>" title="Signed waiver document"></iframe>
+        </div>
+      <% rescue StandardError %>
+        <p class="empty">The signed document could not be loaded here.</p>
+      <% end %>
+    <% end %>
+  </section>
 </div>
-
-
-<h2>
-  <%= @contract.first_name %> 
-  <%= @contract.last_name %> 
-  <%= "and #{@contract.cosigner}" unless @contract.cosigner.blank? %>
-  <%= link_to "(#{@contract.user.name})", @contract.user if @contract.user %>
-  <small>
-    signed
-    <%= @contract.signed_at.to_date.to_fs(:long) if @contract.signed_at %>
-  </small>
-</h2>
-<% unless @contract.created_by.blank? %>
-  <p>
-    <em>Created by <%= @contract.created_by.name %></em>
-  </p>
-<% end %>
-
-<% if @contract.document.blank? %>
-  <p>No document uploaded</p>
-<% else %>
-  <% begin %>
-    <p><%= link_to "Download Contract", @contract.document.url, class: "btn btn-default" %></p>
-    <div class="contract-doc">
-      <iframe src="<%= @contract.document.url %>" width="100%" height="600" title="Signed waiver document"></iframe>
-    </div>
-  <% rescue StandardError %>
-    <p>The signed document could not be loaded in this environment.</p>
-  <% end %>
-<% end %>
-         
-
-<br />
-

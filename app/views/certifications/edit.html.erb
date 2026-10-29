@@ -1,6 +1,2 @@
-<h1>Editing certification</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Show', @certification %> |
-<%= link_to 'Back', certifications_path %>
+<%= render PageHeaderComponent.new(eyebrow: "Certification classes", eyebrow_path: certifications_path, title: "Edit certification") %>
+<%= render "form" %>

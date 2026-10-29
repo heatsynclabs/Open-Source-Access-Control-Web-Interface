@@ -1,22 +1,14 @@
-<%= form_for @resource_category, :html => { :multipart => true } do |f| %>
-  <% if @resource_category.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@resource_category.errors.count, "error") %> prohibited this resource from being saved:</h2>
-
-      <ul>
-      <% @resource_category.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+<%= form_for @resource_category, html: { multipart: true, class: "form narrow" } do |f| %>
+  <%= render FormErrorsComponent.new(@resource_category) %>
+  <fieldset>
+    <legend>Category</legend>
+    <div class="field">
+      <%= f.label :name %>
+      <%= f.text_field :name %>
     </div>
-  <% end %>
-
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.submit nil, class: "btn btn-primary" %>
-  </p>
+  </fieldset>
+  <div class="form-actions">
+    <%= f.submit @resource_category.new_record? ? "Add category" : "Save category", class: "primary" %>
+    <%= link_to "Cancel", resource_categories_path, class: "btn" %>
+  </div>
 <% end %>
-

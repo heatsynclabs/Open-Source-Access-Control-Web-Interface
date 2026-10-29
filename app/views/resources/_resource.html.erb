@@ -1,14 +1,22 @@
-<div class="resource">
-  <div class="thumbnail">
-    <%= link_to(resource) do %>
-      <% if resource.user %>
-        <span class="ownership">Owned by:<br/><%= resource.user.name %></span>
-      <% end %>
-      <% if resource.disposed_at %>
-        <span class="disposed">Disposed:<br/><%= resource.disposed_at.to_date %></span>
-      <% end %>
-      <%= image_tag(resource.picture.url(:thumb)) if resource.picture? %>
-      <h4><%=h resource.name %></h4>
+<%# One tool as a card: photo (or an icon), name, category and owner. Rendered on the tools list, the member home and people's pages. %>
+<%= link_to resource, class: ["tool-card", ("gone" if resource.disposed_at)] do %>
+  <span class="pic">
+    <% if resource.picture? %>
+      <%= image_tag resource.picture.url(:medium), alt: "", loading: "lazy" %>
+    <% else %>
+      <%= lucide_icon "wrench" %>
     <% end %>
-  </div>
-</div>
+  </span>
+  <span class="body">
+    <span class="name"><%= resource.name %></span>
+    <% if resource.resource_category %><span class="small muted"><%= resource.resource_category.name %></span><% end %>
+    <% if resource.user %><span class="small muted">Owned by <%= resource.user.name %></span><% end %>
+    <span class="tool-chips">
+      <% if resource.disposed_at %>
+        <%= render ChipComponent.new("Gone #{resource.disposed_at.to_date.strftime('%b %Y')}") %>
+      <% elsif resource.donatable %>
+        <%= render ChipComponent.new("Donatable", tone: :info) %>
+      <% end %>
+    </span>
+  </span>
+<% end %>

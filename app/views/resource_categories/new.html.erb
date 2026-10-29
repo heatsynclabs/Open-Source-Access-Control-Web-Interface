@@ -1,4 +1,2 @@
-<h1>New Category
-<%= link_to 'Back', resource_categories_path, class: "btn btn-default" %>
-</h1>
-<%= render 'form' %>
+<%= render PageHeaderComponent.new(eyebrow: "Categories", eyebrow_path: resource_categories_path, title: "New category") %>
+<%= render "form" %>

@@ -62,7 +62,7 @@ class ResourcesController < ApplicationController
   private
 
   def resources_params
-    params.require(:resources).permit(:supercategory, :user_id, :resource_category_id, :name, :serial, :specs, :status, :donatable,
+    params.require(:resource).permit(:supercategory, :user_id, :resource_category_id, :name, :serial, :specs, :status, :donatable,
       :picture, :picture_file_name, :picture_content_type, :picture_file_size, :picture_updated_at,
       :picture2, :picture2_file_name, :picture2_content_type, :picture2_file_size, :picture2_updated_at,
       :picture3, :picture3_file_name, :picture3_content_type, :picture3_file_size, :picture3_updated_at,

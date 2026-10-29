@@ -1,15 +1,37 @@
-<h1>User Certifications</h1>
-
-<%= link_to 'New User Certification', new_user_certification_path if can? :create, UserCertification %>
-
-  <% @grouped_user_certs.sort.each do |cert, user_certifications| %>
-  <dl class="collapsible">
-    <dt><%= cert.name %></dt>
-    <% user_certifications.sort{|a,b| a.user_name <=> b.user_name}.each do |user_certification| %>
-      <dd>
-        <%= link_to user_certification.user_name, user_certification %>
-      </dd>
-    <% end %>
-  </dl>
+<%= render PageHeaderComponent.new(eyebrow: "Certifications", eyebrow_path: certifications_path, title: "Who is certified", lead: "Everyone signed off on each tool. Open a tool to see its holders.") do |header| %>
+  <% header.with_action { link_to "Certify someone", new_user_certification_path, class: "btn primary" } if can? :create, UserCertification %>
 <% end %>
 
+<div data-controller="filter" data-filter-noun-value="certifications">
+  <div class="filters">
+    <label class="search-box">
+      <%= lucide_icon "search" %>
+      <input type="search" placeholder="Tool or person" aria-label="Search certifications" data-filter-target="query" data-action="filter#apply">
+    </label>
+  </div>
+  <p class="count-line" data-filter-target="count" aria-live="polite"></p>
+
+  <div class="cert-groups">
+    <% @grouped_user_certs.sort_by { |cert, _| cert&.name.to_s }.each do |cert, user_certifications| %>
+      <% holders = user_certifications.sort_by { |uc| uc.user_name.downcase } %>
+      <details class="cert-group" data-filter-target="item" data-filter-text="<%= [cert&.name, *holders.map(&:user_name)].join(' ') %>">
+        <summary>
+          <span class="cert-name"><%= cert ? cert.name : "Missing certification" %></span>
+          <span class="cert-count"><%= pluralize(holders.size, "holder") %></span>
+        </summary>
+        <ul class="plain">
+          <% holders.each do |user_certification| %>
+            <li>
+              <%= link_to user_certification, class: "person-cell" do %>
+                <% if user_certification.user %><%= person_avatar(user_certification.user, 28) %><% end %><span><%= user_certification.user_name %></span>
+              <% end %>
+              <span class="small muted nowrap">since <%= user_certification.created_at.strftime("%b %Y") %></span>
+            </li>
+          <% end %>
+        </ul>
+      </details>
+    <% end %>
+  </div>
+  <p class="empty" data-filter-target="none" hidden>Nothing matches.</p>
+  <% if @grouped_user_certs.empty? %><%= render EmptyStateComponent.new("Nobody is certified on anything yet.") %><% end %>
+</div>

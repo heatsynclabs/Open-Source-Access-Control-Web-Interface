@@ -1,36 +1,27 @@
-<p>
-  <b>User:</b>
-  <%= link_to @user_certification.user.name, @user_certification.user %>
-</p>
-
-<p>
-  <b>Certification:</b>
-  <%= @user_certification.certification.name %>
-</p>
-
-<p>
-  <b>Created:</b> by <%= link_to @created_by.name, @created_by unless @created_by.blank? %>
-  at <%= @user_certification.created_at %> 
-</p>
-
-<p>
-  <b>Updated:</b> by 
-  <% if @updated_by.blank? %>
-    #<%= @user_certification.updated_by ||= "nil" %>
-  <% else %>
-    <%= link_to @updated_by.name, @updated_by %>
-  <% end %>
-  at <%= @user_certification.updated_at %> 
-</p>
-
-<p>
-<% if can? :update, @user_certification %>
-  <%= link_to 'Edit', edit_user_certification_path(@user_certification) %> |
+<%= render PageHeaderComponent.new(eyebrow: "Who is certified", eyebrow_path: user_certifications_path, title: "#{@user_certification.user_name}: #{@user_certification.certification.name}") do |header| %>
+  <% header.with_action { link_to "Edit", edit_user_certification_path(@user_certification), class: "btn" } if can? :update, @user_certification %>
+  <% header.with_action { link_to "Revoke", @user_certification, method: :delete, class: "btn danger", data: { confirm: "Revoke this certification?" } } if can? :destroy, @user_certification %>
 <% end %>
 
-<% if can? :destroy, @user_certification %>
-  <%= link_to 'Delete', @user_certification, :confirm => "Are you sure you want to destroy this user's certification?", :method => :delete %> | 
-<% end %>
-
-<%= link_to 'Back', user_certifications_path %>
-</p>
+<section class="card">
+  <dl class="facts">
+    <dt>Member</dt>
+    <dd><%= @user_certification.user ? link_to(@user_certification.user.name, @user_certification.user) : @user_certification.user_name %></dd>
+    <dt>Certified on</dt>
+    <dd><%= link_to @user_certification.certification.name, @user_certification.certification %></dd>
+    <dt>Granted</dt>
+    <dd>
+      <%= @user_certification.created_at.strftime("%B %-d, %Y at %-l:%M%P") %>
+      <% if @created_by %> by <%= link_to @created_by.name, @created_by %><% end %>
+    </dd>
+    <dt>Last changed</dt>
+    <dd>
+      <%= @user_certification.updated_at.strftime("%B %-d, %Y at %-l:%M%P") %>
+      <% if @updated_by %>
+        by <%= link_to @updated_by.name, @updated_by %>
+      <% elsif @user_certification.updated_by.present? %>
+        by member #<%= @user_certification.updated_by %>
+      <% end %>
+    </dd>
+  </dl>
+</section>

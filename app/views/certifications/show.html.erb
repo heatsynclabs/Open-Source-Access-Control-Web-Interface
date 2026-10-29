@@ -1,22 +1,32 @@
-<p>
-  <b>Name:</b>
-  <%= @certification.name %>
-</p>
+<%= render PageHeaderComponent.new(eyebrow: "Certification classes", eyebrow_path: certifications_path, title: @certification.name) do |header| %>
+  <% header.with_action { link_to "Certify someone", new_user_certification_path, class: "btn primary" } if can? :create, UserCertification %>
+  <% header.with_action { link_to "Edit", edit_certification_path(@certification), class: "btn" } if can? :update, @certification %>
+<% end %>
 
-<p>
-  <b>Slug (lowercase, single-word identifier):</b>
-  <%= @certification.slug %>
-</p>
+<div class="grid side">
+  <section class="card">
+    <h2>About</h2>
+    <dl class="facts">
+      <dt>Slug</dt><dd class="mono"><%= @certification.slug %></dd>
+    </dl>
+    <% if @certification.description.present? %>
+      <div class="prose cert-description"><%= simple_format @certification.description %></div>
+    <% end %>
+  </section>
 
-<p>
-  <b>Description:</b>
-  <%= simple_format @certification.description %>
-</p>
-
-<p>
-  <b>Certified Users:</b>
-  <%= link_to "Click Here", user_certifications_path %>
-</p>
-
-<% if can? :update, @certification %><%= link_to 'Edit', edit_certification_path(@certification) %> |<% end %>
-<%= link_to 'Back', certifications_path %>
+  <section class="card">
+    <div class="card-head">
+      <h2>Certified</h2>
+      <%= link_to "Everyone certified", user_certifications_path %>
+    </div>
+    <% if @certification_users.any? %>
+      <ul class="plain">
+        <% @certification_users.each do |user| %>
+          <li><%= link_to user, class: "person-cell" do %><%= person_avatar(user, 28) %><span><%= user.name %></span><% end %></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <%= render EmptyStateComponent.new("Nobody you can see holds this certification yet.") %>
+    <% end %>
+  </section>
+</div>

@@ -1,42 +1,57 @@
-<div class="row">
-  <h1 class="col-md-8">Contracts
-    <%= link_to 'Add Contract', new_contract_path, :class => "btn btn-success" if can? :create, Contract %>
-  </h1>
+<%= render PageHeaderComponent.new(eyebrow: "Admin", title: "Waivers", lead: "Signed waivers on file, paper scans and online signatures.") do |header| %>
+  <% header.with_action { link_to "Add a waiver", new_contract_path, class: "btn primary" } if can? :create, Contract %>
+<% end %>
+
+<% contracts = @contracts.sort_by { |contract| contract.last_name.to_s.downcase } %>
+<% scanned = contracts.count { |contract| contract.document.present? } %>
+<div class="tiles">
+  <%= render StatTileComponent.new(value: contracts.size, label: "Waivers on file", tone: :headline) %>
+  <%= render StatTileComponent.new(value: scanned, label: "With a scan") %>
+  <%= render StatTileComponent.new(value: contracts.count { |contract| contract.user.nil? }, label: "Not linked to a member") %>
 </div>
 
-<table class="table">
-  <tr>
-    <th>Scan?</th>
-    <th>Name</th>
-    <th>User</th>
-    <th>Date</th>
-    <th></th>
-  </tr>
+<div data-controller="filter" data-filter-noun-value="waivers">
+  <div class="filters">
+    <label class="search-box">
+      <%= lucide_icon "search" %>
+      <input type="search" placeholder="Signer, cosigner or member" aria-label="Search waivers" data-filter-target="query" data-action="filter#apply">
+    </label>
+    <button type="button" class="toggle" data-filter-target="toggle" data-key="unlinked" aria-pressed="false" data-action="filter#flip">Not linked only</button>
+  </div>
+  <p class="count-line" data-filter-target="count" aria-live="polite"></p>
 
-  <% @contracts.sort_by{|r| (r.last_name) || "" }.each do |contract| %>
-    <tr>
-      <td>
-        <% unless contract.document.blank? %>
-          <span class="glyphicon glyphicon-ok"></span>
+  <div class="table-wrap tall">
+    <table>
+      <thead>
+        <tr><th>Signed by</th><th>Member</th><th>Signed</th><th>Scan</th><th><span class="visually-hidden">Actions</span></th></tr>
+      </thead>
+      <tbody>
+        <% contracts.each do |contract| %>
+          <tr data-filter-target="item" data-unlinked="<%= contract.user.nil? %>"
+              data-filter-text="<%= [contract.first_name, contract.last_name, contract.cosigner, contract.user&.name].compact.join(' ') %>">
+            <td>
+              <%= link_to [contract.last_name, contract.first_name].compact_blank.join(", "), contract %>
+              <% if contract.cosigner.present? %><span class="muted small">and <%= contract.cosigner %></span><% end %>
+            </td>
+            <td>
+              <% if contract.user %>
+                <%= link_to contract.user, class: "person-cell" do %><%= person_avatar(contract.user, 28) %><span><%= contract.user.name %></span><% end %>
+              <% else %>
+                <span class="muted">Not linked</span>
+              <% end %>
+            </td>
+            <td><%= contract.signed_at.to_date.to_fs(:long) %></td>
+            <td><%= render ChipComponent.new("Scan", tone: :ok) if contract.document.present? %></td>
+            <td class="actions">
+              <div class="actions-row">
+                <%= link_to "View", contract, class: "btn small" %>
+                <%= link_to "Edit", edit_contract_path(contract), class: "btn small" %>
+              </div>
+            </td>
+          </tr>
         <% end %>
-      </td>
-      <td>
-        <%= contract.last_name %>, 
-        <%= contract.first_name %>
-        <%= "and #{contract.cosigner}" unless contract.cosigner.blank? %>
-      </td>
-      <td>
-        <%= link_to contract.user.name, contract.user if contract.user %>
-      </td>
-      <td>
-        <%= contract.signed_at.to_date.to_fs(:long) %>
-      </td>
-      <td>
-        <%= link_to "View", contract, class: "btn btn-primary" %>
-        <%= link_to "Edit", edit_contract_path(contract), class: "btn btn-default" %>
-      </td>
-    </tr>
-  <% end %>
-</table>
-<br />
-
+      </tbody>
+    </table>
+  </div>
+  <p class="empty" data-filter-target="none" hidden>No waiver matches.</p>
+</div>

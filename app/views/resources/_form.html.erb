@@ -1,79 +1,81 @@
-<%= form_for @resource, :html => { :multipart => true, class: "col-sm-6" } do |f| %>
-  <% if @resource.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@resource.errors.count, "error") %> prohibited this resource from being saved:</h2>
-
-      <ul>
-      <% @resource.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+<%= form_for @resource, html: { multipart: true, class: "form" } do |f| %>
+  <%= render FormErrorsComponent.new(@resource) %>
+  <fieldset>
+    <legend>The tool</legend>
+    <div class="fields">
+      <div class="field">
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+      </div>
+      <div class="field">
+        <%= f.label :resource_category_id, "Category" %>
+        <%= select(:resource, :resource_category_id, options_from_collection_for_select(ResourceCategory.all.sort_by(&:name), :id, :name, @resource.resource_category_id), {}) %>
+      </div>
+      <div class="field">
+        <%= f.label :status, "Where it lives" %>
+        <%= f.text_field :status %>
+        <p class="hint">A room, a shelf, or its condition.</p>
+      </div>
+      <div class="field">
+        <%= f.label :serial %>
+        <%= f.text_field :serial, class: "mono" %>
+      </div>
+      <div class="field wide">
+        <%= f.label :specs %>
+        <%= f.text_field :specs %>
+      </div>
     </div>
-  <% end %>
+  </fieldset>
 
-  <p>
-    <%= f.label :resource_category_id, "Category" %><br />
-    <%= select(:resource, :resource_category_id, options_from_collection_for_select(ResourceCategory.all.sort_by(&:name), :id, :name, @resource.resource_category_id ), {}, {class: "form-control"} ) %>
-  </p>
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name, class: "form-control" %>
-  </p>
-  <p>
-    <%= f.label :serial, "Serial" %>
-    <br />
-    <%= f.text_field :serial, class: "form-control" %>
-  </p>
-  <p>
-    <%= f.label :specs, "Specs" %>
-    <br/>
-    <%= f.text_field :specs, class: "form-control" %>
-  </p>
-  <p>
-    <%= f.label :status, "Status/Location" %>
-    <br/>
-    <%= f.text_field :status, class: "form-control" %>
-  </p>
- 
-  <p>
-    <%= f.label :disposed_at, "Disposed?" %><br />
-    <%= f.date_select :disposed_at, include_blank: true %>
-  </p>
+  <fieldset>
+    <legend>Ownership</legend>
+    <div class="fields">
+      <div class="field">
+        <%= f.label :user_id, "Owner" %>
+        <%= select(:resource, :user_id, options_from_collection_for_select(@users, :id, :name, @resource.user_id), { include_blank: true }) %>
+        <p class="hint">Leave blank when the lab owns it.</p>
+      </div>
+      <div class="field">
+        <%= f.label :estimated_value, "Estimated value" %>
+        <%= f.text_field :estimated_value %>
+      </div>
+      <div class="field">
+        <%= f.label :disposed_at, "Gone since" %>
+        <div class="date-select"><%= f.date_select :disposed_at, include_blank: true %></div>
+        <p class="hint">Set when the tool leaves the lab.</p>
+      </div>
+      <div class="field">
+        <span class="label">Donations</span>
+        <div class="check"><%= f.check_box :donatable %><%= f.label :donatable, "Can be donated" %></div>
+      </div>
+    </div>
+  </fieldset>
 
-    <p>
-      <%= f.label :user_id, "Owner" %>
-      <br />
-      <%= select(:resource, :user_id, options_from_collection_for_select(@users, :id, :name, @resource.user_id), {include_blank: true}, {class: "form-control"}) %>
-    </p>
+  <fieldset>
+    <legend>Photos</legend>
+    <div class="fields">
+      <% [:picture, :picture2, :picture3, :picture4].each_with_index do |name, i| %>
+        <div class="field photo-field">
+          <%= f.label name, "Photo #{i + 1}" %>
+          <% unless @resource.send(name).blank? %>
+            <%= link_to image_tag(@resource.send(name).url(:tiny), alt: "Current photo #{i + 1}"), @resource.send(name).url, class: "current-photo" %>
+          <% end %>
+          <%= f.file_field name %>
+        </div>
+      <% end %>
+    </div>
+  </fieldset>
 
-  <p>
-    <%= f.label :donatable %><br />
-    <%= f.check_box :donatable %>
-  </p>
+  <fieldset>
+    <legend>Notes</legend>
+    <div class="field wide">
+      <%= f.label :notes %>
+      <%= f.text_area :notes %>
+    </div>
+  </fieldset>
 
-  <p>
-    <%= f.label :estimated_value, "Estimated Value" %><br />
-    <%= f.text_field :estimated_value, class: "form-control" %>
-  </p>
-
-  <% [:picture, :picture2, :picture3, :picture4].each do |p| %>
-    <p class="row">
-      <span class="col-sm-3">
-        <%= f.label p %><br />
-        <%= f.file_field p %>
-      </span>
-      <span class="col-sm-2">
-        <%= link_to image_tag(@resource.send(p).url(:tiny)), @resource.send(p).url unless @resource.send(p).blank? %>
-      </span>
-    </p>				      
-  <% end %>
-
-  <p>
-    <%= f.label :notes %><br />
-    <%= f.text_area :notes, class: "form-control" %>
-  </p>
-  <p>
-    <%= f.submit nil, class: "btn btn-primary" %>
-  </p>
+  <div class="form-actions">
+    <%= f.submit @resource.new_record? ? "Add tool" : "Save tool", class: "primary" %>
+    <%= link_to "Cancel", @resource.new_record? ? resources_path : resource_path(@resource), class: "btn" %>
+  </div>
 <% end %>
-

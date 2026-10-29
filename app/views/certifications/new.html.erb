@@ -1,5 +1,2 @@
-<h1>New certification</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Back', certifications_path %>
+<%= render PageHeaderComponent.new(eyebrow: "Certification classes", eyebrow_path: certifications_path, title: "New certification") %>
+<%= render "form" %>

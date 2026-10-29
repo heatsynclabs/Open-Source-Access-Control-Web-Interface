@@ -1,29 +1,25 @@
-<%= form_for(@certification) do |f| %>
-  <% if @certification.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@certification.errors.count, "error") %> prohibited this certification from being saved:</h2>
-
-      <ul>
-      <% @certification.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+<%= form_for(@certification, html: { class: "form" }) do |f| %>
+  <%= render FormErrorsComponent.new(@certification) %>
+  <fieldset>
+    <legend>Certification</legend>
+    <div class="fields">
+      <div class="field">
+        <%= f.label :name %>
+        <%= f.text_field :name %>
+      </div>
+      <div class="field">
+        <%= f.label :slug %>
+        <%= f.text_field :slug, class: "mono", autocomplete: "off" %>
+        <p class="hint">Lowercase, one word. Tool interlocks ask for a certification by this name.</p>
+      </div>
+      <div class="field wide">
+        <%= f.label :description %>
+        <%= f.text_area :description %>
+      </div>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </div>
-  <div class="field">
-    <%= f.label :slug, "Slug (lowercase, single-word identifier)" %><br />
-    <%= f.text_field :slug %>
-  </div>
-  <div class="field">
-    <%= f.label :description %><br />
-    <%= f.text_area :description %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
+  </fieldset>
+  <div class="form-actions">
+    <%= f.submit @certification.new_record? ? "Create certification" : "Save certification", class: "primary" %>
+    <%= link_to "Cancel", @certification.new_record? ? certifications_path : certification_path(@certification), class: "btn" %>
   </div>
 <% end %>

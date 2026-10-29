@@ -1,40 +1,36 @@
-<div class="row">
-  <h1 class="col-md-8">Lab Resources
-    <%= link_to 'Add Resource', new_resource_path, :class => "btn btn-success" if can? :create, Resource %>
-    <%= link_to 'Categories', resource_categories_path, :class => "btn btn-primary" if can? :read, ResourceCategory %>
-    <a class="btn btn-default" onclick="$('#accordion .collapse').collapse('toggle')" />Expand/Collapse All</a>
-  </h1>
-  
-  <span class="col-md-2 col-xs-6">
-    <h3>Featured item:</h3>
-    <%= render @featured_resource unless @featured_resource.blank? %>
-  </span>
-</div>
+<%= render PageHeaderComponent.new(eyebrow: "The lab", title: "Tools and resources", lead: "What the lab has, who owns it, and where it lives.") do |header| %>
+  <% header.with_action { link_to "Add a tool", new_resource_path, class: "btn primary" } if can? :create, Resource %>
+  <% header.with_action { link_to "Categories", resource_categories_path, class: "btn" } if can? :read, ResourceCategory %>
+<% end %>
 
-<div class="row">
-<% unless @resources.blank? %>
-  <div class="panel-group col-sm-8" id="accordion">
-    <% @resources.sort_by{|r| [r.resource_category_name,r.name] }.group_by(&:resource_category).each do |resource_category,resources| %>
-    <div class="panel panel-default">
-      <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#collapse_cat_<%= resource_category.id %>">
-        <h4 class="panel-title">
-            <%= resource_category.name %>
-        </h4>
-      </div>
-      <div id="collapse_cat_<%= resource_category.id %>" class="panel-collapse collapse">
-        <div class="panel-body">
-          <% resources.each do |resource| %>
-            <div class="col-xs-2">
-              <%= render resource %>
-            </div>
-          <% end %>
-        </div>
-      </div>
+<% resources = @resources.sort_by { |resource| [resource.resource_category_name.to_s, resource.name.to_s.downcase] } %>
+<% categories = resources.filter_map(&:resource_category_name).uniq %>
+
+<% if resources.empty? %>
+  <%= render EmptyStateComponent.new("No tools listed yet.") %>
+<% else %>
+  <div data-controller="filter" data-filter-noun-value="tools">
+    <div class="filters">
+      <label class="search-box">
+        <%= lucide_icon "search" %>
+        <input type="search" placeholder="Tool, serial, specs or owner" aria-label="Search tools" data-filter-target="query" data-action="filter#apply">
+      </label>
+      <select aria-label="Category" data-filter-target="select" data-key="category" data-action="filter#apply">
+        <option value="">Every category</option>
+        <% categories.each do |name| %><option><%= name %></option><% end %>
+      </select>
+      <button type="button" class="toggle" data-filter-target="toggle" data-key="here" aria-pressed="true" data-action="filter#flip">Hide gone</button>
     </div>
-    <% end %>
+    <p class="count-line" data-filter-target="count" aria-live="polite"></p>
+
+    <div class="tool-grid">
+      <% resources.each do |resource| %>
+        <div data-filter-target="item" data-category="<%= resource.resource_category_name %>" data-here="<%= resource.disposed_at.nil? %>"
+             data-filter-text="<%= [resource.name, resource.resource_category_name, resource.serial, resource.specs, resource.status, resource.user&.name].compact.join(' ') %>">
+          <%= render resource %>
+        </div>
+      <% end %>
+    </div>
+    <p class="empty" data-filter-target="none" hidden>No tool matches. Try fewer words, or another category.</p>
   </div>
 <% end %>
-</div>
-
-<br />
-

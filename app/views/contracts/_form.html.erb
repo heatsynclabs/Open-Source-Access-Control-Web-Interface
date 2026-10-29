@@ -1,51 +1,53 @@
-<%= form_for(@contract, html: {class: "col-sm-6"}) do |f| %>
-  <% if @contract.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@contract.errors.count, "error") %> prohibited this contract from being saved:</h2>
+<%= form_for(@contract, html: { class: "form" }) do |f| %>
+  <%= render FormErrorsComponent.new(@contract) %>
+  <fieldset>
+    <legend>Who signed</legend>
+    <div class="fields">
+      <div class="field">
+        <%= f.label :first_name %>
+        <%= f.text_field :first_name %>
+      </div>
+      <div class="field">
+        <%= f.label :last_name %>
+        <%= f.text_field :last_name %>
+      </div>
+      <div class="field">
+        <%= f.label :cosigner %>
+        <%= f.text_field :cosigner %>
+        <p class="hint">A parent or guardian signing for a minor.</p>
+      </div>
+      <div class="field">
+        <%= f.label :user_id, "Member" %>
+        <%= collection_select(:contract, :user_id, @users, :id, :name, include_blank: true) %>
+        <div id="contract_user_notes"></div>
+      </div>
+      <div class="field">
+        <%= f.label :signed_at, "Signed on" %>
+        <div class="date-select"><%= f.date_select :signed_at %></div>
+      </div>
+    </div>
+  </fieldset>
 
-      <ul>
-      <% @contract.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
+  <fieldset>
+    <legend>Scan</legend>
+    <div class="field wide">
+      <% if @contract.document.present? %>
+        <p><%= link_to "View the document on file", @contract.document.url, class: "btn small", target: "_blank", rel: "noopener" %></p>
+        <details class="replace-document">
+          <summary>Upload a new document</summary>
+          <%= f.label :document, "New document" %>
+          <%= f.file_field :document %>
+        </details>
+      <% else %>
+        <%= f.label :document %>
+        <%= f.file_field :document %>
+        <p class="hint">A photo or PDF of the signed paper waiver.</p>
       <% end %>
-      </ul>
     </div>
-  <% end %>
+  </fieldset>
 
-  <div class="form-group">
-    <%= f.label :first_name %><br />
-    <%= f.text_field :first_name, class: "form-control" %>
-  </div>
-  <div class="form-group">
-    <%= f.label :last_name %><br />
-    <%= f.text_field :last_name, class: "form-control" %>
-  </div>
-  <div class="form-group">
-    <%= f.label :cosigner %><br />
-    <%= f.text_field :cosigner, class: "form-control" %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :user_id, "User" %><br />
-    <%= collection_select(:contract, :user_id, @users, :id, :name, :include_blank => true) %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :signed_at %><br />
-    <%= f.date_select :signed_at  %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :document %><br />
-    <%= link_to "View Existing Document", @contract.document.url, class: "btn btn-default" unless @contract.document.blank? %>
-    <p>
-    <%= link_to "Upload New Document", "#", class: "btn btn-default", onclick: "$('#document_upload').removeClass('hidden'); $(this).addClass('hidden')" unless @contract.document.blank? %>
-    <div id="document_upload" class="<%= "hidden" unless @contract.document.blank? %>">
-      <%= f.file_field :document, class: "form-control", style: "width: 100%; height: 100px; background-color: #f9f9f9;" %>
-    </div>
-    </p>
-  </div>
-
-  <div class="form-group">
-    <%= f.submit nil, class: "btn btn-primary" %>
+  <div class="form-actions">
+    <%= f.submit @contract.new_record? ? "Save waiver" : "Save changes", class: "primary" %>
+    <%= link_to "Cancel", @contract.new_record? ? contracts_path : contract_path(@contract), class: "btn" %>
   </div>
 <% end %>

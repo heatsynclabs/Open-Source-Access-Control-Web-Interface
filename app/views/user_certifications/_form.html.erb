@@ -1,26 +1,21 @@
-<%= form_for(@user_certification) do |f| %>
-  <% if @user_certification.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@user_certification.errors.count, "error") %> prohibited this User Certification from being saved:</h2>
-
-      <ul>
-      <% @user_certification.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+<% @user_certification.user_id = params[:user] if params[:user].present? %>
+<%= form_for(@user_certification, html: { class: "form" }) do |f| %>
+  <%= render FormErrorsComponent.new(@user_certification) %>
+  <fieldset>
+    <legend>Certification</legend>
+    <div class="fields">
+      <div class="field">
+        <%= f.label :user_id, "Member" %>
+        <%= collection_select(:user_certification, :user_id, @users, :id, :name, include_blank: true) %>
+      </div>
+      <div class="field">
+        <%= f.label :certification_id, "Certified on" %>
+        <%= collection_select(:user_certification, :certification_id, @certifications, :id, :name, include_blank: true) %>
+      </div>
     </div>
-  <% end %>
-
-  <% @user_certification.user_id = params[:user] if params[:user].present? %>
-  <div class="field">
-    <%= f.label :user_id, "User" %><br />
-    <%= collection_select(:user_certification, :user_id, @users, :id, :name, :include_blank => true) %>
-  </div>
-  <div class="field">
-    <%= f.label :certification_id, "Certification" %><br />
-    <%= collection_select(:user_certification, :certification_id, @certifications, :id, :name, :include_blank => true) %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
+  </fieldset>
+  <div class="form-actions">
+    <%= f.submit @user_certification.new_record? ? "Certify" : "Save", class: "primary" %>
+    <%= link_to "Cancel", @user_certification.new_record? ? user_certifications_path : user_certification_path(@user_certification), class: "btn" %>
   </div>
 <% end %>
