@@ -1,6 +1,7 @@
 module ApplicationHelper
   LAB_ADDRESS = "108 W Main St, Mesa, AZ 85201"
-  LAB_MAP_URL = "https://www.google.com/maps/search/?api=1&query=#{ERB::Util.url_encode("HeatSync Labs, #{LAB_ADDRESS}")}"
+  # The lab on OpenStreetMap (its own listing for HeatSync Labs at 108 W Main).
+  LAB_MAP_URL = "https://www.openstreetmap.org/?mlat=33.41532&mlon=-111.83450#map=19/33.41532/-111.83450"
 
   # Tags and attributes kept when showing HTML an admin pasted into a
   # setting (the more information page came from the old wiki, with an
