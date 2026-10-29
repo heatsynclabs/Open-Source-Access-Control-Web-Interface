@@ -14,7 +14,28 @@ Contributions welcome! Simply send a pull request via Github.
 
 ## This branch
 
-HeatSync's production members app, brought off Rails 3.2. Now Ruby 3.3 / Rails 7.2 / PostgreSQL, Dockerized, and themed with GANTRY (light by default, dark toggle). Same features (members, door logs, payments, certifications, audit log, member signup), current stack.
+HeatSync's production members app, brought off Rails 3.2. Now Ruby 3.3 / Rails 7.2 / PostgreSQL, Dockerized, and themed with GANTRY (light or dark, following the device until someone picks one). Same features (members, door logs, payments, certifications, audit log, member signup), current stack, plus a lab calendar and an analytics page.
+
+
+## How the front end is built
+
+* **One layout** (`app/views/layouts/application.html.erb`) for every page: header, main nav, the role links (Instructor, Treasurer, Admin), caution tape, footer.
+* **Stylesheets** in `app/assets/stylesheets`, compiled with Dart Sass (`dartsass-sprockets`), so modern CSS works as written. `gantry_tokens.scss` is the GANTRY token set shared with heatsynclabs.org; everything else uses its variables, in cascade layers: `base`, `layout`, `components` (with `forms` and `tables`), `calendar`, `charts`, `pages` (and `pages/*.scss` per area).
+* **ViewComponents** in `app/components` for repeated pieces: `PageHeaderComponent` (also sets the tab title), `StatTileComponent`, `ChipComponent`, `MemberBadgeComponent`, `AvatarComponent`, `DoorTileComponent`, `FormErrorsComponent`, `EmptyStateComponent`, `ChartCardComponent`, and the calendar's `Calendar::*` components. Icons are Lucide (`lucide_icon "name"`).
+* **JavaScript** through import maps (`config/importmap.rb`), no Node build. Behavior is in Stimulus controllers (`app/javascript/controllers`). Turbo is used only for frames (the calendar card loads after the page); Turbo Drive is off, so jquery_ujs still handles sign out and delete links (`app/assets/javascripts/legacy.js`).
+* **Charts** are Chartkick and Chart.js (`app/javascript/charts.js`, loaded only on pages with a chart). Each theme has its own palette, checked for colour-blind separation.
+
+
+## Lab calendar
+
+`/calendar` shows the lab's public Google Calendar as a month grid, a week or a list, with the same categories and colours as heatsynclabs.org. `Calendar::WeekComponent` is the "this week" card; drop it into a page with `<%= render "calendar/week_frame" %>`, which loads it in a Turbo Frame so the page never waits on Google.
+
+`LabCalendar` (`app/models/lab_calendar*`) reads the public ICS feed on the server, keeps a fresh copy for 15 minutes and the last good copy for a week, and expands repeating events with `icalendar-recurrence`. Set `GOOGLE_CALENDAR_ICS_URL` to read a different calendar. No API key is needed.
+
+
+## Analytics
+
+`/analytics` is for admins and treasurers: members, dues, door use and the calendar, as counts only. The queries are in `app/queries/analytics`, one small class per subject, grouped in lab time with `groupdate`, and cached for 10 minutes per period.
 
 
 ## Run locally (Docker)
@@ -31,7 +52,7 @@ HeatSync's production members app, brought off Rails 3.2. Now Ruby 3.3 / Rails 7
 
 * `docker compose exec members_web bundle exec rails test` (Test::Unit, under `test/`)
 * One file: append the path, e.g. `... bundle exec rails test test/unit/user_test.rb`
-* The suite predates the Rails 7 upgrade and needs updating before it runs green. The app itself is verified working.
+* The calendar, analytics and component tests run green: `... bundle exec rails test test/models/lab_calendar test/queries test/components`. The older scaffold tests predate the Rails 7 upgrade and still need updating.
 
 
 ## Configuration
