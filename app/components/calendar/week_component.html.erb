@@ -1,7 +1,7 @@
 <section class="card week-card">
   <div class="card-head">
     <h2>This week at the lab</h2>
-    <%= link_to "Full calendar", helpers.calendar_path %>
+    <%= link_to "Full calendar", LabCalendar::PUBLIC_URL %>
   </div>
   <ol class="week-days">
     <% shown_days.each do |day| %>

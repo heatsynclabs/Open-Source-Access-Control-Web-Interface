@@ -8,7 +8,7 @@ export default class extends Controller {
     this.element.querySelectorAll("table:not(.no-stack)").forEach((table) => {
       const headers = [...table.querySelectorAll("thead th")].map((th) => th.textContent.trim())
       if (headers.length < 3) return
-      table.classList.add("stack")
+      table.classList.add("stacked")
       table.querySelectorAll("tbody tr").forEach((row) => {
         ;[...row.children].forEach((cell, index) => { cell.dataset.label = headers[index] || "" })
       })

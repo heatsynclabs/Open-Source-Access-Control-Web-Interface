@@ -35,7 +35,7 @@
     <span>HeatSync Labs, Mesa, Arizona</span>
     <%= link_to "heatsynclabs.org", "https://www.heatsynclabs.org" %>
     <%= link_to "Wiki", "https://wiki.heatsynclabs.org" %>
-    <%= link_to "Calendar", calendar_path %>
+    <%= link_to "Calendar", LabCalendar::PUBLIC_URL %>
     <%= link_to "Space API", space_api_path %>
   </footer>
 <%= raw Setting.analytics_code if Setting.present? %>

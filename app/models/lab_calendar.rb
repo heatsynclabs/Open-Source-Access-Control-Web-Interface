@@ -8,6 +8,9 @@
 module LabCalendar
   # Expanded events reach back far enough for the analytics page's
   # "all time", and a year ahead for the calendar page.
+  # The lab's public calendar page; the members site links there instead of
+  # to its own calendar page.
+  PUBLIC_URL = "https://www.heatsynclabs.org/calendar/"
   HISTORY_START = Date.new(2010, 1, 1)
   LOOKAHEAD = 13.months
 

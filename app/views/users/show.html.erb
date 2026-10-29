@@ -153,17 +153,6 @@
       </section>
     <% end %>
 
-    <section class="card">
-      <div class="card-head">
-        <h2>Computers</h2>
-        <%= link_to "Add", new_mac_path, class: "btn small" if can? :create, Mac %>
-      </div>
-      <% if @user.macs.any? %>
-        <ul class="plain"><% @user.macs.each do |mac| %><li><%= link_to mac.mac, mac, class: "mono" %></li><% end %></ul>
-      <% else %>
-        <%= render EmptyStateComponent.new("None listed.") %>
-      <% end %>
-    </section>
 
     <% if admin %>
       <section class="card">
