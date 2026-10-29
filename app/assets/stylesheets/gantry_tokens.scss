@@ -361,7 +361,7 @@
   width: 100%;
   max-width: var(--maxw);
   margin-inline: auto;
-  padding-inline: #{"max(var(--space-4), var(--safe-l))"};
+  padding-inline: max(var(--space-4), var(--safe-l));
 }
 
 .g-band { background: var(--g-bg); color: var(--g-ink); padding-block: var(--space-12); }
