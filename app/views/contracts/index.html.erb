@@ -1,5 +1,6 @@
 <%= render PageHeaderComponent.new(eyebrow: "Admin", title: "Waivers", lead: "Signed waivers on file, paper scans and online signatures.") do |header| %>
   <% header.with_action { link_to "Add a waiver", new_contract_path, class: "btn primary" } if can? :create, Contract %>
+  <% header.with_action { link_to "Online waiver form", Contract::ONLINE_FORM_URL, class: "btn" } %>
 <% end %>
 
 <% contracts = @contracts.sort_by { |contract| contract.last_name.to_s.downcase } %>

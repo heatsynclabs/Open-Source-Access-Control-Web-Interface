@@ -1,4 +1,8 @@
 class Contract < ActiveRecord::Base
+  # The lab's online waiver (a Google Form). Signing it does not add a record
+  # here; a volunteer records it, as with a paper waiver.
+  ONLINE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdg59iLo5rDZL7f3GvHIVXVu_32vqjwYCCfuRvyMTK1P5RGhg/viewform"
+
   belongs_to :user
   belongs_to :created_by, :foreign_key => "created_by_id", :class_name => "User"
 

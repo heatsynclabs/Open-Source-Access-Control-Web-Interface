@@ -7,7 +7,7 @@
   <p class="msg warn todo">
     <strong>Before you use the shop on your own:</strong>
     <%= safe_join([
-      ("sign the waiver at the lab" if @needs_waiver),
+      (safe_join(["sign the ", link_to("waiver", Contract::ONLINE_FORM_URL), " online or at the lab"]) if @needs_waiver),
       (safe_join(["come to a new member orientation (ask any volunteer, or come to ", link_to("open hours", LabCalendar::PUBLIC_URL), ")"]) if @needs_orientation),
     ].compact, ", and ") %>.
   </p>

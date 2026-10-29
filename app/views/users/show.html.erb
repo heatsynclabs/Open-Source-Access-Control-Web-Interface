@@ -91,6 +91,7 @@
         <dt>Waiver</dt>
         <dd>
           <%= @user.waiver.present? ? @user.waiver.strftime("%B %-d, %Y") : "Not on file" %>
+          <% if @user.waiver.blank? && @user.contracts.empty? && @user == current_user %><br><%= link_to "Sign the waiver online", Contract::ONLINE_FORM_URL %><% end %>
           <% @user.contracts.each do |contract| %>
             <br><%= can?(:read, contract) ? link_to("Signed #{contract.signed_at.strftime('%B %-d, %Y')}", contract) : "Signed #{contract.signed_at.strftime('%B %-d, %Y')}" %>
           <% end %>
