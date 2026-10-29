@@ -33,6 +33,11 @@
   .find-address { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: var(--text-xl); text-transform: uppercase; letter-spacing: var(--tracking-tight); }
   .find-links { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 
+  // ---------------------------------------------------------- more information
+  // The page is a setting pasted from the old wiki, one h1 per question.
+  .faq :is(h1, h2) { font-size: var(--text-xl); line-height: 1.25; margin: var(--space-8) 0 var(--space-2); text-transform: none; letter-spacing: normal; }
+  .faq :is(h1, h2):first-child { margin-top: 0; }
+
   .home-week { margin-top: var(--space-12); }
 
   @media (max-width: 640px) {

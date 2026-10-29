@@ -59,17 +59,13 @@
 
 <section class="home-week"><%= render "calendar/week_frame" %></section>
 
-<% if @space["address"].present? && @space["address"] !~ /123 main st/i %>
-  <section class="find">
-    <div>
-      <p class="eyebrow">Find us</p>
-      <p class="find-address"><%= @space["address"] %></p>
-    </div>
-    <div class="find-links">
-      <% if @space["lat"].to_f != 0 && @space["lon"].to_f != 0 %>
-        <%= link_to "Map", "https://www.openstreetmap.org/?mlat=#{@space['lat']}&mlon=#{@space['lon']}#map=18/#{@space['lat']}/#{@space['lon']}", class: "btn" %>
-      <% end %>
-      <%= link_to "heatsynclabs.org", "https://www.heatsynclabs.org", class: "btn" %>
-    </div>
-  </section>
-<% end %>
+<section class="find">
+  <div>
+    <p class="eyebrow">Find us</p>
+    <p class="find-address"><%= ApplicationHelper::LAB_ADDRESS %></p>
+  </div>
+  <div class="find-links">
+    <%= link_to "Map", ApplicationHelper::LAB_MAP_URL, class: "btn" %>
+    <%= link_to "heatsynclabs.org", "https://www.heatsynclabs.org", class: "btn" %>
+  </div>
+</section>

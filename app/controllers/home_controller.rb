@@ -1,9 +1,8 @@
 class HomeController < ApplicationController
 
   def index
-    # Door state and address for both views, from the same data as /space_api.
+    # Door state for both views, from the same data as /space_api.
     @door_status = DoorLog.show_status rescue nil
-    @space = (JSON.parse(Setting.space_api_json_template) rescue {})
 
     # What a member still needs before they can use the shop on their own.
     if user_signed_in?
