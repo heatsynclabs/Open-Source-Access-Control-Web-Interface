@@ -1,0 +1,14 @@
+# Keep local state out of the image: caches, logs, uploads, compiled assets,
+# local config with passwords, and git history. The Dockerfile writes the
+# config it needs.
+.git
+tmp
+log
+public/assets
+public/system
+node_modules
+.env
+config/database.yml
+config/config.yml
+config/initializers/secret_token.rb
+docker-compose.override.yml

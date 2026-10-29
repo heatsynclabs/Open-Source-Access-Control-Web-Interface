@@ -10,7 +10,7 @@
 
 <div class="tiles">
   <%= render StatTileComponent.new(value: @members[:paid_up], label: "Paid up members", sub: "A payment in the last 60 days", tone: :headline) %>
-  <%= render StatTileComponent.new(value: @members[:active], label: "On a member level") %>
+  <%= render StatTileComponent.new(value: @members[:active], label: "On a member level", sub: "Paid up or not; levels stay until someone changes them") %>
   <%= render StatTileComponent.new(value: @members[:cardholders], label: "Hold a working card") %>
   <%= render StatTileComponent.new(value: number_with_delimiter(@door[:entries]), label: "Card entries", sub: @period.label) %>
   <% if @calendar %>
