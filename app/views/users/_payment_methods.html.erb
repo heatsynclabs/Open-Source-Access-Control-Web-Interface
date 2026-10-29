@@ -1,22 +1,21 @@
-<%# The pays-by select and what each choice means. Values are what the treasurer's records use. %>
+<%# The pays-by select and what the chosen way means. Values are what the treasurer's records use. %>
 <%
+  signing_up = controller_name == "registrations" && %w[new create].include?(action_name)
   payment_methods = [[nil], ["PayPal"], ["Dwolla"], ["Bill Pay", "BillPay"], ["Check"], ["Cash"], ["Other"]]
   payment_instructions = {
-    "PayPal" => "Set up a monthly recurring payment to finances@heatsynclabs.org, or use the button on your profile.",
+    "PayPal" => "Set up a monthly recurring payment to finances@heatsynclabs.org, or use the subscribe button #{signing_up ? 'on the next page' : 'under Dues and payments'}.",
     "Dwolla" => "The Dwolla button no longer works. Pick another way, or ask the treasurer.",
-    "Bill Pay" => "Have your bank send a monthly check to HeatSync Labs Treasurer, 108 W Main St, Mesa AZ 85201.",
+    "BillPay" => "Have your bank send a monthly check to HeatSync Labs Treasurer, 108 W Main St, Mesa AZ 85201.",
     "Check" => "Mail it to HeatSync Labs Treasurer, 108 W Main St, Mesa AZ 85201, or put it in the drop safe at the lab with a deposit slip attached, each month.",
     "Cash" => "Put it in the drop safe at the lab with a deposit slip attached, each month.",
     "Other" => "Talk to the treasurer.",
   }
 %>
-<%= g.label :payment_method, "Pays by" %>
-<%= g.select :payment_method, payment_methods %>
-<% if params[:action] != "new" %><p class="hint">After changing this, update your payment service too. It does not change by itself.</p><% end %>
-<%# Open when signing up, where people choose; folded on the profile. %>
-<details class="hint pay-ways" <%= "open" if params[:action] == "new" %>>
-  <summary>How each way works</summary>
-  <dl class="facts">
-    <% payment_instructions.each do |method, text| %><dt><%= method %></dt><dd><%= text %></dd><% end %>
-  </dl>
-</details>
+<div class="field" data-controller="choice">
+  <%= g.label :payment_method, "Pays by" %>
+  <%= g.select :payment_method, payment_methods, {}, data: { choice_target: "select", action: "choice#show" } %>
+  <% payment_instructions.each do |method, text| %>
+    <p class="hint" data-choice-target="note" data-value="<%= method %>"><%= text %></p>
+  <% end %>
+  <% if params[:action] != "new" %><p class="hint">After changing this, update your payment service too. It does not change by itself.</p><% end %>
+</div>

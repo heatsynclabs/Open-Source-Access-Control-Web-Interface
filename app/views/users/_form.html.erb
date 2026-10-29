@@ -69,9 +69,7 @@
         <%= f.label :member_level, "Membership level" %>
         <%= f.select :member_level, member_level_options %>
       </div>
-      <div class="field">
-        <%= render partial: "/users/payment_methods", locals: { g: f } %>
-      </div>
+      <%= render partial: "/users/payment_methods", locals: { g: f } %>
       <div class="field">
         <%= f.label :payee %>
         <%= f.text_field :payee %>

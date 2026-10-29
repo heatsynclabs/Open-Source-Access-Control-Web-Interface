@@ -11,9 +11,7 @@
         <%= f.select :member_level, member_level_options %>
         <p class="hint">Associate $25, Basic $50 or Plus $100 a month.</p>
       </div>
-      <div class="field">
-        <%= render partial: "/users/payment_methods", locals: { g: f } %>
-      </div>
+      <%= render partial: "/users/payment_methods", locals: { g: f } %>
     </div>
   </fieldset>
 
