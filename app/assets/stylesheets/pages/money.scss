@@ -15,6 +15,4 @@
   .remote .door .state { font-size: var(--text-5xl); }
   .remote .door .actions .btn, .remote .door .actions button { flex: 1 1 120px; min-height: 56px; }
   .remote .doors { grid-template-columns: 1fr; margin-bottom: var(--space-4); }
-  .remote-extra { margin-top: var(--space-6); }
-  .webcam { width: 100%; height: auto; display: block; border: 2px solid var(--steel-hi); }
 }

@@ -40,18 +40,4 @@
     </div>
     <p class="note">Door state updates every minute.</p>
   <% end %>
-
-  <div class="actions-row remote-extra">
-    <button type="button" class="btn" data-action="dialog#open" data-dialog-id="webcams"><%= lucide_icon "video" %> Who's here?</button>
-  </div>
-
-  <dialog id="webcams" data-action="click->dialog#backdrop" aria-labelledby="webcams-title">
-    <button type="button" class="icon-btn dialog-close" data-action="dialog#close" aria-label="Close"><%= lucide_icon "x" %></button>
-    <h2 id="webcams-title">Webcam</h2>
-    <a href="http://live.heatsynclabs.org/snapshot.php?camera=1" data-action="door-status#reloadCamera">
-      <img class="webcam" src="http://live.heatsynclabs.org/snapshot.php?camera=1" alt="Snapshot from the lab's camera" loading="lazy" data-door-status-target="camera">
-    </a>
-    <p class="note">Tap the picture for a fresh one.</p>
-    <p data-door-status-target="macs"></p>
-  </dialog>
 </div>
