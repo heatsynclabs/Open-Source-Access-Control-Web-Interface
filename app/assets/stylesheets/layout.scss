@@ -133,6 +133,7 @@
     margin: 0 auto;
     padding: var(--space-8) max(var(--space-4), var(--safe-r)) var(--space-16) max(var(--space-4), var(--safe-l));
     &.narrow { max-width: 560px; }
+    &.wide { max-width: var(--container-2xl, 1440px); }
   }
 
   .foot {

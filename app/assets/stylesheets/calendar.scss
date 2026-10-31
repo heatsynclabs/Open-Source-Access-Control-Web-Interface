@@ -211,4 +211,24 @@
     dl.facts { margin-bottom: var(--space-4); }
     .event-description { max-height: 40vh; overflow: auto; margin-bottom: var(--space-5); overflow-wrap: anywhere; }
   }
+
+  // ---------------------------------------------------------- embedded public calendar
+  // The /calendar page frames the heatsynclabs.org calendar whole. It is a
+  // cross-origin page, so the iframe cannot size itself to its content; it
+  // takes most of the viewport height and scrolls inside.
+  .calendar-embed {
+    margin-top: var(--space-5);
+    border: 2px solid var(--steel-hi);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: min(1500px, calc(100vh - 170px));
+      min-height: 560px;
+      border: 0;
+    }
+  }
 }
