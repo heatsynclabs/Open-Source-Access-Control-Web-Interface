@@ -8,9 +8,13 @@
 module LabCalendar
   # Expanded events reach back far enough for the analytics page's
   # "all time", and a year ahead for the calendar page.
-  # The lab's public calendar page; the members site links there instead of
-  # to its own calendar page.
+  # The lab's public calendar page; the members site links people there (new
+  # tab) to see the calendar in its full site context.
   PUBLIC_URL = "https://www.heatsynclabs.org/calendar/"
+  # The same calendar with no site chrome, built for framing. The members
+  # /calendar page embeds this so members stay in the members site and see the
+  # one calendar the lab uses, never a second copy. Overridable for local dev.
+  EMBED_URL = ENV.fetch("CALENDAR_EMBED_URL", "https://www.heatsynclabs.org/calendar/embed/")
   HISTORY_START = Date.new(2010, 1, 1)
   LOOKAHEAD = 13.months
 

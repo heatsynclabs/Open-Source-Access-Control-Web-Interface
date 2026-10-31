@@ -1,64 +1,18 @@
 <% content_for :title, "Calendar" %>
-<%= render PageHeaderComponent.new(eyebrow: "HeatSync Labs calendar", title: @view == "list" ? "Coming up" : @date.strftime("%B %Y")) do |header| %>
-  <% header.with_action do %>
-    <nav class="tabs calendar-views" aria-label="Calendar view">
-      <% { "month" => "Month", "week" => "Week", "list" => "List" }.each do |key, label| %>
-        <%= link_to label, calendar_path(calendar_link_params(view: key)), class: ("on" if @view == key), "aria-current": ("page" if @view == key) %>
-      <% end %>
-    </nav>
-  <% end %>
+<% content_for :main_class, "wide" %>
+<%= render PageHeaderComponent.new(eyebrow: "HeatSync Labs", title: "Calendar", lead: "The lab's full event calendar, the same one on heatsynclabs.org.") do |header| %>
+  <% header.with_action { link_to "Open on heatsynclabs.org", LabCalendar::PUBLIC_URL, target: "_blank", rel: "noopener", class: "btn small" } %>
 <% end %>
 
-<div class="calendar-toolbar">
-  <div class="actions-row">
-    <%= link_to calendar_path(calendar_link_params(start_date: (@date - @step).iso8601)), class: "btn small", "aria-label": "Earlier" do %><%= lucide_icon "chevron-left" %><% end %>
-    <%= link_to "Today", calendar_path(calendar_link_params(start_date: nil)), class: "btn small" %>
-    <%= link_to calendar_path(calendar_link_params(start_date: (@date + @step).iso8601)), class: "btn small", "aria-label": "Later" do %><%= lucide_icon "chevron-right" %><% end %>
-  </div>
-  <nav class="filters category-filters" aria-label="Show">
-    <%= link_to "Everything", calendar_path(calendar_link_params(cat: nil)), class: ["toggle", ("on" unless @category)] %>
-    <% LabCalendar::Category.all.reject { |c| c.key == "open" }.each do |category| %>
-      <%= link_to calendar_path(calendar_link_params(cat: category.key)), class: ["toggle", "cat-#{category.key}", ("on" if @category == category)] do %>
-        <span class="cat-dot"></span><%= category.label %>
-      <% end %>
-    <% end %>
-    <%= link_to calendar_path(calendar_link_params(open: (@show_open_hours ? nil : "1"))), class: ["toggle", "cat-open", ("on" if @show_open_hours)], "aria-pressed": @show_open_hours.to_s do %>
-      <span class="cat-dot"></span>Open hours
-    <% end %>
-  </nav>
+<%# The calendar is embedded from the public site so members see one calendar, %>
+<%# not a second copy that can drift out of step with it. The embed reports its %>
+<%# height so the iframe grows to fit and the page scrolls as one (no scroll box). %>
+<div class="calendar-embed" data-controller="calendar-embed">
+  <iframe src="<%= LabCalendar::EMBED_URL %>"
+          title="HeatSync Labs calendar"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+          data-calendar-embed-target="frame"></iframe>
 </div>
 
-<% if @unavailable %>
-  <p class="msg err">The lab calendar could not be read from Google just now. Try again in a few minutes, or see it on <%= link_to "heatsynclabs.org", "https://www.heatsynclabs.org/calendar" %>.</p>
-<% else %>
-  <% if @freshness && @freshness[:stale] %>
-    <p class="msg warn">Google did not answer, so this is the calendar as of <%= time_ago_in_words(@freshness[:fetched_at]) %> ago.</p>
-  <% end %>
-
-  <% case @view %>
-  <% when "month" %>
-    <%= month_calendar(events: @events, attribute: :starts_at, end_attribute: :last_day, start_date: @date, partial: "calendar/month_grid") do |day, events| %>
-      <span class="day-num"><%= day.day %></span>
-      <% events.first(CalendarHelper::DAY_CELL_EVENTS).each do |event| %>
-        <%= render Calendar::EventComponent.new(event: event, style: :pill) %>
-      <% end %>
-      <% if events.size > CalendarHelper::DAY_CELL_EVENTS %>
-        <%= link_to "#{events.size - CalendarHelper::DAY_CELL_EVENTS} more", calendar_path(calendar_link_params(view: "list", start_date: day.iso8601)), class: "more" %>
-      <% end %>
-    <% end %>
-    <%# On phones the grid only shows dots, so the month's events follow as a list. %>
-    <div class="month-agenda"><%= render "agenda", events: @events.select { |e| e.day.month == @date.month } %></div>
-  <% when "week" %>
-    <%= week_calendar(events: @events, attribute: :starts_at, end_attribute: :last_day, start_date: @date, partial: "calendar/week_grid") do |day, events| %>
-      <% events.each do |event| %>
-        <%= render Calendar::EventComponent.new(event: event) %>
-      <% end %>
-      <% if events.empty? %><p class="empty small">Nothing listed</p><% end %>
-    <% end %>
-  <% else %>
-    <%= render "agenda", events: @events %>
-  <% end %>
-  <%= render Calendar::EventDialogComponent.with_collection(@events.uniq) %>
-<% end %>
-
-<p class="note">Times are lab time (Arizona). Events come from the public HeatSync calendar on Google.</p>
+<p class="note">The calendar opens on <%= link_to "heatsynclabs.org", LabCalendar::PUBLIC_URL, target: "_blank", rel: "noopener" %> if it does not show above. Times are lab time (Arizona).</p>

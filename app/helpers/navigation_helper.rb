@@ -6,7 +6,7 @@ module NavigationHelper
   def primary_nav_links
     [
       NavLink.new("Home", root_path, %w[home]),
-      NavLink.new("Calendar", LabCalendar::PUBLIC_URL, %w[]),
+      NavLink.new("Calendar", calendar_path, %w[calendar]),
       (NavLink.new("People", users_path, %w[users]) if can?(:read, User)),
       (NavLink.new("Tools", resources_path, %w[resources resource_categories]) if can?(:read, Resource)),
       (NavLink.new("Certifications", certifications_path, %w[certifications user_certifications]) if user_signed_in? && can?(:read, Certification)),
