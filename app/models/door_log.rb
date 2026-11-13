@@ -43,34 +43,28 @@ class DoorLog < ActiveRecord::Base
   end
 
   def self.execute_command(command)
-    output = ""
-    # load config values
-    door_access_url = APP_CONFIG['door_access_url']
-    door_access_password = APP_CONFIG['door_access_password']
+    password = APP_CONFIG['door_access_password']
 
-    #login
-    source = URI.open("#{door_access_url}?e=#{door_access_password}").read
-    results = source.scan(/ok/)
-
-    #only continue if we've got an OK login
-    if(results.size > 0) then
-      # Parse the command and result
-      parsing = parse_command(command)
-      output += parsing[:output]
-      url_param = parsing[:url_param]
-
-      # Execute the command
-      URI.open("#{door_access_url}?#{url_param}")
-
-      self.download_status # Update the status cache
-    else
-      output +=  'Failed to connect to door system.'
+    # login; only continue if we got an OK login
+    unless DoorBoard.get("e=#{password}").scan(/ok/).size > 0
+      return 'Failed to connect to door system.'
     end
 
-    #logout
-    URI.open("#{door_access_url}?e=0000")
+    parsing = parse_command(command)
+    DoorBoard.get(parsing[:url_param]) # execute the command
+    download_status                    # update the status cache
+    logout(password)                   # best effort; board also auto-logs-out
+    parsing[:output]
+  rescue DoorBoard::Unreachable
+    'Failed to connect to door system.'
+  end
 
-    return output
+  # Tell the board to log out. Best effort: a failure here must not clobber the
+  # result of a command that already ran, and the board logs itself out anyway.
+  def self.logout(_password = nil)
+    DoorBoard.get("e=0000")
+  rescue DoorBoard::Unreachable
+    nil
   end
 
   def self.parse_command(command)
@@ -148,57 +142,38 @@ class DoorLog < ActiveRecord::Base
   end
 
   def self.download_status
-    # load config values
-    door_access_url = APP_CONFIG['door_access_url']
-    door_access_password = APP_CONFIG['door_access_password']
-
     # query for status
-    source = URI.open("#{door_access_url}?9").read
+    source = DoorBoard.get("9")
     # expect {"armed"=>255, "activated"=>255, "alarm_3"=>1, "alarm_2"=>1, "door_1_locked"=>1, "door_2_locked"=>1}
     # See https://github.com/heatsynclabs/Open_Access_Control_Ethernet for more info
-    @status = JSON.parse(source)
-    @status.each do |key,value|
+    status = JSON.parse(source)
+    status.each do |key, value|
       DoorLog.create!({:key => key, :data => value})
     end
+    status
+  rescue DoorBoard::Unreachable
+    nil
   end
 
   def self.download_from_door
-    # load config values
-    door_access_url = APP_CONFIG['door_access_url']
-    door_access_password = APP_CONFIG['door_access_password']
+    password = APP_CONFIG['door_access_password']
 
-    # connect to door access system
-    source = URI.open("#{door_access_url}?e=#{door_access_password}").read
-    results = source.scan(/ok/)
-    if(results.size > 0) then
-      @end_results = Array.new
+    # connect; only continue if we got an OK login
+    return false unless DoorBoard.get("e=#{password}").scan(/ok/).size > 0
 
-      #only continue if we've got an OK login
-      source = URI.open("#{door_access_url}?z").read
-      results = source.scan(/(.*): (.*)\r\n/)
-
-      results.each do |r|
-        if(r[0] != "\000") then
-          DoorLog.create!({:key => r[0], :data => r[1]})
-        end
-      end
-
-      #clear log
-      URI.open("#{door_access_url}?y")
-      #logout
-      URI.open("#{door_access_url}?e=0000")
-
-      if(results.size > 0) then
-        #only return true if we got some kind of decent response
-        return results
-      else
-        # We didn't get a decent response.
-        return false
-      end
-    else
-      # We didn't get an OK login.
-      return false
+    # download the on-board log buffer
+    source = DoorBoard.get("z")
+    results = source.scan(/(.*): (.*)\r\n/)
+    results.each do |r|
+      DoorLog.create!({:key => r[0], :data => r[1]}) if r[0] != "\000"
     end
+
+    DoorBoard.get("y") # clear the board log now that the rows are saved
+    logout(password)
+
+    results.size > 0 ? results : false
+  rescue DoorBoard::Unreachable
+    false
   end
 
   def self.key_legend

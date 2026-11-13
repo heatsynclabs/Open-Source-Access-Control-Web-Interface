@@ -49,7 +49,8 @@ def seed_dev_members!
     user.save!
     created += 1
 
-    Card.create!(user_id: user.id, card_number: format("DEV%04d", 1000 + i), card_permissions: 1) if m[:card]
+    # Fake but valid card numbers: the reader (and the board) treat these as hex.
+    Card.create!(user_id: user.id, card_number: format("FACE%04X", i), card_permissions: 1) if m[:card]
 
     if m[:waiver]
       first, last = m[:name].split(" ", 2)
