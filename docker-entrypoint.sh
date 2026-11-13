@@ -9,6 +9,11 @@ p="config/config.yml"; c=YAML.load_file(p)
   next unless c[e]
   c[e]["door_access_url"]=ENV["DOOR_ACCESS_URL"] if ENV["DOOR_ACCESS_URL"].to_s!=""
   c[e]["door_access_password"]=ENV["DOOR_ACCESS_PASSWORD"] if ENV["DOOR_ACCESS_PASSWORD"].to_s!=""
+  c[e]["door_backend"]=ENV["DOOR_BACKEND"] if ENV["DOOR_BACKEND"].to_s!=""
+  c[e]["door_api_url"]=ENV["DOOR_API_URL"] if ENV["DOOR_API_URL"].to_s!=""
+  c[e]["door_api_key"]=ENV["DOOR_API_KEY"] if ENV["DOOR_API_KEY"].to_s!=""
+  c[e]["door_controller"]=ENV["DOOR_CONTROLLER"] if ENV["DOOR_CONTROLLER"].to_s!=""
+  c[e]["door_doors"]=ENV["DOOR_DOORS"].split(",").map(&:to_i) if ENV["DOOR_DOORS"].to_s!=""
   c[e]["smtp_address"]=ENV["SMTP_ADDRESS"] if ENV["SMTP_ADDRESS"].to_s!=""
   c[e]["smtp_port"]=ENV["SMTP_PORT"].to_i if ENV["SMTP_PORT"].to_s!=""
   c[e]["smtp_tls"]=(ENV["SMTP_TLS"]=="true") if ENV["SMTP_TLS"].to_s!=""
