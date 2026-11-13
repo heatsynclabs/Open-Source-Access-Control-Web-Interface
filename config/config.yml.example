@@ -1,6 +1,11 @@
 development:
   door_access_url: "http://192.168.1.177"
   door_access_password: "1234"
+  door_backend: legacy
+  door_api_url: "http://127.0.0.1:3000"
+  door_api_key: ""
+  door_controller: default
+  door_doors: [1, 2]
   smtp_tls: true
   smtp_address: "smtp.gmail.com"
   smtp_port: 587
@@ -12,6 +17,11 @@ development:
 test:
   door_access_url: "http://192.168.1.177"
   door_access_password: "1234"
+  door_backend: legacy
+  door_api_url: "http://127.0.0.1:3000"
+  door_api_key: ""
+  door_controller: default
+  door_doors: [1, 2]
   smtp_tls: true
   smtp_address: "smtp.gmail.com"
   smtp_port: 587
@@ -23,6 +33,11 @@ test:
 production:
   door_access_url: "http://192.168.1.177"
   door_access_password: "1234"
+  door_backend: legacy
+  door_api_url: "http://127.0.0.1:3000"
+  door_api_key: ""
+  door_controller: default
+  door_doors: [1, 2]
   smtp_tls: true
   smtp_address: "smtp.gmail.com"
   smtp_port: 587

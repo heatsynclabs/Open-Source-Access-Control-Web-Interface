@@ -15,6 +15,10 @@ class Card < ActiveRecord::Base
     :message => "must be 1 to 8 hex digits (0-9, A-F), as the reader shows it"
   belongs_to :user
 
+  # When routing through door-api, removing a card from the DB also removes it
+  # from the board. Best effort: a door-api failure must not block the delete.
+  after_destroy :remove_from_door_api, :if => -> { DoorApiClient.enabled? }
+
   # Computed per-request in CardsController#index, not a column.
   attr_accessor :accesses_this_week
 
@@ -24,18 +28,21 @@ class Card < ActiveRecord::Base
     (SLOT_RANGE.to_a - used).min
   end
 
-  # Push this one card to the door board. Returns true only on a decent reply,
-  # false on a bad reply or an unreachable board (timeouts handled by DoorBoard).
+  # Push this one card to the door. Routes through door-api when enabled,
+  # otherwise talks to the board directly. Returns true on success, false on a
+  # bad reply or an unreachable door (timeouts handled below each path).
   def upload_to_door
+    return DoorApiClient.new.put_card(:number => card_number.to_i(16), :doors => door_access_list) if DoorApiClient.enabled?
     source = DoorBoard.get(upload_query)
     source.scan(/cur/).size > 0
   rescue DoorBoard::Unreachable
     false
   end
 
-  # Push every card to the board, one at a time. One unreachable or slow board
-  # fails that card (FAIL) and moves on, instead of hanging the whole request.
+  # Push every card to the door. Through door-api this is a single reconcile
+  # (read once, write deltas); directly it is one request per card.
   def self.upload_all_to_door
+    return sync_all_to_door_api if DoorApiClient.enabled?
     Card.all.map do |card|
       slot = card.id.to_s.rjust(3, '0')
       begin
@@ -47,6 +54,21 @@ class Card < ActiveRecord::Base
     end
   end
 
+  # Reconcile the whole card set to the board via door-api. Returns the door-api
+  # summary hash ({ "added"=>, "updated"=>, "removed"=>, "failed"=>[] }).
+  def self.sync_all_to_door_api
+    cards = Card.all.map { |c| { :card => c.card_number.to_i(16), :doors => c.door_access_list } }
+    DoorApiClient.new.sync(:cards => cards)
+  rescue DoorApiClient::Error => e
+    { "error" => e.message }
+  end
+
+  # The doors this card may open, as door-api expects: the configured door list
+  # when enabled (card_permissions 1), none when disabled (255).
+  def door_access_list
+    card_permissions == 1 ? Array(APP_CONFIG['door_doors'] || [1, 2]) : []
+  end
+
   # The board's "modify slot" query for this card: zero-padded slot, permission
   # mask and tag, plus the login password. card_number is validated to 1-8 hex,
   # so it cannot contain query-string characters.
@@ -55,5 +77,13 @@ class Card < ActiveRecord::Base
     cardperm = card_permissions.to_s.rjust(3, '0')
     cardnum  = card_number.rjust(8, '0')
     "m#{cardid}&p#{cardperm}&t#{cardnum}&e=#{APP_CONFIG['door_access_password']}"
+  end
+
+  private
+
+  def remove_from_door_api
+    DoorApiClient.new.delete_card(card_number.to_i(16))
+  rescue => e
+    Rails.logger.warn("door-api delete_card failed for card #{id}: #{e.message}")
   end
 end

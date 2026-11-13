@@ -42,7 +42,22 @@ class DoorLog < ActiveRecord::Base
     end
   end
 
+  # Legacy door command -> door-api (door number, action). :all applies the action
+  # to every configured door. Alarm commands (arm/disarm) have no door-api
+  # equivalent and are handled separately.
+  DOOR_API_COMMANDS = {
+    'unlock' => [:all, 'unlock'], 'u' => [:all, 'unlock'],
+    'unlock-front' => [1, 'unlock'], 'u1' => [1, 'unlock'],
+    'unlock-rear' => [2, 'unlock'], 'u2' => [2, 'unlock'],
+    'lock' => [:all, 'lock'], 'l' => [:all, 'lock'],
+    'lock-front' => [1, 'lock'], 'l1' => [1, 'lock'],
+    'lock-rear' => [2, 'lock'], 'l2' => [2, 'lock'],
+    'open-front' => [1, 'open'], 'open-rear' => [2, 'open']
+  }.freeze
+
   def self.execute_command(command)
+    return execute_command_via_api(command) if DoorApiClient.enabled?
+
     password = APP_CONFIG['door_access_password']
 
     # login; only continue if we got an OK login
@@ -56,6 +71,23 @@ class DoorLog < ActiveRecord::Base
     logout(password)                   # best effort; board also auto-logs-out
     parsing[:output]
   rescue DoorBoard::Unreachable
+    'Failed to connect to door system.'
+  end
+
+  # Run a door command through door-api. Mirrors the legacy return (the command's
+  # friendly message) so callers (space_api, api/v1/doors) are unchanged.
+  def self.execute_command_via_api(command)
+    mapping = DOOR_API_COMMANDS[command]
+    return 'Alarm control is not available through the door API.' if %w[arm disarm].include?(command)
+    return parse_command(command)[:output] unless mapping # unknown -> legacy message
+
+    door, action = mapping
+    client = DoorApiClient.new
+    doors = door == :all ? Array(APP_CONFIG['door_doors'] || [1, 2]) : [door]
+    doors.each { |d| client.door(d, action) }
+    download_status # refresh the DB status cache
+    parse_command(command)[:output]
+  rescue DoorApiClient::Error
     'Failed to connect to door system.'
   end
 
@@ -142,6 +174,8 @@ class DoorLog < ActiveRecord::Base
   end
 
   def self.download_status
+    return download_status_via_api if DoorApiClient.enabled?
+
     # query for status
     source = DoorBoard.get("9")
     # expect {"armed"=>255, "activated"=>255, "alarm_3"=>1, "alarm_2"=>1, "door_1_locked"=>1, "door_2_locked"=>1}
@@ -155,6 +189,23 @@ class DoorLog < ActiveRecord::Base
     nil
   end
 
+  # Pull status from door-api and write the same door_N_locked rows the legacy
+  # path writes, so show_status (a pure DB read) keeps working unchanged.
+  def self.download_status_via_api
+    status = DoorApiClient.new.status
+    status.each do |key, value|
+      next unless key.to_s =~ /\Adoor_\d+_locked\z/
+      DoorLog.create!({:key => key.to_s, :data => (value ? 1 : 0)})
+    end
+    status
+  rescue DoorApiClient::Error
+    nil
+  end
+
+  # NOTE: event-log download stays on the legacy path for now. The board's buffer
+  # has no read cursor (clear-on-read), so it does not map onto door-api's
+  # incremental events(); that moves to door-api only after the UHPPOTE cutover,
+  # whose events are index-stable. See door-api docs/MEMBERS-INTEGRATION.md.
   def self.download_from_door
     password = APP_CONFIG['door_access_password']
 
