@@ -29,9 +29,11 @@ class DoorApiClient
 
   # ---- doors ----
 
-  # action is "unlock", "lock" or "open".
+  # action is "unlock", "lock" or "open". Sends an empty JSON body so the request
+  # carries a Content-Type door-api's parser accepts (a bodyless POST otherwise
+  # gets Net::HTTP's default form content-type).
   def door(door_number, action)
-    post("/v1/controllers/#{@controller}/doors/#{door_number}/#{action}")
+    post("/v1/controllers/#{@controller}/doors/#{door_number}/#{action}", {})
   end
 
   # ---- status ----
