@@ -66,7 +66,9 @@ class CardsController < ApplicationController
   # GET /cards/new
   # GET /cards/new.json
   def new
-    #@card = Card.new
+    # Pre-fill the door-board slot with the lowest free one so an admin does not
+    # have to look it up. They can still type a different slot.
+    @card.id ||= Card.next_free_slot
 
     respond_to do |format|
       format.html # new.html.erb
@@ -82,11 +84,22 @@ class CardsController < ApplicationController
   # POST /cards
   # POST /cards.json
   def create
-    #@card = Card.new(params[:card])
+    # The primary key IS the door-board slot (10..200). Honor the slot the admin
+    # typed when it is free; otherwise drop the card into the next free slot so
+    # two cards can never land on the same slot. Never fall back to the id
+    # sequence, which does not track the hand-assigned slots and would collide.
+    @requested_slot = @card.id
+    if @requested_slot.blank? || Card.exists?(:id => @requested_slot)
+      @card.id = Card.next_free_slot
+    end
 
     respond_to do |format|
-      if @card.save
-        format.html { redirect_to cards_url, :notice => 'Card was successfully created.' }
+      if @card.id.nil?
+        @card.errors.add(:base, "Every door slot from 10 to 200 is in use. Disable and delete an old card, then try again.")
+        format.html { render :action => "new", :status => :unprocessable_entity }
+        format.json { render :json => @card.errors, :status => :unprocessable_entity }
+      elsif @card.save
+        format.html { redirect_to cards_url, :notice => slot_notice }
         format.json { render :json => @card, :status => :created, :location => @card }
       else
         format.html { render :action => "new" }
@@ -101,7 +114,7 @@ class CardsController < ApplicationController
     #@card = Card.find(params[:id])
 
     respond_to do |format|
-      if @card.update(cards_params)
+      if @card.update(card_params)
         format.html { redirect_to cards_url, :notice => 'Card was successfully updated.' }
         format.json { head :no_content }
       else
@@ -160,7 +173,22 @@ class CardsController < ApplicationController
 
   private
 
-  def cards_params
-    params.require(:card).permit(:user_id, :name, :card_number, :card_permissions)
+  # CanCanCan's load_and_authorize_resource builds and updates the card from the
+  # method named for the resource: "card_params". It must include :id because the
+  # door-board slot is the primary key and is set from the form.
+  def card_params
+    params.require(:card).permit(:user_id, :name, :card_number, :card_permissions, :id)
+  end
+
+  # Flash message after a successful create, telling the admin which slot the card
+  # actually landed in when the one they asked for was taken or left blank.
+  def slot_notice
+    if @requested_slot.present? && @requested_slot != @card.id
+      "Card created. Slot #{@requested_slot} was already in use, so the card went into the next free slot, #{@card.id}. Upload it to the door board to activate it."
+    elsif @requested_slot.blank?
+      "Card created in slot #{@card.id}. Upload it to the door board to activate it."
+    else
+      "Card was successfully created. Upload it to the door board to activate it."
+    end
   end
 end

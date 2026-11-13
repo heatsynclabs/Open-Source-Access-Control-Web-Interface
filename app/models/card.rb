@@ -1,12 +1,21 @@
 class Card < ActiveRecord::Base
   require 'open-uri'
 
+  # The door board addresses cards by slot, and the slot is this row's primary key.
+  SLOT_RANGE = (10..200)
+
   validates_presence_of :user_id, :card_number, :card_permissions
   validates_uniqueness_of :id, :card_number
   belongs_to :user
 
   # Computed per-request in CardsController#index, not a column.
   attr_accessor :accesses_this_week
+
+  # The lowest free door-board slot, or nil if every slot in SLOT_RANGE is taken.
+  def self.next_free_slot
+    used = where(:id => SLOT_RANGE).pluck(:id)
+    (SLOT_RANGE.to_a - used).min
+  end
 
   def upload_to_door
     # load config values
