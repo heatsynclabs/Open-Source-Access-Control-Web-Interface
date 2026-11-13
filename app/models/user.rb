@@ -25,7 +25,12 @@ class User < ActiveRecord::Base
 
   validates :email, uniqueness: true
   validates_format_of :email, :without => /\.ru\z/
-  validates_presence_of [:name, :postal_code, :current_skills, :desired_skills, :marketing_source]
+  validates_presence_of :name
+  # The profile fields a member supplies at sign-up (postal code, skills, how they
+  # heard of us) are required only on create, so they still gate sign-up but do not
+  # block later saves - a password reset, or an admin edit - for accounts created
+  # before these fields existed and that never had them filled in.
+  validates_presence_of [:postal_code, :current_skills, :desired_skills, :marketing_source], :on => :create
 
   after_create :send_new_user_email
 
