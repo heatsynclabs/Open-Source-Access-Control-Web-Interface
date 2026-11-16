@@ -25,7 +25,13 @@ class Ability
       can :compose_email, User
       can :send_email, User
 
-      if user.card_access_enabled
+      cardholder = user.card_access_enabled
+
+      # Who unlocked the front door, and the door leaderboard: oriented
+      # members and cardholders, not accounts that only signed up online.
+      can :read, :door_activity if cardholder || user.orientation.present?
+
+      if cardholder
         can :access_doors_remotely, :door_access
         can :authorize, Card # used for interlock card/certification auth
       end

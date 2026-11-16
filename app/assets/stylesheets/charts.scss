@@ -40,6 +40,28 @@
   .bar-list .bar span { display: block; height: 100%; width: calc(var(--v) * 100%); background: var(--cat, var(--hazard)); }
   .bar-list .value { font-variant-numeric: tabular-nums; color: var(--ash); }
 
+  // A ranked list of members (the door leaderboard): rank, avatar, name and
+  // count on one line, a bar for their share of the leader's count below.
+  .leaderboard { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .leaderboard li {
+    display: grid;
+    grid-template-columns: 2ch auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-1) var(--space-3);
+    font-size: var(--text-sm);
+  }
+  .leaderboard .rank { font-family: var(--font-mono); font-weight: 600; color: var(--smoke); text-align: right; }
+  .leaderboard .person-name { min-width: 0; display: grid; }
+  .leaderboard .person-name .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .leaderboard .person-name small { font-size: var(--text-xs); color: var(--smoke); }
+  .leaderboard .value { font-variant-numeric: tabular-nums; color: var(--ash); white-space: nowrap; }
+  .leaderboard .bar { grid-column: 3 / -1; height: 6px; background: var(--slab-hi); }
+  .leaderboard .bar span { display: block; height: 100%; width: calc(var(--v) * 100%); background: color-mix(in srgb, var(--hazard) 40%, var(--slab-hi)); }
+  .leaderboard li.first .rank { color: var(--accent-text); }
+  .leaderboard li.first .bar span { background: var(--hazard); }
+  .leaderboard li.me .person-name .name { font-weight: 600; }
+  .leaderboard li.me .person-name .name::after { content: " (you)"; font-weight: 400; color: var(--smoke); }
+
   // The membership funnel: one bar per step, widths relative to the first.
   .funnel { display: grid; gap: var(--space-3); }
   .funnel-step { display: grid; grid-template-columns: 11rem 1fr 4rem; gap: var(--space-3); align-items: center; font-size: var(--text-sm); }

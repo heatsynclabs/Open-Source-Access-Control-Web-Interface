@@ -1,0 +1,35 @@
+<%= render PageHeaderComponent.new(eyebrow: "Doors", title: "Who opens the lab",
+      lead: "Unlock the front door from the site or the app, then lock it yourself when you leave, and those hours are yours. Opening up and locking up count too.") %>
+
+<nav class="tabs" aria-label="Time window">
+  <% DoorActivity::WINDOWS.each do |key, label| %>
+    <%= link_to label, door_leaderboard_path(window: key), class: ("on" if key == @window), "aria-current": ("page" if key == @window) %>
+  <% end %>
+</nav>
+
+<div class="grid two">
+  <section class="card">
+    <div class="card-head">
+      <h2>Kept the lab open</h2>
+      <span class="muted small">hours</span>
+    </div>
+    <%= render LeaderboardComponent.new(rows: @opened, me: current_user,
+          score: ->(row) { row.hours }, figure: ->(row) { door_hours(row.hours) },
+          detail: ->(row) { door_leaderboard_detail(row) },
+          empty: "Nobody has opened the lab from the site yet. The top spot is open.") %>
+    <p class="note">Hours run from your unlock to your lock, when you did both. If someone else locks up, or the after-hours lock does, you still get the opening and they get the locking up. Unlocks under half an hour, like letting someone in, do not count.</p>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Days at the lab</h2>
+      <span class="muted small">swipes and remote opens</span>
+    </div>
+    <%= render LeaderboardComponent.new(rows: @days, me: current_user,
+          score: ->(row) { row.days }, figure: ->(row) { pluralize(row.days, "day") },
+          empty: "Nobody has swiped in yet.") %>
+    <p class="note">One per day, however many times you come and go.</p>
+  </section>
+</div>
+
+<p class="note">Hidden profiles are left out. Updated every 10 minutes.</p>

@@ -97,6 +97,9 @@ Dooraccess::Application.routes.draw do
   # Aggregate charts for the board and the treasurer.
   get 'analytics' => 'analytics#index', :as => :analytics
 
+  # Who opens the lab most, for any signed-in member.
+  get 'door_leaderboard' => 'door_leaderboard#index', :as => :door_leaderboard
+
   match 'more_info' => 'home#more_info', via: [:get, :post]
   root :to => "home#index"
 end

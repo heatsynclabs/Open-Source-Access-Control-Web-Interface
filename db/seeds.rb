@@ -5,4 +5,5 @@ require_relative "seeds/dev_members.rb"
 initialize_local_admin!
 set_defaults!
 seed_dev_members!
+seed_dev_door_events!
 

@@ -49,7 +49,7 @@ def seed_dev_members!
     user.save!
     created += 1
 
-    Card.create!(user_id: user.id, card_number: format("DEV%04d", 1000 + i), card_permissions: 1) if m[:card]
+    Card.create!(user_id: user.id, card_number: format("%08x", 0x5a1000 + i * 7919), card_permissions: 1) if m[:card]
 
     if m[:waiver]
       first, last = m[:name].split(" ", 2)
@@ -61,4 +61,101 @@ def seed_dev_members!
   end
 
   puts "Seeded #{created} dev members."
+end
+
+# Development-only door history for the "who unlocked it" line and the door
+# leaderboard: remote unlocks and locks by seeded members, the after-hours
+# auto-lock, card swipes (g/G pairs, as the board logs them), and the front
+# door unlocked right now. Runs once, only when the door log is empty.
+def seed_dev_door_events!
+  return unless Rails.env.development?
+  return if DoorLog.exists?
+
+  people = User.where(email: %w[ada@example.com grace@example.com nikola@example.com hedy@example.com
+                                alan@example.com rosalind@example.com shuri@example.com vikram@example.com])
+               .index_by { |user| user.email.split("@").first }
+  return if people.size < 8
+
+  auto_lock = DoorLogsHelper::AUTOMATIC_LOCK_ID
+  half = DoorLogsHelper::CARD_HALF
+  rng = Random.new(42)
+  now = Time.zone.now
+  log = ->(key, data, at) { DoorLog.create!(key: key, data: data, created_at: at, updated_at: at) }
+  status = ->(front_locked, at) do
+    log.("door_1_locked", front_locked ? 1 : 0, at + 2.seconds)
+    log.("door_2_locked", 1, at + 2.seconds)
+  end
+  swipe = ->(user, at) do
+    number = user.cards.first&.card_number.to_s.to_i(16)
+    next if number.zero?
+    log.("g", number / half, at)
+    log.("G", number % half, at + 1.second)
+  end
+
+  # Who tends to open up: weights make a clear leader without a runaway.
+  openers = %w[ada ada ada grace grace nikola alan alan hedy rosalind shuri].map { |key| people[key] }
+  swipers = %w[ada grace nikola hedy rosalind alan shuri].map { |key| people[key] }
+
+  (1..75).reverse_each do |days_ago|
+    day = (now - days_ago.days).beginning_of_day
+    next if rng.rand < 0.25 # some days nobody opens up
+
+    opener = openers[rng.rand(openers.size)]
+    opened = day + (16 + rng.rand(3)).hours + rng.rand(50).minutes
+    log.(rng.rand < 0.3 ? "api_rem_u=1" : "rem_u=1", opener.id, opened)
+    status.(false, opened)
+
+    # Someone else unlocks again while it is already open (should not count twice).
+    if rng.rand < 0.2
+      again = opened + 40.minutes
+      log.("rem_u", openers[rng.rand(openers.size)].id, again)
+      status.(false, again)
+    end
+
+    swipers.sample(2 + rng.rand(4), random: rng).each do |user|
+      2.times { swipe.(user, opened - 30.minutes + rng.rand(240).minutes) }
+    end
+
+    # A quick unlock to let someone in, locked again a minute later.
+    if rng.rand < 0.3
+      buzz = opened - 2.hours
+      who = openers[rng.rand(openers.size)]
+      log.("rem_u=1", who.id, buzz)
+      status.(false, buzz)
+      log.("rem_l=1", who.id, buzz + 1.minute)
+      status.(true, buzz + 1.minute)
+    end
+
+    # How the night ends, roughly as on the real board: most nights the
+    # after-hours lock does it, some nights the opener locks up, some nights
+    # someone else does.
+    closed = opened + (2 + rng.rand(5)).hours + rng.rand(55).minutes
+    roll = rng.rand
+    if roll < 0.3
+      log.("rem_l", opener.id, closed)
+    elsif roll < 0.5
+      log.("rem_l=1", (openers - [opener]).sample(random: rng).id, closed)
+    else
+      closed = day + 22.hours
+      log.("rem_l", auto_lock, closed)
+    end
+    status.(true, closed)
+  end
+
+  # An unlock the board never confirmed (it was offline): no status row.
+  log.("rem_u=1", people["grace"].id, now - 4.days + 2.hours)
+
+  # Things that must never count: a refused rear unlock, a hidden member.
+  log.("rem_u=2", people["nikola"].id, now - 3.days)
+  log.("rem_u=1", people["vikram"].id, now - 2.days + 18.hours)
+  status.(false, now - 2.days + 18.hours)
+  log.("rem_l=1", people["vikram"].id, now - 2.days + 20.hours)
+  status.(true, now - 2.days + 20.hours)
+
+  # Right now: Hedy unlocked the front door twelve minutes ago.
+  swipe.(people["hedy"], now - 15.minutes)
+  log.("rem_u=1", people["hedy"].id, now - 12.minutes)
+  status.(false, now - 12.minutes)
+
+  puts "Seeded #{DoorLog.count} dev door log rows."
 end

@@ -69,6 +69,12 @@ class User < ActiveRecord::Base
     user_to_absorb.destroy
   end
 
+  # "Ada L." for "Ada Lovelace": enough to know who, for pages every member sees.
+  def short_name
+    first, *rest = name.to_s.split
+    rest.any? ? "#{first} #{rest.last[0]}." : first.to_s
+  end
+
   def card_access_enabled
     # If the user has at least one card with permission level 1, they have access
     self.cards.where(:card_permissions => 1).count > 0

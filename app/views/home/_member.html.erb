@@ -22,7 +22,7 @@
       </div>
       <% if @door_status && !@door_status[:door_1_locked].nil? %>
         <div class="doors">
-          <%= render DoorTileComponent.new(name: "Front door", locked: @door_status[:door_1_locked], open_command: "open-front", can_control: can_control) %>
+          <%= render DoorTileComponent.new(name: "Front door", locked: @door_status[:door_1_locked], open_command: "open-front", can_control: can_control, unlocked_by: @front_unlocker) %>
           <%= render DoorTileComponent.new(name: "Rear door", locked: @door_status[:door_2_locked], open_command: "open-rear", can_control: can_control) %>
         </div>
       <% else %>
@@ -58,6 +58,19 @@
             </li>
           <% end %>
         </ul>
+      </section>
+    <% end %>
+
+    <% unless @top_openers.nil? %>
+      <section class="card">
+        <div class="card-head">
+          <h3>Kept the lab open <span class="muted small">this month</span></h3>
+          <%= link_to "Leaderboard", door_leaderboard_path %>
+        </div>
+        <%= render LeaderboardComponent.new(rows: @top_openers, me: current_user,
+              score: ->(row) { row.hours }, figure: ->(row) { door_hours(row.hours) },
+              detail: ->(row) { door_leaderboard_detail(row) },
+              empty: "Nobody has opened the lab from the site this month. Could be you.") %>
       </section>
     <% end %>
 

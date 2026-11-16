@@ -1,12 +1,14 @@
 # One door's lock state, with an "open for 5 seconds" button for people who
 # may work the doors remotely. locked is true, false, or nil when the board
-# has not reported yet.
+# has not reported yet. unlocked_by (a DoorActivity::Unlock) adds a quiet
+# line saying who unlocked it, shown only while the door is unlocked.
 class DoorTileComponent < ViewComponent::Base
-  def initialize(name:, locked:, open_command:, can_control: false)
+  def initialize(name:, locked:, open_command:, can_control: false, unlocked_by: nil)
     @name = name
     @locked = locked
     @open_command = open_command
     @can_control = can_control
+    @unlocked_by = unlocked_by
   end
 
   def call
@@ -14,6 +16,7 @@ class DoorTileComponent < ViewComponent::Base
       safe_join([
         tag.span(@name, class: "eyebrow"),
         tag.span(state_label, class: "state"),
+        (render(UnlockedByComponent.new(@unlocked_by)) if @locked == false),
         (open_button if @can_control),
       ].compact)
     end

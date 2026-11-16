@@ -6,6 +6,7 @@ class HomeController < ApplicationController
 
     # What a member still needs before they can use the shop on their own.
     if user_signed_in?
+      load_door_activity if can?(:read, :door_activity)
       @needs_waiver = current_user.waiver.blank? && !current_user.contracts.exists?
       @needs_orientation = current_user.orientation.blank?
     end
@@ -56,4 +57,17 @@ class HomeController < ApplicationController
     end
   end
 
+  private
+
+  # Who unlocked the front door, and this month's top three. A failure here
+  # is logged and leaves the home page as it was before this feature.
+  def load_door_activity
+    activity = DoorActivity.new
+    @front_unlocker = activity.front_unlocker(@door_status)
+    @top_openers = activity.opened_the_lab("month", limit: 3, stats: activity.cached_stats(:opening, "month"))
+  rescue StandardError => e
+    Rails.logger.error("Door activity on the home page failed: #{e.class}: #{e.message}")
+    @front_unlocker = nil
+    @top_openers = nil
+  end
 end

@@ -382,6 +382,19 @@
     &.unlocked .btn, &.unlocked button { color: var(--tape-dark); border-color: var(--tape-dark); }
     &.unknown .state { color: var(--smoke); }
   }
+  // Who unlocked a door: one quiet line inside the unlocked (amber) tile.
+  .unlocked-by {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--on-hazard-muted);
+    strong { color: var(--tape-dark); font-weight: 600; }
+    time { white-space: nowrap; }
+    .avatar { box-shadow: 0 0 0 1.5px var(--tape-dark); }
+  }
 
   // ---------------------------------------------------------- pictures
   .pictures {
