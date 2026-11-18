@@ -1,7 +1,9 @@
 # Staging on Coolify: app members-staging, branch `staging`, auto-deploys on
-# every push to that branch. LAN, Ops VPN and tailnet only (no public domain):
-#   site   http://172.22.110.200:3000
-#   mail   http://172.22.110.200:8025 (every email staging sends lands here)
+# every push to that branch.
+#   site   https://staging.heatsynclabs.org (public, like production; the domain
+#          is set on staging_web in Coolify)
+#   mail   http://172.22.110.200:8025 (lab network only; every email staging
+#          sends lands here)
 #
 # Data: on every deploy, staging-db-restore loads the newest nightly backup of
 # the production database (read-only mount of /data/backups/offsite/members).
@@ -63,15 +65,15 @@ services:
         condition: service_completed_successfully
       staging-mail:
         condition: service_started
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     environment:
       RAILS_ENV: production
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
       DATABASE_URL: postgres://members:${STAGING_DB_PASSWORD}@staging-db:5432/members
       STAGING_NOTICE: "Staging copy with last night's data. Changes here are thrown away on the next deploy. Email goes to the staging mailbox, not to members."
-      MAIL_HOST: ${STAGING_HOST:-172.22.110.200:3000}
-      MAIL_PROTOCOL: http
+      MAIL_HOST: ${STAGING_HOST:-staging.heatsynclabs.org}
+      MAIL_PROTOCOL: https
       # Door
       DOOR_JOBS: "off"
       DOOR_BACKEND: ${DOOR_BACKEND:-door_api}
