@@ -81,9 +81,14 @@ class SpaceApiController < ApplicationController
         Rails.logger.warn "----------\r\nWARNING: DOOR ACCESS ATTEMPT DENIED. USER #{current_user.inspect}\r\n----------"
       else
         # Stop unless we've got a command to run
-        unless params['cmd']
+        if !params['cmd']
           @output += "No command specified."
-        else 
+        elsif current_user.id == DoorLogsHelper::AUTOMATIC_LOCK_ID && !DoorBoard.jobs_enabled?
+          # The after-hours lock signs in as this account. With door jobs off
+          # it does nothing here, so only production runs it.
+          @output += DoorBoard::JOBS_OFF_MESSAGE
+          Rails.logger.info("After-hours lock skipped: DOOR_JOBS=off")
+        else
           # Log the access
           Rails.logger.info "Door access: user #{current_user.inspect}"
           DoorLog.create!({:key => "rem_"+DoorLog.parse_command(params['cmd'])[:url_param], :data => current_user.id})

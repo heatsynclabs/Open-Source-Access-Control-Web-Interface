@@ -55,6 +55,11 @@ class DoorLogsController < ApplicationController
 
   # GET /door_logs/auto_download
   def auto_download
+    unless DoorBoard.jobs_enabled?
+      Rails.logger.info("Door log import skipped: DOOR_JOBS=off")
+      return render(plain: DoorBoard::JOBS_OFF_MESSAGE, status: :forbidden)
+    end
+
     @results = DoorLog.download_from_door
     @status = DoorLog.download_status # for space_api
 

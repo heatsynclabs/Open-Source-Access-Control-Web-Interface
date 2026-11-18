@@ -21,6 +21,17 @@ module DoorBoard
 
   module_function
 
+  # Door jobs are the scheduled work only one server may do: the door log
+  # import every 6 minutes (it clears the board's log) and the after-hours
+  # lock. Production leaves DOOR_JOBS unset. A staging copy runs with
+  # DOOR_JOBS=off so it never repeats them; members' own door actions there
+  # still work.
+  def jobs_enabled?
+    ENV["DOOR_JOBS"].to_s.strip.downcase != "off"
+  end
+
+  JOBS_OFF_MESSAGE = "Door jobs are off on this server (DOOR_JOBS=off).".freeze
+
   # GET door_access_url + "?" + query and return the response body as a String.
   # The query is passed through untouched: the firmware parses a raw, fixed-width
   # query string and runs one command per request, so callers are responsible for
