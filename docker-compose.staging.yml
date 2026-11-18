@@ -13,7 +13,12 @@
 # Door: DOOR_JOBS is "off" here, written in this file so it cannot be switched
 # on from Coolify. Staging never runs the door log import or the after-hours
 # lock; production does. Door actions go through the staging door-api
-# (DOOR_API_URL, see the door-api repo's docker-compose.staging.yml).
+# (DOOR_API_URL, see the door-api repo's docker-compose.staging.yml), whose
+# front controller is the REAL front door: open, unlock and lock move it.
+# door-api staging refuses card writes and log reads on the real board.
+#
+# How staging and production deploy, the flags, and how to ship a change:
+# README.md, "Staging and production".
 #
 # Values in ${...} come from the Coolify resource's environment variables.
 services:

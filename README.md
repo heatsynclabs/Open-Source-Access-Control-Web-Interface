@@ -17,6 +17,87 @@ Contributions welcome! Simply send a pull request via Github.
 HeatSync's production members app, brought off Rails 3.2. Now Ruby 3.3 / Rails 7.2 / PostgreSQL, Dockerized, and themed with GANTRY (light or dark, following the device until someone picks one). Same features (members, door logs, payments, certifications, audit log, member signup), current stack, plus a lab calendar and an analytics page.
 
 
+## Staging and production
+
+### What runs where
+
+| Branch | Coolify app (the lab's R610, `172.22.110.200:8000`) | Compose file | Address |
+|---|---|---|---|
+| `main` | `members-production` (`del3ydip0byiellecae4rhl6`), project Member-Resources | `docker-compose.production.yml` | https://members.heatsynclabs.org |
+| `staging` | `members-staging` (`cpk0vwvqj0muqs0iexoqkhjp`), project Critical Infra, environment `staging` | `docker-compose.staging.yml` | https://staging.heatsynclabs.org (staging mail: http://172.22.110.200:8025, lab network only) |
+
+### How a push deploys
+
+One GitHub webhook on this repo (id `705434501`, push events) sends every push to
+`https://coolify.heatsynclabs.org/webhooks/source/github/events/manual`. Coolify
+checks the signature and redeploys only the app whose branch matches: a push to
+`main` deploys production, a push to `staging` deploys staging, and any other
+branch deploys nothing. Deploys do not run database migrations. Progress and
+logs: Coolify, the app, Deployments and Logs.
+
+### How staging differs
+
+- **Data.** Each staging deploy loads the newest nightly backup of production
+  (02:00, `/data/backups/offsite/members`, mounted read-only) into its own
+  database through the one-shot service `staging-db-restore`, then starts the
+  site. Production's database is never contacted. Staging changes are replaced
+  on the next deploy unless `STAGING_DB_REFRESH=off` is set in Coolify.
+- **Mail** goes to Mailpit (`staging-mail`), never to members.
+- **Photos** load from production's S3 bucket, but staging has no S3 keys, so
+  uploads and deletes fail instead of touching production's files.
+- **Door.** Staging sends door actions through door-api staging
+  (`DOOR_BACKEND=door_api`), which moves the **real front door**. Open, unlock
+  and lock work, so tell people at the lab before testing them. Staging never
+  runs the door jobs, which stay on production: the door log import, the
+  after-hours lock and card writes.
+- Every page shows a staging bar (`STAGING_NOTICE`), and tab titles start with
+  "Staging:".
+
+### Flags and where they are
+
+| Flag | Where | Production | Staging |
+|---|---|---|---|
+| `DOOR_JOBS` | compose file (written in `docker-compose.staging.yml`, so it cannot be changed from Coolify) | unset, meaning on | `"off"`: `/door_logs/auto_download` answers 403 and the after-hours lock account does nothing (`DoorBoard.jobs_enabled?`) |
+| `DOOR_BACKEND` | Coolify env | unset, meaning `legacy` (talks to the board at `DOOR_ACCESS_URL` directly) | `door_api` |
+| `DOOR_API_URL`, `DOOR_API_KEY`, `DOOR_CONTROLLER`, `DOOR_DOORS` | Coolify env | unset | door-api staging, its key, `front`, `1,2` |
+| `DOOR_ACCESS_URL`, `DOOR_ACCESS_PASSWORD` | Coolify env | the real board | the simulator (only the blocked log import would use them) |
+| `STAGING_DB_REFRESH` | Coolify env | n/a | unset (restore every deploy); `off` keeps staging data |
+| `STAGING_NOTICE`, `MAIL_HOST`, `MAIL_PROTOCOL` | compose file | unset (`members.heatsynclabs.org`) | the banner text, `staging.heatsynclabs.org`, `https` |
+
+Secrets live only in Coolify's environment variables, with a copy in the ops
+folder's `secrets/SECRETS.md`. door-api staging has its own flags and the board
+password: see the door-api repo's README, "Staging and production".
+
+Production's door jobs are Coolify scheduled tasks on `members-production`:
+`door-log-import` (every 6 minutes) and `door-after-hours-lock`. Staging has
+no scheduled tasks.
+
+### Making a change, testing it, shipping it
+
+1. **Start from `staging`.** Run `git checkout staging && git pull`, then
+   `git checkout -b my-change`. If `main` has moved on, merge `main` into
+   `staging` first so staging tests what production will become.
+2. **Test locally.** Run `docker compose up` and the tests (see Tests below).
+   Locally, keep `DOOR_ACCESS_URL=http://127.0.0.1:9` so nothing on your laptop
+   can reach the real board.
+3. **Deploy to staging.** Merge your branch into `staging` and push. Coolify
+   redeploys staging with a fresh copy of last night's data, which takes a few
+   minutes.
+4. **Check it on staging.** Go to https://staging.heatsynclabs.org, sign in with
+   your normal account and use the change the way members will. Emails it sends
+   are at http://172.22.110.200:8025.
+5. **Go live.** Open a pull request from `staging` (or your branch) to `main`,
+   review it and merge it. The merge deploys production. Then check
+   https://members.heatsynclabs.org and the app's Logs in Coolify.
+6. **If it breaks.** Revert the merge on `main` and push. That redeploys the
+   previous code. In Coolify you can also redeploy an earlier deployment.
+
+Merging `staging` into `main` carries the door-api code and the `DOOR_JOBS`
+check. Both are safe for production as long as production leaves
+`DOOR_BACKEND` and `DOOR_JOBS` unset. A change that needs a database migration
+needs one run by hand on production, because deploys do not run them.
+
+
 ## How the front end is built
 
 * **One layout** (`app/views/layouts/application.html.erb`) for every page: header, main nav, the role menus (Treasurer, Admin), caution tape, footer.
