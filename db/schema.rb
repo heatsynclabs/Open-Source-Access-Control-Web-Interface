@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_19_210000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_20_000000) do
 
   create_table "audit_events", :force => true do |t|
     t.string   "event_type"
@@ -233,6 +233,22 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_19_210000) do
   end
 
   add_index "settings", ["thing_type", "thing_id", "var"], :name => "index_settings_on_thing_type_and_thing_id_and_var", :unique => true
+
+  create_table "ticketed_events", :force => true do |t|
+    t.integer  "guestlist_id",                                                :null => false
+    t.string   "name",                                                        :null => false
+    t.date     "held_on",                                                     :null => false
+    t.string   "kind",                                                        :null => false
+    t.string   "status",                                                      :null => false
+    t.integer  "attendees",                                  :default => 0,   :null => false
+    t.integer  "checked_in",                                 :default => 0,   :null => false
+    t.decimal  "dollars",      :precision => 10, :scale => 2, :default => 0.0, :null => false
+    t.datetime "created_at",                                                  :null => false
+    t.datetime "updated_at",                                                  :null => false
+  end
+
+  add_index "ticketed_events", ["guestlist_id"], :name => "index_ticketed_events_on_guestlist_id", :unique => true
+  add_index "ticketed_events", ["held_on"], :name => "index_ticketed_events_on_held_on"
 
   create_table "toolshare_users", :force => true do |t|
     t.string   "email",                               :default => "", :null => false

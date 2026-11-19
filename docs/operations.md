@@ -38,6 +38,27 @@ Pausing the log import loses nothing unless the board fills its 40 events.
 | Waivers and photos | nightly copy (01:30) by `members-files-backup` | `/data/backups/offsite/members-files`, uploaded off site by SpiderOak |
 | Door board cards | the board keeps them itself; the site can re-upload all of them | the site's database is the master list |
 
+## Class sign-ups on the analytics page
+
+The analytics page's "Who signs up" section counts the lab's classes and workshops sold
+on guestlist.co, the lab's ticketing site: events held, people signed up, how many came
+(at the events that checked people in), the best attended events and, for the treasurer
+and admins, the money collected. Guestlist has no feed the site can read without the
+organizer login, so the numbers are a snapshot in the table `ticketed_events`, one row
+per event with its name, day, kind, status and counts (no attendee names).
+
+The snapshot is built off the server by the operations folder's
+`data/scripts/guestlist.py` from a pull of the organizer account, checked against the lab
+calendar so that cancelled events, drafts, empty copies and events nobody signed up for
+are marked and left out of the counts. To refresh it, rebuild `guestlist_events.csv`
+there, then on the server:
+
+    bin/rails db:migrate     # once, to create ticketed_events
+    bin/rails runner script/ticketed_events.rb load guestlist_events.csv
+
+Loading replaces every row in one transaction, so it can be rerun. Until the table exists
+the section is left out and the rest of the page works as before.
+
 ## When something breaks
 
 | Symptom | First checks |

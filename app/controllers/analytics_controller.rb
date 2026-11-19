@@ -1,5 +1,5 @@
-# Aggregate charts for signed-in members: members, door use and the
-# calendar, plus dues for the treasurer and admins. Counts only; nothing on
+# Aggregate charts for signed-in members: members, door use, the calendar
+# and class sign-ups, plus dues and class money for the treasurer and admins. Counts only; nothing on
 # this page names a person.
 class AnalyticsController < ApplicationController
   before_action :authenticate_user!
@@ -12,6 +12,11 @@ class AnalyticsController < ApplicationController
     @payments = cached(:payments) { payments_section(Analytics::Payments.new(@period)) } if can?(:manage, Payment)
     @door = cached(:door) { door_section(Analytics::Door.new(@period)) }
     @calendar = calendar_section
+    if TicketedEvent.available?
+      classes = Analytics::Classes.new(@period)
+      @classes = cached(:classes) { classes_section(classes) }
+      @class_money = cached(:class_money) { { total: classes.dollars_total, by_period: classes.dollars_by_period } } if can?(:manage, Payment)
+    end
   end
 
   private
@@ -44,6 +49,14 @@ class AnalyticsController < ApplicationController
       entries_by_period: door.entries_by_period,
       cards_by_period: door.distinct_cards_by_period, by_day: door.entries_by_day,
       grid: door.weekday_hour_grid, remote: door.remote_by_source,
+    }
+  end
+
+  def classes_section(classes)
+    {
+      events: classes.events_count, attendees: classes.attendees_total, show_up: classes.show_up,
+      by_period: classes.attendees_by_period, by_kind: classes.by_kind, top: classes.top_events,
+      left_out: classes.left_out, loaded_on: classes.loaded_on,
     }
   end
 
