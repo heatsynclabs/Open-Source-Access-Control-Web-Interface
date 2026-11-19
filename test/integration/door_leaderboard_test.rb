@@ -16,6 +16,7 @@ class DoorLeaderboardTest < ActionDispatch::IntegrationTest
   setup do
     Rails.cache.clear
     DoorLog.delete_all
+    DoorActivityArchive.delete_all
     @ada = member("Ada Lovelace")
     [[0, "rem_u=1", @ada.id], [2, "door_1_locked", 0]].each do |seconds, key, data|
       at = 40.minutes.ago + seconds
@@ -52,5 +53,19 @@ class DoorLeaderboardTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", door_leaderboard_path, false
     get door_leaderboard_path
     assert_redirected_to root_url
+  end
+
+  test "all time shows the archived years with a note about the lost ones" do
+    old = member("Old Timer")
+    DoorActivityArchive.create!(user_id: old.id, hours: 321.5, shifts: 60, opened: 70, locked: 65, days: 400,
+                                covers_from: Date.new(2012, 8, 25), covers_to: Date.new(2020, 4, 13))
+    sign_in member("Grace Hopper")
+    get door_leaderboard_path(window: "all")
+    assert_response :success
+    assert_match "Old T.", response.body
+    assert_match "August 2012 to April 2020", response.body
+    get door_leaderboard_path(window: "month")
+    assert_no_match "Old T.", response.body
+    assert_no_match "recovered from old backups", response.body
   end
 end

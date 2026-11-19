@@ -55,6 +55,31 @@ every 2 minutes, it would take more than about 10 swipes in 2 minutes to push th
 entries out. (Until 2026-11-18 the import ran every 6 minutes, and a busy evening could fill
 the board's log.)
 
+## The door leaderboard
+
+The leaderboard (`/door_leaderboard`) has two boards, "Kept the lab open" (hours from your
+own unlock to your own lock) and "Days at the lab", for this month and for all time. It
+reads the door log through `app/queries/door_activity.rb`.
+
+**All time reaches back to 2012.** The live door log starts on 2022-07-30. The years before
+were recovered from old backups on 2026-11-19: August 2012 to April 2020 (the log from
+April 2020 to July 2022 was lost for good). They were scored once, on a laptop, with the
+same rules, and only the per-member totals were loaded into the table
+`door_activity_archives`. The all-time boards add those totals, so the server never reads
+the old log; the page says which years are included.
+
+**Keeping it light.** This month's numbers are rebuilt at most every 10 minutes and all
+time at most every hour (about a second of database work), and only one request rebuilds
+while the others are served the old numbers.
+
+**Rebuilding the archive** (only if the rules change):
+1. Load the old rows and that era's cards into a scratch database (never production).
+   The full log and the card list come from the lab's ops records.
+2. `bin/rails runner script/door_activity_archive.rb build archive.json` there.
+3. On production: `bin/rails runner script/door_activity_archive.rb load archive.json`.
+
+The archive file holds member ids, so it never goes into git.
+
 ## What the board's log entries mean
 
 Each event is a letter and a number, saved as a `door_logs` row.

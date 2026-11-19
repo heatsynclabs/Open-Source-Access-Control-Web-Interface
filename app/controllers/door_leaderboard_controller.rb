@@ -10,5 +10,6 @@ class DoorLeaderboardController < ApplicationController
     activity = DoorActivity.new
     @opened = activity.opened_the_lab(@window, stats: activity.cached_stats(:opening, @window))
     @days = activity.days_at_the_lab(@window, stats: activity.cached_stats(:days, @window))
+    @archive_span = DoorActivityArchive.span if @window == "all"
   end
 end

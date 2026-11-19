@@ -31,6 +31,10 @@ class DoorActivity
   LONGEST_PERIOD = 14.hours     # nothing open longer than this is trusted
   SHORTEST_PERIOD = 30.minutes  # shorter is letting someone in
   CACHE_FOR = 10.minutes
+  # All time changes slowly and costs about a second of queries to build, so
+  # it is rebuilt at most hourly; race_condition_ttl lets one request rebuild
+  # it while the others keep serving the old numbers.
+  ALL_TIME_CACHE_FOR = 1.hour
 
   WINDOWS = { "month" => "This month", "all" => "All time" }.freeze
 
@@ -68,7 +72,8 @@ class DoorActivity
   # are cached; people are looked up on every request.
   def cached_stats(board, window)
     month = @now.to_date.beginning_of_month.iso8601 if window == "month"
-    Rails.cache.fetch(["door_activity", "v2", board, window, month], expires_in: CACHE_FOR) do
+    expires_in = window == "all" ? ALL_TIME_CACHE_FOR : CACHE_FOR
+    Rails.cache.fetch(["door_activity", "v3", board, window, month], expires_in: expires_in, race_condition_ttl: 1.minute) do
       case board
       when :opening then opening_stats(window)
       when :days then day_stats(window)
@@ -90,8 +95,10 @@ class DoorActivity
   end
 
   # Plain numbers per user id, safe to cache: users are looked up fresh on
-  # every request, so hiding a profile takes effect at once.
-  def opening_stats(window)
+  # every request, so hiding a profile takes effect at once. "all" adds the
+  # archived years (DoorActivityArchive) unless archive: false, which is how
+  # the archive itself is built.
+  def opening_stats(window, archive: true)
     stats = Hash.new { |hash, id| hash[id] = { hours: 0.0, shifts: 0, opened: 0, locked: 0 } }
     periods(range(window)).each do |period|
       stats[period[:opener]][:opened] += 1
@@ -101,17 +108,30 @@ class DoorActivity
       stats[closer][:shifts] += 1
       stats[closer][:hours] += (period[:locked_at] - period[:unlocked_at]) / 3600.0
     end
+    add_archive(stats, DoorActivityArchive.opening_stats) if archive && window == "all"
     stats.transform_values { |s| s.merge(hours: s[:hours].round(1)) }
   end
 
-  def day_stats(window)
+  def day_stats(window, archive: true)
     days = Hash.new { |hash, id| hash[id] = Set.new }
     card_days(range(window)).each { |id, day| days[id] << day }
     remote_days(range(window)).each { |id, day| days[id] << day }
-    days.transform_values { |set| { days: set.size } }
+    stats = days.transform_values { |set| { days: set.size } }
+    add_archive(stats, DoorActivityArchive.day_stats) if archive && window == "all"
+    stats
   end
 
   private
+
+  # Adds archived totals to live ones, per user id. The archive's years end
+  # before the live table starts, so adding is exact (days included).
+  def add_archive(stats, archived)
+    archived.each do |id, extra|
+      current = stats.key?(id) ? stats[id] : extra.transform_values { 0 }
+      stats[id] = current.merge(extra) { |_, live, old| live + old }
+    end
+    stats
+  end
 
   def range(window)
     window == "all" ? nil : (@now.beginning_of_month..@now)

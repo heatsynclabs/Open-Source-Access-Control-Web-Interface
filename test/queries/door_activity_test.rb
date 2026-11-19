@@ -6,7 +6,13 @@ class DoorActivityTest < ActiveSupport::TestCase
 
   setup do
     DoorLog.delete_all
+    DoorActivityArchive.delete_all
     Rails.cache.clear
+  end
+
+  def archive(user, hours: 0, shifts: 0, opened: 0, locked: 0, days: 0)
+    DoorActivityArchive.create!(user_id: user.id, hours: hours, shifts: shifts, opened: opened, locked: locked, days: days,
+                                covers_from: Date.new(2012, 8, 25), covers_to: Date.new(2020, 4, 13))
   end
 
   def member(name, hidden: false, card: nil, oriented: true)
@@ -216,5 +222,59 @@ class DoorActivityTest < ActiveSupport::TestCase
     assert_equal "Ada L.", User.new(name: "Ada King Lovelace").short_name
     assert_equal "Cher", User.new(name: "Cher").short_name
     assert_equal "", User.new(name: nil).short_name
+  end
+
+  # ---------------------------------------------------------- archived years
+
+  test "all time adds the archived years to the live log; this month does not" do
+    ada, grace = member("Ada Lovelace"), member("Grace Hopper")
+    unlock(ada.id, NOW - 3.hours)
+    lock(ada.id, NOW - 1.hour)
+    archive(ada, hours: 100.5, shifts: 40, opened: 50, locked: 45, days: 200)
+    archive(grace, hours: 10.0, shifts: 4, opened: 6, locked: 5, days: 30) # only in the archive
+    all = activity.opening_stats("all")
+    assert_equal({ hours: 102.5, shifts: 41, opened: 51, locked: 46 }, all[ada.id])
+    assert_equal({ hours: 10.0, shifts: 4, opened: 6, locked: 5 }, all[grace.id])
+    assert_equal({ hours: 2.0, shifts: 1, opened: 1, locked: 1 }, activity.opening_stats("month")[ada.id])
+    assert_nil activity.opening_stats("month")[grace.id]
+    assert_equal [ada, grace], activity.opened_the_lab("all").map(&:user)
+  end
+
+  test "days from the archive add to live days on the all-time board only" do
+    ada = member("Ada Lovelace", card: "1a2b3c")
+    swipe("1a2b3c", NOW - 2.hours)
+    archive(ada, days: 300)
+    assert_equal 301, activity.day_stats("all")[ada.id][:days]
+    assert_equal 1, activity.day_stats("month")[ada.id][:days]
+  end
+
+  test "archive: false scores the live log alone, the way the archive is built" do
+    ada = member("Ada Lovelace")
+    archive(ada, hours: 50, shifts: 5, opened: 5, locked: 5, days: 9)
+    assert_empty activity.opening_stats("all", archive: false)
+    assert_empty activity.day_stats("all", archive: false)
+  end
+
+  test "hidden members in the archive stay off the boards" do
+    shy = member("Shy Person", hidden: true)
+    archive(shy, hours: 500, shifts: 90, opened: 90, locked: 90, days: 900)
+    assert_empty activity.opened_the_lab("all")
+    assert_empty activity.days_at_the_lab("all")
+  end
+
+  test "without the archive table the boards show the live log" do
+    ada = member("Ada Lovelace")
+    unlock(ada.id, NOW - 3.hours)
+    lock(ada.id, NOW - 1.hour)
+    DoorActivityArchive.stub(:available?, false) do
+      assert_equal({ hours: 2.0, shifts: 1, opened: 1, locked: 1 }, activity.opening_stats("all")[ada.id])
+      assert_nil DoorActivityArchive.span
+    end
+  end
+
+  test "the archive span comes from its rows" do
+    assert_nil DoorActivityArchive.span
+    archive(member("Ada Lovelace"), hours: 1)
+    assert_equal Date.new(2012, 8, 25)..Date.new(2020, 4, 13), DoorActivityArchive.span
   end
 end
