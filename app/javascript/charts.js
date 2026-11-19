@@ -64,3 +64,7 @@ window.addEventListener("theme:change", () => {
   applyTheme()
   redrawAll()
 })
+
+// Charts drawn later inside a Turbo Frame (the profile's Door stats tab)
+// take the theme too.
+document.addEventListener("turbo:frame-load", redrawAll)
