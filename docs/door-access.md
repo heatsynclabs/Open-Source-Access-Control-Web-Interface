@@ -35,8 +35,8 @@ members who hold an active card.
 
 | Job | When | What it does |
 |---|---|---|
-| Door log import | every 6 minutes | asks door-api for the board's event log (the board keeps only its last 40 events), saves the events to the database, then confirms so door-api can forget them |
-| After-hours lock | every 15 minutes from 22:00 to 08:59 | sends "lock all" as the automatic-lock account (user 468), so the doors are locked overnight even if someone forgot |
+| Door log import | every 2 minutes | asks door-api for the board's event log (the board keeps only its last 40 events), saves the events to the database, then confirms so door-api can forget them |
+| After-hours lock | every 15 minutes from 22:00 to 08:45 | sends "lock all" as the automatic-lock account (user 468), so the doors are locked overnight even if someone forgot |
 | Status | after every door action | stores the board's status (each door locked or not, the alarm fields), which the site and its public status use |
 
 These are Coolify scheduled tasks on the production app. Staging never runs them.
@@ -49,9 +49,36 @@ restarting or times out, the events wait in door-api and come back on the next i
 crash at exactly the wrong moment can save an event twice; it cannot lose one. Two imports
 never run at the same time: the site takes a database lock around each one.
 
-One limit comes from the board itself: it holds only 40 events between imports. On a very
-busy evening, more than about 7 card swipes in 6 minutes can push the oldest events out
-before the import collects them.
+One limit comes from the board itself: it holds only 40 log entries between imports, and
+each card swipe writes four (the card's two halves, the unlock, the relock). With the import
+every 2 minutes, it would take more than about 10 swipes in 2 minutes to push the oldest
+entries out. (Until 2026-11-18 the import ran every 6 minutes, and a busy evening could fill
+the board's log.)
+
+## The door leaderboard
+
+The leaderboard (`/door_leaderboard`) has two boards, "Kept the lab open" (hours from your
+own unlock to your own lock) and "Days at the lab", for this month and for all time. It
+reads the door log through `app/queries/door_activity.rb`.
+
+**All time reaches back to 2012.** The live door log starts on 2022-07-30. The years before
+were recovered from old backups on 2026-11-19: August 2012 to April 2020 (the log from
+April 2020 to July 2022 was lost for good). They were scored once, on a laptop, with the
+same rules, and only the per-member totals were loaded into the table
+`door_activity_archives`. The all-time boards add those totals, so the server never reads
+the old log; the page says which years are included.
+
+**Keeping it light.** This month's numbers are rebuilt at most every 10 minutes and all
+time at most every hour (about a second of database work), and only one request rebuilds
+while the others are served the old numbers.
+
+**Rebuilding the archive** (only if the rules change):
+1. Load the old rows and that era's cards into a scratch database (never production).
+   The full log and the card list come from the lab's ops records.
+2. `bin/rails runner script/door_activity_archive.rb build archive.json` there.
+3. On production: `bin/rails runner script/door_activity_archive.rb load archive.json`.
+
+The archive file holds member ids, so it never goes into git.
 
 ## What the board's log entries mean
 

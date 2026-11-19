@@ -22,7 +22,7 @@ module DoorBoard
   module_function
 
   # Door jobs are the scheduled work only one server may do: the door log
-  # import every 6 minutes (it clears the board's log) and the after-hours
+  # import every 2 minutes (it clears the board's log) and the after-hours
   # lock. Production leaves DOOR_JOBS unset. A staging copy runs with
   # DOOR_JOBS=off so it never repeats them; members' own door actions there
   # still work.

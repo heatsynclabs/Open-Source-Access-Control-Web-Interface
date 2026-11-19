@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_02_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_19_120000) do
 
   create_table "audit_events", :force => true do |t|
     t.string   "event_type"
@@ -64,6 +64,21 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_120000) do
     t.string   "cosigner"
     t.integer  "created_by_id"
   end
+
+  create_table "door_activity_archives", :force => true do |t|
+    t.integer  "user_id", :null => false
+    t.decimal  "hours", :precision => 10, :scale => 1, :default => 0, :null => false
+    t.integer  "shifts", :default => 0, :null => false
+    t.integer  "opened", :default => 0, :null => false
+    t.integer  "locked", :default => 0, :null => false
+    t.integer  "days", :default => 0, :null => false
+    t.date     "covers_from", :null => false
+    t.date     "covers_to", :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "door_activity_archives", ["user_id"], :name => "index_door_activity_archives_on_user_id", :unique => true
 
   create_table "door_logs", :force => true do |t|
     t.string   "key"

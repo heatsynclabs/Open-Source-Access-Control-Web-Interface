@@ -32,4 +32,7 @@
   </section>
 </div>
 
-<p class="note">Hidden profiles are left out. Updated every 10 minutes.</p>
+<% if @archive_span %>
+  <p class="note">All time includes the door log from <%= @archive_span.first.strftime("%B %Y") %> to <%= @archive_span.last.strftime("%B %Y") %>, recovered from old backups. The log from April 2020 to July 2022 was lost, so those years count for nobody.</p>
+<% end %>
+<p class="note">Hidden profiles are left out. This month updates every 10 minutes, all time every hour.</p>

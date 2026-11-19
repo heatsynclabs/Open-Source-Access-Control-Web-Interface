@@ -17,8 +17,8 @@ is the operations folder's `docs/24-door-system-now.md`.
 
 | Job | When | Healthy looks like |
 |---|---|---|
-| `door-log-import` | every 6 minutes | recent executions "success"; Admin > Door logs shows new rows after door use |
-| `door-after-hours-lock` | :00, :15, :30, :45 from 22:00 to 08:59 | executions "success"; the doors show locked overnight |
+| `door-log-import` | every 2 minutes | recent executions "success"; Admin > Door logs shows new rows after door use |
+| `door-after-hours-lock` | :00, :15, :30, :45 from 22:00 to 08:45 | executions "success"; the doors show locked overnight |
 
 To pause one (for maintenance), turn it off in Scheduled Tasks and back on afterwards.
 Pausing the log import loses nothing unless the board fills its 40 events.
