@@ -21,7 +21,7 @@
 
 <%# ---------------------------------------------------------------- door %>
 <div class="section-head"><p class="eyebrow">The door</p><h2>When people come in</h2></div>
-<%= render ChartCardComponent.new(title: "Card entries and distinct cards", note: "Entries are door opens with a card; distinct cards counts each card once per #{@period.unit}.") do %>
+<%= render ChartCardComponent.new(title: "Card entries and distinct cards", note: "Entries are door opens with a card; distinct cards counts each card once per #{@period.unit}. The log reaches back to 2012; #{door_lost_span} was lost.") do %>
   <%= line_chart [
         { name: "Entries", data: by_bucket(@door[:entries_by_period], @period) },
         { name: "Distinct cards", data: by_bucket(@door[:cards_by_period], @period) },

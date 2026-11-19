@@ -70,4 +70,25 @@ class Analytics::QueriesTest < ActiveSupport::TestCase
       assert_equal 15.0, comparison["Days with nothing on"]
     end
   end
+
+  test "door counts include the archived years on the all-time view" do
+    DoorLogArchive.delete_all
+    DoorLog.where(created_at: Time.zone.local(2014, 1, 1)..Time.zone.local(2015, 1, 1)).delete_all
+    at = Time.zone.local(2014, 3, 4, 19)
+    DoorLogArchive.create!(key: "G", data: 1234, created_at: at)
+    DoorLogArchive.create!(key: "G", data: 1234, created_at: at + 1.hour)
+    DoorLogArchive.create!(key: "rem_u=1", data: 7, created_at: at)
+    door = Analytics::Door.new(Analytics::Period.new("all"))
+    assert_equal 2, door.entries_by_day[Date.new(2014, 3, 4)]
+    assert_equal 1, door.distinct_cards_by_period[Date.new(2014, 3, 1)]
+    assert_operator door.weekday_hour_grid[[2, 19]].to_i, :>=, 1
+    assert_equal 1, door.remote_by_source.find { |s| s[:name] == "Website" }[:data][Date.new(2014, 3, 1)]
+    assert_nil Analytics::Door.new(period).entries_by_day[Date.new(2014, 3, 4)] # a recent period leaves it out
+  end
+
+  test "door counts fall back to the live log before the archive table exists" do
+    DoorLogArchive.stub(:available?, false) do
+      assert_kind_of Integer, Analytics::Door.new(Analytics::Period.new("all")).entries_total
+    end
+  end
 end
