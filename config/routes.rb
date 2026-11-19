@@ -18,6 +18,10 @@ Dooraccess::Application.routes.draw do
 
   resources :user_certifications
   resources :certifications
+  # Stored files go through the app, which checks access (config/initializers/file_storage.rb).
+  get 'contracts/:id/document(/:style)' => 'contracts#document', :as => :contract_document, :constraints => { :style => /original|medium|large/ }
+  get 'resources/:id/photo/:attachment(/:style)' => 'resources#photo', :as => :resource_photo,
+      :constraints => { :attachment => /picture[234]?/, :style => /original|medium|thumb|tiny/ }
   resources :contracts
 
   match 'contracts/find_for_user/:user_id' => 'contracts#find_for_user', as: 'find_for_user', via: [:get, :post]

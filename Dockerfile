@@ -1,12 +1,13 @@
 FROM ruby:3.3.5-slim
 
 # System deps: build tools for native gems (pg, bcrypt, passenger),
-# imagemagick for Paperclip, postgres client headers, git and curl. No Node:
+# imagemagick and file (content-type checks) for Paperclip, postgres client headers, git and curl. No Node:
 # JavaScript is served through import maps and needs no build.
 RUN apt-get update -qq && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
     imagemagick \
+    file \
     git \
     curl \
     && rm -rf /var/lib/apt/lists/*

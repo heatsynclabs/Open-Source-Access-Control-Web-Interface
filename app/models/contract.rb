@@ -8,17 +8,18 @@ class Contract < ActiveRecord::Base
 
   validates_presence_of :first_name, :signed_at #, :last_name
 
+  # Signed waivers: personal data. Private in the store, served only through
+  # ContractsController#document (admins). Kept in the store when a record is
+  # deleted (preserve_files): deleting a waiver is a Board decision.
+  DOCUMENT_TYPES = %w[application/pdf image/jpeg image/png].freeze
+  IMAGE_STYLES = { :medium => "300x300>", :large => "900x900>" }.freeze
+
   has_attached_file :document,
-                    { :styles =>
-                      {
-                        :medium => "300x300>",
-                        :large => "900x900>"
-                      },
-                      :storage => :s3,
-                      :s3_protocol => :https,
-                      :s3_credentials => { :access_key_id     => ENV['S3_KEY'],
-                                         :secret_access_key => ENV['S3_SECRET'] },
-                      :path => ":attachment/:id/:style.:extension",
-                      :bucket => ENV['S3_BUCKET']
-                    }
+                    FileStorage.options(bucket: FileStorage.documents_bucket, private_files: true).merge(
+                      # Previews only for scans; a PDF is served as it was uploaded.
+                      :styles => ->(a) { a.instance.document_content_type.to_s.start_with?('image/') ? IMAGE_STYLES : {} },
+                      :preserve_files => true
+                    )
+  validates_attachment_content_type :document, :content_type => DOCUMENT_TYPES
+  validates_attachment_size :document, :less_than => 20.megabytes
 end

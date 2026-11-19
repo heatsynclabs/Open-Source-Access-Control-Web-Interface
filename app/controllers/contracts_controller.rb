@@ -1,4 +1,5 @@
 class ContractsController < ApplicationController
+  include SendsStoredFiles
   load_and_authorize_resource :contract
   before_action :authenticate_user!, :load_users
 
@@ -14,6 +15,15 @@ class ContractsController < ApplicationController
   end
 
   def show
+  end
+
+  # The signed waiver, streamed after load_and_authorize_resource checked access
+  # (admins). There is no direct store link, so an old or guessed URL gets nothing.
+  def document
+    style = (params[:style].presence || 'original').to_sym
+    attachment = @contract.document
+    return head(:not_found) unless attachment.present? && (style == :original || attachment.styles.key?(style))
+    send_stored_file(attachment, style, "waiver-#{@contract.id}", private_file: true)
   end
 
   def new

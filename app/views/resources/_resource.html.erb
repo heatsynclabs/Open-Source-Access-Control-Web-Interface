@@ -2,7 +2,7 @@
 <%= link_to resource, class: ["tool-card", ("gone" if resource.disposed_at)] do %>
   <span class="pic">
     <% if resource.picture? %>
-      <%= image_tag resource.picture.url(:medium), alt: "", loading: "lazy" %>
+      <%= image_tag resource_photo_path(resource, :picture, :medium), alt: "", loading: "lazy" %>
     <% else %>
       <%= lucide_icon "wrench" %>
     <% end %>

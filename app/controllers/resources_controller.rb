@@ -1,10 +1,22 @@
 class ResourcesController < ApplicationController
-  load_and_authorize_resource
+  include SendsStoredFiles
+  load_and_authorize_resource :except => :photo
   before_action :load_users
 
   def index
     @resources = @resources.includes(:user, :resource_category)
     @featured_resource = @resources.where("picture_file_name IS NOT NULL").sample
+  end
+
+  # A tool photo (public, like the resource pages), streamed from the store.
+  def photo
+    @resource = Resource.find(params[:id])
+    authorize! :read, @resource
+    name = params[:attachment].to_sym
+    style = (params[:style].presence || 'original').to_sym
+    attachment = @resource.public_send(name) if Resource::PICTURES.include?(name)
+    return head(:not_found) unless attachment.present? && (style == :original || attachment.styles.key?(style))
+    send_stored_file(attachment, style, "#{name}-#{@resource.id}-#{style}", private_file: false)
   end
 
   def new

@@ -22,9 +22,9 @@
       <%= render EmptyStateComponent.new("No document uploaded.") %>
     <% else %>
       <% begin %>
-        <p><%= link_to "Download", @contract.document.url, class: "btn small" %></p>
+        <p><%= link_to "Download", contract_document_path(@contract, download: 1), class: "btn small" %></p>
         <div class="contract-doc">
-          <iframe src="<%= @contract.document.url %>" title="Signed waiver document"></iframe>
+          <iframe src="<%= contract_document_path(@contract) %>" title="Signed waiver document"></iframe>
         </div>
       <% rescue StandardError %>
         <p class="empty">The signed document could not be loaded here.</p>
