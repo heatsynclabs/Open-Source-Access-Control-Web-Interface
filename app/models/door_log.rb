@@ -42,35 +42,70 @@ class DoorLog < ActiveRecord::Base
     end
   end
 
-  def self.execute_command(command)
-    output = ""
-    # load config values
-    door_access_url = APP_CONFIG['door_access_url']
-    door_access_password = APP_CONFIG['door_access_password']
+  # Remote commands that would unlock the rear door. Refused by the remote page
+  # and the phone API (HYH 2018-02-22). "u2" is the short form of "unlock-rear".
+  REAR_UNLOCK_COMMANDS = %w[unlock-rear u2].freeze
 
-    #login
-    source = URI.open("#{door_access_url}?e=#{door_access_password}").read
-    results = source.scan(/ok/)
+  def self.rear_unlock?(command)
+    REAR_UNLOCK_COMMANDS.include?(command.to_s)
+  end
 
-    #only continue if we've got an OK login
-    if(results.size > 0) then
-      # Parse the command and result
-      parsing = parse_command(command)
-      output += parsing[:output]
-      url_param = parsing[:url_param]
+  # actor (optional) is recorded in door-api's audit trail, e.g. "user 12".
+  def self.execute_command(command, actor: nil)
+    return execute_command_via_api(command, actor: actor) if DoorApiClient.enabled?
 
-      # Execute the command
-      URI.open("#{door_access_url}?#{url_param}")
+    password = APP_CONFIG['door_access_password']
 
-      self.download_status # Update the status cache
-    else
-      output +=  'Failed to connect to door system.'
+    # login; only continue if we got an OK login
+    unless DoorBoard.get("e=#{password}").scan(/ok/).size > 0
+      return 'Failed to connect to door system.'
     end
 
-    #logout
-    URI.open("#{door_access_url}?e=0000")
+    parsing = parse_command(command)
+    DoorBoard.get(parsing[:url_param]) # execute the command
+    download_status                    # update the status cache
+    logout(password)                   # best effort; board also auto-logs-out
+    parsing[:output]
+  rescue DoorBoard::Unreachable
+    'Failed to connect to door system.'
+  end
 
-    return output
+  # The door-api call that sends the board the same query as the direct path.
+  # Derived from parse_command's url_param, so the two paths cannot drift apart:
+  #   o1/o2 -> open one door      u -> unlock all (?u)    u=1/u=2 -> unlock one
+  #   l -> lock all (?l)          l=1/l=2 -> lock one     2 -> arm, 1 -> disarm
+  #   9 (an unknown command) -> nothing, just the status refresh
+  def self.door_api_call(url_param)
+    case url_param
+    when /\Ao([12])\z/ then [:door, $1.to_i, 'open']
+    when 'u' then [:all_doors, 'unlock']
+    when /\Au=([12])\z/ then [:door, $1.to_i, 'unlock']
+    when 'l' then [:all_doors, 'lock']
+    when /\Al=([12])\z/ then [:door, $1.to_i, 'lock']
+    when '2' then [:alarm, 'arm']
+    when '1' then [:alarm, 'disarm']
+    end
+  end
+
+  # Run a door command through door-api. Returns the same message as the direct
+  # path, so callers (space_api, api/v1/doors) are unchanged.
+  def self.execute_command_via_api(command, actor: nil)
+    parsing = parse_command(command)
+    call = door_api_call(parsing[:url_param])
+    DoorApiClient.new(:actor => actor).public_send(call.first, *call.drop(1)) if call
+    download_status # refresh the DB status cache, as the direct path does
+    parsing[:output]
+  rescue DoorApiClient::Error => e
+    return 'The door system is busy. Try again in a moment.' if e.code == 'busy'
+    'Failed to connect to door system.'
+  end
+
+  # Tell the board to log out. Best effort: a failure here must not clobber the
+  # result of a command that already ran, and the board logs itself out anyway.
+  def self.logout(_password = nil)
+    DoorBoard.get("e=0000")
+  rescue DoorBoard::Unreachable
+    nil
   end
 
   def self.parse_command(command)
@@ -148,57 +183,80 @@ class DoorLog < ActiveRecord::Base
   end
 
   def self.download_status
-    # load config values
-    door_access_url = APP_CONFIG['door_access_url']
-    door_access_password = APP_CONFIG['door_access_password']
+    return download_status_via_api if DoorApiClient.enabled?
 
     # query for status
-    source = URI.open("#{door_access_url}?9").read
+    source = DoorBoard.get("9")
     # expect {"armed"=>255, "activated"=>255, "alarm_3"=>1, "alarm_2"=>1, "door_1_locked"=>1, "door_2_locked"=>1}
     # See https://github.com/heatsynclabs/Open_Access_Control_Ethernet for more info
-    @status = JSON.parse(source)
-    @status.each do |key,value|
+    status = JSON.parse(source)
+    status.each do |key, value|
       DoorLog.create!({:key => key, :data => value})
     end
+    status
+  rescue DoorBoard::Unreachable
+    nil
   end
 
+  # Pull the board's status through door-api and store every field it printed,
+  # in its order, exactly as the direct path does (armed, activated, alarm_3,
+  # alarm_2, door_1_locked, door_2_locked).
+  def self.download_status_via_api
+    status = DoorApiClient.new.raw_status
+    status.each do |key, value|
+      DoorLog.create!({:key => key, :data => value})
+    end
+    status
+  rescue DoorApiClient::Error
+    nil
+  end
+
+  # Import the board's event buffer. The direct path logs in, reads (?z), saves
+  # the rows, clears (?y) and logs out.
   def self.download_from_door
-    # load config values
-    door_access_url = APP_CONFIG['door_access_url']
-    door_access_password = APP_CONFIG['door_access_password']
+    return download_from_door_via_api if DoorApiClient.enabled?
 
-    # connect to door access system
-    source = URI.open("#{door_access_url}?e=#{door_access_password}").read
-    results = source.scan(/ok/)
-    if(results.size > 0) then
-      @end_results = Array.new
+    password = APP_CONFIG['door_access_password']
 
-      #only continue if we've got an OK login
-      source = URI.open("#{door_access_url}?z").read
-      results = source.scan(/(.*): (.*)\r\n/)
+    # connect; only continue if we got an OK login
+    return false unless DoorBoard.get("e=#{password}").scan(/ok/).size > 0
 
-      results.each do |r|
-        if(r[0] != "\000") then
-          DoorLog.create!({:key => r[0], :data => r[1]})
+    # download the on-board log buffer
+    source = DoorBoard.get("z")
+    results = source.scan(/(.*): (.*)\r\n/)
+    results.each do |r|
+      DoorLog.create!({:key => r[0], :data => r[1]}) if r[0] != "\000"
+    end
+
+    DoorBoard.get("y") # clear the board log now that the rows are saved
+    logout(password)
+
+    results.size > 0 ? results : false
+  rescue DoorBoard::Unreachable
+    false
+  end
+
+  # Through door-api: it reads the buffer, journals it on disk, then clears the
+  # board, and hands back every drain not yet acknowledged (oldest first). Each
+  # is parsed with the same expression and filter as the direct path, saved in
+  # one transaction, then acknowledged. A failure before the ack leaves the drain
+  # in door-api's journal for the next run, so no event is lost.
+  def self.download_from_door_via_api
+    client = DoorApiClient.new
+    all = []
+    client.drain.each do |d|
+      results = d['raw'].to_s.scan(/(.*): (.*)\r\n/)
+      DoorLog.transaction do
+        results.each do |r|
+          DoorLog.create!({:key => r[0], :data => r[1]}) if r[0] != "\000"
         end
       end
-
-      #clear log
-      URI.open("#{door_access_url}?y")
-      #logout
-      URI.open("#{door_access_url}?e=0000")
-
-      if(results.size > 0) then
-        #only return true if we got some kind of decent response
-        return results
-      else
-        # We didn't get a decent response.
-        return false
-      end
-    else
-      # We didn't get an OK login.
-      return false
+      client.ack(d['drain_id'])
+      all.concat(results)
     end
+    all.size > 0 ? all : false
+  rescue DoorApiClient::Error
+    all.to_a.size > 0 ? all : false
   end
 
   def self.key_legend

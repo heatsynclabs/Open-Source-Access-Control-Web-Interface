@@ -22,6 +22,7 @@
 </head>
 <body data-controller="dialog">
   <a class="skip-link" href="#main">Skip to the page</a>
+  <% if staging_notice %><p class="msg warn staging-notice" role="note"><%= staging_notice %></p><% end %>
   <%= render "layouts/header" %>
 
   <main id="main" class="<%= yield :main_class %>" data-controller="tables">

@@ -1,0 +1,109 @@
+# Staging on Coolify: app members-staging, branch `staging`, auto-deploys on
+# every push to that branch.
+#   site   https://staging.heatsynclabs.org (public, like production; the domain
+#          is set on staging_web in Coolify)
+#   mail   http://172.22.110.200:8025 (lab network only; every email staging
+#          sends lands here)
+#
+# Data: on every deploy, staging-db-restore loads the newest nightly backup of
+# the production database (read-only mount of /data/backups/offsite/members).
+# Production's database is never contacted. Anything changed on staging is
+# replaced on the next deploy; set STAGING_DB_REFRESH=off in Coolify to keep it.
+#
+# Door: DOOR_JOBS is "off" here, written in this file so it cannot be switched
+# on from Coolify. Staging never runs the door log import or the after-hours
+# lock; production does. Door actions go through the staging door-api
+# (DOOR_API_URL, see the door-api repo's docker-compose.staging.yml), whose
+# front controller is the REAL front door: open, unlock and lock move it.
+# door-api staging refuses card writes and log reads on the real board.
+#
+# How staging and production deploy, the flags, and how to ship a change:
+# README.md, "Staging and production".
+#
+# Values in ${...} come from the Coolify resource's environment variables.
+services:
+  staging-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: members
+      POSTGRES_DB: members
+      POSTGRES_PASSWORD: ${STAGING_DB_PASSWORD}
+    volumes:
+      - staging_pg16:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U members -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  staging-db-restore:
+    build:
+      context: ./docker/staging-restore
+    restart: "no"
+    exclude_from_hc: true
+    depends_on:
+      staging-db:
+        condition: service_healthy
+    environment:
+      PGHOST: staging-db
+      POSTGRES_PASSWORD: ${STAGING_DB_PASSWORD}
+      STAGING_DB_REFRESH: ${STAGING_DB_REFRESH:-on}
+    volumes:
+      - /data/backups/offsite/members:/backups:ro
+
+  staging-mail:
+    image: axllent/mailpit:v1.32.0
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "true"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "true"
+
+  staging_web:
+    build:
+      context: .
+    restart: unless-stopped
+    depends_on:
+      staging-db-restore:
+        condition: service_completed_successfully
+      staging-mail:
+        condition: service_started
+    expose:
+      - "3000"
+    environment:
+      RAILS_ENV: production
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      DATABASE_URL: postgres://members:${STAGING_DB_PASSWORD}@staging-db:5432/members
+      STAGING_NOTICE: "Staging copy with last night's data. Changes here are thrown away on the next deploy. Email goes to the staging mailbox, not to members."
+      MAIL_HOST: ${STAGING_HOST:-staging.heatsynclabs.org}
+      MAIL_PROTOCOL: https
+      # Door
+      DOOR_JOBS: "off"
+      DOOR_BACKEND: ${DOOR_BACKEND:-door_api}
+      DOOR_API_URL: ${DOOR_API_URL}
+      DOOR_API_KEY: ${DOOR_API_KEY}
+      DOOR_CONTROLLER: ${DOOR_CONTROLLER}
+      DOOR_DOORS: ${DOOR_DOORS:-1,2}
+      DOOR_ACCESS_URL: ${DOOR_ACCESS_URL:-http://127.0.0.1:9}
+      DOOR_ACCESS_PASSWORD: ${DOOR_ACCESS_PASSWORD}
+      # Mail stays on the box
+      SMTP_ADDRESS: staging-mail
+      SMTP_PORT: "1025"
+      SMTP_TLS: "false"
+      SMTP_DOMAIN: heatsynclabs.org
+      # Photos: read from production's bucket by URL; no keys, so staging
+      # cannot upload, change or delete anything there.
+      S3_BUCKET: ${S3_BUCKET}
+      S3_KEY: ""
+      S3_SECRET: ""
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost:3000/space_api/simple.json || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  staging_pg16:

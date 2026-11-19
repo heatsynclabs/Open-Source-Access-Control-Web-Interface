@@ -72,7 +72,12 @@ Dooraccess::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
   
-  config.action_mailer.default_url_options = { :host => 'members.heatsynclabs.org', :protocol => 'https' }
+  # Links in email point at this site. A staging copy sets MAIL_HOST and
+  # MAIL_PROTOCOL to its own address.
+  config.action_mailer.default_url_options = {
+    :host => ENV['MAIL_HOST'].presence || 'members.heatsynclabs.org',
+    :protocol => ENV['MAIL_PROTOCOL'].presence || 'https'
+  }
 
   # hsl-web's Apache sent this on every members response; keep it so anything
   # reading the site from another origin keeps working. (Cloudflare rewrites

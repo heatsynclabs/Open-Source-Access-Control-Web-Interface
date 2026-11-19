@@ -6,6 +6,16 @@
 #
 # Door automation (log import every 6 minutes, after-hours lock) runs as Coolify
 # scheduled tasks on members_web; see docs/19 in the operations folder.
+#
+# Door backend: DOOR_BACKEND=door_api sends every door, card and log action
+# through production door-api (http://door-api-prod:3000 on the door-net
+# network; door-api repo, docker-compose.production.yml). Unset or "legacy"
+# talks to the board directly with DOOR_ACCESS_URL and DOOR_ACCESS_PASSWORD,
+# which only works while the board is on the lab LAN.
+#
+# door-net is an internal Docker network created once on the R610
+# (docker network create --internal door-net). It must exist before this
+# deploys.
 services:
   members_web:
     build:
@@ -23,6 +33,11 @@ services:
       DOOR_ACCESS_URL: ${DOOR_ACCESS_URL}
       DOOR_ACCESS_PASSWORD: ${DOOR_ACCESS_PASSWORD}
       DOOR_CRON_PASSWORD: ${DOOR_CRON_PASSWORD}
+      DOOR_BACKEND: ${DOOR_BACKEND:-legacy}
+      DOOR_API_URL: ${DOOR_API_URL}
+      DOOR_API_KEY: ${DOOR_API_KEY}
+      DOOR_CONTROLLER: ${DOOR_CONTROLLER:-front}
+      DOOR_DOORS: ${DOOR_DOORS:-1,2}
       SMTP_ADDRESS: ${SMTP_ADDRESS}
       SMTP_PORT: ${SMTP_PORT}
       SMTP_TLS: ${SMTP_TLS}
@@ -33,6 +48,8 @@ services:
       S3_BUCKET: ${S3_BUCKET}
       S3_KEY: ${S3_KEY}
       S3_SECRET: ${S3_SECRET}
+    networks:
+      - door-net
     healthcheck:
       # Reads the cached door state from the database; never contacts the board.
       test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost:3000/space_api/simple.json || exit 1"]
@@ -58,3 +75,8 @@ services:
 
 volumes:
   members_pg16:
+
+networks:
+  door-net:
+    external: true
+    name: door-net

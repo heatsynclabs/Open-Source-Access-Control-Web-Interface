@@ -157,6 +157,14 @@
     > :last-child { margin-bottom: 0; }
   }
 
+  // Full-width bar on a staging copy of the site (STAGING_NOTICE).
+  .msg.staging-notice {
+    margin: 0;
+    border-width: 0 0 2px;
+    text-align: center;
+    font-weight: 600;
+  }
+
   // ---------------------------------------------------------- chips, tags
   .chip {
     display: inline-flex;

@@ -46,6 +46,11 @@ module NavigationHelper
   # section name.
   def page_title
     title = content_for?(:title) ? content_for(:title) : controller_name.humanize
-    "#{title} · HeatSync Members"
+    "#{"Staging: " if staging_notice}#{title} · HeatSync Members"
+  end
+
+  # Text for the bar across the top of a staging copy; nil in production.
+  def staging_notice
+    ENV["STAGING_NOTICE"].presence
   end
 end

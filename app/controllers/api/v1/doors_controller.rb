@@ -36,11 +36,11 @@ class Api::V1::DoorsController < Api::V1::BaseController
     })
     
     # Execute the command (with same rear door restriction as original)
-    if params['cmd'] == "unlock-rear"
+    if DoorLog.rear_unlock?(params['cmd'])
       result = "Attempted to unlock the back door. This is no longer allowed."
       Rails.logger.warn "----------\r\nWARNING: ATTEMPTED TO UNLOCK REAR DOOR VIA API. USER #{current_user.inspect}\r\n----------"
     else
-      result = DoorLog.execute_command(params['cmd'])
+      result = DoorLog.execute_command(params['cmd'], actor: "user #{current_user.id} (api)")
     end
     
     render json: {

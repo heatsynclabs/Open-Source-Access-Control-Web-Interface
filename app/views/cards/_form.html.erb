@@ -20,8 +20,8 @@
       </div>
       <div class="field">
         <%= f.label :id, "DB ID (slot)" %>
-        <%= f.number_field :id, in: 10...201 %>
-        <p class="hint">The card's slot on the door board, 10 to 200.</p>
+        <%= f.number_field :id, in: 10..199, disabled: !@card.new_record? %>
+        <p class="hint"><% if @card.new_record? %>The card's slot on the door board, 10 to 199.<% else %>Fixed once created: to move a card, delete it and create it again.<% end %></p>
       </div>
       <div class="field">
         <%= f.label :card_permissions, "Access" %>
