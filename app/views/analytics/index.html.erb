@@ -31,19 +31,7 @@
 <section class="card">
   <h3>Busiest hours</h3>
   <p class="note">Card entries by day of the week and hour, lab time. Darker is busier.</p>
-  <% busiest = @door[:grid].values.max.to_i %>
-  <div class="heatmap" role="table" aria-label="Card entries by weekday and hour">
-    <span></span>
-    <% 24.times do |hour| %><span class="hour"><%= hour % 3 == 0 ? hour_label(hour) : "" %></span><% end %>
-    <% Date::ABBR_DAYNAMES.each_with_index do |day_name, wday| %>
-      <span class="row-label"><%= day_name %></span>
-      <% 24.times do |hour| %>
-        <% count = @door[:grid].fetch([wday, hour], 0) %>
-        <span class="cell" style="--v: <%= share(count, busiest) %>" title="<%= day_name %> <%= hour_label(hour) %>: <%= count %> entries"></span>
-      <% end %>
-    <% end %>
-  </div>
-  <div class="heatmap-scale"><span>Quiet</span><i></i><span>Busiest, <%= busiest %> entries</span></div>
+  <%= render "shared/week_heatmap", grid: @door[:grid], noun: "entries" %>
 </section>
 
 <div class="grid two">

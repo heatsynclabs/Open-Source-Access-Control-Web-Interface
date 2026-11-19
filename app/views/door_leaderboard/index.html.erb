@@ -33,6 +33,6 @@
 </div>
 
 <% if @archive_span %>
-  <p class="note">All time includes the door log from <%= @archive_span.first.strftime("%B %Y") %> to <%= @archive_span.last.strftime("%B %Y") %>, recovered from old backups. The log from April 2020 to July 2022 was lost, so those years count for nobody.</p>
+  <p class="note">All time includes the door log from <%= @archive_span.first.strftime("%B %Y") %> to <%= @archive_span.last.strftime("%B %Y") %>, recovered from old backups. The log from <%= door_lost_span %> was lost, so those months count for nobody.</p>
 <% end %>
 <p class="note">Hidden profiles are left out. This month updates every 10 minutes, all time every hour.</p>

@@ -12,4 +12,11 @@ module DoorLeaderboardHelper
       ("locked up #{row.locked}" if row.locked.positive?),
     ].compact.join(", ")
   end
+
+  # The months of door log nobody has: from where the recovered archive
+  # ends to where the live log begins ("October 2020 to July 2022").
+  def door_lost_span
+    archived = DoorActivityArchive.span
+    "#{archived ? archived.last.strftime('%B %Y') : 'April 2020'} to July 2022"
+  end
 end

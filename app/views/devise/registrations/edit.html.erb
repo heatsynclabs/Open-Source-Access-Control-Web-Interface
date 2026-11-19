@@ -31,6 +31,7 @@
   <div class="tabs" role="tablist">
     <button type="button" role="tab" data-tabs-target="tab" data-name="details" data-action="tabs#select">Your details</button>
     <button type="button" role="tab" data-tabs-target="tab" data-name="dues" data-action="tabs#select">Dues and payments <span class="count"><%= payments.size %></span></button>
+    <button type="button" role="tab" data-tabs-target="tab" data-name="door" data-action="tabs#select">Door stats</button>
     <button type="button" role="tab" data-tabs-target="tab" data-name="data" data-action="tabs#select">Your data</button>
   </div>
 
@@ -59,6 +60,14 @@
         <% end %>
       </section>
     </div>
+  </section>
+
+  <section role="tabpanel" data-tabs-target="panel" data-name="door" hidden>
+    <%# Loads when the tab first opens (statistics/door_stats); the charts it draws need the chart scripts on this page. %>
+    <% load_chart_scripts %>
+    <%= turbo_frame_tag "door-stats", src: door_stats_path, loading: :lazy do %>
+      <section class="card" aria-busy="true"><div class="skeleton" role="presentation"></div></section>
+    <% end %>
   </section>
 
   <section role="tabpanel" data-tabs-target="panel" data-name="data" hidden>

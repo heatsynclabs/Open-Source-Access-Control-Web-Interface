@@ -15,6 +15,8 @@ Dooraccess::Application.routes.draw do
   match 'statistics' => 'statistics#index', :as => :statistics, via: [:get, :post]
   match 'statistics/mac_log' => 'statistics#mac_log', :as => :mac_statistics, via: [:get, :post]
   match 'statistics/door_log' => 'statistics#door_log', :as => :door_statistics, via: [:get, :post]
+  # The Door stats tab of a member's own profile, loaded into a Turbo Frame.
+  get 'statistics/door_stats' => 'statistics#door_stats', :as => :door_stats
 
   resources :user_certifications
   resources :certifications
