@@ -62,23 +62,42 @@ own unlock to your own lock) and "Days at the lab", for this month and for all t
 reads the door log through `app/queries/door_activity.rb`.
 
 **All time reaches back to 2012.** The live door log starts on 2022-07-30. The years before
-were recovered from old backups on 2026-11-19: August 2012 to April 2020 (the log from
-April 2020 to July 2022 was lost for good). They were scored once, on a laptop, with the
-same rules, and only the per-member totals were loaded into the table
+were recovered from old backups in November 2026: September 2012 to October 2020 (the log
+from October 2020 to July 2022 was lost for good). They were scored once, on a laptop, with
+the same rules, and only per-member, per-year totals were loaded into the table
 `door_activity_archives`. The all-time boards add those totals, so the server never reads
 the old log; the page says which years are included.
+
+**The door tablet.** From December 2013 to October 2016, user id 468 was a tablet at the
+front door that unlocked the lab for whoever stood there (since 2016 the same id is the
+after-hours lock). Its unlocks start an opening period like anyone's, so a member's unlock
+during it does not count as opening the lab, but nobody gets the opening or the hours.
+Locking up after it still counts.
 
 **Keeping it light.** This month's numbers are rebuilt at most every 10 minutes and all
 time at most every hour (about a second of database work), and only one request rebuilds
 while the others are served the old numbers.
 
-**Rebuilding the archive** (only if the rules change):
-1. Load the old rows and that era's cards into a scratch database (never production).
-   The full log and the card list come from the lab's ops records.
-2. `bin/rails runner script/door_activity_archive.rb build archive.json` there.
-3. On production: `bin/rails runner script/door_activity_archive.rb load archive.json`.
+**Rebuilding the archive** (only if the rules or the recovered logs change): the archive is
+built off the server, from the fullest door log and the card lists of every surviving members
+backup, so a swipe counts for whoever held the card at the time. The builder and the file
+live in the lab's ops records (the Omnibus `door-logs/` folder). Load it on production after
+`bin/rails db:migrate`:
 
+    bin/rails runner script/door_activity_archive.rb load archive.json
+
+Loading replaces the table's rows in one transaction; loading the previous file undoes it.
 The archive file holds member ids, so it never goes into git.
+
+## Your door stats
+
+Every member's profile (`/users/edit`, the Door stats tab) shows their own door history:
+days at the lab and hours kept open per year since 2012, their place on the all-time boards,
+when in the week they come in, and the last twelve months. Only the member sees it.
+`app/queries/member_door_stats.rb` builds it from the archive, DoorActivity's hourly
+per-year openings, and one small query of the member's own swipes and remote commands
+(cached for 10 minutes). The tab loads in a Turbo Frame when it is first opened
+(`statistics#door_stats`), so the profile page itself stays fast.
 
 ## What the board's log entries mean
 

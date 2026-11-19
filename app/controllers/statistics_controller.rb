@@ -30,6 +30,13 @@ class StatisticsController < ApplicationController
     end
   end
 
+  # The member's own door history (MemberDoorStats), for the Door stats tab
+  # of their profile, which loads it into a Turbo Frame.
+  def door_stats
+    @stats = MemberDoorStats.new(@user)
+    render layout: false
+  end
+
   def mac_log
     macs = @user.macs.where(:hidden => false).map{|m| m.mac}
     @mac_logs = MacLog.where(:mac => macs).order("created_at ASC").all

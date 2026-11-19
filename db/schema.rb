@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_19_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_19_200000) do
 
   create_table "audit_events", :force => true do |t|
     t.string   "event_type"
@@ -76,9 +76,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_19_120000) do
     t.date     "covers_to", :null => false
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "year"
   end
 
-  add_index "door_activity_archives", ["user_id"], :name => "index_door_activity_archives_on_user_id", :unique => true
+  add_index "door_activity_archives", ["user_id", "year"], :name => "index_door_activity_archives_on_user_id_and_year", :unique => true
 
   create_table "door_logs", :force => true do |t|
     t.string   "key"

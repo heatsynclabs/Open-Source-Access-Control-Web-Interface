@@ -57,7 +57,7 @@ class DoorLeaderboardTest < ActionDispatch::IntegrationTest
 
   test "all time shows the archived years with a note about the lost ones" do
     old = member("Old Timer")
-    DoorActivityArchive.create!(user_id: old.id, hours: 321.5, shifts: 60, opened: 70, locked: 65, days: 400,
+    DoorActivityArchive.create!(user_id: old.id, year: 2015, hours: 321.5, shifts: 60, opened: 70, locked: 65, days: 400,
                                 covers_from: Date.new(2012, 8, 25), covers_to: Date.new(2020, 4, 13))
     sign_in member("Grace Hopper")
     get door_leaderboard_path(window: "all")

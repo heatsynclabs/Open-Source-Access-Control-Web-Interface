@@ -5,7 +5,10 @@
 #     site (rem_u=1) or the phone app (api_rem_u=1); data is their user id.
 #     Card swipes only let one person through.
 #   - Locks are remote too: a member (rem_l*, their id) or the after-hours
-#     lock (user id 468, every 15 minutes from 22:00).
+#     lock (user id 468, every 15 minutes from 22:00). From December 2013 to
+#     October 2016 the same account was the door tablet, which unlocked the
+#     lab for whoever stood at the door: its unlocks open a period, but the
+#     opening and the hours go to nobody.
 #   - The board reports the front door's state (door_1_locked, 0 or 1) right
 #     after each command and at every log import (every 2 minutes since
 #     2026-11-18, every 6 before).
@@ -25,6 +28,9 @@ class DoorActivity
   FRONT_LOCK_KEYS = %w[rem_l api_rem_l rem_l=1 api_rem_l=1].freeze
   # Remote commands that mean the person was dealing with the door that day.
   PRESENCE_KEYS = (FRONT_UNLOCK_KEYS + %w[rem_o1 rem_o2 api_rem_o1 api_rem_o2]).freeze
+  # The high half of a granted swipe's card number, or NULL when it did not
+  # arrive: a column of #granted.
+  HIGH_HALF_SQL = "CASE WHEN prev_key = 'g' AND prev_at >= created_at - interval '5 seconds' THEN prev_data END"
 
   CONFIRM_WITHIN = 10.minutes   # the board reports right after a command
   LOCK_BEFORE_CLOSE = 15.minutes # a lock command this close to the locked report caused it
@@ -68,15 +74,17 @@ class DoorActivity
     row && Unlock.new(who: visible_users([row.data])[row.data], at: row.created_at)
   end
 
-  # opening_stats or day_stats, cached for ten minutes. Only plain numbers
-  # are cached; people are looked up on every request.
+  # opening_stats, day_stats or opening_stats_by_year (window "all" only),
+  # cached for ten minutes, all time for an hour. Only plain numbers are
+  # cached; people are looked up on every request.
   def cached_stats(board, window)
     month = @now.to_date.beginning_of_month.iso8601 if window == "month"
     expires_in = window == "all" ? ALL_TIME_CACHE_FOR : CACHE_FOR
-    Rails.cache.fetch(["door_activity", "v3", board, window, month], expires_in: expires_in, race_condition_ttl: 1.minute) do
+    Rails.cache.fetch(["door_activity", "v4", board, window, month], expires_in: expires_in, race_condition_ttl: 1.minute) do
       case board
       when :opening then opening_stats(window)
       when :days then day_stats(window)
+      when :opening_by_year then opening_stats_by_year
       else raise ArgumentError, "unknown board #{board.inspect}"
       end
     end
@@ -96,20 +104,30 @@ class DoorActivity
 
   # Plain numbers per user id, safe to cache: users are looked up fresh on
   # every request, so hiding a profile takes effect at once. "all" adds the
-  # archived years (DoorActivityArchive) unless archive: false, which is how
-  # the archive itself is built.
+  # archived years (DoorActivityArchive) unless archive: false.
   def opening_stats(window, archive: true)
-    stats = Hash.new { |hash, id| hash[id] = { hours: 0.0, shifts: 0, opened: 0, locked: 0 } }
-    periods(range(window)).each do |period|
-      stats[period[:opener]][:opened] += 1
-      closer = period[:closer]
-      stats[closer][:locked] += 1 if closer && closer != AUTOMATIC_LOCK_ID
-      next unless closer == period[:opener]
-      stats[closer][:shifts] += 1
-      stats[closer][:hours] += (period[:locked_at] - period[:unlocked_at]) / 3600.0
-    end
+    stats = tally(periods(range(window)))
     add_archive(stats, DoorActivityArchive.opening_stats) if archive && window == "all"
     stats.transform_values { |s| s.merge(hours: s[:hours].round(1)) }
+  end
+
+  # The live log's opening_stats per year the periods started in:
+  # { year => { user_id => stats } }. For a member's own history.
+  def opening_stats_by_year
+    periods(nil).group_by { |period| period[:unlocked_at].year }.transform_values do |list|
+      tally(list).transform_values { |s| s.merge(hours: s[:hours].round(1)) }
+    end
+  end
+
+  # Every visit by one member in the live log, oldest first: [time, :card]
+  # for a granted swipe of their card, [time, :remote] for a remote unlock or
+  # open from the site or the app. Uses the same card matching as the boards.
+  def visits(user_id)
+    lows = Card.where(user_id: user_id).pluck(:card_number).map { |number| number.to_s.to_i(16) % CARD_HALF }
+    swipes = lows.empty? ? [] : granted(nil).where(data: lows).pluck(Arel.sql(HIGH_HALF_SQL), :data, :created_at)
+    cards = swipes.filter_map { |high, low, at| [at, :card] if card_owners.call(high, low) == user_id }
+    remote = remote_commands(PRESENCE_KEYS).where(data: user_id).pluck(:created_at).map { |at| [at, :remote] }
+    (cards + remote).sort_by(&:first)
   end
 
   def day_stats(window, archive: true)
@@ -122,6 +140,22 @@ class DoorActivity
   end
 
   private
+
+  # Per user id: openings, lock-ups, and the hours and shifts of periods
+  # someone both opened and locked.
+  def tally(periods)
+    stats = Hash.new { |hash, id| hash[id] = { hours: 0.0, shifts: 0, opened: 0, locked: 0 } }
+    periods.each do |period|
+      opener, closer = period[:opener], period[:closer]
+      stats[closer][:locked] += 1 if closer && closer != AUTOMATIC_LOCK_ID
+      next if opener == AUTOMATIC_LOCK_ID # the door tablet (see the top)
+      stats[opener][:opened] += 1
+      next unless closer == opener
+      stats[closer][:shifts] += 1
+      stats[closer][:hours] += (period[:locked_at] - period[:unlocked_at]) / 3600.0
+    end
+    stats
+  end
 
   # Adds archived totals to live ones, per user id. The archive's years end
   # before the live table starts, so adding is exact (days included).
@@ -162,7 +196,7 @@ class DoorActivity
   # command (who and when) just before that. All lookups are bounded by time
   # so they stay on the created_at index.
   def unlock_rows(range)
-    unlocks = remote_commands(FRONT_UNLOCK_KEYS)
+    unlocks = DoorLog.where(key: FRONT_UNLOCK_KEYS) # the door tablet's too
     unlocks = unlocks.where(created_at: range) if range
     conn = DoorLog.connection
     sql = <<~SQL
@@ -211,6 +245,12 @@ class DoorActivity
   # board logs g (high half) then G (low half) together; a g only pairs with
   # the G right after it, in the same import.
   def granted_swipes(range)
+    granted(range).distinct.pluck(Arel.sql(HIGH_HALF_SQL), :data, Arel.sql(lab_day_sql("created_at")))
+  end
+
+  # Granted swipes (G rows) with the card row logged just before each, which
+  # holds the high half when it is a g in the same import.
+  def granted(range)
     pairs = DoorLog.where(key: %w[g G r R d D])
     pairs = pairs.where(created_at: (range.first - 1.minute)..range.last) if range
     pairs = pairs.select(<<~SQL.squish)
@@ -219,11 +259,7 @@ class DoorActivity
       LAG(created_at) OVER (ORDER BY id) AS prev_at
     SQL
     swipes = DoorLog.unscoped.from(pairs, :door_logs).where(key: "G")
-    swipes = swipes.where(created_at: range) if range
-    swipes.distinct.pluck(
-      Arel.sql("CASE WHEN prev_key = 'g' AND prev_at >= created_at - interval '5 seconds' THEN prev_data END"),
-      :data, Arel.sql(lab_day_sql("created_at"))
-    )
+    range ? swipes.where(created_at: range) : swipes
   end
 
   # Finds the user id behind a swipe: by the full card number when both

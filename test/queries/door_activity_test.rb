@@ -10,8 +10,8 @@ class DoorActivityTest < ActiveSupport::TestCase
     Rails.cache.clear
   end
 
-  def archive(user, hours: 0, shifts: 0, opened: 0, locked: 0, days: 0)
-    DoorActivityArchive.create!(user_id: user.id, hours: hours, shifts: shifts, opened: opened, locked: locked, days: days,
+  def archive(user, year: 2015, hours: 0, shifts: 0, opened: 0, locked: 0, days: 0)
+    DoorActivityArchive.create!(user_id: user.id, year: year, hours: hours, shifts: shifts, opened: opened, locked: locked, days: days,
                                 covers_from: Date.new(2012, 8, 25), covers_to: Date.new(2020, 4, 13))
   end
 
@@ -131,6 +131,25 @@ class DoorActivityTest < ActiveSupport::TestCase
     assert_empty board
   end
 
+  test "an opening from the door tablet is nobody's, but locking it up counts" do
+    ada, grace = member("Ada Lovelace"), member("Grace Hopper")
+    unlock(AUTO, NOW - 6.hours)                 # the door tablet, 2013 to 2016
+    unlock(grace.id, NOW - 5.hours)             # the door is already open
+    lock(ada.id, NOW - 2.hours)
+    assert_equal [[ada, 0.0, 0, 0, 1]], board
+  end
+
+  test "opening stats by year split the live log by the year each period started" do
+    ada = member("Ada Lovelace")
+    unlock(ada.id, Time.zone.local(2025, 3, 1, 18))
+    lock(ada.id, Time.zone.local(2025, 3, 1, 21))
+    unlock(ada.id, NOW - 6.hours)
+    lock(AUTO, NOW - 1.hour)
+    by_year = activity.opening_stats_by_year
+    assert_equal({ hours: 3.0, shifts: 1, opened: 1, locked: 1 }, by_year[2025][ada.id])
+    assert_equal({ hours: 0.0, shifts: 0, opened: 1, locked: 0 }, by_year[2026][ada.id])
+  end
+
   test "a period still open counts as an opening once it passes half an hour" do
     ada = member("Ada Lovelace")
     unlock(ada.id, NOW - 45.minutes)
@@ -210,6 +229,18 @@ class DoorActivityTest < ActiveSupport::TestCase
     assert_equal [grace], activity.days_at_the_lab("all").map(&:user)
   end
 
+  test "visits are one member's own swipes and remote unlocks or opens" do
+    ada = member("Ada Lovelace", card: "5a1f00")
+    grace = member("Grace Hopper", card: "71c2e4")
+    swipe("5a1f00", NOW - 2.days)
+    swipe("71c2e4", NOW - 2.days + 1.minute)
+    log("rem_o1", ada.id, NOW - 1.day)
+    log("rem_l", ada.id, NOW - 1.day + 1.minute) # a lock is not a visit
+    log("rem_o1", grace.id, NOW - 1.hour)
+    assert_equal [[NOW - 2.days, :card], [NOW - 1.day, :remote]], activity.visits(ada.id)
+    assert_empty activity.visits(member("No Card").id)
+  end
+
   # ---------------------------------------------------------- who may see it
 
   test "oriented members and cardholders may see door activity, sign-ups may not" do
@@ -248,7 +279,7 @@ class DoorActivityTest < ActiveSupport::TestCase
     assert_equal 1, activity.day_stats("month")[ada.id][:days]
   end
 
-  test "archive: false scores the live log alone, the way the archive is built" do
+  test "archive: false scores the live log alone" do
     ada = member("Ada Lovelace")
     archive(ada, hours: 50, shifts: 5, opened: 5, locked: 5, days: 9)
     assert_empty activity.opening_stats("all", archive: false)
@@ -270,6 +301,15 @@ class DoorActivityTest < ActiveSupport::TestCase
       assert_equal({ hours: 2.0, shifts: 1, opened: 1, locked: 1 }, activity.opening_stats("all")[ada.id])
       assert_nil DoorActivityArchive.span
     end
+  end
+
+  test "the archive's years add up per member" do
+    ada = member("Ada Lovelace")
+    archive(ada, year: 2014, hours: 1.5, shifts: 1, opened: 2, locked: 1, days: 100)
+    archive(ada, year: 2015, hours: 2.0, shifts: 1, opened: 1, locked: 0, days: 50)
+    assert_equal({ hours: 3.5, shifts: 2, opened: 3, locked: 1 }, DoorActivityArchive.opening_stats[ada.id])
+    assert_equal({ days: 150 }, DoorActivityArchive.day_stats[ada.id])
+    assert_equal [2014, 2015], DoorActivityArchive.years_for(ada.id).map(&:year)
   end
 
   test "the archive span comes from its rows" do

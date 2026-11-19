@@ -1,0 +1,15 @@
+<%# A 7 x 24 grid of door use by weekday and hour, lab time; darker is busier.
+    grid: { [weekday (0 = Sunday), hour] => count }. noun: what is counted ("entries"). %>
+<% busiest = grid.values.max.to_i %>
+<div class="heatmap" role="table" aria-label="<%= noun.capitalize %> by weekday and hour">
+  <span></span>
+  <% 24.times do |hour| %><span class="hour"><%= hour % 3 == 0 ? hour_label(hour) : "" %></span><% end %>
+  <% Date::ABBR_DAYNAMES.each_with_index do |day_name, wday| %>
+    <span class="row-label"><%= day_name %></span>
+    <% 24.times do |hour| %>
+      <% count = grid.fetch([wday, hour], 0) %>
+      <span class="cell" style="--v: <%= share(count, busiest) %>" title="<%= day_name %> <%= hour_label(hour) %>: <%= count %> <%= noun %>"></span>
+    <% end %>
+  <% end %>
+</div>
+<div class="heatmap-scale"><span>Quiet</span><i></i><span>Busiest, <%= busiest %> <%= noun %></span></div>

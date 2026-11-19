@@ -1,0 +1,52 @@
+<%# The Door stats tab of the member's own profile (devise/registrations/edit), loaded into its Turbo Frame. %>
+<%= turbo_frame_tag "door-stats" do %>
+  <% if @stats.any? %>
+    <% total = @stats.total %>
+    <% days_rank, hours_rank = @stats.rank(:days), @stats.rank(:hours) %>
+    <div class="tiles">
+      <%= render StatTileComponent.new(value: number_with_delimiter(total.days), label: "Days at the lab", tone: :headline,
+            sub: (days_rank ? "##{days_rank} on the all-time board" : "Since #{@stats.years.first.year}")) %>
+      <%= render StatTileComponent.new(value: door_hours(total.hours), label: "Kept the lab open",
+            sub: (hours_rank ? "##{hours_rank} by hours, #{pluralize(total.shifts, 'full shift')}" : pluralize(total.shifts, "full shift"))) %>
+      <%= render StatTileComponent.new(value: total.opened, label: "Opened the lab") %>
+      <%= render StatTileComponent.new(value: total.locked, label: "Locked up") %>
+      <%= render StatTileComponent.new(value: @stats.years.first.year, label: "First seen at the door") %>
+    </div>
+
+    <div class="grid two">
+      <%= render ChartCardComponent.new(title: "Days at the lab, by year",
+            rows: @stats.years.map { |y| [y.year, [y.days, y.hours, y.opened, y.locked]] },
+            columns: ["Year", "Days", "Hours", "Opened", "Locked up"]) do %>
+        <%= column_chart @stats.by_year(:days), library: { scales: { y: { ticks: { precision: 0 } } } } %>
+      <% end %>
+      <%= render ChartCardComponent.new(title: "Hours you kept the lab open, by year",
+            note: "From your unlock to your lock, when you did both.") do %>
+        <%= column_chart @stats.by_year(:hours), suffix: " h" %>
+      <% end %>
+    </div>
+
+    <div class="grid two">
+      <section class="card">
+        <h3>When you come in</h3>
+        <p class="note">Your card swipes and remote unlocks since July 2022, by day of the week and hour, lab time.</p>
+        <% if @stats.week_grid.any? %>
+          <%= render "shared/week_heatmap", grid: @stats.week_grid, noun: "visits" %>
+        <% else %>
+          <%= render EmptyStateComponent.new("No visits since July 2022.") %>
+        <% end %>
+      </section>
+      <%= render ChartCardComponent.new(title: "The last twelve months", rows: @stats.recent_months.map { |month, days| [month.strftime("%B %Y"), days] }.reverse,
+            columns: ["Month", "Days"]) do %>
+        <%= column_chart @stats.recent_months.transform_keys { |month| month.strftime("%b %Y") }, library: { scales: { y: { ticks: { precision: 0 } } } } %>
+      <% end %>
+    </div>
+
+    <p class="note">
+      A day at the lab is a day you swiped in with your card or unlocked or opened a door from the site or the app.
+      The door log from <%= door_lost_span %> was lost, so those months count for nobody.
+      Same rules as the <%= link_to "door leaderboard", door_leaderboard_path, target: "_top" %>. Updates every few minutes; hours every hour.
+    </p>
+  <% else %>
+    <%= render EmptyStateComponent.new("No door activity yet. Swipe in with your card, or unlock the door from the site, and it starts counting.") %>
+  <% end %>
+<% end %>
