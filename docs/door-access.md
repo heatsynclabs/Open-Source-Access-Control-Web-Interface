@@ -36,7 +36,7 @@ members who hold an active card.
 | Job | When | What it does |
 |---|---|---|
 | Door log import | every 6 minutes | asks door-api for the board's event log (the board keeps only its last 40 events), saves the events to the database, then confirms so door-api can forget them |
-| After-hours lock | every 15 minutes from 22:00 to 08:59 | sends "lock all" as the automatic-lock account (user 468), so the doors are locked overnight even if someone forgot |
+| After-hours lock | every 15 minutes from 22:00 to 08:45 | sends "lock all" as the automatic-lock account (user 468), so the doors are locked overnight even if someone forgot |
 | Status | after every door action | stores the board's status (each door locked or not, the alarm fields), which the site and its public status use |
 
 These are Coolify scheduled tasks on the production app. Staging never runs them.
@@ -49,9 +49,10 @@ restarting or times out, the events wait in door-api and come back on the next i
 crash at exactly the wrong moment can save an event twice; it cannot lose one. Two imports
 never run at the same time: the site takes a database lock around each one.
 
-One limit comes from the board itself: it holds only 40 events between imports. On a very
-busy evening, more than about 7 card swipes in 6 minutes can push the oldest events out
-before the import collects them.
+One limit comes from the board itself: it holds only 40 log entries between imports, and
+each card swipe writes four (the card's two halves, the unlock, the relock). More than
+about 10 swipes within one 6-minute import window pushes the oldest entries out before the
+import collects them.
 
 ## What the board's log entries mean
 

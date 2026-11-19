@@ -34,8 +34,8 @@ is **not** deleted and you see why; try again later. A deleted card cannot open 
 ## Upload all
 
 "Upload all cards" on the Cards page writes every card to its slot. Use it after the board
-has been replaced or reset, or to be sure the board matches the site. It takes about a
-minute for 70 cards and shows OK or FAIL for each slot.
+has been replaced or reset, or to be sure the board matches the site. It writes the cards
+one after another and shows OK or FAIL for each slot.
 
 ## Good to know
 
