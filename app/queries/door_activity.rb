@@ -7,7 +7,8 @@
 #   - Locks are remote too: a member (rem_l*, their id) or the after-hours
 #     lock (user id 468, every 15 minutes from 22:00).
 #   - The board reports the front door's state (door_1_locked, 0 or 1) right
-#     after each command and every 6 minutes.
+#     after each command and at every log import (every 2 minutes since
+#     2026-11-18, every 6 before).
 #
 # So a "period" is a remote unlock the board confirms (reports unlocked within
 # ten minutes), lasting until it reports the front door locked again. Periods
@@ -181,7 +182,7 @@ class DoorActivity
   end
 
   # [user_id, day] for each card that swiped in on a day. Swipe times are
-  # when the board's log was imported (every 6 minutes), close enough for days.
+  # when the board's log was imported (every 2 minutes), close enough for days.
   def card_days(range)
     granted_swipes(range).filter_map { |high, low, day| (id = card_owners.call(high, low)) && [id, day] }
   end
