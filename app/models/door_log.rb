@@ -42,21 +42,17 @@ class DoorLog < ActiveRecord::Base
     end
   end
 
-  # Legacy door command -> door-api (door number, action). :all applies the action
-  # to every configured door. Alarm commands (arm/disarm) have no door-api
-  # equivalent and are handled separately.
-  DOOR_API_COMMANDS = {
-    'unlock' => [:all, 'unlock'], 'u' => [:all, 'unlock'],
-    'unlock-front' => [1, 'unlock'], 'u1' => [1, 'unlock'],
-    'unlock-rear' => [2, 'unlock'], 'u2' => [2, 'unlock'],
-    'lock' => [:all, 'lock'], 'l' => [:all, 'lock'],
-    'lock-front' => [1, 'lock'], 'l1' => [1, 'lock'],
-    'lock-rear' => [2, 'lock'], 'l2' => [2, 'lock'],
-    'open-front' => [1, 'open'], 'open-rear' => [2, 'open']
-  }.freeze
+  # Remote commands that would unlock the rear door. Refused by the remote page
+  # and the phone API (HYH 2018-02-22). "u2" is the short form of "unlock-rear".
+  REAR_UNLOCK_COMMANDS = %w[unlock-rear u2].freeze
 
-  def self.execute_command(command)
-    return execute_command_via_api(command) if DoorApiClient.enabled?
+  def self.rear_unlock?(command)
+    REAR_UNLOCK_COMMANDS.include?(command.to_s)
+  end
+
+  # actor (optional) is recorded in door-api's audit trail, e.g. "user 12".
+  def self.execute_command(command, actor: nil)
+    return execute_command_via_api(command, actor: actor) if DoorApiClient.enabled?
 
     password = APP_CONFIG['door_access_password']
 
@@ -74,20 +70,33 @@ class DoorLog < ActiveRecord::Base
     'Failed to connect to door system.'
   end
 
-  # Run a door command through door-api. Mirrors the legacy return (the command's
-  # friendly message) so callers (space_api, api/v1/doors) are unchanged.
-  def self.execute_command_via_api(command)
-    mapping = DOOR_API_COMMANDS[command]
-    return 'Alarm control is not available through the door API.' if %w[arm disarm].include?(command)
-    return parse_command(command)[:output] unless mapping # unknown -> legacy message
+  # The door-api call that sends the board the same query as the direct path.
+  # Derived from parse_command's url_param, so the two paths cannot drift apart:
+  #   o1/o2 -> open one door      u -> unlock all (?u)    u=1/u=2 -> unlock one
+  #   l -> lock all (?l)          l=1/l=2 -> lock one     2 -> arm, 1 -> disarm
+  #   9 (an unknown command) -> nothing, just the status refresh
+  def self.door_api_call(url_param)
+    case url_param
+    when /\Ao([12])\z/ then [:door, $1.to_i, 'open']
+    when 'u' then [:all_doors, 'unlock']
+    when /\Au=([12])\z/ then [:door, $1.to_i, 'unlock']
+    when 'l' then [:all_doors, 'lock']
+    when /\Al=([12])\z/ then [:door, $1.to_i, 'lock']
+    when '2' then [:alarm, 'arm']
+    when '1' then [:alarm, 'disarm']
+    end
+  end
 
-    door, action = mapping
-    client = DoorApiClient.new
-    doors = door == :all ? Array(APP_CONFIG['door_doors'] || [1, 2]) : [door]
-    doors.each { |d| client.door(d, action) }
-    download_status # refresh the DB status cache
-    parse_command(command)[:output]
-  rescue DoorApiClient::Error
+  # Run a door command through door-api. Returns the same message as the direct
+  # path, so callers (space_api, api/v1/doors) are unchanged.
+  def self.execute_command_via_api(command, actor: nil)
+    parsing = parse_command(command)
+    call = door_api_call(parsing[:url_param])
+    DoorApiClient.new(:actor => actor).public_send(call.first, *call.drop(1)) if call
+    download_status # refresh the DB status cache, as the direct path does
+    parsing[:output]
+  rescue DoorApiClient::Error => e
+    return 'The door system is busy. Try again in a moment.' if e.code == 'busy'
     'Failed to connect to door system.'
   end
 
@@ -189,24 +198,24 @@ class DoorLog < ActiveRecord::Base
     nil
   end
 
-  # Pull status from door-api and write the same door_N_locked rows the legacy
-  # path writes, so show_status (a pure DB read) keeps working unchanged.
+  # Pull the board's status through door-api and store every field it printed,
+  # in its order, exactly as the direct path does (armed, activated, alarm_3,
+  # alarm_2, door_1_locked, door_2_locked).
   def self.download_status_via_api
-    status = DoorApiClient.new.status
+    status = DoorApiClient.new.raw_status
     status.each do |key, value|
-      next unless key.to_s =~ /\Adoor_\d+_locked\z/
-      DoorLog.create!({:key => key.to_s, :data => (value ? 1 : 0)})
+      DoorLog.create!({:key => key, :data => value})
     end
     status
   rescue DoorApiClient::Error
     nil
   end
 
-  # NOTE: event-log download stays on the legacy path for now. The board's buffer
-  # has no read cursor (clear-on-read), so it does not map onto door-api's
-  # incremental events(); that moves to door-api only after the UHPPOTE cutover,
-  # whose events are index-stable. See door-api docs/MEMBERS-INTEGRATION.md.
+  # Import the board's event buffer. The direct path logs in, reads (?z), saves
+  # the rows, clears (?y) and logs out.
   def self.download_from_door
+    return download_from_door_via_api if DoorApiClient.enabled?
+
     password = APP_CONFIG['door_access_password']
 
     # connect; only continue if we got an OK login
@@ -225,6 +234,29 @@ class DoorLog < ActiveRecord::Base
     results.size > 0 ? results : false
   rescue DoorBoard::Unreachable
     false
+  end
+
+  # Through door-api: it reads the buffer, journals it on disk, then clears the
+  # board, and hands back every drain not yet acknowledged (oldest first). Each
+  # is parsed with the same expression and filter as the direct path, saved in
+  # one transaction, then acknowledged. A failure before the ack leaves the drain
+  # in door-api's journal for the next run, so no event is lost.
+  def self.download_from_door_via_api
+    client = DoorApiClient.new
+    all = []
+    client.drain.each do |d|
+      results = d['raw'].to_s.scan(/(.*): (.*)\r\n/)
+      DoorLog.transaction do
+        results.each do |r|
+          DoorLog.create!({:key => r[0], :data => r[1]}) if r[0] != "\000"
+        end
+      end
+      client.ack(d['drain_id'])
+      all.concat(results)
+    end
+    all.size > 0 ? all : false
+  rescue DoorApiClient::Error
+    all.to_a.size > 0 ? all : false
   end
 
   def self.key_legend

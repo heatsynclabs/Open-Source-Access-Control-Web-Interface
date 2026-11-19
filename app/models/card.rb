@@ -2,7 +2,10 @@ class Card < ActiveRecord::Base
   require 'open-uri'
 
   # The door board addresses cards by slot, and the slot is this row's primary key.
-  SLOT_RANGE = (10..200)
+  # The firmware lists slots 0..199; writing slot 200 runs past the end of its
+  # EEPROM and overwrites the alarm settings, so 199 is the last usable slot.
+  SLOT_RANGE = (10..199)
+  BOARD_SLOTS = (0..199)
 
   validates_presence_of :user_id, :card_number, :card_permissions
   validates_uniqueness_of :id, :card_number
@@ -15,9 +18,10 @@ class Card < ActiveRecord::Base
     :message => "must be 1 to 8 hex digits (0-9, A-F), as the reader shows it"
   belongs_to :user
 
-  # When routing through door-api, removing a card from the DB also removes it
-  # from the board. Best effort: a door-api failure must not block the delete.
-  after_destroy :remove_from_door_api, :if => -> { DoorApiClient.enabled? }
+  # Deleting a card first clears its slot on the door board, so a deleted card
+  # can no longer open the door. If the board does not confirm, the card is kept
+  # and the admin sees why (errors[:base]).
+  before_destroy :remove_from_board
 
   # Computed per-request in CardsController#index, not a column.
   attr_accessor :accesses_this_week
@@ -28,45 +32,26 @@ class Card < ActiveRecord::Base
     (SLOT_RANGE.to_a - used).min
   end
 
-  # Push this one card to the door. Routes through door-api when enabled,
-  # otherwise talks to the board directly. Returns true on success, false on a
-  # bad reply or an unreachable door (timeouts handled below each path).
+  # Push this one card to the door: slot = card id, permission mask, tag. Through
+  # door-api when enabled (it sends the board the same ?m query and checks the
+  # board's read-back), otherwise directly. True on success, false otherwise.
   def upload_to_door
-    return DoorApiClient.new.put_card(:number => card_number.to_i(16), :doors => door_access_list) if DoorApiClient.enabled?
+    if DoorApiClient.enabled?
+      DoorApiClient.new.put_slot(id, card_number, card_permissions)
+      return true
+    end
     source = DoorBoard.get(upload_query)
     source.scan(/cur/).size > 0
-  rescue DoorBoard::Unreachable
+  rescue DoorBoard::Unreachable, DoorApiClient::Error
     false
   end
 
-  # Push every card to the door. Through door-api this is a single reconcile
-  # (read once, write deltas); directly it is one request per card.
+  # Push every card to the door, one request per card, on either path.
+  # Returns [[slot, "OK" | "FAIL"], ...].
   def self.upload_all_to_door
-    return sync_all_to_door_api if DoorApiClient.enabled?
     Card.all.map do |card|
-      slot = card.id.to_s.rjust(3, '0')
-      begin
-        source = DoorBoard.get(card.upload_query)
-        [slot, source.scan(/cur/).size > 0 ? "OK" : "FAIL"]
-      rescue DoorBoard::Unreachable
-        [slot, "FAIL"]
-      end
+      [card.id.to_s.rjust(3, '0'), card.upload_to_door ? "OK" : "FAIL"]
     end
-  end
-
-  # Reconcile the whole card set to the board via door-api. Returns the door-api
-  # summary hash ({ "added"=>, "updated"=>, "removed"=>, "failed"=>[] }).
-  def self.sync_all_to_door_api
-    cards = Card.all.map { |c| { :card => c.card_number.to_i(16), :doors => c.door_access_list } }
-    DoorApiClient.new.sync(:cards => cards)
-  rescue DoorApiClient::Error => e
-    { "error" => e.message }
-  end
-
-  # The doors this card may open, as door-api expects: the configured door list
-  # when enabled (card_permissions 1), none when disabled (255).
-  def door_access_list
-    card_permissions == 1 ? Array(APP_CONFIG['door_doors'] || [1, 2]) : []
   end
 
   # The board's "modify slot" query for this card: zero-padded slot, permission
@@ -81,9 +66,26 @@ class Card < ActiveRecord::Base
 
   private
 
-  def remove_from_door_api
-    DoorApiClient.new.delete_card(card_number.to_i(16))
-  rescue => e
-    Rails.logger.warn("door-api delete_card failed for card #{id}: #{e.message}")
+  def remove_from_board
+    unless BOARD_SLOTS.cover?(id)
+      # Not a slot the board has (an old id). Writing it would hit another slot
+      # or the alarm settings, so only the row is removed.
+      Rails.logger.warn("Card #{id} is outside the board's slots; deleting the row only")
+      return
+    end
+    confirmed =
+      if DoorApiClient.enabled?
+        DoorApiClient.new.clear_slot(id)
+        true
+      else
+        DoorBoard.get("r#{id.to_s.rjust(3, '0')}&e=#{APP_CONFIG['door_access_password']}").include?('cur:')
+      end
+    unless confirmed
+      errors.add(:base, "The door board did not confirm removing slot #{id}, so the card was not deleted. Try again.")
+      throw :abort
+    end
+  rescue DoorBoard::Unreachable, DoorApiClient::Error => e
+    errors.add(:base, "Could not reach the door board (#{e.message}), so the card was not deleted. Try again.")
+    throw :abort
   end
 end

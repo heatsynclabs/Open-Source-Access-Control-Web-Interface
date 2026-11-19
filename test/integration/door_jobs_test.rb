@@ -53,6 +53,28 @@ class DoorJobsTest < ActionDispatch::IntegrationTest
     assert_equal 1, calls
   end
 
+  test "the log import only answers the scheduled task inside the container" do
+    ENV.delete("DOOR_JOBS")
+    DoorLog.stub(:download_from_door, refuse_board) do
+      post auto_download_path, env: { "REMOTE_ADDR" => "10.0.1.7" }
+    end
+    assert_response :forbidden
+    DoorLog.stub(:download_from_door, refuse_board) do
+      post auto_download_path, headers: { "X-Forwarded-For" => "127.0.0.1" }, env: { "REMOTE_ADDR" => "10.0.1.7" }
+    end
+    assert_response :forbidden
+  end
+
+  test "u2 is refused like unlock-rear" do
+    sign_in user(card: true)
+    %w[u2 unlock-rear].each do |cmd|
+      DoorLog.stub(:execute_command, refuse_board) do
+        post "/space_api/access.json", params: { cmd: cmd }
+      end
+      assert_includes response.body, "no longer allowed"
+    end
+  end
+
   test "the after-hours lock account does nothing when door jobs are off" do
     ENV["DOOR_JOBS"] = "off"
     sign_in user(id: DoorLogsHelper::AUTOMATIC_LOCK_ID, card: true)
@@ -69,7 +91,7 @@ class DoorJobsTest < ActionDispatch::IntegrationTest
     sign_in user(card: true)
     commands = []
     assert_difference -> { DoorLog.count }, 1 do
-      DoorLog.stub(:execute_command, ->(cmd) { commands << cmd; "Locked." }) do
+      DoorLog.stub(:execute_command, ->(cmd, **) { commands << cmd; "Locked." }) do
         post "/space_api/access.json", params: { cmd: "lock" }
       end
     end

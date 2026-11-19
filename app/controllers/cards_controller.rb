@@ -84,7 +84,7 @@ class CardsController < ApplicationController
   # POST /cards
   # POST /cards.json
   def create
-    # The primary key IS the door-board slot (10..200). Honor the slot the admin
+    # The primary key IS the door-board slot (10..199). Honor the slot the admin
     # typed when it is free; otherwise drop the card into the next free slot so
     # two cards can never land on the same slot. Never fall back to the id
     # sequence, which does not track the hand-assigned slots and would collide.
@@ -95,7 +95,7 @@ class CardsController < ApplicationController
 
     respond_to do |format|
       if @card.id.nil?
-        @card.errors.add(:base, "Every door slot from 10 to 200 is in use. Disable and delete an old card, then try again.")
+        @card.errors.add(:base, "Every door slot from 10 to 199 is in use. Disable and delete an old card, then try again.")
         format.html { render :action => "new", :status => :unprocessable_entity }
         format.json { render :json => @card.errors, :status => :unprocessable_entity }
       elsif @card.save
@@ -163,21 +163,28 @@ class CardsController < ApplicationController
   # DELETE /cards/1.json
   def destroy
     #@card = Card.find(params[:id])
-    @card.destroy
-
     respond_to do |format|
-      format.html { redirect_to cards_url, :notice => 'Card successfully deleted.' }
-      format.json { head :no_content }
+      if @card.destroy
+        format.html { redirect_to cards_url, :notice => 'Card deleted and removed from the door board.' }
+        format.json { head :no_content }
+      else
+        format.html { redirect_to card_url(@card), :alert => @card.errors.full_messages.to_sentence }
+        format.json { render :json => @card.errors, :status => :unprocessable_entity }
+      end
     end
   end
 
   private
 
   # CanCanCan's load_and_authorize_resource builds and updates the card from the
-  # method named for the resource: "card_params". It must include :id because the
-  # door-board slot is the primary key and is set from the form.
+  # method named for the resource: "card_params". On create it includes :id,
+  # because the door-board slot is the primary key and is set from the form. On
+  # update it does not: moving a card to another slot would leave the old slot
+  # live on the board.
   def card_params
-    params.require(:card).permit(:user_id, :name, :card_number, :card_permissions, :id)
+    allowed = [:user_id, :name, :card_number, :card_permissions]
+    allowed << :id if action_name == 'create'
+    params.require(:card).permit(*allowed)
   end
 
   # Flash message after a successful create, telling the admin which slot the card

@@ -55,6 +55,13 @@ class DoorLogsController < ApplicationController
 
   # GET /door_logs/auto_download
   def auto_download
+    # Only the scheduled task inside the container may run the import: it curls
+    # localhost:3000. Anything arriving through the proxy is refused.
+    unless request.local?
+      Rails.logger.warn("Door log import refused: not a local request (#{request.remote_addr})")
+      return render(plain: "Forbidden", status: :forbidden)
+    end
+
     unless DoorBoard.jobs_enabled?
       Rails.logger.info("Door log import skipped: DOOR_JOBS=off")
       return render(plain: DoorBoard::JOBS_OFF_MESSAGE, status: :forbidden)
