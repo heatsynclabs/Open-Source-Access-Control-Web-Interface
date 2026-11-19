@@ -204,6 +204,10 @@ class DoorActivityTest < ActiveSupport::TestCase
     lock(ada.id, NOW - 1.hour)
     swipe("5a1f00", NOW - 3.hours)
     assert_equal activity.opening_stats("month"), activity.cached_stats(:opening, "month")
+    unlock(ada.id, Time.zone.local(2024, 5, 1, 18))  # another year, and the archive
+    lock(ada.id, Time.zone.local(2024, 5, 1, 20, 30))
+    archive(ada, hours: 4.5, shifts: 2, opened: 3, locked: 2)
+    assert_equal activity.opening_stats("all"), activity.cached_stats(:opening, "all")
     assert_equal activity.day_stats("all"), activity.cached_stats(:days, "all")
     assert_raises(ArgumentError) { activity.cached_stats(:nonsense, "all") }
   end

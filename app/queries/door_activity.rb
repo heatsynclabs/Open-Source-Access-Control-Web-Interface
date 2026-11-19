@@ -82,7 +82,7 @@ class DoorActivity
     expires_in = window == "all" ? ALL_TIME_CACHE_FOR : CACHE_FOR
     Rails.cache.fetch(["door_activity", "v4", board, window, month], expires_in: expires_in, race_condition_ttl: 1.minute) do
       case board
-      when :opening then opening_stats(window)
+      when :opening then window == "all" ? all_time_opening_stats : opening_stats(window)
       when :days then day_stats(window)
       when :opening_by_year then opening_stats_by_year
       else raise ArgumentError, "unknown board #{board.inspect}"
@@ -140,6 +140,17 @@ class DoorActivity
   end
 
   private
+
+  # opening_stats("all") from the cached per-year numbers, so the whole log
+  # is scanned once an hour for both the boards and members' own stats.
+  def all_time_opening_stats
+    stats = Hash.new { |hash, id| hash[id] = { hours: 0.0, shifts: 0, opened: 0, locked: 0 } }
+    cached_stats(:opening_by_year, "all").each_value do |by_user|
+      by_user.each { |id, s| stats[id] = stats[id].merge(s) { |_, a, b| a + b } }
+    end
+    add_archive(stats, DoorActivityArchive.opening_stats)
+    stats.transform_values { |s| s.merge(hours: s[:hours].round(1)) }
+  end
 
   # Per user id: openings, lock-ups, and the hours and shifts of periods
   # someone both opened and locked.
