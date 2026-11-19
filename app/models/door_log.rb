@@ -241,7 +241,24 @@ class DoorLog < ActiveRecord::Base
   # is parsed with the same expression and filter as the direct path, saved in
   # one transaction, then acknowledged. A failure before the ack leaves the drain
   # in door-api's journal for the next run, so no event is lost.
+  # One import at a time (the scheduled task and an admin's "download" could
+  # otherwise both save the same unacknowledged drain): a Postgres advisory lock,
+  # held only around the drain, save and acknowledge.
+  IMPORT_LOCK = 4_240_001
+
   def self.download_from_door_via_api
+    conn = DoorLog.connection
+    # uncached: the query cache would otherwise answer a repeated lock query
+    # from memory instead of asking Postgres.
+    return false unless conn.uncached { conn.select_value("SELECT pg_try_advisory_lock(#{IMPORT_LOCK})") }
+    begin
+      import_drains_via_api
+    ensure
+      conn.uncached { conn.select_value("SELECT pg_advisory_unlock(#{IMPORT_LOCK})") }
+    end
+  end
+
+  def self.import_drains_via_api
     client = DoorApiClient.new
     all = []
     client.drain.each do |d|

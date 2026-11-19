@@ -93,11 +93,18 @@ services:
       SMTP_PORT: "1025"
       SMTP_TLS: "false"
       SMTP_DOMAIN: heatsynclabs.org
-      # Photos: read from production's bucket by URL; no keys, so staging
-      # cannot upload, change or delete anything there.
+      # Files: the tool photos are read from the lab's file store (Garage,
+      # members-files on files-net) with a key that can read the photos bucket
+      # only. Staging can never read the signed waivers, and cannot upload,
+      # change or delete anything.
+      S3_ENDPOINT: ${S3_ENDPOINT:-}
+      S3_REGION: ${S3_REGION:-us-east-1}
       S3_BUCKET: ${S3_BUCKET}
-      S3_KEY: ""
-      S3_SECRET: ""
+      S3_DOCUMENTS_BUCKET: ${S3_DOCUMENTS_BUCKET:-}
+      S3_KEY: ${S3_KEY:-}
+      S3_SECRET: ${S3_SECRET:-}
+    networks:
+      - files-net
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost:3000/space_api/simple.json || exit 1"]
       interval: 30s
@@ -107,3 +114,9 @@ services:
 
 volumes:
   staging_pg16:
+
+networks:
+  # The lab's file store network (Garage); staging only reads photos there.
+  files-net:
+    external: true
+    name: files-net

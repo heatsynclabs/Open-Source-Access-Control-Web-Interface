@@ -7,11 +7,12 @@
 # Door automation (log import every 6 minutes, after-hours lock) runs as Coolify
 # scheduled tasks on members_web; see docs/19 in the operations folder.
 #
-# Door backend: DOOR_BACKEND=door_api sends every door, card and log action
+# Door backend: door_api (the default) sends every door, card and log action
 # through production door-api (http://door-api-prod:3000 on the door-net
-# network; door-api repo, docker-compose.production.yml). Unset or "legacy"
-# talks to the board directly with DOOR_ACCESS_URL and DOOR_ACCESS_PASSWORD,
-# which only works while the board is on the lab LAN.
+# network; door-api repo, docker-compose.production.yml). The board is on its own
+# segment behind door-api. "legacy" talks to the board directly with
+# DOOR_ACCESS_URL and DOOR_ACCESS_PASSWORD; that works only if the board is put
+# back on the lab LAN (the rollback in the operations runbook).
 #
 # door-net is an internal Docker network created once on the R610
 # (docker network create --internal door-net). It must exist before this
@@ -33,7 +34,7 @@ services:
       DOOR_ACCESS_URL: ${DOOR_ACCESS_URL}
       DOOR_ACCESS_PASSWORD: ${DOOR_ACCESS_PASSWORD}
       DOOR_CRON_PASSWORD: ${DOOR_CRON_PASSWORD}
-      DOOR_BACKEND: ${DOOR_BACKEND:-legacy}
+      DOOR_BACKEND: ${DOOR_BACKEND:-door_api}
       DOOR_API_URL: ${DOOR_API_URL}
       DOOR_API_KEY: ${DOOR_API_KEY}
       DOOR_CONTROLLER: ${DOOR_CONTROLLER:-front}

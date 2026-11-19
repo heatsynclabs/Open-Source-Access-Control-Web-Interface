@@ -11,6 +11,12 @@ Distributed under a Creative Commons Attribution 3.0 license http://creativecomm
 
 Contributions welcome! Simply send a pull request via Github.
 
+## Documentation
+
+How the site works, how to look after it and how to change it: **[docs/](docs/README.md)**,
+starting with the [overview](docs/overview.md). Guides for door access, access cards,
+files and waivers, environments and deploying, configuration, development and operations.
+
 
 ## This branch
 
@@ -19,83 +25,19 @@ HeatSync's production members app, brought off Rails 3.2. Now Ruby 3.3 / Rails 7
 
 ## Staging and production
 
-### What runs where
+| Branch | Coolify app (project Critical Infra) | Address |
+|---|---|---|
+| `main` | `members-production` | https://members.heatsynclabs.org |
+| `staging` | `members-staging` | https://staging.heatsynclabs.org |
 
-| Branch | Coolify app (the lab's R610, `172.22.110.200:8000`) | Compose file | Address |
-|---|---|---|---|
-| `main` | `members-production` (`del3ydip0byiellecae4rhl6`), project Member-Resources | `docker-compose.production.yml` | https://members.heatsynclabs.org |
-| `staging` | `members-staging` (`cpk0vwvqj0muqs0iexoqkhjp`), project Critical Infra, environment `staging` | `docker-compose.staging.yml` | https://staging.heatsynclabs.org (staging mail: http://172.22.110.200:8025, lab network only) |
+A push to `main` deploys production; a push to `staging` deploys staging. Staging runs on a
+fresh copy of last night's production data, its mail never leaves the server, and its door
+buttons drive an emulator of the board's real firmware, never a real door. Production sends
+every door action through door-api and keeps its files in the lab's own file store.
 
-### How a push deploys
-
-One GitHub webhook on this repo (id `705434501`, push events) sends every push to
-`https://coolify.heatsynclabs.org/webhooks/source/github/events/manual`. Coolify
-checks the signature and redeploys only the app whose branch matches: a push to
-`main` deploys production, a push to `staging` deploys staging, and any other
-branch deploys nothing. Deploys do not run database migrations. Progress and
-logs: Coolify, the app, Deployments and Logs.
-
-### How staging differs
-
-- **Data.** Each staging deploy loads the newest nightly backup of production
-  (02:00, `/data/backups/offsite/members`, mounted read-only) into its own
-  database through the one-shot service `staging-db-restore`, then starts the
-  site. Production's database is never contacted. Staging changes are replaced
-  on the next deploy unless `STAGING_DB_REFRESH=off` is set in Coolify.
-- **Mail** goes to Mailpit (`staging-mail`), never to members.
-- **Photos** load from production's S3 bucket, but staging has no S3 keys, so
-  uploads and deletes fail instead of touching production's files.
-- **Door.** Staging sends door actions through door-api staging
-  (`DOOR_BACKEND=door_api`), which moves the **real front door**. Open, unlock
-  and lock work, so tell people at the lab before testing them. Staging never
-  runs the door jobs, which stay on production: the door log import, the
-  after-hours lock and card writes.
-- Every page shows a staging bar (`STAGING_NOTICE`), and tab titles start with
-  "Staging:".
-
-### Flags and where they are
-
-| Flag | Where | Production | Staging |
-|---|---|---|---|
-| `DOOR_JOBS` | compose file (written in `docker-compose.staging.yml`, so it cannot be changed from Coolify) | unset, meaning on | `"off"`: `/door_logs/auto_download` answers 403 and the after-hours lock account does nothing (`DoorBoard.jobs_enabled?`) |
-| `DOOR_BACKEND` | Coolify env | unset, meaning `legacy` (talks to the board at `DOOR_ACCESS_URL` directly) | `door_api` |
-| `DOOR_API_URL`, `DOOR_API_KEY`, `DOOR_CONTROLLER`, `DOOR_DOORS` | Coolify env | unset | door-api staging, its key, `front`, `1,2` |
-| `DOOR_ACCESS_URL`, `DOOR_ACCESS_PASSWORD` | Coolify env | the real board | the simulator (only the blocked log import would use them) |
-| `STAGING_DB_REFRESH` | Coolify env | n/a | unset (restore every deploy); `off` keeps staging data |
-| `STAGING_NOTICE`, `MAIL_HOST`, `MAIL_PROTOCOL` | compose file | unset (`members.heatsynclabs.org`) | the banner text, `staging.heatsynclabs.org`, `https` |
-
-Secrets live only in Coolify's environment variables, with a copy in the ops
-folder's `secrets/SECRETS.md`. door-api staging has its own flags and the board
-password: see the door-api repo's README, "Staging and production".
-
-Production's door jobs are Coolify scheduled tasks on `members-production`:
-`door-log-import` (every 6 minutes) and `door-after-hours-lock`. Staging has
-no scheduled tasks.
-
-### Making a change, testing it, shipping it
-
-1. **Start from `staging`.** Run `git checkout staging && git pull`, then
-   `git checkout -b my-change`. If `main` has moved on, merge `main` into
-   `staging` first so staging tests what production will become.
-2. **Test locally.** Run `docker compose up` and the tests (see Tests below).
-   Locally, keep `DOOR_ACCESS_URL=http://127.0.0.1:9` so nothing on your laptop
-   can reach the real board.
-3. **Deploy to staging.** Merge your branch into `staging` and push. Coolify
-   redeploys staging with a fresh copy of last night's data, which takes a few
-   minutes.
-4. **Check it on staging.** Go to https://staging.heatsynclabs.org, sign in with
-   your normal account and use the change the way members will. Emails it sends
-   are at http://172.22.110.200:8025.
-5. **Go live.** Open a pull request from `staging` (or your branch) to `main`,
-   review it and merge it. The merge deploys production. Then check
-   https://members.heatsynclabs.org and the app's Logs in Coolify.
-6. **If it breaks.** Revert the merge on `main` and push. That redeploys the
-   previous code. In Coolify you can also redeploy an earlier deployment.
-
-Merging `staging` into `main` carries the door-api code and the `DOOR_JOBS`
-check. Both are safe for production as long as production leaves
-`DOOR_BACKEND` and `DOOR_JOBS` unset. A change that needs a database migration
-needs one run by hand on production, because deploys do not run them.
+How to make a change, test it on staging and ship it, and how to undo one:
+[docs/environments-and-deploying.md](docs/environments-and-deploying.md). Every setting:
+[docs/configuration.md](docs/configuration.md).
 
 
 ## How the front end is built
@@ -121,37 +63,17 @@ needs one run by hand on production, because deploys do not run them.
 
 ## Run locally (Docker)
 
-* `docker compose up`
-* Seed the (development, right?) database: `docker compose exec members_web bundle exec rake db:setup`
-* Serves on http://localhost:3000. This machine maps it to 3001 via a gitignored `docker-compose.override.yml` to dodge a local port conflict; do the same if 3000 is taken.
-* Sign in with the seeded admin in `db/seeds.rb`.
-* Postgres is at `postgres://postgres:postgres@localhost:5432/members_db_development`. The DB persists in the `db_data` volume; source is copied at build, so rebuild `members_web` after code changes.
-* Inbucket (dev mail catcher) is at http://localhost:10001.
-
-
-## Tests
-
-* `docker compose exec members_web bundle exec rails test` (Test::Unit, under `test/`)
-* One file: append the path, e.g. `... bundle exec rails test test/unit/user_test.rb`
-* The calendar, analytics and component tests run green: `... bundle exec rails test test/models/lab_calendar test/queries test/components`. The older scaffold tests predate the Rails 7 upgrade and still need updating.
+`docker compose up`, then `docker compose exec members_web bundle exec rake db:setup`, then
+http://localhost:3000 (sign in with the admin in `db/seeds.rb`). Keep
+`DOOR_ACCESS_URL=http://127.0.0.1:9` so nothing on your laptop can reach a real door.
+Details, the tests and the door emulator: [docs/development.md](docs/development.md).
 
 
 ## Configuration
 
-For a real deploy (the Docker dev defaults aside), create these from their `.example` templates. All are gitignored; keep the secrets in a password manager, not the repo.
-
-* `config/database.yml`: Postgres per environment (`database`, `host`, `username`, `password`, `pool`).
-* `config/config.yml`, per environment:
-  * `door_access_url`: the access-control board's HTTP address.
-  * `door_access_password`: its admin password. Secret.
-  * `smtp_address`, `smtp_port`, `smtp_domain`, `smtp_authentication`, `smtp_tls`, `smtp_user`, `smtp_password`: outbound mail for member notices and password resets. `smtp_password` is a secret (a Gmail app password in practice).
-* `.env` (from `env.example`):
-  * `S3_BUCKET`, `S3_KEY`, `S3_SECRET`: AWS S3 for member photo uploads via Paperclip. Secrets. Or skip S3 and point Paperclip at local storage in the `resource` and `contract` models.
-  * `DOORACCESS_DATABASE_USERNAME`, `DOORACCESS_DATABASE_PASSWORD`: the Postgres credentials the Docker compose reads.
-* `config/initializers/secret_token.rb`: `secret_token`, a 30 character or longer random string that signs session cookies. Secret. Generate with `rake secret`; rotating it signs everyone out.
-* `SECRET_KEY_BASE` (environment variable, production): backs Devise's reset and confirmation tokens. Set it for a current Rails 7 deploy; the legacy `secret_token.rb` above still handles session signing.
-* `config/initializers/devise.rb`: password hashing. `config.stretches` is the bcrypt cost (10 here; bcrypt salts each password itself, so there is no salt to set). `config.pepper` is an optional secret mixed into every password before hashing. It ships commented out, and once set it must stay fixed or every stored password stops matching.
-* `db/seeds/admin.rb`: the initial admin email and password created by `rake db:seed`. Change it before production.
+All settings are environment variables (Coolify on the lab's server); none are secrets in
+this repository. The full list, with what each does: [docs/configuration.md](docs/configuration.md).
+Locally, the Docker setup uses safe defaults.
 
 
 ## Manual setup
@@ -161,7 +83,7 @@ For a real deploy (the Docker dev defaults aside), create these from their `.exa
 * Load into a Ruby 3.3 / Rails 7.2 environment
 * Copy config/config.yml.example to config/config.yml and edit appropriately
 * Copy config/database.yml.example to config/database.yml and edit appropriately
-* Copy env.example to .env and edit appropriately for your Amazon S3 account OR adjust the resource.rb and contract.rb model settings to use different storage for picture attachments (via Paperclip)
+* Set the `S3_*` settings for an S3-compatible file store (Amazon S3, or a self-hosted one such as Garage): see docs/files-and-waivers.md
 * Copy config/initializers/secret_token.rb.example to config/initializers/secret_token.rb and edit appropriately
 * See/edit db/seeds.rb for the initial admin account info.
 * Run bundle install, rake db:migrate, rake db:seed, etc.

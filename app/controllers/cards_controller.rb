@@ -45,6 +45,7 @@ class CardsController < ApplicationController
   # PUT /cards/1/upload
   def upload
     #@card = Card.find(params[:id])
+    @card.door_actor = "user #{current_user.id}"
     @upload_result = @card.upload_to_door
 
     respond_to do |format|
@@ -55,7 +56,7 @@ class CardsController < ApplicationController
 
   # PUT /cards/upload_all
   def upload_all
-    @upload_result = Card.upload_all_to_door
+    @upload_result = Card.upload_all_to_door(actor: "user #{current_user.id}")
 
     respond_to do |format|
       format.html # show.html.erb
@@ -163,6 +164,7 @@ class CardsController < ApplicationController
   # DELETE /cards/1.json
   def destroy
     #@card = Card.find(params[:id])
+    @card.door_actor = "user #{current_user.id}"
     respond_to do |format|
       if @card.destroy
         format.html { redirect_to cards_url, :notice => 'Card deleted and removed from the door board.' }
