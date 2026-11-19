@@ -25,6 +25,14 @@ class Card < ActiveRecord::Base
 
   # Computed per-request in CardsController#index, not a column.
   attr_accessor :accesses_this_week
+  # Who is changing the card (e.g. "user 12"), for door-api's audit log. Set by
+  # CardsController; not stored.
+  attr_accessor :door_actor
+
+  # A new card's id is its slot on the door board, which the board uses only
+  # from 0 to 199 (members keeps 0..9 free). The form limits it too; this is the
+  # server-side check.
+  validate :slot_in_range, :on => :create
 
   # The lowest free door-board slot, or nil if every slot in SLOT_RANGE is taken.
   def self.next_free_slot
@@ -37,7 +45,7 @@ class Card < ActiveRecord::Base
   # board's read-back), otherwise directly. True on success, false otherwise.
   def upload_to_door
     if DoorApiClient.enabled?
-      DoorApiClient.new.put_slot(id, card_number, card_permissions)
+      DoorApiClient.new(:actor => door_actor).put_slot(id, card_number, card_permissions)
       return true
     end
     source = DoorBoard.get(upload_query)
@@ -48,8 +56,9 @@ class Card < ActiveRecord::Base
 
   # Push every card to the door, one request per card, on either path.
   # Returns [[slot, "OK" | "FAIL"], ...].
-  def self.upload_all_to_door
+  def self.upload_all_to_door(actor: nil)
     Card.all.map do |card|
+      card.door_actor = actor
       [card.id.to_s.rjust(3, '0'), card.upload_to_door ? "OK" : "FAIL"]
     end
   end
@@ -66,6 +75,11 @@ class Card < ActiveRecord::Base
 
   private
 
+  def slot_in_range
+    return if id.nil? || SLOT_RANGE.cover?(id)
+    errors.add(:id, "must be a door-board slot from #{SLOT_RANGE.first} to #{SLOT_RANGE.last}")
+  end
+
   def remove_from_board
     unless BOARD_SLOTS.cover?(id)
       # Not a slot the board has (an old id). Writing it would hit another slot
@@ -75,7 +89,7 @@ class Card < ActiveRecord::Base
     end
     confirmed =
       if DoorApiClient.enabled?
-        DoorApiClient.new.clear_slot(id)
+        DoorApiClient.new(:actor => door_actor).clear_slot(id)
         true
       else
         DoorBoard.get("r#{id.to_s.rjust(3, '0')}&e=#{APP_CONFIG['door_access_password']}").include?('cur:')

@@ -58,7 +58,7 @@
         <div class="field photo-field">
           <%= f.label name, "Photo #{i + 1}" %>
           <% unless @resource.send(name).blank? %>
-            <%= link_to image_tag(@resource.send(name).url(:tiny), alt: "Current photo #{i + 1}"), @resource.send(name).url, class: "current-photo" %>
+            <%= link_to image_tag(resource_photo_path(@resource, name, :tiny), alt: "Current photo #{i + 1}"), resource_photo_path(@resource, name), class: "current-photo" %>
           <% end %>
           <%= f.file_field name %>
         </div>

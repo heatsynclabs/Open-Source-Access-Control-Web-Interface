@@ -7,11 +7,12 @@
 # Door automation (log import every 6 minutes, after-hours lock) runs as Coolify
 # scheduled tasks on members_web; see docs/19 in the operations folder.
 #
-# Door backend: DOOR_BACKEND=door_api sends every door, card and log action
+# Door backend: door_api (the default) sends every door, card and log action
 # through production door-api (http://door-api-prod:3000 on the door-net
-# network; door-api repo, docker-compose.production.yml). Unset or "legacy"
-# talks to the board directly with DOOR_ACCESS_URL and DOOR_ACCESS_PASSWORD,
-# which only works while the board is on the lab LAN.
+# network; door-api repo, docker-compose.production.yml). The board is on its own
+# segment behind door-api. "legacy" talks to the board directly with
+# DOOR_ACCESS_URL and DOOR_ACCESS_PASSWORD; that works only if the board is put
+# back on the lab LAN (the rollback in the operations runbook).
 #
 # door-net is an internal Docker network created once on the R610
 # (docker network create --internal door-net). It must exist before this
@@ -33,7 +34,7 @@ services:
       DOOR_ACCESS_URL: ${DOOR_ACCESS_URL}
       DOOR_ACCESS_PASSWORD: ${DOOR_ACCESS_PASSWORD}
       DOOR_CRON_PASSWORD: ${DOOR_CRON_PASSWORD}
-      DOOR_BACKEND: ${DOOR_BACKEND:-legacy}
+      DOOR_BACKEND: ${DOOR_BACKEND:-door_api}
       DOOR_API_URL: ${DOOR_API_URL}
       DOOR_API_KEY: ${DOOR_API_KEY}
       DOOR_CONTROLLER: ${DOOR_CONTROLLER:-front}
@@ -48,8 +49,15 @@ services:
       S3_BUCKET: ${S3_BUCKET}
       S3_KEY: ${S3_KEY}
       S3_SECRET: ${S3_SECRET}
+      # Unset: AWS. Set for the lab's Garage store (members-files on files-net):
+      # S3_ENDPOINT=http://members-files:3900, S3_REGION=garage,
+      # S3_BUCKET=members-photos, S3_DOCUMENTS_BUCKET=members-waivers.
+      S3_ENDPOINT: ${S3_ENDPOINT:-}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_DOCUMENTS_BUCKET: ${S3_DOCUMENTS_BUCKET:-}
     networks:
       - door-net
+      - files-net
     healthcheck:
       # Reads the cached door state from the database; never contacts the board.
       test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost:3000/space_api/simple.json || exit 1"]
@@ -80,3 +88,8 @@ networks:
   door-net:
     external: true
     name: door-net
+  # Internal network to the members-files store (Garage); exists on the R610
+  # since 2026-11-18 (created by r610-prep.sh).
+  files-net:
+    external: true
+    name: files-net

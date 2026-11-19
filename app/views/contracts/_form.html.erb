@@ -32,7 +32,7 @@
     <legend>Scan</legend>
     <div class="field wide">
       <% if @contract.document.present? %>
-        <p><%= link_to "View the document on file", @contract.document.url, class: "btn small", target: "_blank", rel: "noopener" %></p>
+        <p><%= link_to "View the document on file", contract_document_path(@contract), class: "btn small", target: "_blank", rel: "noopener" %></p>
         <details class="replace-document">
           <summary>Upload a new document</summary>
           <%= f.label :document, "New document" %>

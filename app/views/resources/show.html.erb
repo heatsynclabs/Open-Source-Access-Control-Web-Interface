@@ -3,7 +3,7 @@
   <% header.with_action { link_to "Delete", resource_path(@resource), method: :delete, class: "btn danger", data: { confirm: "Delete this tool for good?" } } if can? :destroy, @resource %>
 <% end %>
 
-<% pictures = [:picture, :picture2, :picture3, :picture4].map { |name| @resource.send(name) }.reject(&:blank?) %>
+<% pictures = Resource::PICTURES.reject { |name| @resource.send(name).blank? } %>
 <% owner = @resource.user || @resource.owner %>
 
 <div class="grid side">
@@ -11,8 +11,8 @@
     <% if pictures.any? %>
       <section class="card">
         <div class="pictures">
-          <% pictures.each do |picture| %>
-            <%= link_to image_tag(picture.url(:medium), alt: "#{@resource.name} photo", loading: "lazy"), picture.url %>
+          <% pictures.each do |name| %>
+            <%= link_to image_tag(resource_photo_path(@resource, name, :medium), alt: "#{@resource.name} photo", loading: "lazy"), resource_photo_path(@resource, name) %>
           <% end %>
         </div>
       </section>

@@ -189,9 +189,48 @@ class DoorApiClientTest < ActiveSupport::TestCase
   end
 
   test 'a card outside the board slots is deleted without touching the board' do
-    c = card(:id => 250)
+    c = Card.new(:id => 250, :user_id => (User.first || users(:one)).id, :card_number => 'abc250', :card_permissions => 1)
+    c.save!(:validate => false) # an old row from before the slot check
     assert c.destroy
     assert_empty @requests.select { |r| r[:method] == 'DELETE' }
+  end
+
+  test 'a new card must use a board slot from 10 to 199' do
+    user = User.first || users(:one)
+    [5, 200, 1000].each do |slot|
+      c = Card.new(:id => slot, :user_id => user.id, :card_number => "ab#{slot}", :card_permissions => 1)
+      assert_not c.valid?, "slot #{slot}"
+      assert c.errors[:id].any?
+    end
+    assert Card.new(:id => 199, :user_id => user.id, :card_number => 'ab199', :card_permissions => 1).valid?
+  end
+
+  test 'card writes and deletes tell door-api who made them' do
+    respond('PUT /v1/controllers/front/slots/42', 200, { 'ok' => true })
+    respond('DELETE /v1/controllers/front/slots/42', 200, { 'ok' => true })
+    c = card
+    c.door_actor = 'user 7'
+    c.upload_to_door
+    assert_equal 'user 7', @requests.last[:headers]['x-door-actor']
+    c.destroy
+    assert_equal 'user 7', @requests.last[:headers]['x-door-actor']
+  end
+
+  test 'only one import runs at a time' do
+    # A second, independent database session holds the import lock.
+    info = DoorLog.connection.raw_connection.conninfo_hash.slice(:host, :port, :dbname, :user, :password).compact
+    other = PG.connect(info)
+    begin
+      other.exec("SELECT pg_advisory_lock(#{DoorLog::IMPORT_LOCK})")
+      assert_equal false, DoorLog.download_from_door
+      assert(@requests.none? { |r| r[:path].end_with?('/log/drain') })
+    ensure
+      other.exec("SELECT pg_advisory_unlock(#{DoorLog::IMPORT_LOCK})")
+      other.close
+    end
+    respond('POST /v1/controllers/front/log/drain', 200, { 'drains' => [] })
+    assert_equal false, DoorLog.download_from_door # nothing to import, but it ran
+    assert(@requests.any? { |r| r[:path].end_with?('/log/drain') })
   end
 
   test 'the slot range stops at 199' do
