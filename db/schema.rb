@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_19_200000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_19_210000) do
 
   create_table "audit_events", :force => true do |t|
     t.string   "event_type"
@@ -80,6 +80,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_19_200000) do
   end
 
   add_index "door_activity_archives", ["user_id", "year"], :name => "index_door_activity_archives_on_user_id_and_year", :unique => true
+
+  create_table "door_log_archives", :force => true do |t|
+    t.string   "key",        :null => false
+    t.integer  "data"
+    t.datetime "created_at", :null => false
+  end
+
+  add_index "door_log_archives", ["created_at"], :name => "index_door_log_archives_on_created_at"
+  add_index "door_log_archives", ["key"], :name => "index_door_log_archives_on_key"
 
   create_table "door_logs", :force => true do |t|
     t.string   "key"

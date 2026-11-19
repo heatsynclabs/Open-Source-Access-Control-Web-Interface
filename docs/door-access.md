@@ -89,6 +89,13 @@ live in the lab's ops records (the Omnibus `door-logs/` folder). Load it on prod
 Loading replaces the table's rows in one transaction; loading the previous file undoes it.
 The archive file holds member ids, so it never goes into git.
 
+**Analytics reaches back to 2012 too.** The analytics page's door charts (card entries,
+distinct cards, busiest hours, remote commands) count `door_logs` together with
+`door_log_archives`: the granted swipes and remote commands of September 2012 to October
+2020 (about 121,000 rows, the same columns), loaded with
+`bin/rails runner script/door_log_archive.rb load rows.csv.gz` after `bin/rails db:migrate`.
+Only analytics reads that table; the leaderboard uses the per-member totals above.
+
 ## Your door stats
 
 Every member's profile (`/users/edit`, the Door stats tab) shows their own door history:

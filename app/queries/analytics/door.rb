@@ -1,6 +1,8 @@
 module Analytics
   # Door use from the board's log. Card events store a card code in data,
-  # so distinct codes count distinct cards without naming anyone.
+  # so distinct codes count distinct cards without naming anyone. Counts the
+  # live log and the old years in DoorLogArchive together, so every period
+  # reaches back to 2012.
   class Door
     GRANTED = "G"
 
@@ -20,8 +22,10 @@ module Analytics
       granted.group_by_period(@period.unit, :created_at, range: @period.range).distinct.count(:data)
     end
 
+    # Days with entries only: the lost months and the days before the log
+    # began are not quiet days.
     def entries_by_day
-      granted.group_by_day(:created_at, range: @period.range).count
+      granted.group_by_day(:created_at, range: @period.range, series: false).count
     end
 
     # { [weekday 0 = Sunday, hour] => entries }
@@ -31,7 +35,7 @@ module Analytics
 
     # Door commands sent from the members site and from the phone app.
     def remote_by_source
-      remote = DoorLog.where(created_at: @period.range)
+      remote = log.where(created_at: @period.range)
       [
         { name: "Phone app", data: by_period(remote.where("key LIKE ?", "api_rem_%")) },
         { name: "Website", data: by_period(remote.where("key LIKE ?", "rem_%")) },
@@ -41,7 +45,16 @@ module Analytics
     private
 
     def granted
-      DoorLog.where(key: GRANTED, created_at: @period.range)
+      log.where(key: GRANTED, created_at: @period.range)
+    end
+
+    # door_logs, plus door_log_archives once that table exists.
+    def log
+      return DoorLog.all unless DoorLogArchive.available?
+      DoorLog.unscoped.from(<<~SQL.squish)
+        (SELECT key, data, created_at FROM door_logs
+         UNION ALL SELECT key, data, created_at FROM door_log_archives) AS door_logs
+      SQL
     end
 
     def by_period(scope)
