@@ -96,8 +96,8 @@ class AnalyticsController < ApplicationController
       series[:data].each { |bucket, count| totals[bucket] += count }
     end
     lines = [
-      ["Card entries", @door[:entries_by_period], true],
-      ["Members coming in", @door[:cards_by_period], true],
+      ["Card swipes", @door[:entries_by_period], true],
+      ["Cardholders who came in", @door[:cards_by_period], true],
       ["Calendar events", calendar_counts, true],
       ["Class sign-ups", @classes&.dig(:by_period), true],
       ["New accounts", @members[:signups], false],

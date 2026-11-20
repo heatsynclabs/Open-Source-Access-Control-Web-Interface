@@ -10,7 +10,8 @@ for the treasurer and admins). All starts with **Everything together**: the main
 on one chart. They are counted in very different amounts, so each line is measured
 against its own busy month (its 90th percentile month = 100, clipped at 200), and starts
 when its records do. The tooltip and the table under the chart give the real numbers.
-Card entries, members coming in, calendar events and class sign-ups show at first; new
+Card swipes (every time a card opened the door), cardholders who came in (each card once
+a month, however often it was used), calendar events and class sign-ups show at first; new
 accounts, tool sign-offs and, for the treasurer and admins, dues payers and dues recorded
 are a click away in the legend. All time is drawn by quarter (the average month in each).
 

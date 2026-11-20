@@ -132,23 +132,23 @@ class Analytics::QueriesTest < ActiveSupport::TestCase
     months = (1..12).map { |m| Date.new(2025, m, 1) }
     entries = months.to_h { |month| [month, month.month == 1 ? 0 : 100] }.merge(months.last => 1000)
     overview = Analytics::Overview.new(period("3y"), [
-      ["Card entries", entries, true], ["Members coming in", nil, true],
+      ["Card swipes", entries, true], ["Cardholders who came in", nil, true],
       ["Calendar events", months.to_h { |month| [month, 4] }, true], ["Dues recorded", { months.first => 50.0 }, false, "$"],
     ])
     lines = overview.chart_series.to_h { |line| [line[:name], line] }
-    entry_points = lines["Card entries"][:data]
+    entry_points = lines["Card swipes"][:data]
     assert_nil entry_points["Jan 2025"] # before the line's first data
     assert_equal 100, entry_points["Jun 2025"]
     assert_equal 200, entry_points["Dec 2025"] # one freak month is clipped at the ceiling
-    assert_equal 1000.0, lines["Card entries"][:dataset][:actualByLabel]["Dec 2025"] # the tooltip's real number
+    assert_equal 1000.0, lines["Card swipes"][:dataset][:actualByLabel]["Dec 2025"] # the tooltip's real number
     assert lines["Dues recorded"][:dataset][:hidden]
-    assert_equal ["Card entries", "Calendar events", "Dues recorded"], overview.names
+    assert_equal ["Card swipes", "Calendar events", "Dues recorded"], overview.names
     assert_equal ["1,000", "4", ""], overview.table["Dec 2025"]
     assert_equal "$50", overview.table["Jan 2025"].last
   end
 
   test "all time is drawn by quarter, each the average month" do
-    overview = Analytics::Overview.new(period("all"), [["Card entries", { Date.new(2024, 1, 1) => 30, Date.new(2024, 2, 1) => 60, Date.new(2024, 3, 1) => 90 }, true]])
+    overview = Analytics::Overview.new(period("all"), [["Card swipes", { Date.new(2024, 1, 1) => 30, Date.new(2024, 2, 1) => 60, Date.new(2024, 3, 1) => 90 }, true]])
     assert overview.quarterly?
     assert_equal({ "Q1 2024" => ["60"] }, overview.table)
   end
