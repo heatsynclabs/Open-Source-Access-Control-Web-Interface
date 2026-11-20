@@ -3,7 +3,7 @@
   <%= f.select :log, options_for_select(@logs.invert, params[:log]), { include_blank: "Both logs" }, "aria-label": "Log", data: { action: "change->autosubmit#submit" } %>
   <%= f.search_field :q, value: params[:q], placeholder: "Search project and notes", "aria-label": "Search" %>
   <%= f.select :material, options_for_select(@materials, params[:material]), { include_blank: "Any material" }, "aria-label": "Material", data: { action: "change->autosubmit#submit" } %>
-  <%= f.select :result, options_for_select([["Worked", "success"], ["Partly worked", "conditional"], ["Failed", "fail"]], params[:result]), { include_blank: "Any result" }, "aria-label": "Result", data: { action: "change->autosubmit#submit" } %>
+  <%= f.select :result, options_for_select([["Worked", "success"], ["Partly worked", "conditional"], ["Failed", "fail"], ["Not recorded", "unknown"]], params[:result]), { include_blank: "Any result" }, "aria-label": "Result", data: { action: "change->autosubmit#submit" } %>
   <%= f.submit "Search", class: "btn" %>
 <% end %>
 <p class="label"><%= pluralize(number_with_delimiter(@found), "job") %>, newest first. Names on the form are not shown. The earlier log (2013 to 2020) recorded settings only: no project, notes or result.</p>
@@ -16,7 +16,7 @@
         <tr>
           <td class="nowrap"><%= job.date.iso8601 %></td>
           <td><% if job.source == LaserJob::EARLIER %><span class="muted">Earlier log</span><% else %><strong><%= job.title %></strong><% end %><% if note.present? %><br><span class="muted small"><%= truncate(note, length: 220) %></span><% end %></td>
-          <td><%= job.material %><br><span class="muted small"><%= job.bucket %><%= " (logged as #{job.material_raw})" if job.source == LaserJob::EARLIER && job.material_raw.present? && job.material_raw.downcase != job.material.downcase %></span></td>
+          <td><%= job.material %><br><span class="muted small"><%= job.bucket %><%= " (logged as #{job.material_raw})" if job.source == LaserJob::EARLIER && job.material_raw.present? && !job.material.downcase.include?(job.material_raw.downcase.strip) %></span></td>
           <td class="nowrap"><%= "#{job.cut_op} #{laser_number(job.cut_power)}/#{laser_number(job.cut_speed)}" if job.cut_op %><% if job.cut_op && job.eng_mode %><br><% end %><%= "engrave #{laser_number(job.eng_power)}/#{laser_number(job.eng_speed)}" if job.eng_mode %></td>
           <td><%= render ChipComponent.new({ "success" => "worked", "conditional" => "partly", "fail" => "failed", "unknown" => "not recorded" }.fetch(job.result, job.result), tone: { "success" => :ok, "conditional" => :warn, "fail" => :err }[job.result]) %></td>
         </tr>

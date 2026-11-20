@@ -8,8 +8,9 @@ module LaserLog
   # material put in the current form's terms. It has dates, materials,
   # thickness and settings only: no names, results, passes, run time or
   # notes. Each row is cleaned by LaserLog::Cleaner like a form row and kept
-  # as source LaserJob::EARLIER; laser:sync loads it when it is missing or
-  # the file has changed.
+  # as source LaserJob::EARLIER. laser:sync reloads it every night before
+  # reading the form (a second or so), so a corrected file or cleaning rule
+  # shows the next morning.
   class Archive
     FILE = Rails.root.join("db/archive/large-laser-log-2013-2020.csv")
 
@@ -30,17 +31,12 @@ module LaserLog
       end
     end
 
-    def loaded?
-      LaserJob.where(source: LaserJob::EARLIER).count == CSV.read(FILE, headers: true).size
-    end
-
     def load!
       records = jobs
       LaserJob.transaction do
         LaserJob.where(source: LaserJob::EARLIER).delete_all
         LaserJob.insert_all!(records)
       end
-      Rails.cache.delete_matched("laser") rescue nil
       records.size
     end
   end

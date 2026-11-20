@@ -52,8 +52,9 @@ no names, results, passes, run time or notes. Nothing was found for July 2020 to
   folder). The file was public on the wiki and holds no personal data.
 - **Loading.** `LaserLog::Archive` cleans each row with the same `LaserLog::Cleaner` as the
   form (swapped boxes, scores, material folding) and keeps it as source `2013 log`.
-  `laser:sync` loads it whenever it is missing or the file has changed; the nightly read of
-  the form never touches it.
+  `laser:sync` reloads it every night before reading the form (a second or so), so a
+  corrected file or cleaning rule shows the next morning; the form's own replace never
+  touches it, and its row count is not part of the form's "far fewer rows" check.
 - **Where it shows.** The log (both logs, or one); "Find a setting" and "All settings" show
   what people used for the same stock then, marked as history; the 3 mm plywood drift
   reaches back to 2013 (hollow points: every job, since there are no results); analytics

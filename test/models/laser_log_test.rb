@@ -90,10 +90,9 @@ class LaserLogTest < ActiveSupport::TestCase
 
   test "the earlier log loads from its file, cleaned like the form, and the nightly sync leaves it alone" do
     LaserJob.delete_all
-    archive = LaserLog::Archive.new
-    loaded = archive.load!
+    loaded = LaserLog::Archive.new.load!
     assert_equal CSV.read(LaserLog::Archive::FILE, headers: true).size, loaded
-    assert archive.loaded?
+    assert_equal loaded, LaserLog::Archive.new.load!, "reloading replaces, never adds"
     earlier = LaserJob.where(source: LaserJob::EARLIER)
     assert_equal ["unknown"], earlier.distinct.pluck(:result)
     assert_equal "", earlier.distinct.pick(:person_key)
