@@ -1,6 +1,7 @@
 # Aggregate charts for signed-in members: members, door use, the calendar
 # and class sign-ups, plus dues and class money for the treasurer and
-# admins. Counts only; nothing on this page names a person.
+# admins, and "Over the years" (LabMetric: records the site does not hold).
+# Counts only; nothing on this page names a person.
 #
 # The page has one tab per source (section) and "All". The page itself is
 # only the header, tabs and period buttons, so it shows at once; the numbers
@@ -13,7 +14,7 @@ class AnalyticsController < ApplicationController
   CACHE_FOR = 10.minutes
   SECTIONS = {
     "all" => "All", "door" => "Lab use", "calendar" => "Calendar", "classes" => "Classes",
-    "members" => "Members", "dues" => "Dues",
+    "members" => "Members", "dues" => "Dues", "history" => "Over the years",
   }.freeze
 
   before_action :choose_section
@@ -30,6 +31,7 @@ class AnalyticsController < ApplicationController
     classes_sections if (all || @section == "classes") && TicketedEvent.available?
     @payments = cached(:payments) { payments_section(Analytics::Payments.new(@period)) } if (all || @section == "dues") && @sections.key?("dues")
     @overview = overview if all
+    @history = Analytics::History.new if (all || @section == "history") && LabMetric.available?
     render layout: false
   end
 

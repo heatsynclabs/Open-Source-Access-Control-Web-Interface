@@ -25,6 +25,13 @@ module AnalyticsHelper
     series_list.map { |series| series.merge(data: by_bucket(series[:data], period)) }
   end
 
+  # Table rows [[label, [value, ...]]] for Chartkick series that share their
+  # labels (one column per series), for a chart card's numbers.
+  def series_rows(series)
+    return [] if series.empty?
+    series.first[:data].keys.map { |label| [label, series.map { |line| line[:data][label] }] }
+  end
+
   # "12am", "3pm": an hour of the day on the door heatmap.
   def hour_label(hour)
     Time.zone.local(2000, 1, 1, hour).strftime("%-l%P")
