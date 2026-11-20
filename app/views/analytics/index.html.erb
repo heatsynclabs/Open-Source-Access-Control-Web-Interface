@@ -12,7 +12,7 @@
   <% Analytics::Period::CHOICES.each do |key, choice| %>
     <%= link_to choice[:label], analytics_path(period: key, section: @section), class: ["toggle", ("on" if @period.key == key)], "aria-current": ("page" if @period.key == key) %>
   <% end %>
-  <span class="muted small">Grouped by <%= @period.unit %>. Figures refresh every <%= distance_of_time_in_words(AnalyticsController::CACHE_FOR) %>.</span>
+  <span class="muted small">Grouped by <%= @period.unit %>. The <%= @period.unit %> we are in is marked "so far" and drawn dashed or paler, since it is not over. Figures refresh every <%= distance_of_time_in_words(AnalyticsController::CACHE_FOR) %>.</span>
 </nav>
 
 <%# The numbers load from analytics#section; its charts need the chart scripts on this page. %>

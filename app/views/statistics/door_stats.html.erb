@@ -35,9 +35,9 @@
           <%= render EmptyStateComponent.new("No visits since July 2022.") %>
         <% end %>
       </section>
-      <%= render ChartCardComponent.new(title: "The last twelve months", rows: @stats.recent_months.map { |month, days| [month.strftime("%B %Y"), days] }.reverse,
+      <%= render ChartCardComponent.new(title: "The last twelve months", rows: @stats.recent_months.map { |month, days| [month_label(month, "%B %Y"), days] }.reverse,
             columns: ["Month", "Days"]) do %>
-        <%= column_chart @stats.recent_months.transform_keys { |month| month.strftime("%b %Y") }, library: { scales: { y: { ticks: { precision: 0 } } } } %>
+        <%= column_chart @stats.recent_months.transform_keys { |month| month_label(month) }, library: { scales: { y: { ticks: { precision: 0 } } } } %>
       <% end %>
     </div>
 

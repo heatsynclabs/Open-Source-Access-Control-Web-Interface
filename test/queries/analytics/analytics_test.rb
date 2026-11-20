@@ -20,6 +20,13 @@ class Analytics::QueriesTest < ActiveSupport::TestCase
     assert_equal :week, period("90d").unit
   end
 
+  test "the bucket we are in is labelled so far" do
+    this_month, last_month = Date.current.beginning_of_month, Date.current.beginning_of_month << 1
+    assert_equal this_month.strftime("%b %Y") + " (so far)", period.bucket_label(this_month)
+    assert_equal last_month.strftime("%b %Y"), period.bucket_label(last_month)
+    assert_match(/\(so far\)\z/, period("90d").bucket_label(Date.current.beginning_of_week))
+  end
+
   test "level mix bands members the way the site names levels" do
     member(member_level: 100)
     member(member_level: 50)

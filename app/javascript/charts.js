@@ -57,6 +57,36 @@ function redrawAll() {
   })
 }
 
+// The bucket we are in is not over yet: the server ends its label with
+// " (so far)" (Analytics::Period::SO_FAR). Its line segment is dashed and its
+// bars paler, so a half-counted month does not read as a drop.
+const SO_FAR = " (so far)"
+
+function paler(color) {
+  const hex = /^#([0-9a-f]{6})$/i.exec(color || "")
+  if (!hex) return color
+  const n = parseInt(hex[1], 16)
+  return `rgba(${n >> 16}, ${(n >> 8) & 255}, ${n & 255}, 0.4)`
+}
+
+const unfinishedPeriod = {
+  id: "unfinishedPeriod",
+  beforeUpdate(chart) {
+    const labels = chart.data.labels || []
+    const last = labels.length - 1
+    if (last < 0 || !String(labels[last]).endsWith(SO_FAR)) return
+    chart.data.datasets.forEach((dataset) => {
+      if ((dataset.type || chart.config.type) === "line") {
+        dataset.segment = { borderDash: (ctx) => (ctx.p1DataIndex === last ? [5, 4] : undefined) }
+      } else {
+        const base = Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor[0] : dataset.backgroundColor
+        dataset.backgroundColor = labels.map((_label, i) => (i === last ? paler(base) : base))
+      }
+    })
+  },
+}
+window.Chart.register(unfinishedPeriod)
+
 applyTheme()
 redrawAll()
 
