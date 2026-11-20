@@ -65,6 +65,10 @@ window.addEventListener("theme:change", () => {
   redrawAll()
 })
 
+// Chartkick draws a page's charts when their inline scripts run, which can
+// be after this module, so theme them again once the page has loaded.
 // Charts drawn later inside a Turbo Frame (the profile's Door stats tab)
 // take the theme too.
+if (document.readyState === "complete") redrawAll()
+else window.addEventListener("load", redrawAll)
 document.addEventListener("turbo:frame-load", redrawAll)

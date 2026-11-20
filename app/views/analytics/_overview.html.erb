@@ -11,6 +11,6 @@
   <% end %>
 </div>
 
-<%= render ChartCardComponent.new(title: "Everything together", note: "Each line is drawn against its own busiest #{@period.unit} (100), so lines counted in hundreds and in tens can be compared by shape. Click a name to hide or show its line; the real numbers are in the table.", rows: @overview.actual.transform_keys { |bucket| @period.bucket_label(bucket) }, columns: ["When", *@overview.names]) do %>
-  <%= line_chart @overview.indexed.map { |line| line.merge(data: by_bucket(line[:data], @period)) }, height: "300px", curve: false, points: false, suffix: "", library: { interaction: { mode: "index", intersect: false } } %>
+<%= render ChartCardComponent.new(title: "Everything together", note: "Each line is scaled to its own busy level: 100 is a busy #{@period.unit} for that line (its 90th percentile), so lines counted in hundreds and in tens can be compared by shape. A line starts when its records do. Click a name to hide or show its line; the real numbers are in the table.", rows: @overview.actual.transform_keys { |bucket| @period.bucket_label(bucket) }, columns: ["When", *@overview.names]) do %>
+  <%= line_chart @overview.indexed.map { |line| line.merge(data: by_bucket(line[:data], @period)) }, height: "300px", curve: false, points: false, max: Analytics::Overview::CEILING, library: { interaction: { mode: "index", intersect: false } } %>
 <% end %>
