@@ -34,6 +34,30 @@
   .heatmap-scale { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-3); font-size: var(--text-xs); color: var(--ash); }
   .heatmap-scale i { width: 80px; height: 10px; background: linear-gradient(90deg, var(--slab-hi), var(--hazard)); }
 
+  // Where members live: zones of the valley in a rough map, each shaded by
+  // its share of the busiest zone (as the door heatmap is).
+  .zone-map {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-areas:
+      "west phx scot north north"
+      "west phx tempe mesa emesa"
+      ". . chand gilb pinal"
+      ". . south south .";
+    gap: 4px;
+    margin-bottom: var(--space-3);
+    .zone {
+      display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-1);
+      min-height: 72px; padding: var(--space-2);
+      background: color-mix(in srgb, var(--hazard) calc(var(--v) * 100%), var(--slab-hi));
+      border: 1px solid var(--steel);
+      &.hot { color: var(--tape-dark); }
+      &.lab { outline: 3px solid var(--steel-hi); outline-offset: -3px; }
+    }
+    .zone-name { font-size: var(--text-xs); line-height: 1.2; }
+    .zone-num { font-family: var(--font-display); font-size: var(--text-lg); }
+  }
+
   // Horizontal bars for ranked lists (top certifications, recurring events).
   .bar-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
   .bar-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-1) var(--space-3); font-size: var(--text-sm); }

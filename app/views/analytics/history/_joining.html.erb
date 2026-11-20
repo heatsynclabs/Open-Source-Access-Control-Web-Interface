@@ -10,7 +10,11 @@
     <%= column_chart heard, discrete: true, stacked: true %>
   <% end %>
 
-  <%= render ChartCardComponent.new(title: "Where members live", note: "People who have paid dues, by the ZIP code on their account. 85201 is downtown Mesa, where the lab is; 85281 to 85283 are Tempe.") do %>
+  <%= render ChartCardComponent.new(title: "Where members live, by area", note: "People who have paid dues, by the ZIP code on their account, grouped into areas laid out roughly as on a map (west on the left, north at the top). Darker is more people.") do %>
+    <%= render "analytics/history/zone_map" %>
+  <% end %>
+
+  <%= render ChartCardComponent.new(title: "Where members live, by ZIP code", note: "The same people by ZIP code. 85201 is downtown Mesa, where the lab is; 85281 to 85283 are Tempe.") do %>
     <%= render "analytics/bar_list", rows: @history.totals("members_by_zip"), empty: "No ZIP codes loaded." %>
   <% end %>
 </div>

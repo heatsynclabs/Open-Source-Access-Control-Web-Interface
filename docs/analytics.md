@@ -130,7 +130,7 @@ data writes any count of people under 5 as "<5"), and the tab says "fewer than 5
 | Messages and people posting | `community/mailing_list_monthly.csv` (one member's copy of the Google Group, counted from its daily summaries) and `community/slack_monthly.csv` | Aug 2011 to Apr 2026; Slack Apr 2018 to Aug 2026 | Slack's part months at each end |
 | Wiki edits, most-read pages | `community/wiki_activity_by_year.csv`, `community/wiki_most_read.csv` | 2009 to 2025; views to Oct 2026 | articles only (no user or talk pages) |
 | Where events were held, who keeps the calendar | `events/calendar_places_by_year.csv`, `events/calendar_contributors_by_year.csv`, from the December 2025 calendar download | 2010 to 2025 | 2025 ends on 10 December |
-| How people heard about the lab, where members live | `membership/how_heard_by_year.csv`, `membership/members_by_zip.csv`, from the September 2026 database copy | 2012 to 2026 | the free-text answers are never copied, only kinds by keyword; ZIP codes with fewer than 5 people grouped |
+| How people heard about the lab, where members live | `membership/how_heard_by_year.csv`, `membership/members_by_zip.csv` and `members_by_zone.csv` (ZIP codes grouped into areas of the valley by USPS ranges, drawn as a rough map of zones), from the September 2026 database copy | 2012 to 2026 | the free-text answers are never copied, only kinds by keyword; ZIP codes with fewer than 5 people grouped |
 | Money (treasurer, admins) | PayPal dues and donations by year, `finances/form990_by_year.csv` (the Form 990-EZ returns, 2010 to 2024), utility bills by year | 2010 to 2026 | donations from mid-2022 to mid-2025 (only dues were imported then) |
 
 ### Refreshing the figures

@@ -11,7 +11,6 @@
 </div>
 
 <% drift = t.drift %>
-<% series = drift.transform_values { |half| half&.dig(:ratio) } %>
-<%= render ChartCardComponent.new(title: "The machine drifts", note: "Power divided by speed that 3 mm plywood needed to cut through, by half year (higher means a weaker beam). Optics work noted in the log: #{Laser::Model::OPTICS.map { |day, label| "#{label.downcase} #{day.strftime("%b %Y")}" }.to_sentence}.", rows: drift.map { |half, v| [half, v ? [v[:ratio], "#{laser_number(v[:power])}% at #{laser_number(v[:speed])} mm/s"] : ["", ""]] }, columns: ["Half year", "Power / speed", "Typical setting"]) do %>
-  <%= line_chart series, discrete: true, curve: false %>
+<%= render ChartCardComponent.new(title: "The machine drifts", note: "Power divided by speed that 3 mm plywood needed to cut through, by half year (higher means a weaker beam). Dashed lines are optics work noted in the log; under each point, its typical power / speed.", rows: drift.map { |half, v| [half, v ? [v[:ratio], "#{laser_number(v[:power])}% at #{laser_number(v[:speed])} mm/s"] : ["", ""]] }, columns: ["Half year", "Power / speed", "Typical setting"]) do %>
+  <%= laser_drift_chart(drift) %>
 <% end %>

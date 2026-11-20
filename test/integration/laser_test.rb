@@ -51,6 +51,13 @@ class LaserPageTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "the drift chart marks optics work with dashed lines" do
+    sign_in member
+    get laser_path(view: "trouble")
+    assert_select "svg.laser-chart line.optics"
+    assert_select "svg.laser-chart text.optics-label", text: "Lens clean"
+  end
+
   test "the log searches titles and notes and never shows who logged a job" do
     sign_in member
     get laser_path(view: "log", q: "did not cut")

@@ -75,6 +75,54 @@ module LaserHelper
     tag.svg(safe_join(marks), class: "laser-chart", viewBox: "0 0 #{w} #{h}", role: "img", "aria-label": "Energy needed against thickness for plywood, acrylic and MDF")
   end
 
+  # Power / speed that 3 mm plywood needed, by half year, with the optics
+  # work as dashed lines and each point's typical setting under it.
+  def laser_drift_chart(drift)
+    halves = drift.keys
+    values = drift.values.compact.map { |v| v[:ratio] }
+    return "" if values.empty?
+    w, h, l, r, t, b = 860, 240, 30, 16, 24, 30
+    top = values.max * 1.4
+    first_year = halves.first.to_i
+    x = ->(i) { l + (i + 0.5) * (w - l - r) / halves.size }
+    y = ->(v) { t + (1 - v / top) * (h - t - b) }
+    marks = (0..top.floor).step(2).map { |v| grid_line(l, w - r, y.(v), v) }
+    marks += optics_lines { |day| l + ((day.year - first_year) * 2 + (day.month - 1) / 6.0) * (w - l - r) / halves.size }.call(t, h - b)
+    points = halves.each_with_index.filter_map { |half, i| [i, drift[half]] if drift[half] }
+    marks << tag.polyline(class: "trend", points: points.map { |i, v| "#{x.(i).round(1)},#{y.(v[:ratio]).round(1)}" }.join(" "))
+    halves.each_with_index { |half, i| marks << tag.text(half, x: x.(i).round(1), y: h - b + 18, "text-anchor": "middle") }
+    points.each do |i, v|
+      marks << tag.circle(tag.title("#{halves[i]}: #{v[:ratio]} (#{laser_number(v[:power])}% at #{laser_number(v[:speed])} mm/s)"), class: "point", cx: x.(i).round(1), cy: y.(v[:ratio]).round(1), r: 6)
+      marks << tag.text("#{laser_number(v[:power])}/#{laser_number(v[:speed])}", class: "point-label", x: (x.(i) - 10).round(1), y: (y.(v[:ratio]) + 22).round(1), "text-anchor": "middle")
+    end
+    tag.svg(safe_join(marks), class: "laser-chart", viewBox: "0 0 #{w} #{h}", role: "img", "aria-label": "Power to speed ratio for 3 mm plywood over time")
+  end
+
+  # The energy index by quarter (one vote per person), 1.00 dashed, optics
+  # work as dashed lines.
+  def laser_index_chart(quarters)
+    return "" if quarters.empty?
+    w, h, l, r, t, b, lo, hi = 860, 250, 40, 14, 30, 30, 0.7, 1.3
+    x = ->(i) { l + (i + 0.5) * (w - l - r) / quarters.size }
+    y = ->(v) { t + (hi - v.clamp(lo, hi)) / (hi - lo) * (h - t - b) }
+    marks = [0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3].map do |v|
+      safe_join([tag.line(class: (v == 1.0 ? "baseline" : "grid"), x1: l, x2: w - r, y1: y.(v).round(1), y2: y.(v).round(1)),
+                 tag.text(format("%.1f", v), x: l - 8, y: (y.(v) + 4).round(1), "text-anchor": "end")])
+    end
+    names = quarters.map { |q| q[:quarter] }
+    position = lambda do |day|
+      i = names.index("#{day.year}Q#{(day.month - 1) / 3 + 1}")
+      i && l + (i + ((day.month - 1) % 3 + day.day / 31.0) / 3) * (w - l - r) / quarters.size
+    end
+    marks += optics_lines(stagger: true, &position).call(t, h - b)
+    marks << tag.polyline(class: "trend", points: quarters.each_with_index.map { |q, i| "#{x.(i).round(1)},#{y.(q[:vote]).round(1)}" }.join(" "))
+    quarters.each_with_index do |q, i|
+      marks << tag.circle(tag.title("#{q[:quarter]}: #{q[:vote]} from #{q[:people]} people, #{q[:n]} cuts"), class: "point", cx: x.(i).round(1), cy: y.(q[:vote]).round(1), r: 5)
+      marks << tag.text(q[:quarter].sub("Q", " Q"), x: x.(i).round(1), y: h - b + 18, "text-anchor": "middle") if i.even?
+    end
+    tag.svg(safe_join(marks), class: "laser-chart", viewBox: "0 0 #{w} #{h}", role: "img", "aria-label": "Energy index by quarter")
+  end
+
   # "+12%" or "-3%", or n/a.
   def laser_change(value)
     return tag.span("n/a", class: "muted") if value.nil?
@@ -82,6 +130,18 @@ module LaserHelper
   end
 
   private
+
+  # Dashed lines for the optics work in Laser::Model::OPTICS, at the x the
+  # block gives for a date (nil: off the chart), labelled at the top.
+  def optics_lines(stagger: false, &x_of)
+    lambda do |top, bottom|
+      Laser::Model::OPTICS.each_with_index.flat_map do |(day, label), i|
+        at = x_of.call(day) or next []
+        [tag.line(class: "optics", x1: at.round(1), x2: at.round(1), y1: top - 6, y2: bottom),
+         tag.text(label, class: "optics-label", x: (at - 4).round(1), y: top - 10 - (stagger ? (i % 2) * 11 : 0), "text-anchor": "end")]
+      end
+    end
+  end
 
   def grid_line(from, to, at, label)
     safe_join([tag.line(class: "grid", x1: from, x2: to, y1: at.round(1), y2: at.round(1)),

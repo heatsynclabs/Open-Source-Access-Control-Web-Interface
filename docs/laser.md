@@ -9,7 +9,7 @@ cleaning rules and the same numbers, in the site's own design, with no names.
 |---|---|
 | Find a setting | Pick a material, a job (cut through or engrave) and a thickness: the typical power, speed and passes (or scan gap) from jobs that worked, how reliable that is, the spread, one vote per person, every setting tried (a power against speed chart) and the notes from jobs that struggled |
 | All settings | One row per material and thickness with 3 or more jobs |
-| What goes wrong | Trouble rates (MDF, thick plywood, multiple passes, a dirty start), the top complaints from the notes, and how the 3 mm plywood setting drifted by half year |
+| What goes wrong | Trouble rates (MDF, thick plywood, multiple passes, a dirty start), the top complaints from the notes, and how the 3 mm plywood setting drifted by half year, with optics work as dashed lines |
 | Laser math | The energy per mm a cut takes (E = 0.8 x power / speed x passes), how it grows with thickness, an estimator for unlogged stock, whether lens cleans show up, whether laser hours wear the beam, and what the log cannot tell you |
 | Cheat sheet | The settings on one printable sheet; pick a paper size and print (only the sheet prints) |
 | The log | Every job, newest first, searchable by project and notes and filterable by material and result; names are not shown. "How the log was cleaned" lists every repair |

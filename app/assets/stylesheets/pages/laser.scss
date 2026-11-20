@@ -36,6 +36,12 @@
   .laser-chart .law-mdf { stroke: var(--violet); fill: var(--violet); }
   .laser-chart polyline.law-plywood, .laser-chart polyline.law-acrylic, .laser-chart polyline.law-mdf { fill: none; }
   .laser-chart .end-label { fill: var(--bone); font-size: 12px; }
+  .laser-chart .optics { stroke: var(--rust); stroke-width: 2; stroke-dasharray: 3 3; }
+  .laser-chart .optics-label { fill: var(--rust-deep); font-size: 10px; }
+  .laser-chart .trend { fill: none; stroke: var(--bone); stroke-width: 2.5; }
+  .laser-chart .baseline { stroke: var(--bone); stroke-dasharray: 6 4; }
+  .laser-chart circle.point { fill: var(--hazard); stroke: var(--steel-hi); stroke-width: 2; fill-opacity: 1; }
+  .laser-chart .point-label { fill: var(--bone); }
 
   .laser-table td.big, .laser-sheet td.big { font-family: var(--font-display); font-size: var(--text-lg); }
   .laser-table tr.family th { background: var(--slab-hi); text-transform: uppercase; letter-spacing: var(--tracking-wide); font-size: var(--text-xs); }

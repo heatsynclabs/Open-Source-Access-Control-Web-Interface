@@ -1,0 +1,14 @@
+<%# Where dues payers live, as zones of the valley laid out roughly as on a map, shaded by how many live there (members_by_zone). %>
+<% zones = @history.totals("members_by_zone").to_h %>
+<% most = zones.except("Not given", "Out of state").values.compact.max.to_f %>
+<div class="zone-map" role="img" aria-label="Members by area: <%= zones.map { |name, n| "#{name} #{n || "fewer than 5"}" }.join(", ") %>">
+  <% AnalyticsHelper::ZONE_AREAS.each do |name, area| %>
+    <% n = zones[name] %>
+    <% share = n && most.positive? ? (n / most).round(3) : 0 %>
+    <div class="zone<%= " hot" if share > 0.55 %><%= " lab" if name == AnalyticsHelper::LAB_ZONE %>" style="grid-area: <%= area %>; --v: <%= share %>">
+      <span class="zone-name"><%= name %><%= " (the lab)" if name == AnalyticsHelper::LAB_ZONE %></span>
+      <span class="zone-num"><%= n.nil? ? "fewer than 5" : n %></span>
+    </div>
+  <% end %>
+</div>
+<p class="muted small">Not on the map: <%= zones["Out of state"] || "fewer than 5" %> out of state, <%= zones["Not given"] %> with no ZIP code on their account.</p>

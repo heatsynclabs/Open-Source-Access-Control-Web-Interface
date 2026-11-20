@@ -31,6 +31,15 @@ module AnalyticsHelper
     series.flat_map { |line| line[:data].keys }.uniq.map { |label| [label, series.map { |line| line[:data][label] }] }
   end
 
+  # The zone map of where members live: each zone's place in a grid laid out
+  # roughly like the valley (west to east, north to south).
+  ZONE_AREAS = {
+    "West Valley" => "west", "Phoenix" => "phx", "Scottsdale and Fountain Hills" => "scot",
+    "Elsewhere in Arizona" => "north", "Tempe" => "tempe", "Mesa, downtown and west" => "mesa", "East Mesa" => "emesa",
+    "Chandler" => "chand", "Gilbert" => "gilb", "Pinal County" => "pinal", "Tucson and the south" => "south",
+  }.freeze
+  LAB_ZONE = "Mesa, downtown and west"
+
   # An Over the years deep dive (Analytics::History::TOPICS).
   def history_topic_path(topic)
     analytics_path(section: "history", topic: topic)

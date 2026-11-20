@@ -29,6 +29,8 @@ class AnalyticsHistoryTest < ActionDispatch::IntegrationTest
     metric("calendar_contributors", Date.new(2025, 1, 1), nil, period: "year")
     metric("calendar_items_added", Date.new(2013, 1, 1), 155, period: "year")
     metric("calendar_contributors", Date.new(2013, 1, 1), 20, period: "year")
+    metric("members_by_zone", Date.new(2026, 9, 1), 56, label: "Mesa, downtown and west", period: "total")
+    metric("members_by_zone", Date.new(2026, 9, 1), nil, label: "Elsewhere in Arizona", period: "total")
   end
 
   def history_tab
@@ -46,6 +48,8 @@ class AnalyticsHistoryTest < ActionDispatch::IntegrationTest
     assert_match "Different people added them: 20 in 2013, fewer than 5 in 2025", response.body
     assert_select "h2", text: "Money", count: 0
     assert_no_match "$1,850", response.body
+    assert_select ".zone-map .zone.lab .zone-num", "56"
+    assert_select ".zone-map .zone-num", "fewer than 5"
   end
 
   test "the wiki deep dive lists the most-read pages" do
