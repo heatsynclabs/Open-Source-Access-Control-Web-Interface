@@ -18,7 +18,10 @@ to hide or show its line; the real numbers are in the table under the chart.
 | Classes | guestlist.co, the lab's ticketing site (`ticketed_events`) | an organizer export by hand, plus a nightly check of guestlist's public pages | nightly for new and recent events; the full history as of the last export |
 | Dues (treasurer, admins) | `payments`, from PayPal CSV imports and hand entries | the treasurer imports PayPal CSVs on the PayPal page | as of the last import |
 
-Every chart is cached for 10 minutes.
+Every chart is cached for 10 minutes. The page itself (header, tabs, period buttons)
+shows at once; the numbers load into it from `/analytics/section` in a Turbo Frame, with a
+placeholder and a "Working out the numbers" line meanwhile, because the first view after
+the cache expires can take a few seconds.
 
 ## Classes (guestlist.co)
 

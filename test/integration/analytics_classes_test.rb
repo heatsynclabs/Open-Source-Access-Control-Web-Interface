@@ -24,9 +24,20 @@ class AnalyticsClassesTest < ActionDispatch::IntegrationTest
     TicketedEvent.update_all(collected_at: Time.zone.local(2026, 11, 19, 16, 14))
   end
 
+  # The numbers, as the page's Turbo Frame loads them.
   def analytics_page(**params)
-    LabCalendar.stub(:between, ->(_range) { raise LabCalendar::Unavailable }) { get analytics_path(params) }
+    LabCalendar.stub(:between, ->(_range) { raise LabCalendar::Unavailable }) { get analytics_section_path(params) }
     assert_response :success
+  end
+
+  test "the page shows at once with a placeholder and loads the numbers into a frame" do
+    sign_in member
+    get analytics_path(period: "3y", section: "classes")
+    assert_response :success
+    assert_select ".tabs a.on", "Classes"
+    assert_select "turbo-frame#analytics-section[src=?][target=_top]", analytics_section_path(period: "3y", section: "classes")
+    assert_select "turbo-frame#analytics-section [aria-busy=true]", /Working out the numbers for Classes, 3 years/
+    assert_no_match "Who signs up", response.body # the numbers are not worked out for the page itself
   end
 
   test "members see sign-ups but not class money" do
@@ -58,7 +69,7 @@ class AnalyticsClassesTest < ActionDispatch::IntegrationTest
   test "the Classes tab lists every event with its status" do
     sign_in member
     analytics_page(section: "classes")
-    assert_select ".tabs a.on", "Classes"
+    assert_select "turbo-frame#analytics-section"
     assert_select "h3", "By year"
     assert_select "td", "Cancelled Laser Class"
     assert_select ".chip.err", "cancelled"
@@ -70,7 +81,7 @@ class AnalyticsClassesTest < ActionDispatch::IntegrationTest
     analytics_page
     assert_select "h3", "Everything together"
     assert_select ".tabs a", text: "Dues", count: 0
-    analytics_page(section: "dues")
+    get analytics_path(section: "dues")
     assert_select ".tabs a.on", "All" # an unknown or forbidden tab falls back to All
   end
 

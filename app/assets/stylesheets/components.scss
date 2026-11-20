@@ -432,4 +432,19 @@
     animation: shimmer 1.4s linear infinite;
   }
   @keyframes shimmer { to { background-position: -200% 0; } }
+  .skeleton.short { min-height: 96px; }
+
+  // A small spinning ring beside "loading" text.
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: var(--space-2);
+    vertical-align: -2px;
+    border: 2px solid var(--steel-hi);
+    border-top-color: var(--hazard);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 }

@@ -2,8 +2,11 @@
 # and class sign-ups, plus dues and class money for the treasurer and
 # admins. Counts only; nothing on this page names a person.
 #
-# The page has one tab per source (section) and "All". Only the sections a
-# tab shows are worked out.
+# The page has one tab per source (section) and "All". The page itself is
+# only the header, tabs and period buttons, so it shows at once; the numbers
+# load into it from #section (a Turbo Frame), which works out only the
+# sections the tab shows. The first view after the cache expires can take a
+# few seconds, and the frame shows a placeholder meanwhile.
 class AnalyticsController < ApplicationController
   before_action :authenticate_user!
 
@@ -13,10 +16,12 @@ class AnalyticsController < ApplicationController
     "members" => "Members", "dues" => "Dues",
   }.freeze
 
+  before_action :choose_section
+
   def index
-    @period = Analytics::Period.new(params[:period])
-    @sections = SECTIONS.reject { |key, _label| key == "dues" && !can?(:manage, Payment) }
-    @section = @sections.key?(params[:section]) ? params[:section] : "all"
+  end
+
+  def section
     all = @section == "all"
 
     @members = cached(:members) { members_section(Analytics::Members.new(@period)) } if all || @section == "members"
@@ -25,9 +30,16 @@ class AnalyticsController < ApplicationController
     classes_sections if (all || @section == "classes") && TicketedEvent.available?
     @payments = cached(:payments) { payments_section(Analytics::Payments.new(@period)) } if @section == "dues"
     @overview = overview if all
+    render layout: false
   end
 
   private
+
+  def choose_section
+    @period = Analytics::Period.new(params[:period])
+    @sections = SECTIONS.reject { |key, _label| key == "dues" && !can?(:manage, Payment) }
+    @section = @sections.key?(params[:section]) ? params[:section] : "all"
+  end
 
   def cached(section, &block)
     Rails.cache.fetch(["analytics", section, @period.key], expires_in: CACHE_FOR, &block)

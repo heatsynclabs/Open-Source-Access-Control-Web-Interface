@@ -15,23 +15,13 @@
   <span class="muted small">Grouped by <%= @period.unit %>. Figures refresh every <%= distance_of_time_in_words(AnalyticsController::CACHE_FOR) %>.</span>
 </nav>
 
-<% case @section %>
-<% when "all" %>
-  <%= render "overview" %>
-  <%= render "door" %>
-  <%= render "calendar" %>
-  <%= render "classes" %>
-  <%= render "members" %>
-<% when "door" %>
-  <%= render "door" %>
-<% when "calendar" %>
-  <%= render "calendar" %>
-<% when "classes" %>
-  <%= render "classes" %>
-  <%= render "classes_detail" %>
-<% when "members" %>
-  <%= render "members" %>
-<% when "dues" %>
-  <%= render "dues" %>
+<%# The numbers load from analytics#section; its charts need the chart scripts on this page. %>
+<% load_chart_scripts %>
+<%= turbo_frame_tag "analytics-section", src: analytics_section_path(period: @period.key, section: @section), target: "_top" do %>
+  <div class="analytics-loading" aria-busy="true">
+    <p class="muted"><span class="spinner" role="presentation"></span> Working out the numbers for <%= @sections[@section].downcase == "all" ? "every section" : @sections[@section] %>, <%= @period.label.downcase %>. The first look after a while can take a few seconds.</p>
+    <div class="tiles"><% 4.times do %><div class="tile skeleton short" role="presentation"></div><% end %></div>
+    <section class="card"><div class="skeleton" role="presentation"></div></section>
+  </div>
 <% end %>
 </div>
