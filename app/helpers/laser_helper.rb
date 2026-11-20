@@ -87,7 +87,7 @@ module LaserHelper
     x = ->(i) { l + (i + 0.5) * (w - l - r) / halves.size }
     y = ->(v) { t + (1 - v / top) * (h - t - b) }
     marks = (0..top.floor).step(2).map { |v| grid_line(l, w - r, y.(v), v) }
-    marks += optics_lines { |day| l + ((day.year - first_year) * 2 + (day.month - 1) / 6.0) * (w - l - r) / halves.size }.call(t, h - b)
+    marks += optics_lines(stagger: true) { |day| l + ((day.year - first_year) * 2 + (day.month - 1) / 6.0) * (w - l - r) / halves.size }.call(t + 6, h - b)
     points = halves.each_with_index.filter_map { |half, i| [i, drift[half]] if drift[half] }
     marks << tag.polyline(class: "trend", points: points.map { |i, v| "#{x.(i).round(1)},#{y.(v[:ratio]).round(1)}" }.join(" "))
     halves.each_with_index { |half, i| marks << tag.text(half, x: x.(i).round(1), y: h - b + 18, "text-anchor": "middle") }
