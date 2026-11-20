@@ -15,7 +15,7 @@
     <% end %>
   </div>
   <%= render ChartCardComponent.new(title: "People signed up per #{@period.unit}", note: classes_note(@classes), rows: by_bucket(@classes[:by_period], @period), columns: ["When", "People"]) do %>
-    <%= column_chart by_bucket(@classes[:by_period], @period) %>
+    <%= column_chart by_bucket(@classes[:by_period], @period), discrete: true %>
   <% end %>
   <div class="grid two">
     <%= render ChartCardComponent.new(title: "Sign-ups by kind of class", note: "Kinds are read from the event name, so they are approximate.", rows: @classes[:by_kind], columns: ["Kind", "People"]) do %>
@@ -28,7 +28,7 @@
   </div>
   <% if @class_money %>
     <%= render ChartCardComponent.new(title: "Class money per #{@period.unit}", note: "What guestlist collected for events in each #{@period.unit}, before refunds and fees.", rows: by_bucket(@class_money[:by_period], @period), columns: ["When", "Dollars"]) do %>
-      <%= column_chart by_bucket(@class_money[:by_period], @period), prefix: "$" %>
+      <%= column_chart by_bucket(@class_money[:by_period], @period), discrete: true, prefix: "$" %>
     <% end %>
   <% end %>
 <% elsif @section == "classes" %>

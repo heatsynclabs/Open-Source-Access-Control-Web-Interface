@@ -3,7 +3,7 @@
   <%= line_chart [
         { name: "Entries", data: by_bucket(@door[:entries_by_period], @period) },
         { name: "Distinct cards", data: by_bucket(@door[:cards_by_period], @period) },
-      ], height: "240px", curve: false, points: false %>
+      ], discrete: true, height: "240px", curve: false, points: false %>
 <% end %>
 
 <section class="card">
@@ -14,7 +14,7 @@
 
 <div class="grid two">
   <%= render ChartCardComponent.new(title: "Remote door commands", note: "Opens, unlocks and locks sent from the website and the phone app.") do %>
-    <%= column_chart by_bucket_series(@door[:remote], @period), stacked: true %>
+    <%= column_chart by_bucket_series(@door[:remote], @period), discrete: true, stacked: true %>
   <% end %>
   <% if @calendar %>
     <%= render ChartCardComponent.new(title: "Does the calendar bring people in?", note: "Average card entries per day, on days with an event against days with nothing on.", rows: @calendar[:door_on_event_days], columns: ["Days", "Entries per day"]) do %>

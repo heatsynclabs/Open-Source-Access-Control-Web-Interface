@@ -1,7 +1,7 @@
 <div class="section-head"><p class="eyebrow">Members</p><h2>Joining and staying</h2></div>
 <div class="grid two">
   <%= render ChartCardComponent.new(title: "Signups", note: "New accounts on the members site. Accounts loaded in bulk (the 2012 launch and the 2013 imports) are left out.", rows: by_bucket(@members[:signups], @period), columns: ["When", "Signups"]) do %>
-    <%= column_chart by_bucket(@members[:signups], @period) %>
+    <%= column_chart by_bucket(@members[:signups], @period), discrete: true %>
   <% end %>
 
   <section class="card">
@@ -24,7 +24,7 @@
           { name: "Orientations", data: by_bucket(@members[:orientations], @period) },
           { name: "Waivers signed", data: by_bucket(@members[:waivers], @period) },
           { name: "Certifications", data: by_bucket(@members[:certifications], @period) },
-        ], curve: false, points: false %>
+        ], discrete: true, curve: false, points: false %>
   <% end %>
 
   <%= render ChartCardComponent.new(title: "Member levels now", note: "Everyone on a member level today, whether or not they are paid up.", rows: @members[:level_mix], columns: ["Level", "Members"]) do %>
