@@ -76,10 +76,10 @@ module LaserHelper
   end
 
   # Power / speed that 3 mm plywood took, by half year, with the optics work
-  # as dashed lines. The earlier log's points (no results recorded) are
+  # as dashed lines. The old form's points are
   # hollow; the line breaks where nothing was logged. Each point's typical
   # setting is written under it (every other point when there are many).
-  def laser_drift_chart(drift)
+  def laser_drift_chart(drift, optics: [])
     halves = drift.keys
     values = drift.values.compact.map { |v| v[:ratio] }
     return "" if values.empty?
@@ -90,7 +90,7 @@ module LaserHelper
     x = ->(i) { l + (i + 0.5) * (w - l - r) / halves.size }
     y = ->(v) { t + (1 - v / top) * (h - t - b) }
     marks = (0..top.floor).step(2).map { |v| grid_line(l, w - r, y.(v), v) }
-    marks += optics_lines(stagger: true) do |day|
+    marks += optics_lines(optics, stagger: true) do |day|
       l + ((day.year - first_year) * 2 - (first_half - 1) + (day.month - 1) / 6.0) * (w - l - r) / halves.size
     end.call(t, h - b)
     runs = halves.each_with_index.slice_when { |(a, _), (c, _)| drift[a].nil? || drift[c].nil? }.map { |run| run.select { |half, _| drift[half] } }
@@ -100,7 +100,7 @@ module LaserHelper
     halves.each_with_index do |half, i|
       marks << tag.text(dense ? half.sub(" H1", "").sub(/\d+ H2/, "") : half, x: x.(i).round(1), y: h - b + 18, "text-anchor": "middle")
       v = drift[half] or next
-      tip = "#{half}: #{v[:ratio]} (#{laser_number(v[:power])}% at #{laser_number(v[:speed])} mm/s#{", every job, results not recorded" if v[:earlier]})"
+      tip = "#{half}: #{v[:ratio]} (#{laser_number(v[:power])}% at #{laser_number(v[:speed])} mm/s#{", old form" if v[:earlier]})"
       marks << tag.circle(tag.title(tip), class: ["point", ("earlier" if v[:earlier])], cx: x.(i).round(1), cy: y.(v[:ratio]).round(1), r: dense ? 5 : 6)
       next if dense && i.odd?
       marks << tag.text("#{laser_number(v[:power])}/#{laser_number(v[:speed])}", class: "point-label", x: x.(i).round(1), y: (y.(v[:ratio]) + 20).round(1), "text-anchor": "middle")
@@ -110,7 +110,7 @@ module LaserHelper
 
   # The energy index by quarter (one vote per person), 1.00 dashed, optics
   # work as dashed lines.
-  def laser_index_chart(quarters)
+  def laser_index_chart(quarters, optics: [])
     return "" if quarters.empty?
     w, h, l, r, t, b, lo, hi = 860, 250, 40, 14, 30, 30, 0.7, 1.3
     x = ->(i) { l + (i + 0.5) * (w - l - r) / quarters.size }
@@ -124,7 +124,7 @@ module LaserHelper
       i = names.index("#{day.year}Q#{(day.month - 1) / 3 + 1}")
       i && l + (i + ((day.month - 1) % 3 + day.day / 31.0) / 3) * (w - l - r) / quarters.size
     end
-    marks += optics_lines(stagger: true, &position).call(t, h - b)
+    marks += optics_lines(optics, stagger: true, &position).call(t, h - b)
     marks << tag.polyline(class: "trend", points: quarters.each_with_index.map { |q, i| "#{x.(i).round(1)},#{y.(q[:vote]).round(1)}" }.join(" "))
     quarters.each_with_index do |q, i|
       marks << tag.circle(tag.title("#{q[:quarter]}: #{q[:vote]} from #{q[:people]} people, #{q[:n]} cuts"), class: "point", cx: x.(i).round(1), cy: y.(q[:vote]).round(1), r: 5)
@@ -141,11 +141,11 @@ module LaserHelper
 
   private
 
-  # Dashed lines for the optics work in Laser::Model::OPTICS, at the x the
-  # block gives for a date (nil: off the chart), labelled at the top.
-  def optics_lines(stagger: false, &x_of)
+  # Dashed lines for optics work ([[date, label]], Laser::Model::OPTICS), at
+  # the x the block gives for a date (nil: off the chart), labelled at the top.
+  def optics_lines(optics, stagger: false, &x_of)
     lambda do |top, bottom|
-      Laser::Model::OPTICS.each_with_index.flat_map do |(day, label), i|
+      optics.each_with_index.flat_map do |(day, label), i|
         at = x_of.call(day) or next []
         [tag.line(class: "optics", x1: at.round(1), x2: at.round(1), y1: top - 6, y2: bottom),
          tag.text(label, class: "optics-label", x: (at - 4).round(1), y: top - 10 - (stagger ? (i % 2) * 11 : 0), "text-anchor": "end")]

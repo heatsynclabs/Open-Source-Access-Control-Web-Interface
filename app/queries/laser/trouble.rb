@@ -1,7 +1,7 @@
 module Laser
   # "What goes wrong": trouble rates across the log and the drift of the 3 mm
-  # plywood setting, as in the laser explorer. Trouble needs results, so only
-  # the current form counts; the drift reaches back through the earlier log.
+  # plywood setting, as in the laser explorer, for one machine. Trouble comes
+  # from the current form; the drift reaches back through the old form.
   class Trouble
     def initialize(jobs, earlier: [])
       @jobs = jobs
@@ -44,11 +44,13 @@ module Laser
 
     # Power divided by speed that 3 mm plywood took to cut through, by half
     # year: { "2023 H1" => { ratio:, power:, speed:, earlier: } }, nil where
-    # nothing was logged. Higher is a weaker beam. The current form counts the
-    # jobs that worked; the earlier log, which has no results, every job.
+    # nothing was logged; earlier is true for a half year from the old form
+    # alone. Higher is a weaker beam. Jobs that worked count, and on the old
+    # forms also jobs with no result recorded (the large laser's never asked).
     def drift
       plywood = ->(j) { j.cut_op == "cut" && j.material == "Plywood / wood" && j.bucket == "3 mm (1/8 in)" }
-      groups = (@earlier.select(&plywood) + @jobs.select { |j| plywood.(j) && j.success? }).group_by { |j| half_of(j.date) }
+      counted = ->(j) { plywood.(j) && (j.success? || j.result == "unknown") }
+      groups = (@earlier.select(&counted) + @jobs.select { |j| plywood.(j) && j.success? }).group_by { |j| half_of(j.date) }
       first = (@earlier.first || @jobs.first).date
       halves = (first.year..@jobs.last.date.year).flat_map { |y| ["#{y} H1", "#{y} H2"] }
       halves = halves.drop_while { |half| half < half_of(first) }
@@ -56,7 +58,7 @@ module Laser
         rows = groups.fetch(half, [])
         [half, rows.any? ? { ratio: Stats.median(rows.map { |j| j.cut_power / j.cut_speed }).round(2),
                              power: Stats.median(rows.map(&:cut_power)), speed: Stats.median(rows.map(&:cut_speed)),
-                             earlier: rows.first.source == LaserJob::EARLIER } : nil]
+                             earlier: rows.all? { |j| j.source == LaserJob::OLD } } : nil]
       end
     end
 

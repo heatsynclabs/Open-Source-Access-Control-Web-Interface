@@ -2,7 +2,8 @@ import { Controller } from "@hotwired/stimulus"
 
 // The Laser math estimator: from the fitted law (E = k x thickness^b, in J/mm)
 // and a chosen power, the speed that leaves the same energy per mm.
-// law: { k: { material: k }, b, low, high, thickest: { material: mm }, logged: { material: { mm: jobs } } }
+// law: { k: { material: k }, b, low, high, thickest: { material: mm }, logged: { material: { mm: jobs } },
+//        perPercent: watts per percent of power (0.8 on an 80 W tube) }
 export default class extends Controller {
   static targets = ["material", "thickness", "power", "powerLabel", "beam", "output", "note"]
   static values = { law: Object }
@@ -17,7 +18,7 @@ export default class extends Controller {
     const mm = Math.max(0.5, Number(this.thicknessTarget.value) || 3)
     const power = Number(this.powerTarget.value)
     const energy = law.k[material] * Math.pow(mm, law.b) * Number(this.beamTarget.value)
-    const speed = 0.8 * power / energy
+    const speed = law.perPercent * power / energy
     const fmt = (v) => (v < 10 ? v.toFixed(1) : Math.round(v).toString())
     this.powerLabelTarget.textContent = `${power}%`
     this.outputTarget.replaceChildren(...[[power, "Power %"], [fmt(speed), "Speed mm/s"], [energy.toFixed(1), "J per mm"]].map(([value, label]) => {

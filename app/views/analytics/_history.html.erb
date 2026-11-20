@@ -18,9 +18,9 @@
     <% end %>
 
     <% if @laser&.any? %>
-      <% laser = @laser.jobs_by_month.transform_keys { |month| month.strftime("%b %Y") } %>
-      <%= render ChartCardComponent.new(title: "The laser cutter", note: "Jobs members logged at the 80 W laser each month: the earlier log from October 2013 to June 2020, then the current form from April 2022 (read every night). Nothing was logged in between. The Laser page in the menu turns the same logs into a settings guide.", rows: laser, columns: ["Month", "Jobs logged"], more: history_topic_path("laser")) do %>
-        <%= column_chart laser, discrete: true %>
+      <% laser = @laser.jobs_by_machine.map { |s| { name: s[:name], data: s[:data].transform_keys { |month| month.strftime("%b %Y") } } } %>
+      <%= render ChartCardComponent.new(title: "The laser cutters", note: "Jobs members logged at each laser each month, from every log form the two machines have had (read every night). The second laser came around 2019; its log's 2011 to 2013 jobs were probably on the lab's first laser. Breaks are stretches with nothing logged. The Laser page in the menu turns the same logs into a settings guide.", rows: series_rows(laser), columns: ["Month", *laser.map { |s| s[:name] }], more: history_topic_path("laser")) do %>
+        <%= line_chart laser, discrete: true, curve: false, points: false %>
       <% end %>
     <% end %>
 

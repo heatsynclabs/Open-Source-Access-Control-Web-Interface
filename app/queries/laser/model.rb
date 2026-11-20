@@ -4,19 +4,21 @@ module Laser
   # and medians; its job classifier is left out). People, not jobs, are the
   # independent unit, so the intervals resample people.
   #
-  # E (J/mm) = 0.8 x power % / speed mm/s x passes, the energy the beam
-  # leaves per millimetre on an 80 W tube. The law: log E = log k(material)
+  # E (J/mm) = watts / 100 x power % / speed mm/s x passes, the energy the
+  # beam leaves per millimetre (0.8 on the 80 W tube, 0.6 on the 60 W). The law: log E = log k(material)
   # + b log thickness, fitted to clean cuts through rigid stock.
   class Model
     RIGID = ["Plywood / wood", "MDF / hardboard", "Acrylic", "Softwood (basswood, balsa, pine)", "Hardwood",
              "Melamine / whiteboard"].freeze
-    # Optics work noted in the log's machine notes. Add a line when the lens
-    # is cleaned or the beam realigned.
-    OPTICS = [
-      [Date.new(2022, 11, 11), "Realign and repair"], [Date.new(2023, 10, 4), "Optics clean"],
-      [Date.new(2023, 12, 12), "Lens clean"], [Date.new(2024, 12, 22), "Lens clean"], [Date.new(2026, 9, 20), "Lens clean"],
-    ].freeze
-    WATTS_PER_PERCENT = 0.8
+    # Optics work noted in each machine's log notes. Add a line when the lens
+    # is cleaned or the beam realigned. (None is noted on the mini laser's.)
+    OPTICS = {
+      "large" => [
+        [Date.new(2022, 11, 11), "Realign and repair"], [Date.new(2023, 10, 4), "Optics clean"],
+        [Date.new(2023, 12, 12), "Lens clean"], [Date.new(2024, 12, 22), "Lens clean"], [Date.new(2026, 9, 20), "Lens clean"],
+      ].freeze,
+      "mini" => [].freeze,
+    }.freeze
     SEED = 1
 
     Cut = Data.define(:job, :energy, :resid)
@@ -24,19 +26,24 @@ module Laser
     # Everything the Laser math view shows, worked out once per sync (it
     # resamples people hundreds of times, about two seconds); laser:sync
     # warms it. nil when too few clean cuts are logged.
-    def self.summary
-      Rails.cache.fetch(["laser", "math", LaserJob.synced_at.to_i]) do
-        model = new(Laser::Log.jobs)
+    # The optics figures are nil for a machine with no optics work noted.
+    def self.summary(machine)
+      Rails.cache.fetch(["laser", "math", machine, LaserJob.synced_at.to_i]) do
+        model = new(Laser::Log.jobs(machine), watts: LaserJob::WATTS.fetch(machine), optics: OPTICS.fetch(machine))
         next nil unless model.available?
+        optics = OPTICS.fetch(machine).any?
         { cuts: model.cuts_count, worked: model.worked_count, b: model.b, k: model.k, b_range: model.b_range,
           b_single: model.b_single, b_vote: model.b_vote, spread: model.spread, jobs: model.jobs_per_material,
           thickest: model.thickest, observed: RIGID.first(3).to_h { |m| [m, model.observed(m)] },
-          quarters: model.quarters, optics: model.optics, optics_trouble: model.optics_trouble, hours: model.hours }
+          quarters: model.quarters, optics: (model.optics if optics), optics_trouble: (model.optics_trouble if optics),
+          hours: (model.hours if optics), per_percent: model.per_percent }
       end
     end
 
-    def initialize(jobs)
+    def initialize(jobs, watts: 80, optics: OPTICS["large"])
       @jobs = jobs
+      @per_percent = watts / 100.0
+      @optics = optics
       rigid = jobs.select { |j| j.cut_op == "cut" && j.mm && RIGID.include?(j.material) && j.mm >= 2 }
       ok = rigid.select(&:success?)
       @coef = fit(ok.map { |j| [j, energy(j)] })
@@ -47,6 +54,8 @@ module Laser
     def available?
       @ok.size >= 30
     end
+
+    attr_reader :per_percent
 
     def cuts_count = @cuts.size
     def worked_count = @ok.size
@@ -104,7 +113,7 @@ module Laser
     # Each optics event: energy and trouble 60 days either side, for all jobs,
     # one vote per person, and the same people on both sides.
     def optics
-      OPTICS.map do |day, label|
+      @optics.map do |day, label|
         before, after = around(day, 60)
         pb, pa = [before, after].map { |side| side.select { |c| c.job.success? }.group_by { |c| c.job.person }.transform_values { |cs| Stats.median(cs.map(&:resid)) } }
         both = pb.keys & pa.keys
@@ -119,7 +128,7 @@ module Laser
     # Trouble in the 60 days before optics work against after, all events
     # pooled, with a Fisher exact p.
     def optics_trouble
-      totals = OPTICS.map { |day, _| around(day, 60) }.each_with_object([[0, 0], [0, 0]]) do |(before, after), sums|
+      totals = @optics.map { |day, _| around(day, 60) }.each_with_object([[0, 0], [0, 0]]) do |(before, after), sums|
         sums[0][0] += before.count { |c| !c.job.success? }
         sums[0][1] += before.size
         sums[1][0] += after.count { |c| !c.job.success? }
@@ -142,19 +151,19 @@ module Laser
       stretches = points.group_by { |pt| pt[2] }.sort.map do |stretch, pts|
         counts = pts.map(&:last).tally
         regulars = pts.select { |pt| counts[pt.last] >= 3 }
-        { from: OPTICS[stretch - 1].first, per100: pooled_slope(pts),
+        { from: @optics[stretch - 1].first, per100: pooled_slope(pts),
           hours: even(pts.map(&:first).max), n: pts.size, people: regulars.map(&:last).uniq.size,
           within: regulars.size > 20 ? person_slope(regulars)&.then { |s| per100(s) } : nil }
       end
       { per100: per100(slope), low: boot.any? ? even(Stats.quantile(boot, 0.05), 1) : nil, high: boot.any? ? even(Stats.quantile(boot, 0.95), 1) : nil,
         r: even(Stats.correlation(points.map(&:first), points.map { |pt| pt[1] }), 2), n: points.size,
-        stretches: stretches, since_last: even(since_last), last: OPTICS.last }
+        stretches: stretches, since_last: even(since_last), last: @optics.last }
     end
 
     private
 
     def energy(job)
-      WATTS_PER_PERCENT * job.cut_power / job.cut_speed * job.passes
+      @per_percent * job.cut_power / job.cut_speed * job.passes
     end
 
     def design(job)
@@ -204,7 +213,7 @@ module Laser
       residuals = @cuts.to_h { |c| [c.job.id, c] }
       stretch, hours, points = 0, 0.0, []
       @jobs.sort_by { |j| [j.date, j.id] }.each do |job|
-        while stretch < OPTICS.size && job.date >= OPTICS[stretch].first
+        while stretch < @optics.size && job.date >= @optics[stretch].first
           stretch += 1
           hours = 0.0
         end

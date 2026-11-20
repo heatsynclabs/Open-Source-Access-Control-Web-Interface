@@ -1,2 +1,2 @@
-<%= render PageHeaderComponent.new(eyebrow: "The large 80 W laser", title: "Laser settings") %>
-<%= render EmptyStateComponent.new("The laser log has not been read on this site yet (docs/laser.md: bundle exec rails laser:sync).") %>
+<%= render PageHeaderComponent.new(eyebrow: "#{LaserJob::MACHINES[@machine]} laser", title: "Laser settings") %>
+<%= render EmptyStateComponent.new("This laser's log has not been read on this site yet (docs/laser.md: bundle exec rails laser:sync).") %>

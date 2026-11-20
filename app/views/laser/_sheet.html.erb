@@ -5,7 +5,7 @@
   <p>The settings on one sheet for the wall by the laser. Pick a paper size, then print with headers and footers off and background graphics on.</p>
   <nav class="filters" aria-label="Paper size">
     <% LaserController::PAPERS.each do |key, (label, _size)| %>
-      <%= link_to label, laser_path(view: "sheet", paper: key), class: ["toggle", ("on" if key == @paper)], "aria-current": ("true" if key == @paper) %>
+      <%= link_to label, laser_at(view: "sheet", paper: key), class: ["toggle", ("on" if key == @paper)], "aria-current": ("true" if key == @paper) %>
     <% end %>
     <button type="button" class="btn" data-controller="print" data-action="print#print">Print the <%= name %> sheet</button>
   </nav>
@@ -13,7 +13,7 @@
 
 <article class="laser-sheet">
   <header>
-    <h2>Large 80 W laser: settings that worked</h2>
+    <h2><%= LaserJob::MACHINES[@machine] %> laser: settings that worked</h2>
     <p>Power % then speed mm/s: typical, the median of logged jobs that worked. Average is the mean of the same jobs. <span class="chip ok dot">90%+</span> <span class="chip warn dot">75 to 89%</span> <span class="chip err dot">under 75%</span> clean success. Grey rows: under 5 good jobs, or settings all over the place; a starting guess only.</p>
   </header>
   <div class="laser-sheet-body">

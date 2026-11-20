@@ -1,13 +1,14 @@
-# One job on the large 80 W laser, as a member logged it and
-# LaserLog::Cleaner repaired it: from the current form (source FORM, rebuilt
-# nightly by LaserLog::Sync) or the earlier form of 2013 to 2020 (source
-# EARLIER, LaserLog::Archive), which recorded settings but not results.
+# One job on one of the lab's laser cutters (MACHINES), as a member logged it
+# and LaserLog::Cleaner repaired it, from the machine's current form (FORM) or
+# its old one (OLD). Rebuilt nightly by LaserLog::Sync from LaserLog::SHEETS.
 # Never holds a name: person_key tells jobs by the same person apart and
 # nothing more. The Laser page (Laser::Settings, Laser::Trouble, Laser::Math)
 # and analytics (Laser::Usage) read it.
 class LaserJob < ActiveRecord::Base
+  MACHINES = { "large" => "Large 80W", "mini" => "Mini 60W" }.freeze
+  WATTS = { "large" => 80, "mini" => 60 }.freeze
   FORM = "form"
-  EARLIER = "2013 log"
+  OLD = "old form"
 
   scope :cuts, -> { where(cut_op: "cut") }
   scope :with_settings, -> { where.not(cut_op: nil).or(where.not(eng_mode: nil)) }

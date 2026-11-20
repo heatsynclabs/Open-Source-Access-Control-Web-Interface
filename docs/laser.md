@@ -1,69 +1,70 @@
 # The laser settings page
 
-`/laser` (menu: **Laser**, any signed-in member) is a settings guide for the large 80 W
-laser, built from the jobs members log on the form by the machine. It is the members-site
-version of the "80W Laser Log Explorer" a member built from the same log: the same
-cleaning rules and the same numbers, in the site's own design, with no names.
+`/laser` (menu: **Laser**, any signed-in member) is a settings guide for the lab's two
+laser cutters, the Large 80W (the default) and the Mini 60W (`?machine=mini`), built from
+the jobs members log on the form by each machine. A switch at the top picks the machine;
+every view is that machine's alone. For the large laser it is the members-site version of
+the "80W Laser Log Explorer" a member built from the same log: the same cleaning rules and
+the same numbers, in the site's own design, with no names.
 
 | View | What it shows |
 |---|---|
 | Find a setting | Pick a material, a job (cut through or engrave) and a thickness: the typical power, speed and passes (or scan gap) from jobs that worked, how reliable that is, the spread, one vote per person, every setting tried (a power against speed chart) and the notes from jobs that struggled |
 | All settings | One row per material and thickness with 3 or more jobs |
 | What goes wrong | Trouble rates (MDF, thick plywood, multiple passes, a dirty start), the top complaints from the notes, and how the 3 mm plywood setting drifted by half year, with optics work as dashed lines |
-| Laser math | The energy per mm a cut takes (E = 0.8 x power / speed x passes), how it grows with thickness, an estimator for unlogged stock, whether lens cleans show up, whether laser hours wear the beam, and what the log cannot tell you |
+| Laser math | The energy per mm a cut takes (E = watts / 100 x power / speed x passes: 0.8 on the large laser, 0.6 on the mini), how it grows with thickness, an estimator for unlogged stock, whether lens cleans show up, whether laser hours wear the beam, and what the log cannot tell you |
 | Cheat sheet | The settings on one printable sheet; pick a paper size and print (only the sheet prints) |
-| The log | Every job from both logs, newest first, searchable by project and notes and filterable by log, material and result; names are not shown. "How the log was cleaned" lists every repair |
+| The log | Every job from the machine's current and old forms, newest first, searchable by project and notes and filterable by form, material and result; names are not shown. "How the log was cleaned" lists every repair |
 
-Usage of the laser (jobs, people and hours a month, results and materials by year) is on
-the analytics page, Over the years, The laser cutter.
+Usage of both lasers (jobs and hours a month per machine, people, results and materials by
+year) is on the analytics page, Over the years, The laser cutters.
 
 ## Where the data comes from
 
-The Google Sheet "Large 80W Laser Log (Responses)" (owned by admin@heatsynclabs.org)
-collects the form's answers. Its form responses tab is shared as "anyone with the link can
-view", so the site reads it as CSV with no login:
+Each laser has a Google Form by the machine, and each form replaced an older one in April
+2022. People still log on an old form now and then, so the site reads all four response
+sheets (`LaserLog::SHEETS`; the wiki's Large 80W Laser and Mini 60W Laser pages link them).
+They are shared as "anyone with the link can view", so the site reads them as CSV with no
+login:
 
-    https://docs.google.com/spreadsheets/d/1BpAYtyFIKQ4UoXv31mKC43YFxfBk34d_q-muw1SP2aU/export?format=csv&gid=1050947612
+| Machine | Form | Sheet | Jobs (2026-11-20) |
+|---|---|---|---|
+| Large 80W | current, from 2022-04-29 | `1BpAYtyFIKQ4UoXv31mKC43YFxfBk34d_q-muw1SP2aU`, tab `1050947612` | 1,424 |
+| Large 80W | old, 2013-10-29 to 2022-04 | `0AoBMPvlNCqvldHl5SERwRHVjN09wRHEtODZzd2RXNWc` | 2,619 |
+| Mini 60W | current, from 2022-04-29 | `1tDxqWNbrJ9M5UuvxpV4khA5Drt6HOfNuQRQbdNvYTxM` | 1,239 |
+| Mini 60W | old, 2011-08 to 2013-05, then 2019-11 to 2022-04 | `1gItwjL4vfXwAsAQZ4dHuAlmoJ7lkLDme82yCei9KeF8`, tab `1432871391` | 1,424 |
 
-(`LaserLog::CSV_URL`; set `LASER_LOG_CSV_URL` to read another copy). If the sheet stops
-being shared that way, the nightly read fails and the page keeps the last copy.
+The sheets have no machine column: each job counts for the machine its form is for. The
+second laser came to the lab around 2019 (Slack, October 2019), so the mini's old form's
+2011 to 2013 jobs were probably on the lab's first laser (not confirmed); they stay with
+the mini, and its charts show the six year gap. If a sheet stops being shared, its nightly
+read fails and the site keeps its last copy.
 
-**Nightly.** `bundle exec rails laser:sync` reads the whole sheet, cleans every row and
-replaces the table `laser_jobs` in one transaction. It refuses a sheet that does not start
-with the form's columns, or that has under 90% of the jobs already held, and then keeps the
-old rows. It also works out the Laser math once (about two seconds) so pages stay fast.
-On production it runs in the same Coolify scheduled task as the guestlist check
-([Operations](operations.md)). By hand: run the command in `members_web` from `/app`.
+**The old forms** (`LaserLog::Layout`) are read by header name into the current form's
+column order, then cleaned by the same `LaserLog::Cleaner`:
 
-## The earlier log (2013 to 2020)
+- neither asked "Did you use cutting / engraving?": a job cut or engraved when it has that
+  power and speed;
+- the large laser's old form took materials as free text (192 spellings), put in the form's
+  terms by `Layout::OLD_MATERIALS` (first match wins); the text as logged is kept and shown
+  in the log ("logged as masonite"). Its thickness is a number of mm. It never asked for
+  results, so they are "not recorded";
+- the mini's old form already used the form's materials and results, with a few older
+  spellings (`Layout::OLD_MINI_NAMES`).
 
-Before the current form, the large laser had an earlier form. A member uploaded its
-settings to the old wiki on 2020-06-21 (`File:large-laser-log.xlsx`, "Excel w/ pivot table
-for the cut data from the log for the larger laser"): 1,934 jobs from 2013-10-29 to
-2020-06-20 with date, material (free text), thickness and cut and engrave settings. It has
-no names, results, passes, run time or notes. Nothing was found for July 2020 to April
-2022, when the current form starts.
+The old forms show as history beside the current one: in the log, in "Find a setting" and
+"All settings" (what people used then, and for the mini how many of those worked), and in
+the 3 mm plywood drift (hollow points). The typical setting that worked, how reliable it is,
+the cheat sheet, trouble rates and the laser math come from the current form only.
 
-- **Where it comes from.** The operations folder's `data/scripts/laser.py --wiki-files`
-  reads the spreadsheet out of the wiki file backup (`HSL-DR/mediawiki-wiki-20261021/
-  wiki.heatsynclabs.org-files.tar`), puts each free-text material in the current form's
-  terms (`EARLIER_MATERIALS` there; 29 jobs stay Other) and writes
-  `db/archive/large-laser-log-2013-2020.csv` (the same file is kept in the operations
-  folder). The file was public on the wiki and holds no personal data.
-- **Loading.** `LaserLog::Archive` cleans each row with the same `LaserLog::Cleaner` as the
-  form (swapped boxes, scores, material folding) and keeps it as source `2013 log`.
-  `laser:sync` reloads it every night before reading the form (a second or so), so a
-  corrected file or cleaning rule shows the next morning; the form's own replace never
-  touches it, and its row count is not part of the form's "far fewer rows" check.
-- **Where it shows.** The log (both logs, or one); "Find a setting" and "All settings" show
-  what people used for the same stock then, marked as history; the 3 mm plywood drift
-  reaches back to 2013 (hollow points: every job, since there are no results); analytics
-  counts its jobs a month and its materials. It stays out of everything that needs results:
-  the typical setting that worked, how reliable it is, the cheat sheet, trouble rates and
-  the laser math.
-- **The small laser.** The same upload holds `small-laser-log.xlsx`: 55 jobs on the small
-  laser, 2019-11 to 2020-06. It is kept in the operations folder only; this page is about
-  the large laser.
+**Nightly.** `bundle exec rails laser:sync` reads each sheet, cleans every row and replaces
+that sheet's jobs in `laser_jobs` (columns `machine` and `source`) in one transaction. It
+refuses a sheet that does not start with a Timestamp column, or that has under 90% of the
+jobs already held from it, and keeps that sheet's old rows; the others still update, and
+the task ends with an error so the failure shows in Coolify. It also works out each
+machine's Laser math once (a few seconds) so pages stay fast. On production it runs in the
+same Coolify scheduled task as the guestlist check ([Operations](operations.md)). By hand:
+run the command in `members_web` from `/app`.
 
 ## Cleaning (LaserLog::Cleaner)
 
@@ -81,15 +82,18 @@ The form accepts anything, so each row is repaired and every repair is recorded
 - free-text results become success, conditional (partly worked) or fail;
 - notes on jobs that did not work are tagged by keyword (did not cut through, fire or
   burning, software, focus or alignment, smoke, warped material);
-- three rows have hand corrections, keyed by their timestamp (`Cleaner::OVERRIDE`).
+- three rows of the large laser's current form have hand corrections, keyed by their
+  timestamp (`Cleaner::OVERRIDE`; not applied to the other sheets).
 
-The rules are a Ruby port of the explorer's `process_laser_log.py`; on the log of
-2026-11-19 they give the same result for every field of all 1,424 jobs.
+The rules are a Ruby port of the explorer's `process_laser_log.py`; on the large laser's log
+of 2026-11-19 they give the same result for every field of all 1,424 jobs. The same rules
+clean the mini's and the old forms; their repair counts are under The log.
 
 **Names.** The name on the form is read only while cleaning (one material rule uses it) and
 to tell people apart: `person_key` is a keyed hash of a short form of the name (the app's
 secret is the key), so jobs by the same person group together for "one vote per person"
-and people counts without anyone being named. Project titles and notes are kept and shown,
+and people counts without anyone being named. Jobs logged with no name (45, all on the
+large laser's old form) get a blank key and count toward jobs, not people. Project titles and notes are kept and shown,
 since they are what makes the log useful; nothing on the page shows who logged a job.
 
 ## The numbers
@@ -104,14 +108,15 @@ since they are what makes the log useful; nothing on the page shows who logged a
   of log E on material and log thickness over clean cuts through rigid stock at 2 mm and
   up; intervals resample people, not jobs (600 and 400 draws, fixed seed). Its numbers equal
   the explorer's except the random intervals, which can differ by a few tenths. The
-  explorer's job classifier (scikit-learn) is not ported. Optics work comes from the
-  machine notes and is listed in `Laser::Model::OPTICS`: add a line when the lens is cleaned
-  or the beam realigned.
+  explorer's job classifier (scikit-learn) is not ported. Each machine is fitted on its own
+  log at its own wattage (`LaserJob::WATTS`). Optics work comes from the machine notes and
+  is listed per machine in `Laser::Model::OPTICS`: add a line when a lens is cleaned or a
+  beam realigned. None is noted for the mini, so its math has no optics sections.
 
 ## Code
 
-`app/models/laser_log.rb` (sheet address, person key), `laser_log/cleaner.rb`,
-`laser_log/sync.rb`, `laser_log/archive.rb`, `laser_job.rb`; `db/archive/`; `app/queries/laser/` (`log`, `stats`, `settings`,
+`app/models/laser_log.rb` (the sheets, person key), `laser_log/layout.rb`,
+`laser_log/cleaner.rb`, `laser_log/sync.rb`, `laser_job.rb`; `app/queries/laser/` (`log`, `stats`, `settings`,
 `trouble`, `model`, `usage`); `app/controllers/laser_controller.rb`;
 `app/views/laser/`; `app/helpers/laser_helper.rb` (the two drawn charts);
 `app/javascript/controllers/laser_estimate_controller.js`, `print_controller.js`;

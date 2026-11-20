@@ -4,9 +4,10 @@
   <p class="label">1. Material</p>
   <nav class="filters" aria-label="Material">
     <% top.each do |material| %>
-      <%= link_to material, laser_path(material: material, op: @op), class: ["toggle", ("on" if material == @material)], "aria-current": ("true" if material == @material) %>
+      <%= link_to material, laser_at(material: material, op: @op), class: ["toggle", ("on" if material == @material)], "aria-current": ("true" if material == @material) %>
     <% end %>
     <%= form_with url: laser_path, method: :get, data: { controller: "autosubmit" }, class: "inline-form" do |f| %>
+      <%= f.hidden_field :machine, value: @machine unless @machine == "large" %>
       <%= f.select :material, options_for_select(rest, (@material if rest.include?(@material))), { include_blank: "More materials" }, "aria-label": "More materials", data: { action: "change->autosubmit#submit" } %>
       <%= f.hidden_field :op, value: @op %>
       <noscript><%= f.submit "Show" %></noscript>
@@ -18,7 +19,7 @@
   <p class="label">2. Job</p>
   <nav class="filters" aria-label="Job">
     <% @settings.ops_for(@material).each do |op| %>
-      <%= link_to Laser::Settings::OPS[op], laser_path(material: @material, op: op), class: ["toggle", ("on" if op == @op)], "aria-current": ("true" if op == @op) %>
+      <%= link_to Laser::Settings::OPS[op], laser_at(material: @material, op: op), class: ["toggle", ("on" if op == @op)], "aria-current": ("true" if op == @op) %>
     <% end %>
   </nav>
 </section>
@@ -28,7 +29,7 @@
     <p class="label">3. Thickness</p>
     <nav class="filters" aria-label="Thickness">
       <% @settings.buckets_for(@material).each do |bucket| %>
-        <%= link_to bucket, laser_path(material: @material, op: @op, bucket: bucket), class: ["toggle", ("on" if bucket == @bucket)], "aria-current": ("true" if bucket == @bucket) %>
+        <%= link_to bucket, laser_at(material: @material, op: @op, bucket: bucket), class: ["toggle", ("on" if bucket == @bucket)], "aria-current": ("true" if bucket == @bucket) %>
       <% end %>
     </nav>
   </section>
@@ -56,7 +57,8 @@
 <% earlier_rows = @earlier_settings.rows_for(@material, @bucket, @op) %>
 <% if earlier_rows.size >= 3 %>
   <% e = @earlier_settings.stats(earlier_rows, @op) %>
-  <p class="msg info laser-earlier">In the laser's earlier log (<%= earlier_rows.first.date.year %> to <%= earlier_rows.last.date.year %>) people used <strong><%= laser_number(e[:power]) %>% at <%= laser_number(e[:speed]) %> mm/s</strong><%= @op == "engrave" && e[:gap] ? ", scan gap #{laser_number(e[:gap], 2)} mm" : "" %> for this, the median of <%= pluralize(earlier_rows.size, "job") %>. That log did not record whether jobs worked, and the laser has been realigned and its lens cleaned since, so this is history, not a recommendation.</p>
+  <% judged = earlier_rows.reject { |j| j.result == "unknown" } %>
+  <p class="msg info laser-earlier">On this laser's old form (<%= earlier_rows.first.date.year %> to <%= earlier_rows.last.date.year %>) people used <strong><%= laser_number(e[:power]) %>% at <%= laser_number(e[:speed]) %> mm/s</strong><%= @op == "engrave" && e[:gap] ? ", scan gap #{laser_number(e[:gap], 2)} mm" : "" %> for this, the median of <%= pluralize(earlier_rows.size, "job") %><%= judged.size >= 3 ? " (#{judged.count(&:success?)} of #{judged.size} with a result worked)" : ", which did not record whether they worked" %>. Tubes age and the optics have been serviced since, so this is history, not a recommendation.</p>
 <% end %>
 
 <% key, = @reliability %>

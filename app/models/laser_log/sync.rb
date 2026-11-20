@@ -2,43 +2,53 @@ require "csv"
 require "net/http"
 
 module LaserLog
-  # Reads the whole laser log form and replaces its jobs in LaserJob (source
-  # FORM; the earlier log is LaserLog::Archive's), cleaned. Run
-  # nightly by `bundle exec rails laser:sync` (Coolify scheduled task) and by
-  # hand after a deploy. Keeps the old rows if the sheet cannot be read or
-  # looks wrong.
+  # Reads each laser log sheet (LaserLog::SHEETS) and replaces its jobs in
+  # LaserJob, cleaned. Run nightly by `bundle exec rails laser:sync` (Coolify
+  # scheduled task) and by hand after a deploy. A sheet that cannot be read or
+  # looks wrong keeps its old rows; the others still update.
   class Sync
-    HEADER = "Timestamp"
-    TOO_FEW = 0.9 # refuse a sheet with under 90% of the rows already held
+    TOO_FEW = 0.9 # refuse a sheet with under 90% of the rows already held from it
 
-    def initialize(csv_text = nil)
-      @csv_text = csv_text
+    # texts: { sheet => csv text } to skip the download (tests).
+    def initialize(sheets = SHEETS, texts: {})
+      @sheets = sheets
+      @texts = texts
     end
 
-    # { read:, kept:, skipped: } or raises LaserLog::Error
+    # { sheet => { read:, kept:, skipped: } or { error: } }
     def run
-      rows = CSV.parse(@csv_text || fetch)
-      raise Error, "the sheet does not look like the laser log" unless rows.first&.first.to_s.strip == HEADER
-      cleaner = Cleaner.new
-      now = Time.current
-      jobs = rows.drop(1).each_with_index.filter_map do |row, i|
-        attributes, name = cleaner.call(row, i + 2)
-        attributes&.merge(source: LaserJob::FORM, person_key: LaserLog.person_key(name), created_at: now, updated_at: now)
-      end
-      held = LaserJob.where(source: LaserJob::FORM).count
-      raise Error, "the sheet has #{jobs.size} jobs, fewer than the #{held} already held" if jobs.size < held * TOO_FEW
-      LaserJob.transaction do
-        LaserJob.where(source: LaserJob::FORM).delete_all
-        LaserJob.insert_all!(jobs) if jobs.any?
+      tally = @sheets.to_h do |sheet|
+        [sheet, replace(sheet)]
+      rescue Error => e
+        [sheet, { error: e.message }]
       end
       Rails.cache.delete_matched("laser") rescue nil
       Rails.cache.delete_matched("analytics") rescue nil
-      { read: rows.size - 1, kept: jobs.size, skipped: rows.size - 1 - jobs.size }
+      tally
     end
 
     private
 
-    def fetch(url = CSV_URL, redirects = 3)
+    def replace(sheet)
+      rows = Layout.rows(@texts[sheet] || fetch(sheet.csv_url), sheet.layout)
+      cleaner = Cleaner.new(overrides: sheet.machine == "large" && sheet.source == LaserJob::FORM)
+      now = Time.current
+      jobs = rows.each_with_index.filter_map do |(row, kept), i|
+        attributes, name = cleaner.call(row, i + 2)
+        attributes&.merge(kept)&.merge(machine: sheet.machine, source: sheet.source, person_key: name.blank? ? "" : LaserLog.person_key(name),
+                                       created_at: now, updated_at: now)
+      end
+      scope = LaserJob.where(machine: sheet.machine, source: sheet.source)
+      held = scope.count
+      raise Error, "#{jobs.size} jobs, fewer than the #{held} already held" if jobs.size < held * TOO_FEW
+      LaserJob.transaction do
+        scope.delete_all
+        LaserJob.insert_all!(jobs) if jobs.any?
+      end
+      { read: rows.size, kept: jobs.size, skipped: rows.size - jobs.size }
+    end
+
+    def fetch(url, redirects = 3)
       response = Net::HTTP.get_response(URI(url))
       if response.is_a?(Net::HTTPRedirection) && redirects.positive?
         return fetch(response["location"], redirects - 1)

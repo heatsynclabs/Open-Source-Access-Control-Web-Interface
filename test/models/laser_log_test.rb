@@ -79,38 +79,66 @@ class LaserLogTest < ActiveSupport::TestCase
     refute_match(/ada|lovelace/i, key)
   end
 
+  def sync(csv, sheet = LaserLog.sheet("large"))
+    LaserLog::Sync.new([sheet], texts: { sheet => csv }).run.fetch(sheet)
+  end
+
   test "sync replaces the jobs and keeps no names" do
     LaserJob.delete_all
     csv = CSV.generate { |out| out << HEADER; out << row; out << row(stamp: "3/5/2024 10:00:00", name: "Grace Hopper", result: "Fail") }
-    assert_equal({ read: 2, kept: 2, skipped: 0 }, LaserLog::Sync.new(csv).run)
-    assert_equal 2, LaserJob.count
+    assert_equal({ read: 2, kept: 2, skipped: 0 }, sync(csv))
+    assert_equal 2, LaserJob.where(machine: "large", source: LaserJob::FORM).count
     assert_equal 2, LaserJob.distinct.count(:person_key)
     refute LaserJob.all.map(&:attributes).to_s.match?(/Lovelace|Hopper/)
   end
 
-  test "the earlier log loads from its file, cleaned like the form, and the nightly sync leaves it alone" do
+  test "each sheet replaces only its own jobs; the mini laser's current form reads like the large one's" do
     LaserJob.delete_all
-    loaded = LaserLog::Archive.new.load!
-    assert_equal CSV.read(LaserLog::Archive::FILE, headers: true).size, loaded
-    assert_equal loaded, LaserLog::Archive.new.load!, "reloading replaces, never adds"
-    earlier = LaserJob.where(source: LaserJob::EARLIER)
-    assert_equal ["unknown"], earlier.distinct.pluck(:result)
-    assert_equal "", earlier.distinct.pick(:person_key)
-    assert_operator earlier.where(material: "Plywood / wood").count, :>, 700
-    assert earlier.where(material_raw: "masonite").all? { |job| job.material == "MDF / hardboard" }
-    csv = CSV.generate { |out| out << HEADER; out << row }
-    LaserLog::Sync.new(csv).run
-    assert_equal loaded, LaserJob.where(source: LaserJob::EARLIER).count
-    assert_equal 1, LaserJob.where(source: LaserJob::FORM).count
+    sync(CSV.generate { |out| out << HEADER; out << row })
+    sync(CSV.generate { |out| out << HEADER; out << row; out << row(stamp: "3/6/2024 10:00:00") }, LaserLog.sheet("mini"))
+    assert_equal 1, LaserJob.where(machine: "large").count
+    assert_equal 2, LaserJob.where(machine: "mini").count
   end
 
-  test "sync refuses a sheet that is not the log, or far shorter than what is held" do
+  test "the large laser's old form: free-text materials in the form's terms, mm thickness, no results" do
     LaserJob.delete_all
-    assert_raises(LaserLog::Error) { LaserLog::Sync.new("Name,Email\nx,y\n").run }
-    csv = CSV.generate { |out| out << HEADER; 10.times { |i| out << row(stamp: "3/#{i + 1}/2024 10:00:00") } }
-    LaserLog::Sync.new(csv).run
-    short = CSV.generate { |out| out << HEADER; out << row }
-    assert_raises(LaserLog::Error) { LaserLog::Sync.new(short).run }
+    header = ["Timestamp", "Start Time", "End Time", "Project Title", "Your Name", "Was the laser clean when you started?",
+              "Did you clean the laser?", "Laser run time (in minutes) total for all parts", "Material", "Thickness (in mm)",
+              "Cutting Speed", "Cutting Power", "What type of use was this?", "Engraving Scan Gap (if engrave)", "Number of passes",
+              "Project Notes", "Machine Notes", "Engraving Speed", "Engraving Power"]
+    csv = CSV.generate do |out|
+      out << header
+      out << ["6/1/2016 19:00:00", "", "", "Box", "Ada Lovelace", "Yes", "Yes", "20", "masonite", "3", "12", "70", "", "", "1", "", "", "", ""]
+      out << ["6/2/2016 19:00:00", "", "", "Coaster", "Grace Hopper", "No", "Yes", "5", "Baltic birch", "6", "", "", "", "0.1", "", "nice", "", "300", "40"]
+    end
+    assert_equal 2, sync(csv, LaserLog.sheet("large", LaserJob::OLD))[:kept]
+    box, coaster = LaserJob.where(source: LaserJob::OLD).order(:logged_at)
+    assert_equal ["MDF / hardboard", "masonite", "3 mm (1/8 in)", "cut", 70, 12], [box.material, box.material_raw, box.bucket, box.cut_op, box.cut_power, box.cut_speed]
+    assert_equal ["Plywood / wood", nil, "raster", "unknown", "nice"], [coaster.material, coaster.cut_op, coaster.eng_mode, coaster.result, coaster.notes]
+    assert_equal 20, box.minutes
+    refute LaserJob.all.map(&:attributes).to_s.match?(/Lovelace|Hopper/)
+  end
+
+  test "the mini laser's old form keeps its results and older material names" do
+    LaserJob.delete_all
+    header = ["Timestamp", "Start Time", "Finish Time", "Project Title", "Name", "Laser Run Time (TOTAL for ALL copies)",
+              "Was the machine clean when you STARTED?", "Did you clean up the machine and work area when you FINISHED?", "Material",
+              "Thickness", "Cutting Power", "Cutting Speed", "Cutting Number of Passes", "Engraving Power", "Engraving Speed",
+              "Engraving Gap", "Engraving Number of Passes", "Results", "Project Notes", "Machine Notes", "Software Notes"]
+    csv = CSV.generate do |out|
+      out << header
+      out << ["3/1/2012 19:00:00", "", "", "Box", "Ada Lovelace", "10", "Yes", "Yes", "Cardboard (Corrugated)", "3 mm (1/8\")", "30", "40", "1", "", "", "", "", "Fail", "", "", ""]
+    end
+    sync(csv, LaserLog.sheet("mini", LaserJob::OLD))
+    job = LaserJob.find_by!(machine: "mini", source: LaserJob::OLD)
+    assert_equal ["Corrugated cardboard", "fail", "Cardboard (Corrugated)"], [job.material, job.result, job.material_raw]
+  end
+
+  test "sync refuses a sheet that is not the log, or far shorter than what is held, and keeps its jobs" do
+    LaserJob.delete_all
+    assert sync("Name,Email\nx,y\n")[:error]
+    sync(CSV.generate { |out| out << HEADER; 10.times { |i| out << row(stamp: "3/#{i + 1}/2024 10:00:00") } })
+    assert_match "fewer", sync(CSV.generate { |out| out << HEADER; out << row })[:error]
     assert_equal 10, LaserJob.count
   end
 end

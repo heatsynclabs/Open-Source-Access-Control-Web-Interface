@@ -1,47 +1,51 @@
-<%= render "analytics/history/head", topic: "laser", note: "From the laser log form members fill in at the 80 W laser, read every night, and the laser's earlier log of October 2013 to June 2020 (a member's export to the old wiki), which recorded settings but not names, results or run time. Nothing was logged from July 2020 to April 2022. Only logged jobs are here; partly covered months are left out. The Laser page in the menu has the settings guide built from the same logs." %>
+<%= render "analytics/history/head", topic: "laser", note: "From the log forms members fill in at the lab's two laser cutters, the Large 80W and the Mini 60W, read every night: each machine's current form (from April 2022) and the old form before it. The Mini came to the lab around 2019; its old form's 2011 to 2013 jobs were probably on the lab's first laser. Only logged jobs are here; months with nothing logged for long stretches are left blank, as are partly covered months. The Laser page in the menu has the settings guide built from the same logs." %>
 <% if @laser&.any? %>
   <% u = @laser %>
   <% months = ->(series) { series.transform_keys { |month| month.strftime("%b %Y") } } %>
+  <% by_machine = ->(list) { list.map { |s| { name: s[:name], data: months.(s[:data]) } } } %>
   <% t = u.totals %>
   <div class="tiles">
-    <%= render StatTileComponent.new(value: number_with_delimiter(t[:jobs]), label: "Jobs on the current form", sub: "#{t[:first]&.strftime("%b %Y")} to #{t[:last]&.strftime("%b %Y")}", tone: :headline) %>
-    <% if t[:earlier].positive? %><%= render StatTileComponent.new(value: number_with_delimiter(t[:earlier]), label: "Jobs in the earlier log", sub: "#{t[:earlier_first]&.strftime("%b %Y")} to #{t[:earlier_last]&.strftime("%b %Y")}") %><% end %>
-    <%= render StatTileComponent.new(value: t[:people], label: "People", sub: "#{t[:one_job]} logged one job only") %>
+    <%= render StatTileComponent.new(value: number_with_delimiter(t[:jobs]), label: "Jobs logged", sub: "since #{t[:first]&.strftime("%b %Y")}", tone: :headline) %>
+    <% LaserJob::MACHINES.each do |machine, label| %>
+      <% m = t[:machines][machine] or next %>
+      <%= render StatTileComponent.new(value: number_with_delimiter(m[:jobs]), label: "On the #{label}", sub: "since #{m[:first]&.strftime("%b %Y")}") %>
+    <% end %>
+    <%= render StatTileComponent.new(value: number_with_delimiter(t[:people]), label: "People", sub: "#{t[:one_job]} logged one job only") %>
     <%= render StatTileComponent.new(value: number_with_delimiter(t[:hours]), label: "Laser hours") %>
     <%= render StatTileComponent.new(value: "#{t[:busiest_tenth]}%", label: "Jobs by the busiest tenth", sub: "of the people") %>
   </div>
   <p><%= link_to "Laser settings: what worked for each material", laser_path, class: "btn" %></p>
   <div class="grid two">
-    <% jobs = months.(u.jobs_by_month) %>
-    <%= render ChartCardComponent.new(title: "Jobs a month", note: "Both logs; the gap is July 2020 to April 2022, when nothing was logged.", rows: jobs, columns: ["Month", "Jobs"]) do %>
-      <%= column_chart jobs, discrete: true %>
+    <% jobs = by_machine.(u.jobs_by_machine) %>
+    <%= render ChartCardComponent.new(title: "Jobs a month", note: "Each laser's logged jobs.", rows: series_rows(jobs), columns: ["Month", *jobs.map { |s| s[:name] }]) do %>
+      <%= line_chart jobs, discrete: true, curve: false, points: false %>
     <% end %>
 
     <% people = months.(u.people_by_month) %>
-    <%= render ChartCardComponent.new(title: "People using it a month", note: "Current form only: the earlier log has no names.", rows: people, columns: ["Month", "People"]) do %>
+    <%= render ChartCardComponent.new(title: "People using a laser a month", note: "Different people who logged a job on either machine.", rows: people, columns: ["Month", "People"]) do %>
       <%= line_chart people, discrete: true, curve: false, points: false %>
     <% end %>
 
-    <% hours = months.(u.hours_by_month) %>
-    <%= render ChartCardComponent.new(title: "Laser hours a month", note: "The run time people logged on the current form, all copies of a job together.", rows: hours, columns: ["Month", "Hours"]) do %>
-      <%= column_chart hours, discrete: true, suffix: " h" %>
+    <% hours = by_machine.(u.hours_by_machine) %>
+    <%= render ChartCardComponent.new(title: "Laser hours a month", note: "The run time people logged, all copies of a job together.", rows: series_rows(hours), columns: ["Month", *hours.map { |s| s[:name] }]) do %>
+      <%= line_chart hours, discrete: true, curve: false, points: false, suffix: " h" %>
     <% end %>
 
     <% results = u.results_by_year.map { |name, data| { name: name, data: data } } %>
-    <%= render ChartCardComponent.new(title: "How jobs turned out, by year", note: "Current form only: the earlier log did not record results.", rows: series_rows(results), columns: ["Year", *results.map { |s| s[:name] }]) do %>
+    <%= render ChartCardComponent.new(title: "How jobs turned out, by year", note: "Both lasers' current forms (from April 2022); the large laser's old form did not ask.", rows: series_rows(results), columns: ["Year", *results.map { |s| s[:name] }]) do %>
       <%= column_chart results, discrete: true, stacked: true %>
     <% end %>
 
     <% families = u.families_by_year.map { |name, data| { name: name, data: data } } %>
-    <%= render ChartCardComponent.new(title: "What was lasered, by year", note: "Jobs by kind of material in both logs, after material names are cleaned up.", rows: series_rows(families), columns: ["Year", *families.map { |s| s[:name] }]) do %>
+    <%= render ChartCardComponent.new(title: "What was lasered, by year", note: "Jobs on both lasers by kind of material, after material names are cleaned up.", rows: series_rows(families), columns: ["Year", *families.map { |s| s[:name] }]) do %>
       <%= column_chart families, discrete: true, stacked: true %>
     <% end %>
 
     <% clean = months.(u.found_clean_by_month) %>
-    <%= render ChartCardComponent.new(title: "Found the machine clean", note: "The share of jobs whose maker found the laser clean when they started.", rows: clean, columns: ["Month", "Found clean (%)"]) do %>
+    <%= render ChartCardComponent.new(title: "Found the machine clean", note: "The share of jobs, on either laser, whose maker found the machine clean when they started.", rows: clean, columns: ["Month", "Found clean (%)"]) do %>
       <%= line_chart clean, discrete: true, curve: false, points: false, suffix: "%", max: 100 %>
     <% end %>
   </div>
 <% else %>
-  <%= render EmptyStateComponent.new("The laser log has not been read on this site yet (docs/laser.md).") %>
+  <%= render EmptyStateComponent.new("The laser logs have not been read on this site yet (docs/laser.md).") %>
 <% end %>

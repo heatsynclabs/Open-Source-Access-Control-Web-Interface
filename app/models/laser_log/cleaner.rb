@@ -68,7 +68,8 @@ module LaserLog
     ].freeze
     BUCKET_ORDER = (BUCKETS.map(&:last) + ["Surface only", "Not stated"]).freeze
 
-    # Hand corrections, keyed by the form's timestamp text.
+    # Hand corrections to the large laser's current form, keyed by its
+    # timestamp text (Cleaner.new(overrides: false) for every other log).
     OVERRIDE = {
       "2/11/2023 17:07:48" => { cut_power: 45, why: "cut power 454 read as 45" },
       "2/15/2024 16:09:57" => { cut_op: "score", why: "note says light mark, not a cut" },
@@ -86,8 +87,14 @@ module LaserLog
       ["warped material", /warp|bowing|bowed/],
     ].freeze
 
+    def initialize(overrides: true)
+      @overrides = overrides ? OVERRIDE : {}
+    end
+
     # The job's attributes (without person_key), and the name for the caller
-    # to turn into a key; nil for a row with no readable timestamp.
+    # to turn into a key; nil for a row with no readable timestamp. The row is
+    # in the current form's column order (LaserLog::Layout turns the old
+    # forms' rows into it).
     def call(row, sheet_row)
       cells = row.map { |cell| cell.to_s.strip }
       cells += [""] * (COLUMNS - cells.size) if cells.size < COLUMNS
@@ -105,7 +112,7 @@ module LaserLog
       material, why = material_of(material_raw, mm, title, who, notes)
       fixes << "material: #{why}" if why
 
-      override = OVERRIDE.fetch(stamp, {})
+      override = @overrides.fetch(stamp, {})
       cut_setting = [nil] * 4
       if cut == "Yes"
         cut_setting = fix_cut(override.fetch(:cut_power) { number(cut_power) }, number(cut_speed), number(cut_passes), material, mm, fixes)

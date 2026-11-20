@@ -1,20 +1,20 @@
-<p class="muted">Typical power and speed from jobs that worked, for every material and thickness with 3 or more logged jobs. Open a row for the detail. The last column is what people used for the same stock in the laser's earlier log (2013 to 2020), which did not record results.</p>
+<p class="muted">Typical power and speed from jobs that worked, for every material and thickness with 3 or more logged jobs. Open a row for the detail. The last column is what people used for the same stock on this laser's old form, as history.</p>
 <nav class="filters" aria-label="Job">
   <% Laser::Settings::OPS.each do |op, label| %>
-    <%= link_to label, laser_path(view: "all", op: op), class: ["toggle", ("on" if op == @op)], "aria-current": ("true" if op == @op) %>
+    <%= link_to label, laser_at(view: "all", op: op), class: ["toggle", ("on" if op == @op)], "aria-current": ("true" if op == @op) %>
   <% end %>
 </nav>
 <div class="table-wrap card">
   <table class="laser-table">
-    <thead><tr><th>Material</th><% if @op == "cut" %><th>Thickness</th><% end %><th class="num">Power %</th><th class="num">Speed mm/s</th><th class="num"><%= @op == "cut" ? "Passes" : "Gap mm" %></th><th class="num">Jobs</th><th>How it goes</th><th class="num">2013 to 2020</th></tr></thead>
+    <thead><tr><th>Material</th><% if @op == "cut" %><th>Thickness</th><% end %><th class="num">Power %</th><th class="num">Speed mm/s</th><th class="num"><%= @op == "cut" ? "Passes" : "Gap mm" %></th><th class="num">Jobs</th><th>How it goes</th><th class="num">Old form</th></tr></thead>
     <tbody>
       <% @table.chunk_while { |a, b| a[:family] == b[:family] }.each do |rows| %>
         <tr class="family"><th colspan="<%= @op == "cut" ? 8 : 7 %>"><%= rows.first[:family] %></th></tr>
         <% rows.each_with_index do |row, i| %>
           <% s = row[:stats] %>
           <tr>
-            <td><%= link_to row[:material], laser_path(material: row[:material], op: @op, bucket: row[:bucket]) if i.zero? || rows[i - 1][:material] != row[:material] %></td>
-            <% if @op == "cut" %><td><%= link_to row[:bucket], laser_path(material: row[:material], op: @op, bucket: row[:bucket]) %></td><% end %>
+            <td><%= link_to row[:material], laser_at(material: row[:material], op: @op, bucket: row[:bucket]) if i.zero? || rows[i - 1][:material] != row[:material] %></td>
+            <% if @op == "cut" %><td><%= link_to row[:bucket], laser_at(material: row[:material], op: @op, bucket: row[:bucket]) %></td><% end %>
             <td class="num big"><%= laser_number(s[:power]) %></td>
             <td class="num big"><%= laser_number(s[:speed]) %></td>
             <td class="num"><%= @op == "cut" ? laser_number(s[:passes]) : (s[:gap] ? laser_number(s[:gap], 2) : "") %></td>
