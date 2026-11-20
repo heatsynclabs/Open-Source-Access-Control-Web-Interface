@@ -1,0 +1,16 @@
+<div class="tiles">
+  <%= render StatTileComponent.new(value: @members[:paid_up], label: "Paid up members", sub: "A payment in the last 60 days", tone: :headline) %>
+  <%= render StatTileComponent.new(value: @members[:active], label: "On a member level", sub: "Paid up or not; levels stay until someone changes them") %>
+  <%= render StatTileComponent.new(value: @members[:cardholders], label: "Hold a working card") %>
+  <%= render StatTileComponent.new(value: number_with_delimiter(@door[:entries]), label: "Card entries", sub: @period.label) %>
+  <% if @calendar %>
+    <%= render StatTileComponent.new(value: @calendar[:total], label: "Events on the calendar", sub: @period.label) %>
+  <% end %>
+  <% if @classes %>
+    <%= render StatTileComponent.new(value: number_with_delimiter(@classes[:attendees]), label: "Signed up for classes", sub: @period.label) %>
+  <% end %>
+</div>
+
+<%= render ChartCardComponent.new(title: "Everything together", note: "Each line is drawn against its own busiest #{@period.unit} (100), so lines counted in hundreds and in tens can be compared by shape. Click a name to hide or show its line; the real numbers are in the table.", rows: @overview.actual.transform_keys { |bucket| @period.bucket_label(bucket) }, columns: ["When", *@overview.names]) do %>
+  <%= line_chart @overview.indexed.map { |line| line.merge(data: by_bucket(line[:data], @period)) }, height: "300px", curve: false, points: false, suffix: "", library: { interaction: { mode: "index", intersect: false } } %>
+<% end %>

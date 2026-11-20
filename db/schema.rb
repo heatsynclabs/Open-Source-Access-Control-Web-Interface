@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_20_000000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_20_010000) do
 
   create_table "audit_events", :force => true do |t|
     t.string   "event_type"
@@ -245,6 +245,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_20_000000) do
     t.decimal  "dollars",      :precision => 10, :scale => 2, :default => 0.0, :null => false
     t.datetime "created_at",                                                  :null => false
     t.datetime "updated_at",                                                  :null => false
+    t.string   "source",                                     :default => "organizer export", :null => false
+    t.datetime "collected_at"
   end
 
   add_index "ticketed_events", ["guestlist_id"], :name => "index_ticketed_events_on_guestlist_id", :unique => true

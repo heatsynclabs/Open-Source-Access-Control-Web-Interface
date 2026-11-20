@@ -1,0 +1,22 @@
+<div class="section-head"><p class="eyebrow">The calendar</p><h2>What the lab puts on</h2></div>
+<% if @calendar %>
+  <div class="tiles">
+    <%= render StatTileComponent.new(value: @calendar[:total], label: "Events", sub: "Open hours not counted") %>
+    <%= render StatTileComponent.new(value: @calendar[:classes], label: "Workshops with sign up") %>
+    <%= render StatTileComponent.new(value: @calendar[:hyh], label: "Hack Your Hackerspace meetings") %>
+  </div>
+  <%= render ChartCardComponent.new(title: "Events per #{@period.unit}, by kind") do %>
+    <%= column_chart by_bucket_series(@calendar[:series], @period), stacked: true, height: "260px", paletteOrder: calendar_palette_order(@calendar[:series]) %>
+  <% end %>
+  <div class="grid two">
+    <section class="card">
+      <h3>Most frequent events</h3>
+      <%= render "bar_list", rows: @calendar[:top].map { |title, count, category| [title, count, category.key] }, empty: "Nothing on the calendar in this period." %>
+    </section>
+    <%= render ChartCardComponent.new(title: "Events by day of the week", rows: @calendar[:weekdays], columns: ["Day", "Events"]) do %>
+      <%= column_chart @calendar[:weekdays] %>
+    <% end %>
+  </div>
+<% else %>
+  <p class="msg warn">The lab calendar could not be read from Google just now, so this section is missing. The rest of the page is current.</p>
+<% end %>

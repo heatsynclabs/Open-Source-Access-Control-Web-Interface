@@ -1,22 +1,30 @@
 # Aggregate charts for signed-in members: members, door use, the calendar
-# and class sign-ups, plus dues and class money for the treasurer and admins. Counts only; nothing on
-# this page names a person.
+# and class sign-ups, plus dues and class money for the treasurer and
+# admins. Counts only; nothing on this page names a person.
+#
+# The page has one tab per source (section) and "All". Only the sections a
+# tab shows are worked out.
 class AnalyticsController < ApplicationController
   before_action :authenticate_user!
 
   CACHE_FOR = 10.minutes
+  SECTIONS = {
+    "all" => "All", "door" => "Lab use", "calendar" => "Calendar", "classes" => "Classes",
+    "members" => "Members", "dues" => "Dues",
+  }.freeze
 
   def index
     @period = Analytics::Period.new(params[:period])
-    @members = cached(:members) { members_section(Analytics::Members.new(@period)) }
-    @payments = cached(:payments) { payments_section(Analytics::Payments.new(@period)) } if can?(:manage, Payment)
-    @door = cached(:door) { door_section(Analytics::Door.new(@period)) }
-    @calendar = calendar_section
-    if TicketedEvent.available?
-      classes = Analytics::Classes.new(@period)
-      @classes = cached(:classes) { classes_section(classes) }
-      @class_money = cached(:class_money) { { total: classes.dollars_total, by_period: classes.dollars_by_period } } if can?(:manage, Payment)
-    end
+    @sections = SECTIONS.reject { |key, _label| key == "dues" && !can?(:manage, Payment) }
+    @section = @sections.key?(params[:section]) ? params[:section] : "all"
+    all = @section == "all"
+
+    @members = cached(:members) { members_section(Analytics::Members.new(@period)) } if all || @section == "members"
+    @door = cached(:door) { door_section(Analytics::Door.new(@period)) } if all || @section.in?(%w[door calendar])
+    @calendar = calendar_section if all || @section.in?(%w[door calendar])
+    classes_sections if (all || @section == "classes") && TicketedEvent.available?
+    @payments = cached(:payments) { payments_section(Analytics::Payments.new(@period)) } if @section == "dues"
+    @overview = overview if all
   end
 
   private
@@ -52,12 +60,30 @@ class AnalyticsController < ApplicationController
     }
   end
 
+  def classes_sections
+    classes = Analytics::Classes.new(@period)
+    @classes = cached(:classes) { classes_section(classes) }
+    @classes_detail = cached(:classes_detail) { { by_year: classes.by_year, events: classes.events.to_a } } if @section == "classes"
+    return unless can?(:manage, Payment)
+    @class_money = cached(:class_money) { { total: classes.dollars_total, by_period: classes.dollars_by_period } }
+  end
+
   def classes_section(classes)
     {
       events: classes.events_count, attendees: classes.attendees_total, show_up: classes.show_up,
       by_period: classes.attendees_by_period, by_kind: classes.by_kind, top: classes.top_events,
-      left_out: classes.left_out, loaded_on: classes.loaded_on,
+      left_out: classes.left_out, collected: classes.collected,
     }
+  end
+
+  def overview
+    calendar_counts = @calendar && @calendar[:series].each_with_object(Hash.new(0)) do |series, totals|
+      series[:data].each { |bucket, count| totals[bucket] += count }
+    end
+    Analytics::Overview.new(
+      entries: @door[:entries_by_period], cards: @door[:cards_by_period], events: calendar_counts,
+      signups: @classes&.dig(:by_period), accounts: @members[:signups]
+    )
   end
 
   # The calendar section reads the Google feed. If that is down the rest of
