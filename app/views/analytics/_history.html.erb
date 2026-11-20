@@ -3,7 +3,7 @@
   <p class="note">Records the members site does not keep itself: PayPal and utility records, the old Wi-Fi log, the mailing list and wiki, the calendar's history and the tax returns. Each chart covers every year its records reach. They were gathered by hand and do not update on their own; a gap in a line is a month or year with no record.</p>
   <div class="grid two">
     <% payers = @history.monthly(["Paying members", "dues_payers"]) %>
-    <%= render ChartCardComponent.new(title: "Paying members", note: "People who paid dues ($25, $50 or $100) through PayPal each month, each payment counted once across the Board's PayPal exports, this site's imports and a recent PayPal download. Dues paid in cash or by cheque are not in PayPal.", rows: series_rows(payers), columns: ["Month", "Paying members"]) do %>
+    <%= render ChartCardComponent.new(title: "Paying members", note: "People who paid dues ($25, $50 or $100) through PayPal each month, each payment counted once across the Board's PayPal exports, this site's imports and a recent PayPal download. Dues paid in cash or by check are not in PayPal.", rows: series_rows(payers), columns: ["Month", "Paying members"]) do %>
       <%= line_chart payers, discrete: true, curve: false, points: false %>
     <% end %>
 
@@ -32,18 +32,19 @@
       <%= column_chart edits, discrete: true %>
     <% end %>
 
-    <%= render ChartCardComponent.new(title: "Most-read wiki pages", note: "Views counted by the wiki itself from 2009 to October 2026, search engines included: #{number_with_delimiter(@history.totals("wiki_views").first&.last.to_i)} views in all.") do %>
-      <%= render "bar_list", rows: @history.totals("wiki_page_views"), empty: "No wiki figures loaded." %>
-    <% end %>
-
     <% places = @history.yearly(["At the lab", "calendar_places", "At the lab"], ["Online", "calendar_places", "Online"], ["Elsewhere", "calendar_places", "Elsewhere"]) %>
     <%= render ChartCardComponent.new(title: "Where events were held", note: "Events on the calendar each year by where they took place (to 10 December 2025). The lab met at Gangplank in Chandler until it moved to Mesa in 2011; online events are mostly 2020 to 2022.", rows: series_rows(places), columns: ["Year", "At the lab", "Online", "Elsewhere"]) do %>
       <%= column_chart places, discrete: true, stacked: true %>
     <% end %>
 
     <% added = @history.yearly(["Events or series added", "calendar_items_added"]) %>
-    <%= render ChartCardComponent.new(title: "Who keeps the calendar", note: "Events and repeating series added to the calendar each year (a series counts once). The table has how many different people added them each year.", rows: @history.table("calendar_items_added", "calendar_contributors"), columns: ["Year", "Events or series added", "People adding them"]) do %>
+    <% most, latest = @history.highest("calendar_contributors"), @history.table("calendar_contributors").last %>
+    <%= render ChartCardComponent.new(title: "Who keeps the calendar", note: "Events and repeating series added to the calendar each year (a series counts once)#{". Different people added them: #{most[1]} in #{most[0]}, #{latest[1].first} in #{latest[0]}; the table has every year" if most && latest}.", rows: @history.table("calendar_items_added", "calendar_contributors"), columns: ["Year", "Events or series added", "People adding them"]) do %>
       <%= column_chart added, discrete: true %>
+    <% end %>
+
+    <%= render ChartCardComponent.new(title: "Most-read wiki pages", note: "Views counted by the wiki itself from 2009 to October 2026, search engines included: #{number_with_delimiter(@history.totals("wiki_views").first&.last.to_i)} views in all.") do %>
+      <%= render "bar_list", rows: @history.totals("wiki_page_views").first(10), empty: "No wiki figures loaded." %>
     <% end %>
 
     <%= render ChartCardComponent.new(title: "How people heard about the lab", note: "What people wrote under \"How did you hear about us?\" when they made an account, sorted into rough kinds by keyword (members database, September 2026). The answers themselves are not shown.", rows: @history.breakdown_table("how_heard"), columns: ["Year joined", *@history.labels("how_heard")]) do %>

@@ -57,6 +57,12 @@ module Analytics
       end
     end
 
+    # [year, value] of the year with the largest count, or nil.
+    def highest(key)
+      row = rows(key).reject { |found| found.value.nil? }.max_by(&:value)
+      row && [row.starts_on.year, number(row.value)]
+    end
+
     def labels(key)
       rows(key).map(&:label).uniq
     end

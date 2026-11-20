@@ -27,6 +27,8 @@ class AnalyticsHistoryTest < ActionDispatch::IntegrationTest
     metric("wiki_views", Date.new(2026, 10, 21), 5_734_654, period: "total")
     metric("calendar_items_added", Date.new(2025, 1, 1), 100, period: "year")
     metric("calendar_contributors", Date.new(2025, 1, 1), nil, period: "year")
+    metric("calendar_items_added", Date.new(2013, 1, 1), 155, period: "year")
+    metric("calendar_contributors", Date.new(2013, 1, 1), 20, period: "year")
   end
 
   def history_tab
@@ -43,6 +45,8 @@ class AnalyticsHistoryTest < ActionDispatch::IntegrationTest
     assert_select ".bar-list span", "Rules"
     assert_match "5,734,654 views in all", response.body
     assert_select "td", "fewer than 5"
+    assert_match "Different people added them: 20 in 2013, fewer than 5 in 2025", response.body
+    assert_select ".bar-list .value", "152,998"
     assert_select "h2", text: "Money", count: 0
     assert_no_match "$1,850", response.body
   end

@@ -33,6 +33,13 @@ class Analytics::HistoryTest < ActiveSupport::TestCase
                  Analytics::History.new.table("calendar_items_added", "calendar_contributors")
   end
 
+  test "the highest year of a count skips the years under 5" do
+    metric("calendar_contributors", Date.new(2013, 1, 1), 20, period: "year")
+    metric("calendar_contributors", Date.new(2025, 1, 1), nil, period: "year")
+    assert_equal [2013, 20], Analytics::History.new.highest("calendar_contributors")
+    assert_nil Analytics::History.new.highest("nothing")
+  end
+
   test "money adds up by year and says which years are short" do
     (1..12).each { |month| metric("dues_dollars", Date.new(2024, month, 1), 3500) }
     metric("dues_dollars", Date.new(2025, 1, 1), 3575.5)
