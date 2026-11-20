@@ -53,6 +53,12 @@
   <p class="muted small"><%= pluralize(s[:n], "logged job") %>: <%= s[:counts]["success"] %> worked<%= ", #{s[:counts]["conditional"]} partly" if s[:counts]["conditional"].positive? %><%= ", #{s[:counts]["fail"]} failed" if s[:counts]["fail"].positive? %>.</p>
 </section>
 
+<% earlier_rows = @earlier_settings.rows_for(@material, @bucket, @op) %>
+<% if earlier_rows.size >= 3 %>
+  <% e = @earlier_settings.stats(earlier_rows, @op) %>
+  <p class="msg info laser-earlier">In the laser's earlier log (<%= earlier_rows.first.date.year %> to <%= earlier_rows.last.date.year %>) people used <strong><%= laser_number(e[:power]) %>% at <%= laser_number(e[:speed]) %> mm/s</strong><%= @op == "engrave" && e[:gap] ? ", scan gap #{laser_number(e[:gap], 2)} mm" : "" %> for this, the median of <%= pluralize(earlier_rows.size, "job") %>. That log did not record whether jobs worked, and the laser has been realigned and its lens cleaned since, so this is history, not a recommendation.</p>
+<% end %>
+
 <% key, = @reliability %>
 <% if s[:scattered] && s[:basis] >= 5 %>
   <p class="msg info">People got this to work with very different settings, so the typical numbers are a rough middle. Look at the dots under More detail before you trust them.</p>

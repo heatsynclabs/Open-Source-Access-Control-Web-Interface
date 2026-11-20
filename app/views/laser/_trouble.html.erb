@@ -11,6 +11,6 @@
 </div>
 
 <% drift = t.drift %>
-<%= render ChartCardComponent.new(title: "The machine drifts", note: "Power divided by speed that 3 mm plywood needed to cut through, by half year (higher means a weaker beam). Dashed lines are optics work noted in the log; under each point, its typical power / speed.", rows: drift.map { |half, v| [half, v ? [v[:ratio], "#{laser_number(v[:power])}% at #{laser_number(v[:speed])} mm/s"] : ["", ""]] }, columns: ["Half year", "Power / speed", "Typical setting"]) do %>
+<%= render ChartCardComponent.new(title: "The machine drifts", note: "Power divided by speed that 3 mm plywood took to cut through, by half year (higher means a weaker beam), and the typical power / speed under each point. Filled points are jobs that worked on the current form; hollow points, to mid-2020, are every job in the earlier log, which did not record results. Nothing was logged from mid-2020 to April 2022. Dashed lines are optics work noted in the log.", rows: drift.map { |half, v| [half, v ? [v[:ratio], "#{laser_number(v[:power])}% at #{laser_number(v[:speed])} mm/s", v[:earlier] ? "earlier log, every job" : "current form, jobs that worked"] : ["", "", ""]] }, columns: ["Half year", "Power / speed", "Typical setting", "From"]) do %>
   <%= laser_drift_chart(drift) %>
 <% end %>

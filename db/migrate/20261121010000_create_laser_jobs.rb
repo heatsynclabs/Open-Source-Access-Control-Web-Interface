@@ -1,15 +1,18 @@
-# The large 80 W laser's job log, cleaned (LaserLog::Cleaner), for the Laser
-# page and analytics. Rebuilt every night from the log form's sheet
-# (bundle exec rails laser:sync). No names: person_key is a keyed hash that
-# only tells jobs by the same person apart. Run by hand (rails db:migrate);
-# the app works before and after.
+# The large 80 W laser's job logs, cleaned (LaserLog::Cleaner), for the Laser
+# page and analytics: source "form" is the current form, rebuilt every night
+# from its sheet; source "2013 log" the earlier form of 2013 to 2020 (from
+# db/archive/). Both are loaded by bundle exec rails laser:sync. No names:
+# person_key is a keyed hash that only tells jobs by the same person apart
+# (blank for the earlier log). Run by hand (rails db:migrate); the app works
+# before and after.
 class CreateLaserJobs < ActiveRecord::Migration[7.2]
   def change
     create_table :laser_jobs do |t|
+      t.string :source, null: false, default: "form"
       t.integer :sheet_row, null: false
       t.datetime :logged_at, null: false
       t.date :logged_on, null: false
-      t.string :person_key, null: false
+      t.string :person_key, null: false, default: ""
       t.string :title, null: false, default: ""
       t.string :material_raw, null: false, default: ""
       t.string :material, null: false
@@ -39,7 +42,7 @@ class CreateLaserJobs < ActiveRecord::Migration[7.2]
       t.text :fixes, null: false, default: ""
       t.timestamps
     end
-    add_index :laser_jobs, :sheet_row, unique: true
+    add_index :laser_jobs, [:source, :sheet_row], unique: true
     add_index :laser_jobs, :logged_on
     add_index :laser_jobs, [:material, :bucket]
   end

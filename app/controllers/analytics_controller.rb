@@ -34,7 +34,7 @@ class AnalyticsController < ApplicationController
     if (all || @section == "history") && LabMetric.available?
       @history = Analytics::History.new
       @history_topics = history_topics
-      @laser = Laser::Usage.new(Laser::Log.jobs) if LaserJob.available? && LaserJob.exists?
+      @laser = Laser::Usage.new(Laser::Log.jobs, Laser::Log.jobs(LaserJob::EARLIER)) if LaserJob.available? && LaserJob.exists?
       @calendar_years = calendar_years if @topic == "calendar"
     end
     render layout: false

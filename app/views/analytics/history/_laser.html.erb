@@ -1,10 +1,11 @@
-<%= render "analytics/history/head", topic: "laser", note: "From the laser log form members fill in at the 80 W laser, read every night (the Laser page in the menu has the settings guide built from the same log). Only logged jobs are here; the month we are in is left out until it is over. Names on the form are never read into the site." %>
+<%= render "analytics/history/head", topic: "laser", note: "From the laser log form members fill in at the 80 W laser, read every night, and the laser's earlier log of October 2013 to June 2020 (a member's export to the old wiki), which recorded settings but not names, results or run time. Nothing was logged from July 2020 to April 2022. Only logged jobs are here; partly covered months are left out. The Laser page in the menu has the settings guide built from the same logs." %>
 <% if @laser&.any? %>
   <% u = @laser %>
   <% months = ->(series) { series.transform_keys { |month| month.strftime("%b %Y") } } %>
   <% t = u.totals %>
   <div class="tiles">
-    <%= render StatTileComponent.new(value: number_with_delimiter(t[:jobs]), label: "Jobs logged", sub: "#{t[:first]&.strftime("%b %Y")} to #{t[:last]&.strftime("%b %Y")}", tone: :headline) %>
+    <%= render StatTileComponent.new(value: number_with_delimiter(t[:jobs]), label: "Jobs on the current form", sub: "#{t[:first]&.strftime("%b %Y")} to #{t[:last]&.strftime("%b %Y")}", tone: :headline) %>
+    <% if t[:earlier].positive? %><%= render StatTileComponent.new(value: number_with_delimiter(t[:earlier]), label: "Jobs in the earlier log", sub: "#{t[:earlier_first]&.strftime("%b %Y")} to #{t[:earlier_last]&.strftime("%b %Y")}") %><% end %>
     <%= render StatTileComponent.new(value: t[:people], label: "People", sub: "#{t[:one_job]} logged one job only") %>
     <%= render StatTileComponent.new(value: number_with_delimiter(t[:hours]), label: "Laser hours") %>
     <%= render StatTileComponent.new(value: "#{t[:busiest_tenth]}%", label: "Jobs by the busiest tenth", sub: "of the people") %>
@@ -12,27 +13,27 @@
   <p><%= link_to "Laser settings: what worked for each material", laser_path, class: "btn" %></p>
   <div class="grid two">
     <% jobs = months.(u.jobs_by_month) %>
-    <%= render ChartCardComponent.new(title: "Jobs a month", rows: jobs, columns: ["Month", "Jobs"]) do %>
+    <%= render ChartCardComponent.new(title: "Jobs a month", note: "Both logs; the gap is July 2020 to April 2022, when nothing was logged.", rows: jobs, columns: ["Month", "Jobs"]) do %>
       <%= column_chart jobs, discrete: true %>
     <% end %>
 
     <% people = months.(u.people_by_month) %>
-    <%= render ChartCardComponent.new(title: "People using it a month", rows: people, columns: ["Month", "People"]) do %>
+    <%= render ChartCardComponent.new(title: "People using it a month", note: "Current form only: the earlier log has no names.", rows: people, columns: ["Month", "People"]) do %>
       <%= line_chart people, discrete: true, curve: false, points: false %>
     <% end %>
 
     <% hours = months.(u.hours_by_month) %>
-    <%= render ChartCardComponent.new(title: "Laser hours a month", note: "The run time people logged, all copies of a job together.", rows: hours, columns: ["Month", "Hours"]) do %>
+    <%= render ChartCardComponent.new(title: "Laser hours a month", note: "The run time people logged on the current form, all copies of a job together.", rows: hours, columns: ["Month", "Hours"]) do %>
       <%= column_chart hours, discrete: true, suffix: " h" %>
     <% end %>
 
     <% results = u.results_by_year.map { |name, data| { name: name, data: data } } %>
-    <%= render ChartCardComponent.new(title: "How jobs turned out, by year", rows: series_rows(results), columns: ["Year", *results.map { |s| s[:name] }]) do %>
+    <%= render ChartCardComponent.new(title: "How jobs turned out, by year", note: "Current form only: the earlier log did not record results.", rows: series_rows(results), columns: ["Year", *results.map { |s| s[:name] }]) do %>
       <%= column_chart results, discrete: true, stacked: true %>
     <% end %>
 
     <% families = u.families_by_year.map { |name, data| { name: name, data: data } } %>
-    <%= render ChartCardComponent.new(title: "What was lasered, by year", note: "Jobs by kind of material, after the log's material names are cleaned up.", rows: series_rows(families), columns: ["Year", *families.map { |s| s[:name] }]) do %>
+    <%= render ChartCardComponent.new(title: "What was lasered, by year", note: "Jobs by kind of material in both logs, after material names are cleaned up.", rows: series_rows(families), columns: ["Year", *families.map { |s| s[:name] }]) do %>
       <%= column_chart families, discrete: true, stacked: true %>
     <% end %>
 

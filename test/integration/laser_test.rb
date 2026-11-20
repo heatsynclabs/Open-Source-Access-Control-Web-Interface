@@ -25,6 +25,12 @@ class LaserPageTest < ActionDispatch::IntegrationTest
         notes: i % 10 == 0 ? "Did not cut through" : "", fixes: "", created_at: Time.current, updated_at: Time.current }
     end
     LaserJob.insert_all!(rows)
+    earlier = (1..5).map do |i|
+      { source: LaserJob::EARLIER, sheet_row: i + 1, logged_at: Time.zone.local(2015, i, 3, 19), logged_on: Date.new(2015, i, 3),
+        person_key: "", material_raw: "birch ply", material: "Plywood / wood", family: "Wood", mm: 6.0, bucket: "6 mm (1/4 in)",
+        cut_op: "cut", cut_power: 90, cut_speed: 6, cut_passes: 1, result: "unknown", created_at: Time.current, updated_at: Time.current }
+    end
+    LaserJob.insert_all!(earlier)
   end
 
   test "signed out people are sent to sign in" do
@@ -40,6 +46,27 @@ class LaserPageTest < ActionDispatch::IntegrationTest
     assert_select "h2", "Plywood / wood, 6 mm (1/4 in)"
     assert_select ".tile .num", "8"
     assert_select "svg.laser-chart circle"
+  end
+
+  test "the finder shows what the earlier log used, as history" do
+    sign_in member
+    get laser_path(material: "Plywood / wood", op: "cut", bucket: "6 mm (1/4 in)")
+    assert_select ".laser-earlier strong", "90% at 6 mm/s"
+    assert_select ".tile .num", "8" # the recommendation still comes from the current form
+  end
+
+  test "the log includes the earlier log, and can show one log" do
+    sign_in member
+    get laser_path(view: "log", log: "earlier")
+    assert_select "tbody tr", 5
+    assert_select ".chip", "not recorded"
+    assert_match "logged as birch ply", response.body
+  end
+
+  test "the drift chart reaches back through the earlier log" do
+    sign_in member
+    get laser_path(view: "trouble")
+    assert_select "svg.laser-chart text", "2015"
   end
 
   test "every view renders" do

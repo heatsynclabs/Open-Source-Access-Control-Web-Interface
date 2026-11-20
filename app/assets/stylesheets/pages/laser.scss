@@ -41,6 +41,7 @@
   .laser-chart .trend { fill: none; stroke: var(--bone); stroke-width: 2.5; }
   .laser-chart .baseline { stroke: var(--bone); stroke-dasharray: 6 4; }
   .laser-chart circle.point { fill: var(--hazard); stroke: var(--steel-hi); stroke-width: 2; fill-opacity: 1; }
+  .laser-chart circle.point.earlier { fill: var(--slab); }
   .laser-chart .point-label { fill: var(--bone); }
 
   .laser-table td.big, .laser-sheet td.big { font-family: var(--font-display); font-size: var(--text-lg); }

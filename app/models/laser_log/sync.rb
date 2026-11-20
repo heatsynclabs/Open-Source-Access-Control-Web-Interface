@@ -2,7 +2,8 @@ require "csv"
 require "net/http"
 
 module LaserLog
-  # Reads the whole laser log and replaces LaserJob with it, cleaned. Run
+  # Reads the whole laser log form and replaces its jobs in LaserJob (source
+  # FORM; the earlier log is LaserLog::Archive's), cleaned. Run
   # nightly by `bundle exec rails laser:sync` (Coolify scheduled task) and by
   # hand after a deploy. Keeps the old rows if the sheet cannot be read or
   # looks wrong.
@@ -22,12 +23,12 @@ module LaserLog
       now = Time.current
       jobs = rows.drop(1).each_with_index.filter_map do |row, i|
         attributes, name = cleaner.call(row, i + 2)
-        attributes&.merge(person_key: LaserLog.person_key(name), created_at: now, updated_at: now)
+        attributes&.merge(source: LaserJob::FORM, person_key: LaserLog.person_key(name), created_at: now, updated_at: now)
       end
-      held = LaserJob.count
+      held = LaserJob.where(source: LaserJob::FORM).count
       raise Error, "the sheet has #{jobs.size} jobs, fewer than the #{held} already held" if jobs.size < held * TOO_FEW
       LaserJob.transaction do
-        LaserJob.delete_all
+        LaserJob.where(source: LaserJob::FORM).delete_all
         LaserJob.insert_all!(jobs) if jobs.any?
       end
       Rails.cache.delete_matched("laser") rescue nil

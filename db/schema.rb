@@ -131,10 +131,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_010000) do
   end
 
   create_table "laser_jobs", force: :cascade do |t|
+    t.string "source", default: "form", null: false
     t.integer "sheet_row", null: false
     t.datetime "logged_at", null: false
     t.date "logged_on", null: false
-    t.string "person_key", null: false
+    t.string "person_key", default: "", null: false
     t.string "title", default: "", null: false
     t.string "material_raw", default: "", null: false
     t.string "material", null: false
@@ -166,7 +167,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_010000) do
     t.datetime "updated_at", null: false
     t.index ["logged_on"], name: "index_laser_jobs_on_logged_on"
     t.index ["material", "bucket"], name: "index_laser_jobs_on_material_and_bucket"
-    t.index ["sheet_row"], name: "index_laser_jobs_on_sheet_row", unique: true
+    t.index ["source", "sheet_row"], name: "index_laser_jobs_on_source_and_sheet_row", unique: true
   end
 
   create_table "mac_logs", force: :cascade do |t|

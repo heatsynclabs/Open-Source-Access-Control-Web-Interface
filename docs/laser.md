@@ -12,7 +12,7 @@ cleaning rules and the same numbers, in the site's own design, with no names.
 | What goes wrong | Trouble rates (MDF, thick plywood, multiple passes, a dirty start), the top complaints from the notes, and how the 3 mm plywood setting drifted by half year, with optics work as dashed lines |
 | Laser math | The energy per mm a cut takes (E = 0.8 x power / speed x passes), how it grows with thickness, an estimator for unlogged stock, whether lens cleans show up, whether laser hours wear the beam, and what the log cannot tell you |
 | Cheat sheet | The settings on one printable sheet; pick a paper size and print (only the sheet prints) |
-| The log | Every job, newest first, searchable by project and notes and filterable by material and result; names are not shown. "How the log was cleaned" lists every repair |
+| The log | Every job from both logs, newest first, searchable by project and notes and filterable by log, material and result; names are not shown. "How the log was cleaned" lists every repair |
 
 Usage of the laser (jobs, people and hours a month, results and materials by year) is on
 the analytics page, Over the years, The laser cutter.
@@ -34,6 +34,35 @@ with the form's columns, or that has under 90% of the jobs already held, and the
 old rows. It also works out the Laser math once (about two seconds) so pages stay fast.
 On production it runs in the same Coolify scheduled task as the guestlist check
 ([Operations](operations.md)). By hand: run the command in `members_web` from `/app`.
+
+## The earlier log (2013 to 2020)
+
+Before the current form, the large laser had an earlier form. A member uploaded its
+settings to the old wiki on 2020-06-21 (`File:large-laser-log.xlsx`, "Excel w/ pivot table
+for the cut data from the log for the larger laser"): 1,934 jobs from 2013-10-29 to
+2020-06-20 with date, material (free text), thickness and cut and engrave settings. It has
+no names, results, passes, run time or notes. Nothing was found for July 2020 to April
+2022, when the current form starts.
+
+- **Where it comes from.** The operations folder's `data/scripts/laser.py --wiki-files`
+  reads the spreadsheet out of the wiki file backup (`HSL-DR/mediawiki-wiki-20261021/
+  wiki.heatsynclabs.org-files.tar`), puts each free-text material in the current form's
+  terms (`EARLIER_MATERIALS` there; 29 jobs stay Other) and writes
+  `db/archive/large-laser-log-2013-2020.csv` (the same file is kept in the operations
+  folder). The file was public on the wiki and holds no personal data.
+- **Loading.** `LaserLog::Archive` cleans each row with the same `LaserLog::Cleaner` as the
+  form (swapped boxes, scores, material folding) and keeps it as source `2013 log`.
+  `laser:sync` loads it whenever it is missing or the file has changed; the nightly read of
+  the form never touches it.
+- **Where it shows.** The log (both logs, or one); "Find a setting" and "All settings" show
+  what people used for the same stock then, marked as history; the 3 mm plywood drift
+  reaches back to 2013 (hollow points: every job, since there are no results); analytics
+  counts its jobs a month and its materials. It stays out of everything that needs results:
+  the typical setting that worked, how reliable it is, the cheat sheet, trouble rates and
+  the laser math.
+- **The small laser.** The same upload holds `small-laser-log.xlsx`: 55 jobs on the small
+  laser, 2019-11 to 2020-06. It is kept in the operations folder only; this page is about
+  the large laser.
 
 ## Cleaning (LaserLog::Cleaner)
 
@@ -81,7 +110,7 @@ since they are what makes the log useful; nothing on the page shows who logged a
 ## Code
 
 `app/models/laser_log.rb` (sheet address, person key), `laser_log/cleaner.rb`,
-`laser_log/sync.rb`, `laser_job.rb`; `app/queries/laser/` (`log`, `stats`, `settings`,
+`laser_log/sync.rb`, `laser_log/archive.rb`, `laser_job.rb`; `db/archive/`; `app/queries/laser/` (`log`, `stats`, `settings`,
 `trouble`, `model`, `usage`); `app/controllers/laser_controller.rb`;
 `app/views/laser/`; `app/helpers/laser_helper.rb` (the two drawn charts);
 `app/javascript/controllers/laser_estimate_controller.js`, `print_controller.js`;

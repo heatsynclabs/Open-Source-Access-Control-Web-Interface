@@ -88,6 +88,23 @@ class LaserLogTest < ActiveSupport::TestCase
     refute LaserJob.all.map(&:attributes).to_s.match?(/Lovelace|Hopper/)
   end
 
+  test "the earlier log loads from its file, cleaned like the form, and the nightly sync leaves it alone" do
+    LaserJob.delete_all
+    archive = LaserLog::Archive.new
+    loaded = archive.load!
+    assert_equal CSV.read(LaserLog::Archive::FILE, headers: true).size, loaded
+    assert archive.loaded?
+    earlier = LaserJob.where(source: LaserJob::EARLIER)
+    assert_equal ["unknown"], earlier.distinct.pluck(:result)
+    assert_equal "", earlier.distinct.pick(:person_key)
+    assert_operator earlier.where(material: "Plywood / wood").count, :>, 700
+    assert earlier.where(material_raw: "masonite").all? { |job| job.material == "MDF / hardboard" }
+    csv = CSV.generate { |out| out << HEADER; out << row }
+    LaserLog::Sync.new(csv).run
+    assert_equal loaded, LaserJob.where(source: LaserJob::EARLIER).count
+    assert_equal 1, LaserJob.where(source: LaserJob::FORM).count
+  end
+
   test "sync refuses a sheet that is not the log, or far shorter than what is held" do
     LaserJob.delete_all
     assert_raises(LaserLog::Error) { LaserLog::Sync.new("Name,Email\nx,y\n").run }

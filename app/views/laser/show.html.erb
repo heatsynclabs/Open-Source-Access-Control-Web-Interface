@@ -1,5 +1,5 @@
 <div class="laser<%= " laser-print" if @view == "sheet" %>">
-<%= render PageHeaderComponent.new(eyebrow: "The large 80 W laser", title: "Laser settings", lead: "What worked on the big laser, from the jobs members logged on the form by the machine: #{number_with_delimiter(@jobs.count(&:settings?))} jobs with settings, #{@jobs.first.date.year} to #{@jobs.last.date.year}. Member reported, not a guarantee: test on scrap, and never leave the laser while it is firing.") %>
+<%= render PageHeaderComponent.new(eyebrow: "The large 80 W laser", title: "Laser settings", lead: "What worked on the big laser, from the jobs members logged on the form by the machine: #{number_with_delimiter(@jobs.count(&:settings?))} jobs with settings and results, #{@jobs.first.date.year} to #{@jobs.last.date.year}#{", beside #{number_with_delimiter(@earlier.size)} from the laser's earlier log (#{@earlier.first.date.year} to #{@earlier.last.date.year}), which recorded settings but not whether they worked" if @earlier.any?}. Member reported, not a guarantee: test on scrap, and never leave the laser while it is firing.") %>
 
 <nav class="tabs" aria-label="Views">
   <% LaserController::VIEWS.each do |key, label| %>

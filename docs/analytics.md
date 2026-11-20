@@ -124,7 +124,7 @@ data writes any count of people under 5 as "<5"), and the tab says "fewer than 5
 | Chart | Source (operations `data/`) | Period | Left out or partial |
 |---|---|---|---|
 | Paying members | `membership/paypal_monthly.csv`: every PayPal record (the Board's exports 2014 to 2022, this site's `paypal_csvs` imports, a PayPal download), each transaction counted once | Apr 2013 to Sep 2026 | subscription dues of $25 or more only (cash and checks are never in PayPal); months with missing or part records (Oct and Nov 2025 have none) |
-| Laser cutter | live: the table `laser_jobs`, read from the laser log sheet every night ([Laser settings](laser.md)), not `lab_metrics` | May 2022 to last month | only logged jobs; no names |
+| Laser cutter | live: the table `laser_jobs`, read from the laser log sheet every night, plus the earlier log of 2013 to 2020 ([Laser settings](laser.md)), not `lab_metrics` | Nov 2013 to May 2020, then May 2022 to last month | only logged jobs; no names; people, hours, results and cleanliness only from 2022 |
 | Devices on the lab Wi-Fi | `attendance/wifi_monthly.csv`, from the old `mac_logs` table | Feb 2013 to Feb 2017 | always-on equipment; months with under 15 days of data |
 | Electricity used a day | `finances/utilities_monthly.csv`, from the City of Mesa bills on the Board drive | Jun 2011 to Jun 2022 | the two buildings are separate lines |
 | Messages and people posting | `community/mailing_list_monthly.csv` (one member's copy of the Google Group, counted from its daily summaries) and `community/slack_monthly.csv` | Aug 2011 to Apr 2026; Slack Apr 2018 to Aug 2026 | Slack's part months at each end |

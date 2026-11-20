@@ -1,8 +1,10 @@
 # The large 80 W laser's settings guide, for signed-in members: what power
 # and speed worked for each material and thickness, what goes wrong, the
 # laser math, a printable cheat sheet and the log itself. Built from the
-# laser log form (LaserJob, rebuilt nightly by laser:sync). Nothing here
-# names the person who logged a job. See docs/laser.md.
+# laser log form (LaserJob, rebuilt nightly by laser:sync); the earlier log
+# of 2013 to 2020, which recorded settings but not results, shows beside it
+# (what people used then) and in the log, never in "what worked". Nothing
+# here names the person who logged a job. See docs/laser.md.
 class LaserController < ApplicationController
   before_action :authenticate_user!
 
@@ -11,6 +13,7 @@ class LaserController < ApplicationController
     "math" => "Laser math", "sheet" => "Cheat sheet", "log" => "The log",
   }.freeze
   LOG_PAGE = 50
+  LOGS = { "form" => "Current form (2022 on)", "earlier" => "Earlier log (2013 to 2020)" }.freeze
   PAPERS = {
     "letter" => ["Letter", "8.5in 11in"], "a4" => ["A4", "210mm 297mm"], "tabloid" => ["Tabloid 11 x 17", "11in 17in"],
     "a3" => ["A3", "297mm 420mm"], "poster" => ["Poster 18 x 24", "18in 24in"],
@@ -18,10 +21,12 @@ class LaserController < ApplicationController
 
   def show
     @view = VIEWS.key?(params[:view]) ? params[:view] : "find"
-    return render(:empty) unless LaserJob.available? && LaserJob.exists?
+    return render(:empty) unless LaserJob.available? && LaserJob.where(source: LaserJob::FORM).exists?
     @synced_at = LaserJob.synced_at
     @jobs = Laser::Log.jobs
+    @earlier = Laser::Log.jobs(LaserJob::EARLIER)
     @settings = Laser::Settings.new(@jobs)
+    @earlier_settings = Laser::Settings.new(@earlier)
     send("#{@view}_view")
   end
 
@@ -40,7 +45,7 @@ class LaserController < ApplicationController
   end
 
   def trouble_view
-    @trouble = Laser::Trouble.new(@jobs)
+    @trouble = Laser::Trouble.new(@jobs, earlier: @earlier)
   end
 
   def math_view
@@ -54,9 +59,12 @@ class LaserController < ApplicationController
   end
 
   def log_view
-    @materials = @jobs.map(&:material).uniq.sort_by { |m| LaserLog::Cleaner::FAMILY.keys.index(m) || 99 }
+    @logs = LOGS
+    everything = @earlier + @jobs
+    @materials = everything.map(&:material).uniq.sort_by { |m| LaserLog::Cleaner::FAMILY.keys.index(m) || 99 }
     query = params[:q].to_s.downcase.strip
-    found = @jobs.select do |job|
+    from = { "form" => @jobs, "earlier" => @earlier }.fetch(params[:log], everything)
+    found = from.select do |job|
       (params[:material].blank? || job.material == params[:material]) &&
         (params[:result].blank? || job.result == params[:result]) &&
         (query.empty? || [job.title, job.notes, job.machine_notes, job.software_notes, job.material_raw].join(" ").downcase.include?(query))

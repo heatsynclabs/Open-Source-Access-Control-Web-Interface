@@ -75,25 +75,35 @@ module LaserHelper
     tag.svg(safe_join(marks), class: "laser-chart", viewBox: "0 0 #{w} #{h}", role: "img", "aria-label": "Energy needed against thickness for plywood, acrylic and MDF")
   end
 
-  # Power / speed that 3 mm plywood needed, by half year, with the optics
-  # work as dashed lines and each point's typical setting under it.
+  # Power / speed that 3 mm plywood took, by half year, with the optics work
+  # as dashed lines. The earlier log's points (no results recorded) are
+  # hollow; the line breaks where nothing was logged. Each point's typical
+  # setting is written under it (every other point when there are many).
   def laser_drift_chart(drift)
     halves = drift.keys
     values = drift.values.compact.map { |v| v[:ratio] }
     return "" if values.empty?
-    w, h, l, r, t, b = 860, 240, 30, 16, 24, 30
+    w, h, l, r, t, b = 860, 250, 30, 16, 30, 30
     top = values.max * 1.4
-    first_year = halves.first.to_i
+    first_year, first_half = halves.first.split(" H").map(&:to_i)
+    dense = halves.size > 14
     x = ->(i) { l + (i + 0.5) * (w - l - r) / halves.size }
     y = ->(v) { t + (1 - v / top) * (h - t - b) }
     marks = (0..top.floor).step(2).map { |v| grid_line(l, w - r, y.(v), v) }
-    marks += optics_lines(stagger: true) { |day| l + ((day.year - first_year) * 2 + (day.month - 1) / 6.0) * (w - l - r) / halves.size }.call(t + 6, h - b)
-    points = halves.each_with_index.filter_map { |half, i| [i, drift[half]] if drift[half] }
-    marks << tag.polyline(class: "trend", points: points.map { |i, v| "#{x.(i).round(1)},#{y.(v[:ratio]).round(1)}" }.join(" "))
-    halves.each_with_index { |half, i| marks << tag.text(half, x: x.(i).round(1), y: h - b + 18, "text-anchor": "middle") }
-    points.each do |i, v|
-      marks << tag.circle(tag.title("#{halves[i]}: #{v[:ratio]} (#{laser_number(v[:power])}% at #{laser_number(v[:speed])} mm/s)"), class: "point", cx: x.(i).round(1), cy: y.(v[:ratio]).round(1), r: 6)
-      marks << tag.text("#{laser_number(v[:power])}/#{laser_number(v[:speed])}", class: "point-label", x: (x.(i) - 10).round(1), y: (y.(v[:ratio]) + 22).round(1), "text-anchor": "middle")
+    marks += optics_lines(stagger: true) do |day|
+      l + ((day.year - first_year) * 2 - (first_half - 1) + (day.month - 1) / 6.0) * (w - l - r) / halves.size
+    end.call(t, h - b)
+    runs = halves.each_with_index.slice_when { |(a, _), (c, _)| drift[a].nil? || drift[c].nil? }.map { |run| run.select { |half, _| drift[half] } }
+    runs.reject(&:empty?).each do |run|
+      marks << tag.polyline(class: "trend", points: run.map { |half, i| "#{x.(i).round(1)},#{y.(drift[half][:ratio]).round(1)}" }.join(" "))
+    end
+    halves.each_with_index do |half, i|
+      marks << tag.text(dense ? half.sub(" H1", "").sub(/\d+ H2/, "") : half, x: x.(i).round(1), y: h - b + 18, "text-anchor": "middle")
+      v = drift[half] or next
+      tip = "#{half}: #{v[:ratio]} (#{laser_number(v[:power])}% at #{laser_number(v[:speed])} mm/s#{", every job, results not recorded" if v[:earlier]})"
+      marks << tag.circle(tag.title(tip), class: ["point", ("earlier" if v[:earlier])], cx: x.(i).round(1), cy: y.(v[:ratio]).round(1), r: dense ? 5 : 6)
+      next if dense && i.odd?
+      marks << tag.text("#{laser_number(v[:power])}/#{laser_number(v[:speed])}", class: "point-label", x: x.(i).round(1), y: (y.(v[:ratio]) + 20).round(1), "text-anchor": "middle")
     end
     tag.svg(safe_join(marks), class: "laser-chart", viewBox: "0 0 #{w} #{h}", role: "img", "aria-label": "Power to speed ratio for 3 mm plywood over time")
   end

@@ -1,0 +1,1935 @@
+timestamp,material_logged,material,thickness,cut_power,cut_speed,engrave_power,engrave_speed,engrave_gap
+10/29/2013 18:32:28,Mahogany,"Hardwood (Cherry, Alder, Walnut, Poplar)",6 mm,,,55,550,0.1
+10/30/2013 19:38:31,Acrylic,"Acrylic (Plexiglas, Lucite)",11 mm,60,15,,,
+11/6/2013 21:58:41,MDF,MDF (Medium Density Fibreboard),6 mm,70,15,,,
+11/7/2013 15:52:10,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,35,15,,,
+11/7/2013 17:26:27,Contact Paper,Paper,0.25 mm,30,70,,,
+11/7/2013 23:39:01,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,250,
+11/9/2013 15:24:52,Plywood,Plywood,3 mm,70,15,,,
+11/9/2013 15:24:56,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,40,15,,,
+11/9/2013 22:39:26,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,55,8,,,
+11/16/2013 02:01:30,Foam Core,Foam Core (Non-PVC),3 mm,50,100,,,
+11/20/2013 16:02:27,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,65,12,,,
+11/20/2013 18:29:49,MDF,MDF (Medium Density Fibreboard),4 mm,70,25,,,
+11/22/2013 21:21:06,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,35,15,,,
+11/24/2013 17:28:58,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,60,20,,,
+11/26/2013 19:04:21,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,,,
+11/27/2013 13:36:43,MDF,MDF (Medium Density Fibreboard),3 mm,60,10,,,
+12/3/2013 22:52:17,Linen,Cloth,0.3 mm,50,10,,,
+12/4/2013 00:49:15,Plywood,Plywood,5 mm,80,30,,,
+12/4/2013 21:59:52,Plywood,Plywood,5 mm,80,30,35,250,
+12/6/2013 02:37:11,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,125,
+12/7/2013 11:09:57,MDF,MDF (Medium Density Fibreboard),3 mm,70,25,,,
+12/7/2013 11:35:41,MDF,MDF (Medium Density Fibreboard),3 mm,70,25,30,300,0.1
+12/7/2013 12:02:57,MDF,MDF (Medium Density Fibreboard),3 mm,70,25,30,300,0.1
+12/7/2013 12:41:45,MDF,MDF (Medium Density Fibreboard),3 mm,70,25,30,300,0.1
+12/7/2013 13:00:47,MDF,MDF (Medium Density Fibreboard),3 mm,70,25,30,3000,0.1
+12/7/2013 13:34:07,MDF,MDF (Medium Density Fibreboard),3 mm,70,25,30,300,0.1
+12/7/2013 13:54:27,MDF,MDF (Medium Density Fibreboard),3 mm,30,300,70,25,1
+12/7/2013 15:47:45,MDF,MDF (Medium Density Fibreboard),3 mm,70,25,30,300,0.1
+12/7/2013 16:23:02,MDF,MDF (Medium Density Fibreboard),4 mm,30,25,30,300,
+12/7/2013 16:41:43,MDF,MDF (Medium Density Fibreboard),3 mm,70,25,30,300,0.1
+12/8/2013 04:16:06,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,125,
+12/8/2013 20:13:41,Plywood,Plywood,5 mm,80,20,,,
+12/8/2013 22:04:21,MDF,MDF (Medium Density Fibreboard),3 mm,70,25,,,
+12/9/2013 19:32:49,Plywood,Plywood,3 mm,80,30,,,
+12/9/2013 21:03:41,Gingerbread & Graham Cracker,OTHER,12 mm,52,10,,,
+12/9/2013 23:06:36,Plywood,Plywood,5 mm,100,20,1,1,
+12/10/2013 18:12:23,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,125,0.1
+12/10/2013 22:06:04,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,80,150,0.1
+12/11/2013 01:11:18,MDF,MDF (Medium Density Fibreboard),3 mm,70,25,30,300,1
+12/11/2013 20:27:21,Plywood,Plywood,6 mm,80,20,,,
+12/11/2013 23:21:48,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,,,
+12/12/2013 17:22:11,Wood,Wood,25.4 mm,,,30,300,
+12/12/2013 20:36:30,Zebra Wood,"Hardwood (Cherry, Alder, Walnut, Poplar)",6 mm,60,15,80,150,0.1
+12/13/2013 02:05:00,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,55,8,,,
+12/13/2013 03:07:33,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,125,
+12/14/2013 14:32:16,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,50,8,45,200,0.15
+12/14/2013 17:01:32,30% wool 70% rayon,Cloth,1 mm,30,100,20,100,
+12/14/2013 17:56:24,Plywood,Plywood,5 mm,80,30,,,
+12/16/2013 20:32:09,balsa,"Softwood (Balsa, Basswood, Pine)",2 mm,60,60,,,
+12/17/2013 19:52:41,Plywood,Plywood,6 mm,80,20,,,
+12/18/2013 03:22:29,Plywood,Plywood,5 mm,70,20,,,
+12/18/2013 19:42:44,Plywood,Plywood,5 mm,100,20,40,300,
+12/19/2013 00:30:50,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,,,
+12/19/2013 20:08:37,Plywood,Plywood,3 mm,80,20,50,200,0.15
+12/19/2013 20:15:04,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",25 mm,50,200,,,
+12/19/2013 20:26:51,Back of Mirror,Mirror (backside),3 mm,,,65,350,0.085
+12/20/2013 00:37:33,Plywood,Plywood,5 mm,80,20,,,
+12/20/2013 01:44:57,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,55,8,35,125,
+12/20/2013 21:58:16,MDF,MDF (Medium Density Fibreboard),3 mm,70,20,,,
+12/20/2013 21:59:11,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,5,,,
+12/20/2013 23:12:59,Paper,Paper,1 mm,16,26,,,
+12/21/2013 02:16:59,sande/birch plywood,Plywood,5 mm,85,30,,,
+12/21/2013 16:01:04,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,45,15,,,
+12/21/2013 20:01:20,Paper,Paper,1 mm,16.5,32,,,
+12/21/2013 23:48:18,MDF,MDF (Medium Density Fibreboard),3 mm,70,20,20,40,
+12/22/2013 17:55:08,Plywood,Plywood,8.2 mm,80,5,,,
+12/23/2013 21:59:12,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,5,30,300,
+12/24/2013 12:45:50,Plywood,Plywood,8.2 mm,74,6,,,
+12/24/2013 16:06:00,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,125,
+12/24/2013 18:10:37,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+12/24/2013 18:12:19,Plywood,Plywood,5 mm,100,10,,,
+12/28/2013 18:54:19,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,10,100,60,0.1
+12/30/2013 19:01:52,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,,,,,
+1/4/2014 11:31:35,Plywood,Plywood,5 mm,70,20,40,300,1.5
+1/4/2014 12:00:29,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,15,300,1.5
+1/4/2014 12:24:20,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,80,40,300,1
+1/4/2014 12:58:13,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,40,300,1
+1/4/2014 15:01:31,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,55,8,,,
+1/4/2014 16:32:29,Plywood,Plywood,6 mm,80,20,,,
+1/4/2014 18:54:41,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,,,
+1/6/2014 18:17:01,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+1/6/2014 18:24:07,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+1/6/2014 22:16:14,Plywood,Plywood,5 mm,80,20,,,
+1/6/2014 22:27:26,Plywood,Plywood,3 mm,70,15,,,
+1/6/2014 22:42:23,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,40,8,,,
+1/8/2014 19:49:03,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",20 mm,,,70,200,
+1/8/2014 21:54:26,MDF,MDF (Medium Density Fibreboard),3 mm,70,15,,,
+1/9/2014 19:10:21,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,10,100,60,0.1
+1/9/2014 21:47:13,metal,OTHER,5 mm,,,80,200,???
+1/11/2014 12:28:04,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,30,,,
+1/11/2014 14:13:18,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,50,10,,,
+1/12/2014 22:03:18,masonite (tempered hardboard),MDF (Medium Density Fibreboard),3 mm,90,50,25,400,
+1/12/2014 22:20:58,masonite (tempered hardboard),MDF (Medium Density Fibreboard),3 mm,70,10,,,
+1/12/2014 23:10:02,masonite,MDF (Medium Density Fibreboard),3 mm,70,10,,,
+1/13/2014 01:48:11,masonite,MDF (Medium Density Fibreboard),8 mm,70,10,,,
+1/13/2014 19:24:57,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,60,15,,,
+1/18/2014 13:33:33,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+1/18/2014 14:37:56,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+1/18/2014 15:38:13,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+1/18/2014 16:07:02,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,55,8,35,115,
+1/18/2014 16:38:18,Paper,Paper,0.5 mm,30,30,,,
+1/18/2014 17:12:31,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+1/18/2014 17:26:19,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,35,15,,,
+1/21/2014 15:47:04,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,50,10,,,
+1/22/2014 15:28:27,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,50,20,,,
+1/23/2014 17:09:39,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+1/24/2014 07:27:43,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+1/24/2014 16:01:38,MDF,MDF (Medium Density Fibreboard),5 mm,60,10,,,
+1/24/2014 17:39:39,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,10,,,
+1/24/2014 21:00:22,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,100,60,100,60,0.1
+1/26/2014 20:43:15,Paper,Paper,0.5 mm,30,30,,,
+1/27/2014 15:56:02,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+1/27/2014 20:54:11,Plywood,Plywood,3 mm,70,25,30,300,0.1
+1/28/2014 20:19:00,MDF,MDF (Medium Density Fibreboard),2 mm,100,8,,,
+1/29/2014 16:28:36,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+1/30/2014 17:04:16,MDF,MDF (Medium Density Fibreboard),3 mm,55,20,,,
+2/1/2014 14:15:43,MDF,MDF (Medium Density Fibreboard),3 mm,70,20,20,300,
+2/1/2014 14:26:39,MDF,MDF (Medium Density Fibreboard),3 mm,,20,,,
+2/1/2014 14:27:15,MDF,MDF (Medium Density Fibreboard),3 mm,70,20,50,300,
+2/1/2014 14:46:26,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,45,200,
+2/1/2014 15:28:44,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,125,
+2/1/2014 15:43:57,Plywood,Plywood,5 mm,70,20,30,300,
+2/1/2014 16:20:44,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,50,10,45,250,
+2/1/2014 16:45:51,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,50,15,45,250,
+2/2/2014 12:11:39,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,50,8,45,250,
+2/2/2014 13:11:39,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,50,8,55,250,
+2/2/2014 16:03:02,Plywood,Plywood,5.5 mm,70,15,,,
+2/7/2014 17:53:40,Paper,Paper,0.5 mm,30,30,30,300,
+2/10/2014 20:51:11,Plywood,Plywood,5 mm,70,15,30,300,0.4
+2/10/2014 21:00:33,Plywood,Plywood,5.5 mm,70,15,30,300,0.4
+2/10/2014 21:12:03,Plywood,Plywood,5.5 mm,70,15,30,300,0.4
+2/10/2014 21:18:55,Plywood,Plywood,5.5 mm,70,15,30,300,0.4
+2/10/2014 21:28:39,Plywood,Plywood,5.5 mm,70,15,30,300,0.4
+2/12/2014 17:03:58,Plywood,Plywood,9 mm,70,8,,,
+2/12/2014 18:02:39,MDF,MDF (Medium Density Fibreboard),5 mm,70,15,40,300,0.4
+2/13/2014 17:47:29,Plywood,Plywood,5 mm,75,15,80,30,0.1
+2/13/2014 20:58:14,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,60,15,,,
+2/13/2014 20:59:52,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",6 mm,60,15,,60,
+2/14/2014 17:37:59,Plywood,Plywood,9 mm,75,8,,,
+2/14/2014 19:07:56,pencils,Wood,5 mm,70,15,,,
+2/15/2014 20:41:29,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,50,10,,50,
+2/17/2014 19:51:38,Plywood,Plywood,6 mm,60,15,,,
+2/17/2014 19:53:22,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,8,,,
+2/18/2014 19:02:38,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",6 mm,60,15,,,
+2/19/2014 17:36:29,6mm Birch,Plywood,6 mm,80,10,,,
+2/20/2014 07:48:05,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,125,
+2/20/2014 20:00:57,foam board,Foam Core (Non-PVC),5 mm,50,80,,,
+2/20/2014 21:12:55,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",9 mm,,,55,550,0.1
+2/22/2014 19:43:56,scrapbook stencil,OTHER,1 mm,25,75,,,
+2/22/2014 19:45:56,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,35,15,35,300,0.1
+2/22/2014 19:47:17,Soft wood,Wood,2 mm,35,25,,,
+2/22/2014 19:50:05,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,35,15,35,300,0.1
+2/22/2014 19:51:44,wood veneer,Wood,0.5 mm,17,100,,,
+2/26/2014 22:03:53,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,60,6,25,10,
+2/27/2014 02:57:27,Plywood,Plywood,5 mm,70,15,35,200,0.05
+2/26/2014 23:03:27,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+2/27/2014 17:05:37,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,,,,,
+2/28/2014 17:30:25,hdf,MDF (Medium Density Fibreboard),3 mm,80,2,,,
+2/28/2014 21:20:49,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,33,125,
+3/2/2014 16:29:57,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,80,20,,,
+3/2/2014 16:47:08,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,40,5,,,
+3/4/2014 19:56:17,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,20,35,200,0.1
+3/3/2014 22:15:55,Paper,Paper,5 mm,50,50,,,
+3/5/2014 19:19:40,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,20,35,200,
+3/6/2014 21:42:02,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,40,15,,,
+3/8/2014 14:16:45,Plywood,Plywood,12 mm,20,30,,,
+3/8/2014 14:23:54,Plywood,Plywood,12 mm,100,2,,,
+3/8/2014 17:14:33,Plywood,Plywood,3 mm,60,20,15,60,0
+3/8/2014 22:51:41,cotton,Cloth,0.005 mm,30,20,,,
+3/10/2014 13:09:50,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,25,135,
+3/10/2014 14:36:24,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,8,40,,,
+3/10/2014 17:13:34,Foam Core,Foam Core (Non-PVC),5 mm,35,70,,,
+3/11/2014 00:02:29,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,30,20,,,
+3/11/2014 17:09:29,MDF,MDF (Medium Density Fibreboard),3 mm,80,20,,,
+3/12/2014 17:50:25,Plywood,Plywood,3 mm,35,20,,,
+3/12/2014 18:37:54,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,10,70,10,
+3/12/2014 22:32:13,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,72,8,,,
+3/13/2014 20:23:15,Plywood,Plywood,5 mm,80,15,,,
+3/14/2014 21:28:22,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,40,,,
+3/15/2014 19:01:00,polyester felt,Cloth,5 mm,40,20,,,
+3/16/2014 10:13:54,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,10,,,
+3/18/2014 02:02:07,Plywood,Plywood,3 mm,65,10,,,
+3/18/2014 17:17:05,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,10,30,300,
+3/18/2014 17:56:21,Plywood,Plywood,5 mm,60,30,,,
+3/18/2014 18:06:38,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,10,,,
+3/19/2014 15:36:22,Thermark on nickel,OTHER,4 mm,,,45,100,
+3/19/2014 17:51:21,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,,,,,
+3/19/2014 19:34:32,Plywood,Plywood,3 mm,70,20,,,
+3/19/2014 20:43:11,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,10,,,
+3/20/2014 20:45:35,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,10,,,
+3/21/2014 14:12:46,Foam Core,Foam Core (Non-PVC),4 mm,50,25,,,
+3/21/2014 15:15:16,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,30,200,
+3/22/2014 16:11:12,Plywood,Plywood,3 mm,70,20,,,
+3/23/2014 06:16:35,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,55,6,,,
+3/23/2014 19:41:33,Plywood,Plywood,5 mm,75,20,,,
+3/25/2014 18:13:28,Plywood,Plywood,5 mm,65,10,,,
+3/26/2014 15:10:10,Plywood,Plywood,3 mm,,,,,
+3/26/2014 19:17:18,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,35,5,,,
+3/26/2014 19:28:10,Plywood,Plywood,5.5 mm,80,30,,,
+3/26/2014 22:04:20,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,40,10,,,
+3/29/2014 12:03:57,basswood,"Softwood (Balsa, Basswood, Pine)",12 mm,70,10,,,
+3/29/2014 18:08:27,Plywood,Plywood,5 mm,70,20,30,300,0.1
+3/29/2014 16:18:13,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,45,10,30,150,0.1
+3/30/2014 00:38:12,Plywood,Plywood,3 mm,60,10,30,200,
+3/30/2014 20:56:06,Plywood,Plywood,5 mm,70,15,,,
+4/1/2014 13:54:35,Plywood,Plywood,5 mm,60,10,20,30,
+4/2/2014 02:35:02,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,10,30,300,0.1
+4/2/2014 14:47:37,Cardboard,Cardboard (Coorrugated),5 mm,60,20,,,
+4/2/2014 20:35:34,Plywood,Plywood,5 mm,70,15,30,300,0.1
+4/2/2014 20:58:11,Plywood,Plywood,5 mm,80,30,30,300,1
+4/2/2014 21:16:18,Plywood,Plywood,5 mm,70,15,30,200,0.5
+4/2/2014 21:40:19,Plywood,Plywood,5 mm,70,15,30,200,0.5
+4/4/2014 15:53:19,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,15,,,
+4/5/2014 23:54:40,Styrofoam,Styrofoam,3 mm,35,15,,,
+4/6/2014 19:13:32,Plywood,Plywood,5 mm,70,20,,,
+4/6/2014 20:06:23,MDF,MDF (Medium Density Fibreboard),3.175 mm,70,6,,,
+4/7/2014 14:59:11,MDF,MDF (Medium Density Fibreboard),3.175 mm,70,6,,,
+4/7/2014 15:14:42,MDF,MDF (Medium Density Fibreboard),3.175 mm,70,6,,,
+4/7/2014 18:36:13,MDF,MDF (Medium Density Fibreboard),3.175 mm,70,6,,,
+4/7/2014 19:58:53,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,8,45,200,0.1
+4/7/2014 23:09:01,foamboard,Foam Core (Non-PVC),6 mm,35,8,,,
+4/8/2014 19:16:24,Plywood,Plywood,5.8 mm,70,10,,,
+4/9/2014 18:43:17,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,15,35,300,
+4/9/2014 19:32:24,Plywood,Plywood,5 mm,70,20,30,300,0.1
+4/9/2014 19:57:00,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,10,30,300,0.1
+4/10/2014 00:29:09,Paper,Paper,0.35 mm,30,20,,,
+4/10/2014 00:58:05,Plywood,Plywood,3 mm,,,,,
+4/10/2014 20:07:01,MDF,MDF (Medium Density Fibreboard),0.318 mm,70,6,300,40,
+4/10/2014 22:11:32,Removing paint from copper clad board,OTHER,0.1 mm,,,35,150,0.1
+4/11/2014 03:34:18,Plywood,Plywood,3 mm,35,5,,,
+4/11/2014 03:44:47,Plywood,Plywood,3 mm,35,5,,,
+4/12/2014 15:19:13,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,60,20,,,
+4/12/2014 18:53:52,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,15,35,300,
+4/13/2014 20:30:03,Plywood,Plywood,5 mm,60,15,,,
+4/12/2014 20:07:47,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,,,
+4/12/2014 20:10:09,Laserable Rubber (low odor),"Rubber, Rubber Stamp",2 mm,50,15,50,100,0.1
+4/14/2014 22:02:23,ripstop nylon,Cloth,0.1 mm,25,40,,,
+4/14/2014 22:29:59,Plywood,Plywood,3 mm,35,5,,,
+4/14/2014 23:30:15,Plywood,Plywood,3 mm,35,5,,,
+4/15/2014 23:36:50,MDF,MDF (Medium Density Fibreboard),3.175 mm,70,6,,,
+4/15/2014 23:38:04,MDF,MDF (Medium Density Fibreboard),3.175 mm,70,15,,,
+4/16/2014 13:55:26,Paper,Paper,5 mm,45,5,,,
+4/17/2014 14:54:40,pencils,Wood,5 mm,15,100,,,
+4/17/2014 20:58:59,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,50,10,,,
+4/18/2014 21:04:50,ripstop nylon,Cloth,0.2 mm,20,40,,,
+4/20/2014 00:42:01,Styrofoam,Styrofoam,3 mm,,,,,
+4/19/2014 20:25:48,MDF,MDF (Medium Density Fibreboard),3 mm,60,15,,,
+4/21/2014 16:41:43,Plywood,Plywood,3 mm,60,15,35,300,
+4/21/2014 17:42:31,Acrylic,"Acrylic (Plexiglas, Lucite)",3.3 mm,60,12,50,200,
+4/21/2014 18:10:13,Plywood,Plywood,3 mm,60,15,30,300,
+4/21/2014 21:18:59,Styrofoam,Styrofoam,5 mm,25,10,,,
+4/21/2014 22:28:18,Styrofoam,Styrofoam,5 mm,25,10,,,
+4/21/2014 22:29:49,Plywood,Plywood,18 mm,25,90,,,
+4/22/2014 01:09:24,Styrofoam,Styrofoam,5 mm,25,10,,,
+4/24/2014 14:36:22,MDF,MDF (Medium Density Fibreboard),5 mm,70,15,35,300,0.1
+4/24/2014 14:38:13,MDF,MDF (Medium Density Fibreboard),5 mm,70,15,35,300,0.1
+4/24/2014 14:39:32,MDF,MDF (Medium Density Fibreboard),5 mm,70,15,,,
+4/24/2014 14:40:57,MDF,MDF (Medium Density Fibreboard),5 mm,70,15,,,
+4/24/2014 14:56:22,MDF,MDF (Medium Density Fibreboard),6 mm,80,15,,,
+4/24/2014 19:21:31,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,125,
+4/25/2014 01:55:02,Plywood,Plywood,3.18 mm,70,15,,,
+4/26/2014 02:10:17,Styrofoam,Styrofoam,5 mm,25,10,,,
+4/26/2014 02:59:39,Plywood,Plywood,5 mm,35,5,,,
+4/26/2014 17:16:42,MDF,MDF (Medium Density Fibreboard),2 mm,20,20,,,
+4/26/2014 20:40:55,Plywood,Plywood,3 mm,60,15,25,125,0.1
+4/27/2014 14:54:28,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,,,40,200,0.1
+4/29/2014 17:55:34,masonite (tempered hardboard),MDF (Medium Density Fibreboard),3 mm,70,10,,,
+4/29/2014 18:52:39,masonite,MDF (Medium Density Fibreboard),3.4 mm,70,10,,,
+4/30/2014 18:07:28,cherry & Walnut,"Hardwood (Cherry, Alder, Walnut, Poplar)",1 mm,,,40,400,
+4/30/2014 20:33:53,Paper,Paper,0.3 mm,30,20,,,0.1
+5/1/2014 19:14:39,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,60,15,60,200,0.1
+5/4/2014 13:18:49,Plywood,Plywood,3 mm,50,25,,,
+5/4/2014 16:54:10,Acrylic and Plywood,"Acrylic (Plexiglas, Lucite)",3 mm,80,20,,,
+5/5/2014 19:14:51,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,60,10,,60,
+5/5/2014 21:06:55,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,40,20,,,
+5/6/2014 16:38:09,Styrofoam,Styrofoam,5 mm,25,10,,,
+5/6/2014 17:54:51,Styrofoam,Styrofoam,5 mm,25,10,,,
+5/6/2014 22:42:27,basswood,"Softwood (Balsa, Basswood, Pine)",1 mm,40,50,,,
+5/7/2014 00:48:36,Styrofoam,Styrofoam,5 mm,25,10,,,
+5/7/2014 12:45:09,cardboard,Cardboard (Coorrugated),3 mm,60,20,,,
+5/7/2014 18:55:19,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,15,,,
+5/7/2014 20:25:55,MDF,MDF (Medium Density Fibreboard),3 mm,60,15,30,300,
+5/7/2014 20:45:53,MDF,MDF (Medium Density Fibreboard),3 mm,60,10,30,300,
+5/7/2014 20:59:41,MDF,MDF (Medium Density Fibreboard),3 mm,70,10,25,300,
+5/7/2014 21:17:57,Wood,Wood,3 mm,60,10,,,
+5/7/2014 23:18:13,Wood,Wood,3 mm,60,15,30,400,
+5/8/2014 17:57:05,MDF and Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,,,
+5/8/2014 22:17:22,Plywood,Plywood,5 mm,80,20,30,500,
+5/8/2014 23:55:05,Plywood,Plywood,5 mm,80,15,30,500,
+5/9/2014 02:10:42,Styrofoam,Styrofoam,3 mm,25,10,,,
+5/9/2014 15:11:51,Plywood,Plywood,3 mm,60,20,35,300,
+5/9/2014 21:44:06,MDF,MDF (Medium Density Fibreboard),3 mm,45,5,,,
+5/11/2014 08:58:34,Plywood,Plywood,9 mm,70,5,35,300,
+5/11/2014 17:31:01,Tempered hardboard,MDF (Medium Density Fibreboard),3 mm,50,10,,,
+5/11/2014 22:49:41,Plywood,Plywood,5 mm,80,15,30,500,
+5/12/2014 20:33:58,Paper,Paper,0.5 mm,20,40,,,
+5/12/2014 20:35:33,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+5/12/2014 20:37:36,Styrofoam,Styrofoam,6 mm,25,80,,,
+5/14/2014 17:07:13,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,12,35,300,0.1
+5/14/2014 17:10:19,Leather,Leather,5 mm,30,40,,,
+5/14/2014 21:36:06,wood,Wood,3 mm,60,15,30,300,1
+5/14/2014 21:53:56,Plywood,Plywood,4 mm,60,15,30,300,1
+5/15/2014 19:22:11,MDF,MDF (Medium Density Fibreboard),3 mm,70,6,,,
+5/15/2014 22:33:39,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,35,5,,,
+5/16/2014 20:55:28,Plywood,Plywood,6 mm,70,28,,,
+5/16/2014 22:06:46,Plywood,Plywood,5 mm,35,5,,,
+5/17/2014 20:57:04,Styrofoam,Styrofoam,3 mm,35,80,,,
+5/18/2014 13:02:27,MDF,MDF (Medium Density Fibreboard),3 mm,70,10,,,
+5/18/2014 14:24:11,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,15,200,60,0.1
+5/19/2014 01:17:52,Styrofoam,Styrofoam,3 mm,35,80,,,
+5/19/2014 21:33:45,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",6 mm,70,10,30,200,0.1
+5/19/2014 22:30:39,MDF,MDF (Medium Density Fibreboard),6 mm,70,5,,,
+5/21/2014 00:26:00,Styrofoam,Styrofoam,3 mm,35,80,,,
+5/21/2014 11:04:22,MDF,MDF (Medium Density Fibreboard),5 mm,70,10,,,
+5/21/2014 22:13:04,Paper,Paper,2 mm,,22,,,
+5/21/2014 22:13:15,Paper,Paper,2 mm,40,22,,,
+5/22/2014 17:20:30,WOOD & ACRYLIC,"Acrylic (Plexiglas, Lucite)",3 mm,60,15,30,300,0.1
+5/24/2014 11:29:11,Paper,Paper,1 mm,16,26,,,
+5/25/2014 17:38:47,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,65,12,30,300,0.1
+5/27/2014 01:19:56,Foam Core,Foam Core (Non-PVC),6 mm,35,80,,,
+5/27/2014 15:55:05,Plywood,Plywood,5 mm,85,15,,,
+5/27/2014 23:41:00,Styrofoam,Styrofoam,4 mm,35,80,,,
+5/27/2014 23:43:24,Plywood,Plywood,5 mm,35,5,,,
+5/28/2014 02:08:18,Plywood,Plywood,5 mm,55,20,30,300,
+5/30/2014 00:52:15,MDF,MDF (Medium Density Fibreboard),3.175 mm,70,30,80,700,
+5/30/2014 02:48:25,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,35,5,,,
+5/30/2014 04:36:35,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,35,5,,,
+5/31/2014 18:26:04,Plywood,Plywood,7 mm,70,7,,,
+5/31/2014 19:04:57,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+5/31/2014 20:16:42,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,5,,,
+5/31/2014 22:49:46,c,OTHER,20 mm,,40,,,
+6/1/2014 03:19:52,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,35,5,,,
+6/1/2014 23:44:33,Styrofoam,Styrofoam,3 mm,35,80,,,
+6/2/2014 20:23:38,Plywood,Plywood,5 mm,80,30,30,65,
+6/2/2014 21:50:52,Plywood,Plywood,5 mm,80,11,,,
+6/3/2014 01:12:11,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,65,15,30,300,0.2
+6/4/2014 00:12:26,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,35,80,,,
+6/4/2014 16:08:59,Leather,Leather,5 mm,40,20,30,300,1
+6/4/2014 21:41:50,MDF,MDF (Medium Density Fibreboard),3 mm,70,25,30,300,
+6/4/2014 23:09:27,Leather,Leather,5 mm,40,20,30,300,1
+6/7/2014 02:30:06,foamboard,Foam Core (Non-PVC),5 mm,35,80,,,
+6/9/2014 20:27:34,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,100,5,,,
+6/9/2014 23:04:21,Plywood,Plywood,3 mm,35,5,,,
+6/10/2014 04:00:43,Cardboard,Cardboard (Coorrugated),4 mm,35,80,,,
+6/10/2014 04:31:38,Styrofoam,Styrofoam,3 mm,35,80,,,
+6/10/2014 04:33:05,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,35,5,,,
+6/10/2014 23:59:46,Cardboard,Cardboard (Coorrugated),4 mm,35,80,,,
+6/11/2014 12:22:12,Paper,Paper,2 mm,40,30,,,
+6/11/2014 16:26:56,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,35,5,,,
+6/11/2014 17:52:52,Cardboard,Cardboard (Coorrugated),4 mm,35,80,,,
+6/11/2014 20:23:18,wood,Wood,3 mm,60,15,30,300,0.1
+6/12/2014 00:48:09,MDF,MDF (Medium Density Fibreboard),3 mm,70,15,,,
+6/12/2014 06:38:19,foamcore,Foam Core (Non-PVC),5 mm,30,5,,,
+6/14/2014 17:56:58,CARD STOCK,Paper (cardstock),3.5 mm,85,25,,,
+6/14/2014 18:10:55,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,60,10,,,
+6/15/2014 21:06:46,Plywood,Plywood,5 mm,70,10,,,
+6/17/2014 20:33:49,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,45,10,,,
+6/18/2014 20:40:34,MDF,MDF (Medium Density Fibreboard),3 mm,70,15,30,200,0.1
+6/18/2014 20:45:40,MDF,MDF (Medium Density Fibreboard),3 mm,15,70,30,300,0.1
+6/18/2014 21:01:02,MDF,MDF (Medium Density Fibreboard),3 mm,70,15,30,200,0.1
+6/18/2014 21:13:03,MDF,MDF (Medium Density Fibreboard),3 mm,70,15,30,250,0.1
+6/18/2014 21:17:36,MDF,MDF (Medium Density Fibreboard),3 mm,70,15,,300,0.1
+6/18/2014 22:23:18,MDF,MDF (Medium Density Fibreboard),6 mm,70,5,,70,
+6/18/2014 23:39:57,Plywood,Plywood,3.12 mm,70,15,,,
+6/20/2014 03:38:20,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,125,
+6/20/2014 20:02:39,MDF,MDF (Medium Density Fibreboard),6 mm,70,10,,,
+6/20/2014 20:32:14,MDF,MDF (Medium Density Fibreboard),6 mm,80,10,,,
+6/20/2014 20:33:58,MDF,MDF (Medium Density Fibreboard),6 mm,80,10,,,
+6/20/2014 20:35:45,Plywood,Plywood,3 mm,70,25,,,
+6/23/2014 01:39:08,Foamcore,Foam Core (Non-PVC),5 mm,35,80,,,
+6/23/2014 11:03:30,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,35,5,,,
+6/23/2014 21:18:34,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,100,20,,,
+6/25/2014 14:49:20,Plywood,Plywood,3 mm,15,70,30,200,0.1
+6/25/2014 17:15:06,Plywood,Plywood,5 mm,70,10,,,
+6/25/2014 19:42:04,Plywood,Plywood,3 mm,70,10,35,250,0.075
+6/25/2014 20:28:37,Plywood,Plywood,3 mm,15,70,30,300,1
+6/25/2014 21:50:44,Acrylic,"Acrylic (Plexiglas, Lucite)",0.25 mm,,,,,
+6/27/2014 19:49:17,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+6/29/2014 16:05:47,MDF,MDF (Medium Density Fibreboard),6 mm,70,15,,,
+6/30/2014 19:59:26,Card stock,Paper (cardstock),2 mm,70,40,,,
+6/30/2014 21:14:36,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",19 mm,,,45,125,0.07
+7/2/2014 15:11:07,Foamcore,Foam Core (Non-PVC),5 mm,5,35,,,
+7/2/2014 22:12:39,Plywood,Plywood,6 mm,,,40,300,2
+7/4/2014 19:38:13,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+7/8/2014 22:51:31,birch plywood,Plywood,5 mm,75,15,,,
+7/11/2014 01:34:55,Styrofoam,Styrofoam,3 mm,35,80,,,
+7/11/2014 07:06:40,Styrofoam,Styrofoam,3 mm,35,80,,,
+7/14/2014 19:21:13,Chipboard,Cardboard (Posterboard),4 mm,75,40,,,
+7/16/2014 14:25:54,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,40,10,,,
+7/16/2014 16:24:52,Plywood,Plywood,5 mm,40,10,,,
+7/17/2014 19:30:37,Plywood,Plywood,5 mm,40,10,,,
+7/18/2014 16:48:06,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,40,10,,,
+7/18/2014 19:57:19,Plywood,Plywood,6 mm,80,10,20,300,
+7/18/2014 21:22:00,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,15,20,100,
+7/19/2014 19:21:41,Plywood,Plywood,5 mm,70,15,,,
+7/20/2014 19:39:39,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,10,,,
+7/21/2014 13:58:18,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,10,,,
+7/21/2014 20:23:10,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,10,30,300,
+7/24/2014 17:15:16,Plywood,Plywood,5 mm,70,10,60,300,
+7/24/2014 17:50:04,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,10,,,
+7/25/2014 15:40:34,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,10,,,
+7/25/2014 21:55:47,Plywood,Plywood,5 mm,80,30,30,300,0.1
+7/25/2014 22:14:29,Plywood,Plywood,3 mm,75,15,,,
+7/26/2014 20:40:04,Plywood,Plywood,5 mm,60,15,60,700,0.15
+7/26/2014 21:57:10,Plywood,Plywood,5 mm,80,30,,,
+7/27/2014 18:17:31,Plywood,Plywood,5 mm,70,15,,,
+7/28/2014 16:01:24,Plywood,Plywood,5 mm,90,30,60,700,0.1
+7/28/2014 20:26:55,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",6.35 mm,80,10,,,
+7/29/2014 02:41:37,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,10,30,300,0.1
+7/30/2014 00:53:55,Plywood,Plywood,5 mm,60,10,60,200,
+7/30/2014 20:51:30,Plywood,Plywood,5 mm,80,30,,,
+7/30/2014 21:12:04,Plywood,Plywood,5 mm,70,10,,,1 mm
+7/30/2014 21:33:48,Plywood,Plywood,6 mm,80,10,300,30,0.2
+7/30/2014 21:42:50,Plywood,Plywood,5 mm,80,30,80,300,0.2
+7/30/2014 22:07:20,Plywood,Plywood,6 mm,70,10,30,300,1
+7/30/2014 23:02:52,MDF,MDF (Medium Density Fibreboard),3 mm,70,20,,,
+7/31/2014 16:32:15,Plywood,Plywood,5 mm,70,15,,,
+7/31/2014 19:35:30,Plywood,Plywood,3 mm,70,20,30,300,
+7/31/2014 21:59:57,Plywood,Plywood,3 mm,70,20,,,
+7/31/2014 22:02:10,Foam Core,Foam Core (Non-PVC),5 mm,35,70,,,
+8/1/2014 20:18:58,MDF,MDF (Medium Density Fibreboard),6 mm,80,10,45,15,
+8/1/2014 20:49:27,Plywood,Plywood,6 mm,80,10,,,
+8/1/2014 21:38:54,Plywood,Plywood,6 mm,80,10,,,
+8/2/2014 14:28:00,Plywood,Plywood,5 mm,,,35,300,
+8/3/2014 16:17:41,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,65,10,30,300,0.1
+8/3/2014 20:02:15,MDF,MDF (Medium Density Fibreboard),3 mm,65,10,,,
+8/5/2014 22:59:03,Acrylic,"Acrylic (Plexiglas, Lucite)",9 mm,60,6,,,
+8/6/2014 19:03:06,Plywood,Plywood,3 mm,75,30,300,30,0.075
+8/6/2014 23:42:33,Plywood,Plywood,5 mm,70,15,,,
+8/7/2014 16:33:24,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,50,10,,,
+8/8/2014 19:06:42,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,40,10,30,300,0.1
+8/10/2014 01:12:28,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,70,20,300,30,0.1
+8/10/2014 23:50:23,Plywood,Plywood,5 mm,70,15,30,300,
+8/12/2014 03:58:27,insulation foam,Styrofoam,25 mm,25,5,,,
+8/12/2014 15:27:47,Plywood,Plywood,5 mm,70,15,20,300,0.1
+8/12/2014 15:53:01,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,15,,,
+8/13/2014 10:54:03,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,35,10,,,
+8/13/2014 17:46:04,Acrylic,"Acrylic (Plexiglas, Lucite)",1.5 mm,35,20,,,
+8/13/2014 18:17:39,Plywood,Plywood,5 mm,75,15,42,300,0.1
+8/13/2014 19:29:00,Plywood,Plywood,5 mm,80,15,30,300,
+8/13/2014 23:45:06,Leather,Leather,3 mm,50,20,20,300,
+8/14/2014 20:35:36,masonite,MDF (Medium Density Fibreboard),3 mm,45,80,,,
+8/15/2014 00:52:40,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,15,,,
+8/15/2014 23:35:02,Plywood,Plywood,12 mm,100,5,,,
+8/16/2014 09:58:30,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,80,15,,,
+8/17/2014 02:05:41,Foam Core,Foam Core (Non-PVC),5 mm,,,,,
+8/18/2014 20:45:55,Plywood,Plywood,0.5 mm,30,30,,,
+8/19/2014 00:09:44,Plywood,Plywood,8 mm,90,5,20,300,0.1
+8/20/2014 20:57:04,MDF,MDF (Medium Density Fibreboard),6.5 mm,50,10,,,
+8/21/2014 21:04:52,MDF,MDF (Medium Density Fibreboard),3 mm,60,10,,,
+8/21/2014 22:55:07,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",0.125 mm,,,40,700,0.1
+8/24/2014 16:20:36,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,65,15,20,300,0.1
+8/28/2014 22:09:26,Plywood,Plywood,8.5 mm,85,5,,,
+8/30/2014 14:29:40,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,15,30,300,0.1
+8/30/2014 18:45:34,Acrylic,"Acrylic (Plexiglas, Lucite)",3.3 mm,35,10,,,
+8/30/2014 20:57:39,Acrylic,"Acrylic (Plexiglas, Lucite)",3.3 mm,70,15,,,
+8/31/2014 19:11:54,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,55,8,,,
+9/3/2014 18:50:40,Acrylic,"Acrylic (Plexiglas, Lucite)",3.3 mm,70,15,,,
+9/3/2014 22:19:32,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,12,,70,
+9/4/2014 00:49:25,Laserable Rubber (low odor),"Rubber, Rubber Stamp",2.5 mm,70,24,70,250,0.08
+9/6/2014 14:16:46,Plywood,Plywood,5 mm,70,20,20,80,
+9/9/2014 14:55:38,Polypropylene,OTHER,6.5 mm,80,4,,,
+9/10/2014 00:20:15,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,55,10,30,200,0.1
+9/10/2014 21:50:52,Plywood,Plywood,5 mm,70,25,35,200,0.1
+9/14/2014 10:51:33,Paper,Paper,0.254 mm,40,30,,,
+9/15/2014 20:49:50,maSONITE,MDF (Medium Density Fibreboard),3 mm,75,20,,,
+9/18/2014 03:58:05,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,40,5,,,
+9/18/2014 17:05:05,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,125,
+9/18/2014 21:42:06,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,50,5,,,
+9/19/2014 01:28:35,rubber,"Rubber, Rubber Stamp",3 mm,70,24,70,250,0.08
+9/21/2014 19:05:59,Styrofoam,Styrofoam,3 mm,35,80,,,
+9/22/2014 18:29:10,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+9/22/2014 20:15:31,MDF,MDF (Medium Density Fibreboard),3 mm,80,12,50,300,
+10/1/2014 18:16:59,Plywood,Plywood,4.762 mm,70,7.5,15,250,
+10/3/2014 16:18:16,Plywood,Plywood,5 mm,70,12,35,300,0.1
+10/3/2014 19:05:49,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,15,,,
+10/3/2014 21:04:26,Plywood,Plywood,5 mm,70,15,,,
+10/6/2014 20:39:11,card stock 15 sheets,Paper (cardstock),8 mm,50,10,,,
+10/7/2014 14:54:22,Plywood,Plywood,5 mm,70,15,,,
+10/9/2014 19:57:50,Plywood,Plywood,5 mm,,,45,300,
+10/11/2014 00:42:20,Styrofoam,Styrofoam,5 mm,40,80,,,
+10/15/2014 00:33:58,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,85,20,,,
+10/16/2014 22:54:22,Plywood,Plywood,9 mm,80,2,50,300,0.1
+10/20/2014 20:57:56,Plywood,Plywood,5 mm,70,15,,,
+10/20/2014 21:14:15,Plywood,Plywood,5 mm,70,15,30,300,0.5
+10/20/2014 21:29:37,Plywood,Plywood,5 mm,70,15,30,300,0.5
+10/20/2014 21:55:36,Plywood,Plywood,5 mm,70,15,30,300,0.25
+10/23/2014 05:05:35,low odor laserable rubber,"Rubber, Rubber Stamp",3 mm,70,24,70,250,0.1
+10/23/2014 18:02:00,tempered hardboard (masonite),MDF (Medium Density Fibreboard),4 mm,70,10,,,
+10/24/2014 22:21:18,"EVA foam - Sticky Back (Darice ""Foamies"")",EVA Foam,2 mm,70,50,,,
+10/24/2014 23:02:15,Paper,Paper,1 mm,30,70,,,
+10/24/2014 23:35:32,Paper,Paper,1 mm,50,70,,,
+10/25/2014 01:55:44,Plywood,Plywood,5 mm,80,15,,,
+10/28/2014 23:39:48,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,80,15,40,350,
+10/29/2014 16:58:58,Ceramic,"Stone (Marble, Granite, etc.)",1 mm,,,100,100,0.1
+10/30/2014 22:45:01,hardbard,MDF (Medium Density Fibreboard),4 mm,70,6,,,
+11/1/2014 11:42:35,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,10,20,250,0.1
+11/2/2014 20:40:46,Acrylic,"Acrylic (Plexiglas, Lucite)",6.5 mm,55,8,,,
+11/2/2014 21:02:45,Plywood,Plywood,6.5 mm,80,5,,,
+11/4/2014 05:06:56,MDF,MDF (Medium Density Fibreboard),10 mm,80,18,20,250,0.1
+11/5/2014 16:40:24,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,69,8,,,
+11/5/2014 21:48:05,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,60,10,,,
+11/6/2014 14:44:53,Luan,Plywood,5 mm,75,10,,,
+11/6/2014 14:46:30,Luan,Plywood,5 mm,85,10,,,
+11/6/2014 22:20:26,MDF,MDF (Medium Density Fibreboard),3 mm,90,25,50,300,stabndard
+11/9/2014 16:57:17,tempered hardboard (masonite),MDF (Medium Density Fibreboard),3 mm,70,10,,,
+11/9/2014 22:30:23,Plywood,Plywood,5 mm,40,5,,,
+11/11/2014 19:47:51,MDF,MDF (Medium Density Fibreboard),2.72 mm,70,15,,,
+11/14/2014 18:12:20,Paper,Paper,0.1 mm,20,40,,,
+11/14/2014 21:52:46,maple,"Hardwood (Cherry, Alder, Walnut, Poplar)",0.125 mm,,,30,300,0.1
+11/15/2014 15:14:19,Paper,Paper,0.1 mm,20,40,,,
+11/17/2014 18:03:22,rubber stamp,"Rubber, Rubber Stamp",3 mm,70,24,70,250,0.1
+11/18/2014 19:50:18,wood,Wood,10 mm,,,70,150,0.1
+11/18/2014 19:51:40,ablam,OTHER,3 mm,70,10,,,
+11/19/2014 21:54:35,wood,Wood,2 mm,80,20,,,
+11/20/2014 14:01:37,Acrylic,"Acrylic (Plexiglas, Lucite)",11 mm,80,5,,,
+11/20/2014 19:24:06,African Blackwoog,"Hardwood (Cherry, Alder, Walnut, Poplar)",1.5 mm,60,20,,,
+11/20/2014 22:06:26,Plywood,Plywood,5 mm,,,45,200,0.02
+11/20/2014 22:09:02,aluminum with Duracote,Anodized Aluminum,0.001 mm,,,35,200,0.02
+11/21/2014 14:02:55,Acrylic,"Acrylic (Plexiglas, Lucite)",11 mm,85,5,,,
+11/21/2014 22:15:23,maple etch,"Hardwood (Cherry, Alder, Walnut, Poplar)",12.7 mm,,,40,300,0.1
+11/21/2014 23:09:50,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,45,5,,,
+11/22/2014 23:08:05,paper,Paper,0.5 mm,35,30,,,
+11/24/2014 16:53:28,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,85,20,,,
+11/24/2014 19:32:04,African Blackwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",1 mm,60,20,,,
+11/24/2014 20:54:04,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,72,8,,,
+11/24/2014 22:00:31,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,60,15,60,200,0.1
+11/25/2014 19:24:54,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,60,15,60,200,0.1
+11/28/2014 13:55:13,Plywood,Plywood,5 mm,40,5,30,300,
+11/28/2014 13:58:02,Plywood,Plywood,5 mm,40,5,30,300,
+11/28/2014 16:24:12,MDF,MDF (Medium Density Fibreboard),5 mm,60,10,20,40,
+11/28/2014 16:54:43,MDF,MDF (Medium Density Fibreboard),5 mm,70,10,,,
+11/28/2014 19:40:57,Plywood,Plywood,5 mm,35,5,,,
+11/28/2014 22:25:21,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,40,5,,,
+12/1/2014 18:27:36,Masonite,MDF (Medium Density Fibreboard),3 mm,70,10,,,
+12/1/2014 18:44:22,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,15,,,
+12/1/2014 18:49:38,Masonite,MDF (Medium Density Fibreboard),3 mm,70,8,,,
+12/2/2014 21:10:40,Paper,Paper,1 mm,30,26,,,
+12/2/2014 22:17:29,Acrylic,"Acrylic (Plexiglas, Lucite)",6.35 mm,55,8,20,120,0.1
+12/3/2014 18:01:29,Plywood,Plywood,5 mm,65,,,10,
+12/4/2014 01:35:59,Paper,Paper,1 mm,30,26,,,
+12/4/2014 13:55:22,rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,235,
+12/4/2014 22:59:38,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,60,8,30,300,0.07
+12/5/2014 15:16:23,Paper,Paper,0.01 mm,23,40,,,
+12/6/2014 00:40:14,Plywood,Plywood,5 mm,65,15,30,255,0.1
+12/6/2014 01:10:35,Glass,Glass,4 mm,,,20,225,0.1
+12/6/2014 18:06:59,chipboard,Cardboard (Posterboard),5 mm,45,25,,,
+12/7/2014 21:59:50,corrugated cardboard,Cardboard (Coorrugated),4 mm,40,25,25,400,0.1
+12/8/2014 21:07:05,Cardboard,Cardboard (Coorrugated),1 mm,,,30,300,0.1
+12/9/2014 22:27:50,Plywood,Plywood,5 mm,70,20,30,300,
+12/10/2014 20:31:01,maple,"Hardwood (Cherry, Alder, Walnut, Poplar)",0.125 mm,,,38,300,0.2
+12/10/2014 21:35:01,Rip stop nylon,Cloth,0.3 mm,50,10,,,
+12/10/2014 23:52:37,Plywood,Plywood,5 mm,70,10,30,300,
+12/11/2014 19:46:45,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,15,,,
+12/12/2014 22:01:47,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,15,30,300,0.1
+12/13/2014 15:06:10,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,15,40,150,0.1
+12/14/2014 02:52:00,MDF,MDF (Medium Density Fibreboard),5 mm,70,5,,70,
+12/14/2014 16:30:01,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+12/15/2014 20:34:24,MDF,MDF (Medium Density Fibreboard),3 mm,80,20,,,
+12/18/2014 22:04:21,Styrofoam,Styrofoam,14.5 mm,40,80,,,
+12/19/2014 10:53:39,Acrylic,"Acrylic (Plexiglas, Lucite)",0.093 mm,60,20,,,
+12/19/2014 19:25:04,Paper,Paper,1 mm,16.5,32,,,
+12/20/2014 08:19:07,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",5 mm,70,10,60,300,
+12/21/2014 12:59:53,Plywood,Plywood,5 mm,40,10,,,
+12/21/2014 20:50:39,Plywood,Plywood,5 mm,65,5,,,
+12/23/2014 21:47:50,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,69,20,,,
+12/24/2014 02:22:03,hardboard,MDF (Medium Density Fibreboard),4 mm,70,10,,,
+12/26/2014 02:36:41,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,60,8,30,300,0.1
+12/29/2014 22:20:28,cardboard,Cardboard (Coorrugated),4 mm,35,25,,,
+12/30/2014 19:52:00,rubber,"Rubber, Rubber Stamp",3 mm,70,24,70,225,0.1
+12/30/2014 22:18:18,Hardboard,MDF (Medium Density Fibreboard),3 mm,70,15,,,
+1/1/2015 20:07:20,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,75,10,,,
+1/1/2015 20:10:59,Plywood,Plywood,5 mm,45,10,,,
+1/3/2015 19:28:17,Plywood,Plywood,5 mm,70,20,20,200,0.1
+1/6/2015 21:36:47,maple,"Hardwood (Cherry, Alder, Walnut, Poplar)",10 mm,,,50,300,0.13
+1/7/2015 17:41:06,Plywood,Plywood,5 mm,70,20,,,
+1/14/2015 20:59:03,Plywood,Plywood,5 mm,70,20,20,200,1
+1/14/2015 21:13:41,Plywood,Plywood,5 mm,20,200,70,20,1
+1/14/2015 21:46:03,MDF,MDF (Medium Density Fibreboard),5 mm,80,20,30,200,1
+1/15/2015 00:59:05,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,8,50,150,0.1
+1/15/2015 01:01:18,Leather,Leather,4 mm,30,40,30,200,0.1
+1/15/2015 01:03:06,Plywood,Plywood,5 mm,30,40,20,200,0.1
+1/16/2015 15:17:27,Acrylic,"Acrylic (Plexiglas, Lucite)",1 mm,60,20,,,
+1/16/2015 19:30:00,Paper,Paper,0.05 mm,30,10,,,
+1/16/2015 21:16:45,Plywood,Plywood,6 mm,70,10,,,
+1/17/2015 19:16:00,Plywood,Plywood,6 mm,,,20,200,0.1
+1/18/2015 12:42:22,Plywood,Plywood,2.8 mm,70,20,,,
+1/19/2015 21:26:42,Plywood,Plywood,5 mm,85,15,20,400,
+1/20/2015 01:48:57,Plywood,Plywood,5 mm,75,15,30,200,0.1
+1/20/2015 14:14:11,Paper,Paper,1 mm,35,400,25,500,
+1/20/2015 21:38:40,cork,OTHER,4 mm,,,20,200,0.1
+1/22/2015 13:17:01,Plywood,Plywood,4 mm,70,15,25,200,0.1
+1/22/2015 13:20:27,No Odor Laserable Rubber (Laserbits.com),"Rubber, Rubber Stamp",3 mm,70,20,70,185,0.1
+1/22/2015 13:23:35,No Odor Laserable Rubber (Laserbits.com),"Rubber, Rubber Stamp",3 mm,70,20,70,225,0.1
+1/22/2015 13:25:56,No Odor Laserable Rubber (Laserbits.com),"Rubber, Rubber Stamp",3 mm,70,24,70,225,0.1
+1/26/2015 18:44:09,Plywood,Plywood,2 mm,70,30,30,300,
+1/28/2015 15:32:51,Acrylic,"Acrylic (Plexiglas, Lucite)",9 mm,80,10,,,
+1/28/2015 15:34:12,Plywood,Plywood,5 mm,70,10,,,
+1/28/2015 17:00:20,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,25,,,70,
+1/28/2015 18:31:08,Plywood,Plywood,5 mm,70,20,30,200,0.1
+1/31/2015 21:06:44,No Odor Laserable Rubber (Laserbits.com),"Rubber, Rubber Stamp",3 mm,70,24,70,225,0.1
+1/31/2015 21:09:00,Plywood,Plywood,5 mm,70,10,25,200,0.1
+1/31/2015 21:11:15,pine,"Softwood (Balsa, Basswood, Pine)",15 mm,,,50,140,0.1
+2/1/2015 20:02:43,MDF,MDF (Medium Density Fibreboard),3 mm,70,20,,,
+2/3/2015 21:39:30,Clay Brick,"Stone (Marble, Granite, etc.)",30 mm,,,80,150,0.1
+2/6/2015 21:24:27,dry erase board,Melamine,4 mm,40,10,,,
+2/7/2015 20:49:17,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,125,
+2/7/2015 22:45:08,Plywood,Plywood,3 mm,70,15,45,300,0.2
+2/10/2015 14:10:04,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,65,5,,,
+2/10/2015 22:07:36,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,20,70,35,200,0.1
+2/11/2015 19:57:06,Plywood,Plywood,5 mm,70,10,50,200,0.1
+2/12/2015 01:29:28,leather,Leather,5 mm,55,10,,,
+2/13/2015 01:51:45,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,35,5,,,
+2/13/2015 01:54:16,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,5,,45,
+2/13/2015 11:56:08,No Odor Laserable Rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,225,0.1
+2/14/2015 18:01:20,no odor laserable rubber,"Rubber, Rubber Stamp",5 mm,70,20,70,225,0.1
+2/15/2015 13:01:41,Masonite,MDF (Medium Density Fibreboard),3 mm,70,10,,,
+2/15/2015 15:36:21,no odor laserable rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,225,0.1
+2/15/2015 17:24:39,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+2/16/2015 21:39:45,MDF,MDF (Medium Density Fibreboard),3 mm,70,18,,70,
+2/19/2015 00:30:48,no odor laserable rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,225,0.1
+2/20/2015 18:16:45,Paper,Paper,0.1 mm,25,40,,,
+2/20/2015 18:18:26,no odor laserable rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,225,0.1
+2/20/2015 21:24:26,Plywood,Plywood,8 mm,80,20,45,300,0.1
+2/22/2015 12:18:03,Plywood,Plywood,5 mm,80,30,45,300,0.1
+2/23/2015 18:04:25,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,,
+2/26/2015 22:00:24,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,50,15,40,200,0.1
+2/26/2015 22:02:41,Plywood,Plywood,6 mm,50,11,,,
+2/28/2015 02:07:00,Stamp Rubber,"Rubber, Rubber Stamp",2 mm,70,20,20,140,1
+2/28/2015 21:59:33,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,50,200,45,150,o.1
+3/3/2015 20:04:26,MDF,MDF (Medium Density Fibreboard),12 mm,70,15,,,
+3/5/2015 16:03:38,Acrylic,"Acrylic (Plexiglas, Lucite)",17 mm,90,5,,,
+3/5/2015 22:28:12,Plywood,Plywood,2 mm,40,18,48,18,0.1
+3/6/2015 21:23:48,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,5,40,150,0.1
+3/7/2015 19:27:04,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,225,0.1
+3/9/2015 21:09:13,Plywood,Plywood,2 mm,,,45,200,0.1
+3/10/2015 20:07:35,Plywood,Plywood,4 mm,80,10,,,
+3/11/2015 21:39:38,Plywood,Plywood,6 mm,50,5,15,250,
+3/12/2015 02:16:43,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,25,40,,,
+3/12/2015 23:52:34,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,50,300,0.1
+3/14/2015 21:20:11,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,800,7,50,300,0.1
+3/14/2015 21:21:31,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,7,50,300,0.1
+3/14/2015 21:22:35,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,7,50,300,0.1
+3/16/2015 00:48:29,Acrylic,"Acrylic (Plexiglas, Lucite)",9 mm,90,10,,,
+3/16/2015 00:48:35,Acrylic,"Acrylic (Plexiglas, Lucite)",2.6 mm,,,40,150,0.1
+3/16/2015 19:17:54,Plywood,Plywood,1 mm,,,45,250,0.1
+3/16/2015 23:21:07,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,10,50,300,0.1
+3/17/2015 21:47:37,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,45,225,0.1
+3/18/2015 21:09:31,Plywood,Plywood,3 mm,70,10,,,0.1
+3/19/2015 11:57:39,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,225,0.1
+3/19/2015 14:45:06,foam core,Foam Core (Non-PVC),4 mm,80,35,,,
+3/20/2015 13:16:11,masonite / hard board,MDF (Medium Density Fibreboard),3 mm,75,10,,,
+3/21/2015 22:41:02,melamine,Melamine,3 mm,80,8,,,
+3/23/2015 11:47:22,melamine,Melamine,3 mm,80,8,,,
+3/24/2015 22:30:08,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,5,,,
+3/25/2015 14:22:38,Acrylic,"Acrylic (Plexiglas, Lucite)",0.225 mm,80,6,,,
+3/25/2015 18:09:46,Acrylic,"Acrylic (Plexiglas, Lucite)",0.225 mm,80,6,,,
+3/26/2015 16:42:46,Acrylic,"Acrylic (Plexiglas, Lucite)",0.225 mm,80,8,,,
+3/26/2015 17:03:41,Acrylic,"Acrylic (Plexiglas, Lucite)",0.225 mm,80,8,,,
+3/29/2015 13:40:08,Acrylic,"Acrylic (Plexiglas, Lucite)",0.226 mm,20,35,,,
+3/30/2015 20:57:23,basswood,"Softwood (Balsa, Basswood, Pine)",1 mm,40,50,,,
+3/31/2015 21:54:23,Plywood,Plywood,1 mm,,,40,200,0.1
+4/1/2015 21:47:23,Basswood,"Softwood (Balsa, Basswood, Pine)",0.8 mm,40,50,,,
+4/6/2015 16:36:59,Styrofoam,Styrofoam,12 mm,100,40,,,
+4/7/2015 06:07:36,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,90,5,40,300,0.085
+4/7/2015 20:34:29,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,,45,,,
+4/8/2015 17:22:17,no odor laser rubber,"Rubber, Rubber Stamp",2 mm,90,10,50,120,0.127
+4/9/2015 18:04:43,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,90,10,,,
+4/9/2015 19:34:19,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,20,,,
+4/10/2015 00:16:36,Plywood,Plywood,6.35 mm,80,7,,,
+4/10/2015 04:36:43,wood,Wood,5 mm,55,20,,,
+4/10/2015 23:32:40,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,5,25,200,0.1
+4/13/2015 19:43:35,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,10,40,300,0.1
+4/14/2015 18:24:14,MDF,MDF (Medium Density Fibreboard),5 mm,40,5,,,
+4/14/2015 21:58:12,Plywood,Plywood,5 mm,45,5,30,175,0.1
+4/15/2015 20:41:47,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,20,40,300,0.1
+4/15/2015 20:57:55,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,10,40,300,0.1
+4/15/2015 21:05:39,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,10,40,300,0.1
+4/15/2015 21:16:20,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,10,40,300,0.1
+4/15/2015 21:30:56,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,50,8,,,
+4/15/2015 21:54:39,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,50,8,40,300,0.1
+4/17/2015 22:41:16,Plywood,Plywood,6.35 mm,80,15,,,
+4/18/2015 04:42:27,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,15,20,80,
+4/20/2015 11:42:50,Rubber Stamps,"Rubber, Rubber Stamp",3 mm,80,20,80,225,0.1
+4/20/2015 21:25:59,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,10,,,
+4/21/2015 20:03:06,Plywood,Plywood,5 mm,80,15,,,
+4/21/2015 20:07:04,Plywood,Plywood,5 mm,80,15,,,
+4/21/2015 22:17:24,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",1 mm,25,10,,,
+4/22/2015 12:46:53,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,50,10,50,200,
+4/23/2015 13:22:11,masonite,MDF (Medium Density Fibreboard),3 mm,75,8,,,
+4/23/2015 16:01:42,masonite,MDF (Medium Density Fibreboard),3 mm,75,8,,,
+4/23/2015 22:22:15,Plywood,Plywood,5 mm,75,8,50,300,
+4/24/2015 13:02:18,masonite,MDF (Medium Density Fibreboard),3 mm,75,8,,,
+4/25/2015 11:16:32,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,5,,,
+4/27/2015 14:52:19,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,22,70,225,3
+4/27/2015 22:20:50,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,45,,,
+4/28/2015 03:38:09,Aluminum Laser etch Dog Tags,Anodized Aluminum,2 mm,90,10,50,200,0.084
+4/29/2015 15:28:41,Acrylic,"Acrylic (Plexiglas, Lucite)",6.35 mm,100,5,80,40,0.1
+4/29/2015 19:57:22,chipboard,Cardboard (Posterboard),3 mm,60,25,,,
+4/29/2015 21:10:39,Leather,Leather,2.5 mm,46,35,,,
+4/30/2015 01:44:58,mirror acrylic,Mirror (backside),3 mm,65,8,,,
+4/30/2015 19:56:13,Bass Wood,Wood,1 mm,40,50,,,
+4/30/2015 23:04:25,Plywood,Plywood,3.175 mm,30,100,35,250,
+4/30/2015 23:59:31,leather,Leather,2.5 mm,50,35,,,
+5/1/2015 16:23:26,Paper,Paper,1 mm,40,50,,,
+5/2/2015 17:42:45,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,,,,,
+5/3/2015 10:58:45,Acrylic,"Acrylic (Plexiglas, Lucite)",4.763 mm,80,10,,,
+5/5/2015 19:08:46,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,20,35,200,
+5/5/2015 22:35:03,Acrylic,"Acrylic (Plexiglas, Lucite)",4.75 mm,80,10,,,
+5/6/2015 16:23:37,Acrylic,"Acrylic (Plexiglas, Lucite)",6.35 mm,80,10,45,70,0.1
+5/21/2015 23:06:03,Plywood,Plywood,3.2 mm,65,100,45,250,0.3
+5/21/2015 23:08:04,Plywood,Plywood,3.2 mm,65,100,45,250,0.3
+5/21/2015 23:22:24,Plywood,Plywood,5 mm,65,30,45,250,0.3
+5/22/2015 22:25:32,Plywood,Plywood,3.2 mm,65,50,45,250,0.34
+5/27/2015 19:19:00,Plywood,Plywood,3.2 mm,,,,,
+5/27/2015 20:56:34,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+5/27/2015 21:57:17,Paper,Paper,1 mm,30,20,,,
+6/7/2015 16:10:10,Plywood,Plywood,5 mm,55,10,60,400,
+6/7/2015 22:41:20,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,40,300,0.085
+6/10/2015 12:00:56,Masonite,MDF (Medium Density Fibreboard),3 mm,85,20,,,
+6/14/2015 14:00:46,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,,,
+6/15/2015 09:17:38,Paper,Paper,0.2 mm,40,23,,,
+6/15/2015 21:00:57,Plywood,Plywood,3 mm,45,20,50,300,0.1
+6/19/2015 22:32:41,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,7,50,300,0.1
+6/22/2015 15:45:09,Delrin,Delrin Seals (Acetal),1 mm,70,25,,,
+6/23/2015 00:40:49,Acrylic,"Acrylic (Plexiglas, Lucite)",1.25 mm,80,10,,,
+6/24/2015 21:50:31,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,80,10,50,300,
+6/25/2015 21:51:34,Delrin .,Delrin Seals (Acetal),0.275 mm,80,20,,,
+6/26/2015 16:35:37,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,75,10,,,
+6/28/2015 17:59:29,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,,
+6/28/2015 21:03:00,Styrofoam,Styrofoam,5 mm,35,80,,,
+7/1/2015 20:47:23,Plywood,Plywood,5 mm,55,10,30,300,0.1
+7/1/2015 21:04:49,Plywood,Plywood,5 mm,55,10,30,300,0.1
+7/1/2015 21:24:33,Plywood,Plywood,5 mm,55,10,30,300,0.1
+7/1/2015 21:37:18,Plywood,Plywood,5 mm,55,10,30,300,0.1
+7/1/2015 21:58:26,Plywood,Plywood,5 mm,55,10,30,300,0.1
+7/2/2015 13:41:05,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,75,10,,,
+7/2/2015 21:00:56,Plywood,Plywood,5 mm,55,10,30,400,0.1
+7/2/2015 22:04:44,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,75,10,,,
+7/3/2015 15:07:25,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,,
+7/3/2015 20:34:05,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,85,8,,,
+7/4/2015 00:44:53,polystyrene,Styrofoam,1 mm,60,40,,,
+7/5/2015 18:27:25,dalrin,Delrin Seals (Acetal),6 mm,50,20,,,
+7/7/2015 00:35:59,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,8,,,
+7/7/2015 13:05:18,masonite,MDF (Medium Density Fibreboard),3 mm,75,8,,,
+7/7/2015 13:06:39,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,5,,,
+7/7/2015 13:07:32,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,5,,,
+7/7/2015 13:08:20,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,5,,,
+7/7/2015 17:21:23,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,5,,,
+7/8/2015 00:00:55,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,5,,,
+7/10/2015 23:20:19,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,,,
+7/14/2015 11:48:01,Pink Foamular XPS Insulation Foam,Styrofoam,25 mm,,,,,0.01
+7/15/2015 19:51:45,cardboard,Cardboard (Coorrugated),4 mm,35,25,,,
+7/15/2015 21:22:45,Plywood,Plywood,5 mm,55,10,,,
+7/15/2015 22:12:39,Acrylic,"Acrylic (Plexiglas, Lucite)",5.6 mm,80,10,,,
+7/16/2015 21:24:57,cardboard,Cardboard (Coorrugated),5 mm,45,20,,,
+7/16/2015 21:26:09,Plywood,Plywood,5 mm,55,10,,,
+7/17/2015 22:38:34,Plywood,Plywood,6 mm,70,8,,,
+7/18/2015 18:53:31,MDF,MDF (Medium Density Fibreboard),5 mm,75,5,,,
+7/18/2015 20:33:33,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,6,,,
+7/18/2015 20:33:48,MDF,MDF (Medium Density Fibreboard),5 mm,75,10,,,
+7/18/2015 20:34:00,MDF,MDF (Medium Density Fibreboard),3 mm,60,15,,,
+7/19/2015 13:42:11,Pink Foamular XPS Insulation Foam,Styrofoam,25 mm,17,225,,,
+7/19/2015 17:52:51,Tempered Hardboard,MDF (Medium Density Fibreboard),3 mm,60,15,,,
+7/19/2015 17:56:19,Blackboard MDF,MDF (Medium Density Fibreboard),5 mm,75,11,,,
+7/19/2015 17:57:48,Te,OTHER,3 mm,60,6,,,
+7/19/2015 17:58:51,MDF,MDF (Medium Density Fibreboard),5 mm,75,10,,,
+7/19/2015 18:28:10,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,6,,,
+7/20/2015 22:01:01,cardboard,Cardboard (Coorrugated),5 mm,45,20,,,
+7/20/2015 22:02:18,Plywood,Plywood,5 mm,55,10,,,
+7/21/2015 14:35:15,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,10,,,
+7/21/2015 20:20:37,Plywood,Plywood,5 mm,55,10,,,
+7/22/2015 20:20:48,Acrylic,"Acrylic (Plexiglas, Lucite)",2.5 mm,75,15,,,
+7/22/2015 21:11:33,maple,"Hardwood (Cherry, Alder, Walnut, Poplar)",15 mm,,,45,250,0.08
+7/25/2015 10:32:47,Pink Foamular XPS Insulation Foam,Styrofoam,25 mm,17,200,,,
+7/28/2015 22:05:35,Acrylic,"Acrylic (Plexiglas, Lucite)",5.3 mm,45,8,40,150,0.1
+7/29/2015 16:53:58,Plywood,Plywood,3 mm,80,20,40,150,
+7/30/2015 20:00:24,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,10,,,
+7/31/2015 22:10:37,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,8,40,150,0.01
+8/1/2015 08:04:32,masonite,MDF (Medium Density Fibreboard),3 mm,70,10,,,
+8/2/2015 02:38:21,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,80,8,30,200,0.085
+8/2/2015 18:05:13,masonite,MDF (Medium Density Fibreboard),3 mm,50,10,,,
+8/5/2015 17:16:59,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,10,45,200,
+8/5/2015 19:48:09,FoamCore,Foam Core (Non-PVC),4 mm,45,80,,,
+8/6/2015 21:30:04,MDF,MDF (Medium Density Fibreboard),5 mm,80,10,,,
+8/7/2015 16:36:19,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,,,60,150,
+8/8/2015 23:10:51,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,20,40,,,
+8/10/2015 03:50:24,Plywood,Plywood,5 mm,70,10,,,
+8/10/2015 03:51:30,polystyrene,Styrofoam,1 mm,60,40,,,
+8/10/2015 17:51:22,Plywood,Plywood,5 mm,70,20,30,300,
+8/11/2015 03:53:06,MDF,MDF (Medium Density Fibreboard),5 mm,80,10,,,
+8/11/2015 03:56:11,no odor laser rubber,"Rubber, Rubber Stamp",1 mm,,,50,120,0.084
+8/11/2015 15:18:30,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,5,,,
+8/11/2015 18:29:13,Foam board,Foam Core (Non-PVC),5 mm,40,80,,,
+8/14/2015 14:55:09,Acrylic,"Acrylic (Plexiglas, Lucite)",0.235 mm,100,6,,,
+8/15/2015 12:04:37,fresnel lens,OTHER,2 mm,20,18,,,
+8/17/2015 13:22:13,Plywood,Plywood,5 mm,70,8,50,300,0.086
+8/17/2015 20:00:42,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,10,,,
+8/18/2015 15:14:24,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,70,10,,,
+8/18/2015 21:29:54,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,10,,,
+8/20/2015 15:37:39,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,30,300,
+8/20/2015 22:49:43,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,,,
+8/21/2015 14:55:23,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,30,300,0.15
+8/21/2015 21:03:19,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,45,5,,,
+8/22/2015 22:38:08,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,10,35,20,
+8/22/2015 23:21:06,Plywood,Plywood,3 mm,60,15,,,
+8/23/2015 11:15:15,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,15,,,
+8/25/2015 00:15:32,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,,,
+8/25/2015 00:16:31,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,30,200,0.087
+8/25/2015 19:56:00,Plywood,Plywood,5 mm,55,20,,,
+8/28/2015 17:11:44,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,225,0.1
+8/28/2015 17:13:46,Plywood,Plywood,3 mm,70,20,,,
+8/29/2015 20:32:15,Plywood,Plywood,5 mm,50,20,,,
+8/30/2015 20:50:51,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,10,,,
+8/31/2015 23:33:27,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,200,0.1
+9/1/2015 21:47:49,Plywood,Plywood,6 mm,80,12,,,
+9/6/2015 23:28:16,Plywood,Plywood,5 mm,70,8,50,300,0.1
+9/10/2015 13:39:27,oak,"Hardwood (Cherry, Alder, Walnut, Poplar)",15 mm,,,,,
+9/10/2015 21:59:02,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,,,
+9/13/2015 15:04:49,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,,,
+9/13/2015 19:01:14,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,,,
+9/14/2015 20:46:49,Plywood,Plywood,6 mm,75,7,,,
+9/14/2015 20:48:13,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,,,
+9/14/2015 21:19:20,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,5,45,,,
+9/15/2015 22:15:44,Plywood,Plywood,3 mm,60,10,45,200,0.01
+9/15/2015 23:30:13,Plywood,Plywood,4.85 mm,85,30,300,50,0.1
+9/16/2015 21:15:30,Plywood,Plywood,5 mm,100,10,40,200,
+9/17/2015 18:29:19,rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,200,0.075
+9/22/2015 18:59:14,rubber,"Rubber, Rubber Stamp",3 mm,70,20,65,200,0.075
+9/22/2015 22:03:05,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,20,,,
+9/22/2015 22:29:57,Tempered Hardboard,MDF (Medium Density Fibreboard),4 mm,100,15,,,
+9/22/2015 22:43:37,MDF,MDF (Medium Density Fibreboard),6 mm,,,,,
+9/23/2015 17:47:05,Plywood,Plywood,3 mm,70,10,,,
+9/24/2015 22:50:59,MDF,MDF (Medium Density Fibreboard),5 mm,70,10,,,
+9/25/2015 15:59:57,Foam board,Foam Core (Non-PVC),5 mm,55,40,,,
+9/25/2015 22:42:22,MDF,MDF (Medium Density Fibreboard),6 mm,,6,,,
+9/26/2015 18:19:11,Plywood,Plywood,8 mm,60,,,150,
+9/29/2015 14:48:00,MDF,MDF (Medium Density Fibreboard),5 mm,75,15,,,
+9/30/2015 21:01:42,MDF,MDF (Medium Density Fibreboard),2 mm,70,25,300,30,0.1
+9/30/2015 21:07:25,wood,Wood,5.4 mm,70,25,60,400,0.1
+9/30/2015 21:10:04,MDF,MDF (Medium Density Fibreboard),3 mm,60,10,30,300,0.1
+9/30/2015 21:12:45,MDF,MDF (Medium Density Fibreboard),3 mm,60,10,300,30,
+10/1/2015 20:38:48,Paper,Paper,1 mm,,,15,300,0.085
+10/1/2015 21:43:13,Plywood,Plywood,1 mm,,,40,250,0.1
+10/4/2015 01:22:20,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,15,,,
+10/6/2015 11:54:27,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,,
+10/7/2015 21:24:20,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,75,7,,,
+10/13/2015 01:20:28,MDF,MDF (Medium Density Fibreboard),5 mm,80,10,,,
+10/13/2015 01:21:24,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,,,
+10/13/2015 01:23:28,MDF,MDF (Medium Density Fibreboard),5 mm,80,10,,,
+10/20/2015 21:35:00,Acrylic,"Acrylic (Plexiglas, Lucite)",12 mm,75,6,,,
+10/20/2015 21:59:06,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,10,,,
+10/22/2015 19:07:10,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,225,0.1
+10/25/2015 15:58:25,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,15,50,30,0.1
+10/26/2015 00:44:17,Pumpkin,OTHER,50 mm,,,80,150,0.08
+10/26/2015 20:25:34,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,10,,,
+10/27/2015 14:47:14,Paper,Paper,1 mm,35,30,,,
+10/27/2015 14:48:34,Plywood,Plywood,5 mm,80,10,,,
+10/27/2015 17:21:58,Plywood,Plywood,5 mm,70,10,,,
+10/27/2015 20:06:48,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,20,35,200,0.1
+10/28/2015 19:49:28,Acrylic,"Acrylic (Plexiglas, Lucite)",6.5 mm,95,10,,,
+10/28/2015 19:51:59,Acrylic,"Acrylic (Plexiglas, Lucite)",6.5 mm,95,10,,,
+10/28/2015 19:54:46,Acrylic,"Acrylic (Plexiglas, Lucite)",6.5 mm,95,10,,,
+10/31/2015 16:01:07,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,15,50,300,0.1
+11/8/2015 09:31:09,cardboard,Cardboard (Coorrugated),1 mm,45,25,,,
+11/13/2015 11:07:12,no odor rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,200,0.08
+11/14/2015 22:01:20,Plywood,Plywood,6 mm,40,25,,,
+11/17/2015 17:48:56,Plywood,Plywood,5 mm,70,10,50,250,0.15
+11/17/2015 17:50:36,masonite,MDF (Medium Density Fibreboard),2 mm,70,15,,,
+11/17/2015 21:00:50,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,200,0.08
+11/19/2015 22:28:47,Concrete,"Stone (Marble, Granite, etc.)",19 mm,,,70,200,0.8
+11/23/2015 21:36:41,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,,,
+12/4/2015 21:54:54,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,70,20,1,1,
+12/8/2015 15:19:54,Cardstock Paper,Paper (cardstock),0.2 mm,,,30,300,0.07
+12/9/2015 14:12:37,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,20,1,1,
+12/10/2015 12:56:20,Cardstock Paper,Paper (cardstock),0.2 mm,35,30,30,300,0.07
+12/11/2015 19:45:53,Plywood,Plywood,5 mm,70,10,30,450,0.15
+12/11/2015 22:01:12,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,8,,,
+12/12/2015 20:27:23,Plywood,Plywood,5 mm,60,10,50,300,
+12/12/2015 23:38:37,Plywood,Plywood,5 mm,70,10,60,450,0.15
+12/12/2015 23:40:39,Wooden Veneer,Wood,0.5 mm,30,10,30,450,0.12
+12/14/2015 01:19:13,Cardstock Paper,Paper (cardstock),0.2 mm,35,30,30,300,0.07
+12/14/2015 20:42:46,Veneer (paper-backed),Paper,0.5 mm,50,10,35,450,0.1
+12/14/2015 22:19:25,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,15,70,200,0.1
+12/16/2015 21:22:37,MDF,MDF (Medium Density Fibreboard),6 mm,85,10,60,450,0.5
+12/16/2015 21:30:56,MDF,MDF (Medium Density Fibreboard),6 mm,85,10,60,450,0.5
+12/16/2015 21:40:58,MDF,MDF (Medium Density Fibreboard),6 mm,85,10,60,450,0.25
+12/16/2015 21:48:04,MDF,MDF (Medium Density Fibreboard),5 mm,90,10,60,400,0.1
+12/19/2015 11:25:20,Leather 1/16 Natural Pigskin,Leather,1.58 mm,,,25,300,0.06
+12/19/2015 12:06:27,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",19.05 mm,60,200,,,
+12/19/2015 12:06:29,Hardwood,"Hardwood (Cherry, Alder, Walnut, Poplar)",19.05 mm,60,200,,,
+12/19/2015 12:28:17,Leather 1/16 Natural Pigskin,Leather,1.5 mm,,,30,200,0.1
+12/19/2015 13:07:37,Leather 1/16 Natural Pigskin,Leather,1.5 mm,,,25,200,0.1
+12/20/2015 03:31:02,Styrofoam,Styrofoam,6 mm,45,80,,,
+12/20/2015 07:55:37,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,20,,,
+12/21/2015 13:50:09,Plywood,Plywood,5 mm,70,10,50,300,0.1
+12/21/2015 17:27:16,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,,,70,200,
+12/21/2015 17:27:18,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,,,70,200,
+12/23/2015 11:40:39,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,200,0.1
+12/24/2015 21:42:13,Plywood,Plywood,5 mm,70,20,30,200,
+12/26/2015 19:55:32,MDF,MDF (Medium Density Fibreboard),5 mm,70,5,,,
+12/28/2015 20:30:28,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,,
+12/28/2015 21:36:49,Plywood,Plywood,3 mm,70,20,,,
+12/29/2015 14:06:21,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,200,0.1
+12/30/2015 13:26:37,Plywood,Plywood,3 mm,70,20,,,
+12/30/2015 20:45:14,MDF,MDF (Medium Density Fibreboard),3 mm,50,10,,,
+12/30/2015 23:17:04,Plywood,Plywood,5 mm,70,10,40,400,
+1/4/2016 22:07:11,Plywood,Plywood,20 mm,,,60,200,
+1/14/2016 17:00:39,MDF,MDF (Medium Density Fibreboard),5 mm,70,6,,,
+1/14/2016 20:47:49,MDF,MDF (Medium Density Fibreboard),6 mm,70,6,,,
+1/16/2016 16:18:05,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,8,30,200,
+1/23/2016 21:04:44,Plywood,Plywood,5 mm,40,400,70,10,0.1
+1/23/2016 21:08:04,Plywood,Plywood,5 mm,40,400,70,10,1
+1/23/2016 21:14:14,Plywood,Plywood,5 mm,70,40,40,400,0.1
+1/24/2016 23:46:07,Plywood,Plywood,2 mm,,,45,400,
+1/25/2016 20:22:31,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,,,
+1/25/2016 23:20:24,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,15,,,
+2/4/2016 19:05:33,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,20,,,
+2/7/2016 15:28:15,cardboard,Cardboard (Coorrugated),20 mm,70,20,,,
+2/9/2016 23:40:59,Plywood,Plywood,3 mm,15,45,15,20,
+2/10/2016 19:22:05,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,10,5,,,
+2/12/2016 17:20:42,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,30,200,0.085
+2/12/2016 21:19:44,Paper,Paper,0.1 mm,50,120,,,
+2/14/2016 17:42:02,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,225,0.1
+2/20/2016 09:01:54,no odor rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,200,0.1
+2/26/2016 03:12:46,MDF,MDF (Medium Density Fibreboard),3 mm,65,20,,,
+2/26/2016 15:32:11,Plywood,Plywood,5 mm,70,5,,,
+2/26/2016 15:34:23,melamine,Melamine,3 mm,70,10,,,
+2/28/2016 15:36:18,Plywood,Plywood,3 mm,75,15,,,
+2/29/2016 12:52:53,Plywood,Plywood,6 mm,75,5,,,
+3/1/2016 22:03:25,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,8,,,
+3/2/2016 22:21:36,Cardboard,Cardboard (Coorrugated),0.125 mm,50,50,50,50,
+3/3/2016 18:06:39,MDF,MDF (Medium Density Fibreboard),8 mm,70,10,,,
+3/6/2016 17:03:54,Plywood,Plywood,5 mm,70,20,25,200,
+3/6/2016 23:03:23,Plywood,Plywood,5.2 mm,45,5,35,300,
+3/7/2016 21:07:54,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,45,300,
+3/7/2016 21:08:51,basswood,"Softwood (Balsa, Basswood, Pine)",0.8 mm,40,50,,,
+3/8/2016 20:56:11,MDF,MDF (Medium Density Fibreboard),5 mm,70,10,,,
+3/9/2016 20:33:58,Plywood,Plywood,0.125 mm,70,10,,,
+3/11/2016 20:20:06,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,45,8,,,
+3/13/2016 20:18:58,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,30,200,
+3/14/2016 20:27:36,Balsa,"Softwood (Balsa, Basswood, Pine)",2 mm,60,60,,,
+3/14/2016 22:52:34,Foam Board,Foam Core (Non-PVC),0.2 mm,40,80,,,
+3/18/2016 00:20:25,Plywood,Plywood,0.3 mm,70,20,25,200,
+3/18/2016 21:52:38,MDF,MDF (Medium Density Fibreboard),3 mm,70,20,,,
+3/20/2016 12:56:10,Pink Foamular XPS Insulation Foam,Styrofoam,25 mm,,,32,400,0.05
+3/20/2016 13:48:17,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,,
+3/20/2016 18:09:46,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,200,0.1
+3/20/2016 19:14:22,Plywood,Plywood,0.3 mm,70,20,25,200,
+3/29/2016 22:31:30,Plywood,Plywood,2.75 mm,85,25,25,100,0.08
+3/30/2016 20:15:38,pencils,Wood,7 mm,20,50,,,
+3/31/2016 00:00:16,Plywood,Plywood,5 mm,70,15,,,
+3/31/2016 22:08:14,PTFE/Teflon,OTHER,3 mm,60,5,,,
+3/31/2016 22:09:27,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,45,5,,,
+4/2/2016 16:09:43,1/16 pig Leather,Leather,0.033 mm,,,27,300,0.1
+4/4/2016 21:07:14,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,,,
+4/5/2016 20:23:41,leather,Leather,3 mm,1,300,27,300,0.1
+4/5/2016 21:46:51,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,60,5,,,
+4/5/2016 23:25:46,Plywood,Plywood,6.35 mm,70,10,60,600,
+4/7/2016 15:39:23,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,10,,,
+4/10/2016 09:10:36,poster board,Cardboard (Posterboard),1 mm,40,70,,,
+4/10/2016 13:59:03,Birch veneer plywood,Plywood,19.5 mm,40,70,60,300,0.2
+4/13/2016 10:13:05,Paper,Paper,1 mm,40,70,,,
+4/13/2016 10:37:42,Plywood,Plywood,5 mm,70,15,,,
+4/14/2016 21:39:08,Plywood,Plywood,5 mm,70,15,40,300,0.15
+4/18/2016 19:44:27,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,55,8,30,200,
+4/18/2016 20:22:47,PTFE/Teflon,OTHER,3 mm,60,5,,,
+4/18/2016 20:24:08,Balsa,"Softwood (Balsa, Basswood, Pine)",2 mm,60,60,,,
+4/18/2016 20:25:41,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,60,5,40,120,0.09
+4/18/2016 22:16:42,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,15,40,300,0.1
+4/19/2016 21:51:52,Plywood,Plywood,5 mm,70,10,40,300,0.2
+4/19/2016 22:06:05,Plywood,Plywood,5 mm,70,10,40,300,0.2
+4/19/2016 22:09:16,Plywood,Plywood,7 mm,70,10,40,300,0.2
+4/21/2016 11:13:34,poster board,Cardboard (Posterboard),1 mm,70,40,,,
+4/21/2016 20:51:27,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,44,8,45,125,
+4/25/2016 02:08:03,MDF,MDF (Medium Density Fibreboard),5 mm,80,10,,,
+4/25/2016 19:51:15,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,10,,,
+4/27/2016 19:26:41,Plywood,Plywood,5 mm,70,10,70,300,
+4/28/2016 21:00:57,Plywood,Plywood,3 mm,20,40,60,300,
+4/28/2016 21:13:49,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,8,,,
+4/29/2016 01:29:49,MDF,MDF (Medium Density Fibreboard),6 mm,55,10,40,300,
+5/5/2016 22:01:16,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,60,5,60,120,
+5/9/2016 21:10:25,Adams Foam Board,Foam Core (Non-PVC),4 mm,40,80,,,
+5/9/2016 22:32:10,Plywood,Plywood,2 mm,70,15,60,300,
+5/9/2016 23:39:47,Plywood,Plywood,6 mm,70,10,,,
+5/10/2016 00:40:14,Plywood,Plywood,6 mm,70,10,50,20,
+5/11/2016 21:49:35,veneer,Wood,0.5 mm,45,30,,,
+5/15/2016 19:04:01,Plywood,Plywood,5 mm,75,20,25,200,
+5/15/2016 20:52:33,Acrylic,"Acrylic (Plexiglas, Lucite)",3.175 mm,80,20,20,200,0.1
+5/16/2016 20:49:55,Tape on Aluminum,Anodized Aluminum,1 mm,,,40,150,0.07
+5/17/2016 19:42:42,MDF,MDF (Medium Density Fibreboard),5 mm,75,20,,,
+5/18/2016 16:05:24,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,20,30,300,
+5/21/2016 18:21:00,Plywood,Plywood,3 mm,70,20,,,
+5/22/2016 17:22:27,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,,,
+5/24/2016 21:38:31,Plywood,Plywood,6 mm,70,10,,,
+5/24/2016 22:30:26,Plywood,Plywood,6 mm,70,10,,,
+5/26/2016 18:24:40,Acrylic,"Acrylic (Plexiglas, Lucite)",1.5 mm,50,30,,,
+5/26/2016 18:50:22,Plywood,Plywood,6 mm,95,20,,,
+5/27/2016 17:39:45,Plywood,Plywood,3 mm,80,20,,,
+5/28/2016 12:56:46,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,10,,,
+5/30/2016 19:14:16,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,20,20,200,
+5/30/2016 19:53:46,Paper,Paper,0.01 mm,20,70,,,
+5/30/2016 22:03:43,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,25,50,150,
+5/31/2016 21:58:16,Poplar,"Hardwood (Cherry, Alder, Walnut, Poplar)",6 mm,100,100,,,
+6/1/2016 10:36:51,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,25,,,
+6/1/2016 19:58:27,Plywood,Plywood,12.7 mm,,,,,
+6/1/2016 23:32:27,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,15,,,
+6/2/2016 14:38:06,MDF,MDF (Medium Density Fibreboard),3 mm,70,20,,,
+6/2/2016 21:33:53,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,,,,,
+6/2/2016 21:56:46,melamine,Melamine,4 mm,50,30,,,
+6/3/2016 16:21:04,melamine,Melamine,3 mm,50,25,,,
+6/3/2016 22:25:08,Plywood,Plywood,5 mm,70,15,,,
+6/4/2016 21:04:02,Plywood,Plywood,6 mm,16,60,60,300,
+6/6/2016 21:40:32,Plywood,Plywood,6 mm,70,10,,,
+6/8/2016 21:23:56,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,,
+6/11/2016 20:22:43,bread,OTHER,44.45 mm,,,40,250,0.1
+6/11/2016 20:57:38,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,52,8,,,
+6/12/2016 21:03:31,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,20,,,
+6/14/2016 20:40:11,Plywood,Plywood,3 mm,80,20,,,
+6/16/2016 14:00:52,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,200,0.1
+6/17/2016 19:15:28,Plywood,Plywood,5 mm,80,10,,,
+6/18/2016 16:30:52,Plywood,Plywood,5 mm,80,10,,,
+6/22/2016 14:57:15,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,45,15,35,200,0.1
+6/23/2016 15:23:06,Paper,Paper,0.3 mm,35,30,,,
+6/23/2016 15:23:55,Plywood,Plywood,5 mm,10,80,,,
+6/26/2016 14:25:17,Styrofoam,Styrofoam,28 mm,,,32,400,0.1
+6/30/2016 21:14:03,Plywood,Plywood,5 mm,70,10,35,300,
+6/30/2016 21:19:06,Plywood,Plywood,5 mm,70,10,,,
+6/30/2016 21:23:13,Plywood,Plywood,5 mm,70,10,,,
+6/30/2016 21:24:29,Plywood,Plywood,5 mm,70,10,,,
+6/30/2016 21:26:54,Plywood,Plywood,5 mm,70,10,50,300,
+7/6/2016 13:39:29,Cotton,Cloth,0.005 mm,20,20,,,
+7/7/2016 23:25:39,Plywood,Plywood,2.5 mm,35,8,,,
+7/9/2016 16:15:18,MDF,MDF (Medium Density Fibreboard),3 mm,12,70,,,
+7/12/2016 20:11:38,Plywood,Plywood,5 mm,80,20,35,200,?
+7/14/2016 22:01:00,formcore,Foam Core (Non-PVC),5 mm,70,100,20,300,
+7/21/2016 04:15:21,Plywood,Plywood,5 mm,90,15,,,
+7/21/2016 23:08:44,Styrofoam,Styrofoam,4 mm,45,80,30,30,
+7/25/2016 19:50:24,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,8,,,
+7/25/2016 22:14:25,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,140,
+7/28/2016 21:25:50,Mirrored plastic,Mirror (backside),1 mm,70,20,,,
+7/29/2016 02:46:21,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,30,50,
+7/30/2016 13:23:04,Glass,Glass,5 mm,,,100,100,0.03
+7/30/2016 18:46:35,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,5,,,
+8/7/2016 13:49:33,mesquite,"Hardwood (Cherry, Alder, Walnut, Poplar)",24 mm,,,60,250,0.6
+8/8/2016 21:04:41,Paper,Paper,0.01 mm,35,20,,,
+8/12/2016 21:07:00,melamine,Melamine,3 mm,55,20,,,
+8/13/2016 18:49:57,poster board,Cardboard (Posterboard),1 mm,35,30,,,
+8/14/2016 15:20:55,melamine,Melamine,3 mm,55,20,,,
+8/15/2016 12:15:46,Plywood,Plywood,5 mm,60,15,,,
+8/15/2016 22:22:14,Paper,Paper,0.01 mm,45,100,,,
+8/17/2016 07:49:00,Plywood,Plywood,5 mm,65,12,,,
+8/17/2016 20:52:30,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,9.5,,,
+8/19/2016 13:42:43,melamine,Melamine,3 mm,50,20,,,
+8/20/2016 15:56:51,melamine,Melamine,3 mm,50,20,,,
+8/20/2016 18:45:59,melamine,Melamine,10 mm,50,20,,,
+8/21/2016 15:17:46,Plywood,Plywood,6 mm,70,10,25,300,0.05
+8/21/2016 22:23:29,melamine,Melamine,3 mm,55,20,,,
+8/22/2016 22:07:17,melamine,Melamine,3 mm,55,20,,,
+8/23/2016 10:19:55,MDF,MDF (Medium Density Fibreboard),5 mm,90,10,17,180,0.1
+8/23/2016 22:06:05,cardboard,Cardboard (Coorrugated),2 mm,30,40,,,
+8/26/2016 12:07:53,Plywood,Plywood,5 mm,85,20,,,
+8/27/2016 14:45:27,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,10,,,
+8/28/2016 13:35:45,Plywood,Plywood,4 mm,70,15,25,300,0.1
+8/29/2016 21:57:41,Paper,Paper,1 mm,40,30,,,
+8/30/2016 21:31:04,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,10,,,
+9/3/2016 11:10:11,Plywood,Plywood,5 mm,65,15,,,
+9/5/2016 17:30:24,Plywood,Plywood,5 mm,65,15,,,
+9/5/2016 17:34:40,Acrylic,"Acrylic (Plexiglas, Lucite)",2.6 mm,70,20,,,
+9/5/2016 17:53:55,hard board,MDF (Medium Density Fibreboard),2.75 mm,70,20,,,
+9/7/2016 02:54:15,Plywood,Plywood,5 mm,70,10,26,600,0.08
+9/7/2016 19:04:28,Plywood,Plywood,3 mm,55,10,,,
+9/8/2016 22:06:31,cardboard,Cardboard (Coorrugated),5 mm,80,40,,,
+9/9/2016 10:45:34,PET tape,OTHER,0.1 mm,,,30,200,0.05
+9/12/2016 19:50:24,Plywood,Plywood,6 mm,80,10,20,300,
+9/12/2016 21:08:16,Plywood,Plywood,5 mm,70,10,25,300,0.1
+9/12/2016 21:11:23,Plywood,Plywood,5 mm,70,10,25,300,0.1
+9/12/2016 21:13:47,Plywood,Plywood,5 mm,70,10,25,300,0.1
+9/12/2016 22:14:43,Plywood,Plywood,6 mm,85,10,20,300,
+9/13/2016 07:52:54,Plywood,Plywood,3 mm,70,12.5,,,
+9/14/2016 18:13:57,melamine,Melamine,3 mm,55,20,,,
+9/14/2016 23:27:56,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,200,0.08
+9/15/2016 01:45:12,Plywood,Plywood,5 mm,65,20,,,
+9/16/2016 23:01:36,melamine,Melamine,3 mm,55,20,,,
+9/17/2016 09:59:56,Plywood,Plywood,5 mm,65,20,,,
+9/20/2016 21:21:35,Plywood,Plywood,5 mm,70,10,20,300,0.2
+9/20/2016 21:21:51,Plywood,Plywood,5 mm,70,10,20,300,0.2
+9/20/2016 21:25:21,Plywood,Plywood,5 mm,70,10,33,300,0.2
+9/20/2016 21:28:03,Plywood,Plywood,5 mm,70,10,42,300,0.2
+9/21/2016 03:49:04,Plywood,Plywood,5 mm,70,10,32,600,0.07
+9/21/2016 18:11:16,hard board,MDF (Medium Density Fibreboard),3 mm,70,10,,,
+9/21/2016 19:58:52,Plywood,Plywood,6 mm,85,10,25,300,
+9/24/2016 05:02:30,Plywood,Plywood,5 mm,60,20,33,600,0.07
+9/24/2016 08:48:49,Plywood,Plywood,5 mm,80,14.5,,,
+9/25/2016 22:17:00,Plywood,Plywood,5 mm,,,,,
+9/26/2016 19:51:51,Plywood,Plywood,5 mm,65,10,,,
+9/27/2016 20:34:05,Plywood,Plywood,5 mm,65,20,30,300,0.15
+9/27/2016 20:53:06,Plywood,Plywood,5 mm,60,20,30,300,0.15
+9/27/2016 21:05:34,Plywood,Plywood,5 mm,60,20,30,300,0.15
+9/27/2016 21:23:49,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,8,35,250,0.15
+9/27/2016 21:40:16,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,35,250,0.15
+9/27/2016 22:00:50,Plywood,Plywood,3 mm,70,10,,,N/A
+9/28/2016 21:36:33,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,10,,,
+9/28/2016 22:11:42,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,10,,,
+9/29/2016 23:27:18,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,70,20,70,200,0.8
+10/1/2016 20:29:08,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,8,15,60,0.1
+10/2/2016 12:42:02,melamine,Melamine,3 mm,65,15,,,
+10/2/2016 20:50:49,melamine,Melamine,3 mm,65,15,,,
+10/3/2016 21:44:37,MDF,MDF (Medium Density Fibreboard),3 mm,75,10,,,
+10/3/2016 21:53:07,MDF,MDF (Medium Density Fibreboard),3 mm,80,10,,,
+10/3/2016 22:07:59,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,10,,,
+10/3/2016 22:44:11,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,70,6,,,
+10/4/2016 19:34:38,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,10,,,
+10/4/2016 19:48:20,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,10,,,
+10/4/2016 20:06:16,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,10,25,250,
+10/4/2016 20:10:21,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,10,,,
+10/5/2016 20:49:38,wood & white board,Melamine,3 mm,70,15,60,300,
+10/6/2016 04:01:35,Plywood,Plywood,6 mm,60,10,,,
+10/6/2016 11:31:28,Plywood,Plywood,5.1 mm,75,10,,,
+10/6/2016 19:32:36,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,10,,,
+10/6/2016 19:33:47,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,10,,,
+10/6/2016 19:48:09,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,10,,,
+10/6/2016 23:02:41,bark,Wood,6 mm,70,10,,,
+10/7/2016 17:36:22,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,20,30,300,0.08
+10/8/2016 10:15:53,Plywood,Plywood,5 mm,65,14.5,,,
+10/8/2016 19:33:12,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,15,30,300,0.08
+10/10/2016 22:39:48,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,10,40,300,0.1
+10/12/2016 14:51:18,MDF,MDF (Medium Density Fibreboard),3 mm,70,5,,,
+10/12/2016 23:50:00,Plywood,Plywood,4 mm,75,10,,,
+10/14/2016 21:37:08,"hard board, white board",Melamine,3 mm,80,15,,,
+10/16/2016 19:08:51,hard board,MDF (Medium Density Fibreboard),3 mm,60,8,,,
+10/17/2016 04:15:03,Plywood,Plywood,5 mm,60,8,,,
+10/19/2016 21:37:30,whiteboard,Melamine,3 mm,60,9,40,300,
+10/19/2016 22:09:28,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,6,25,200,
+10/21/2016 22:05:53,cardboard,Cardboard (Coorrugated),6 mm,70,45,,,
+10/22/2016 22:36:51,multiple materials,OTHER,5 mm,70,10,,,
+10/24/2016 23:57:12,Plywood,Plywood,5 mm,70,10,,,
+10/29/2016 18:05:11,white board & wood,Melamine,5 mm,60,9,,,
+10/29/2016 21:14:09,Birch veneer plywood,Plywood,5 mm,80,10,,,
+10/31/2016 21:56:59,Paper,Paper,0.01 mm,30,60,,,
+11/2/2016 16:58:09,melamine,Melamine,3 mm,75,15,,,
+11/6/2016 17:24:52,melamine,Melamine,3 mm,75,10,,,
+11/9/2016 16:18:18,Paper,Paper,0.05 mm,30,30,,,
+11/11/2016 21:14:43,wood & hard board,MDF (Medium Density Fibreboard),6 mm,75,6,,,
+11/14/2016 23:23:06,melamine,Melamine,3 mm,60,20,,,
+11/19/2016 16:42:00,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,60,20,,,
+11/19/2016 19:21:44,Plywood,Plywood,5 mm,80,30,,,
+11/19/2016 23:33:13,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+11/21/2016 17:14:10,MDF,MDF (Medium Density Fibreboard),0.5 mm,80,10,,,
+11/22/2016 12:44:06,MDF,MDF (Medium Density Fibreboard),5 mm,80,10,,,
+11/22/2016 14:03:30,melamine,Melamine,3 mm,60,20,,,
+11/23/2016 12:39:58,Plywood,Plywood,1 mm,,,46,200,0.1
+11/28/2016 13:59:54,MDF,MDF (Medium Density Fibreboard),5 mm,70,10,,,
+11/28/2016 21:44:59,Plywood,Plywood,1 mm,,,45,300,1
+11/30/2016 00:41:59,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,75,10,,,
+11/30/2016 21:42:24,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,75,10,50,300,0.1
+11/30/2016 21:43:38,Acrylic,"Acrylic (Plexiglas, Lucite)",0.5 mm,75,10,30,300,0.2
+11/30/2016 21:49:03,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,75,10,50,300,0.1
+11/30/2016 21:50:44,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,75,10,50,300,0.1
+11/30/2016 21:52:18,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,60,10,40,300,
+12/1/2016 15:14:37,none,OTHER,4 mm,,,,,
+12/4/2016 19:31:03,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,,
+12/7/2016 14:14:14,cardboard,Cardboard (Coorrugated),5 mm,60,20,,,
+12/7/2016 20:38:44,Foam Board,Foam Core (Non-PVC),5 mm,42,80,,,
+12/9/2016 17:05:39,melamine,Melamine,3 mm,60,20,,,
+12/9/2016 21:39:02,cardboard,Cardboard (Coorrugated),4 mm,35,25,,,
+12/11/2016 15:52:36,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,80,15,,,
+12/13/2016 07:50:36,Plywood,Plywood,5 mm,70,11,,,
+12/13/2016 19:19:13,Plywood,Plywood,3 mm,65,24,40,300,0.08
+12/13/2016 20:17:50,MDF,MDF (Medium Density Fibreboard),0.25 mm,70,10,25,25,
+12/15/2016 07:50:33,Plywood,Plywood,3 mm,65,15,,,
+12/15/2016 21:41:58,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,6,45,200,0.08
+12/15/2016 23:47:40,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,5,,,
+12/15/2016 23:49:14,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,55,5,,,
+12/18/2016 21:33:52,Plywood,Plywood,5 mm,70,10,40,300,0.1
+12/18/2016 21:44:33,Plywood,Plywood,7 mm,,,,,
+12/21/2016 22:56:00,Plywood,Plywood,5 mm,70,10,,,
+12/21/2016 22:57:36,cardboard,Cardboard (Coorrugated),4 mm,45,25,,,
+12/24/2016 01:32:16,Plywood,Plywood,6 mm,45,5,,,
+12/25/2016 12:29:10,Plywood,Plywood,5 mm,70,12,21.25,200,0.1
+12/26/2016 22:32:48,Plywood,Plywood,3 mm,60,30,20,300,
+12/28/2016 17:40:41,Plywood,Plywood,2 mm,,,50,300,0.1
+12/29/2016 21:52:17,Plywood,Plywood,2.8 mm,60,45,,,
+1/8/2017 20:09:32,MDF,MDF (Medium Density Fibreboard),5 mm,75,15,,,
+1/11/2017 18:29:27,Foam Board,Foam Core (Non-PVC),4.5 mm,44,80,,,
+1/11/2017 20:32:00,Plywood,Plywood,5 mm,70,12,40,300,
+1/11/2017 21:04:19,Plywood,Plywood,5 mm,70,12,40,300,0.1
+1/11/2017 21:26:20,Plywood,Plywood,5 mm,70,12,45,300,0.1
+1/17/2017 20:21:29,Paper,Paper,1 mm,30,30,,,
+1/19/2017 19:57:34,Plywood,Plywood,3 mm,30,45,,,
+1/26/2017 11:01:15,Plywood,Plywood,6 mm,70,10,,,
+1/29/2017 14:22:08,MDF,MDF (Medium Density Fibreboard),5 mm,75,8,,,
+1/30/2017 21:24:50,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,50,5,,,
+1/30/2017 21:57:22,Plywood,Plywood,3 mm,60,30,,,
+1/31/2017 00:12:06,melamine,Melamine,3 mm,70,10,,,
+2/1/2017 15:42:00,hardboard,MDF (Medium Density Fibreboard),4 mm,70,9,,,
+2/1/2017 15:50:37,Plywood and rubber,"Rubber, Rubber Stamp",5 mm,70,20,70,200,
+2/3/2017 13:25:56,hard board,MDF (Medium Density Fibreboard),4 mm,70,9,,,
+2/3/2017 15:56:05,chalk board,MDF (Medium Density Fibreboard),5 mm,20,9,,,
+2/4/2017 20:59:05,Plywood,Plywood,0.2 mm,,,45,100,1
+2/5/2017 19:09:36,hardbaord,MDF (Medium Density Fibreboard),4 mm,70,9,,,
+2/6/2017 15:43:20,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,9,,,
+2/6/2017 19:57:13,hard board,MDF (Medium Density Fibreboard),4 mm,70,9,,,
+2/6/2017 19:57:22,hard board,MDF (Medium Density Fibreboard),4 mm,70,9,,,
+2/7/2017 13:19:57,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,75,20,75,200,0.8
+2/7/2017 19:50:50,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,9,50,300,
+2/8/2017 01:57:42,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+2/8/2017 13:48:20,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,45,10,,,
+2/8/2017 19:23:18,Mahogany,"Hardwood (Cherry, Alder, Walnut, Poplar)",8.9 mm,20,50,40,300,0.08
+2/8/2017 19:29:44,Mahogany,"Hardwood (Cherry, Alder, Walnut, Poplar)",8.9 mm,20,50,55,300,0.08
+2/8/2017 19:35:34,Mahogany,"Hardwood (Cherry, Alder, Walnut, Poplar)",8.9 mm,20,50,55,300,0.08
+2/8/2017 21:17:08,Plywood,Plywood,6 mm,60,10,,,
+2/10/2017 10:12:22,melamine,Melamine,3 mm,55,15,,,
+2/14/2017 21:57:11,Plywood,Plywood,3 mm,50,20,,,
+2/15/2017 15:05:44,Cotton,Cloth,0.03 mm,40,140,,,
+2/15/2017 21:14:59,Plywood,Plywood,6 mm,85,10,30,300,
+2/16/2017 02:15:02,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,,,
+2/16/2017 23:07:26,Acrylic,"Acrylic (Plexiglas, Lucite)",6.2 mm,70,7,,,
+2/18/2017 09:59:23,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,15,,,
+2/20/2017 15:55:33,Plywood,Plywood,5 mm,45,5,30,300,
+2/23/2017 22:18:09,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,20,,,
+2/23/2017 22:20:04,cork,OTHER,2 mm,20,50,20,200,0.1
+2/27/2017 20:48:55,leather,Leather,3.7 mm,45,20,,,
+2/27/2017 22:13:20,Plywood,Plywood,3 mm,50,20,,,
+2/27/2017 22:51:35,melamine,Melamine,3 mm,80,10,,80,
+2/28/2017 14:36:23,melamine,Melamine,3 mm,80,10,,,
+2/28/2017 22:24:26,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,55,5,,,
+3/2/2017 17:48:33,melamine,Melamine,3.75 mm,80,10,,,
+3/2/2017 20:27:32,purple heart,"Hardwood (Cherry, Alder, Walnut, Poplar)",6 mm,80,7,,,
+3/5/2017 20:39:10,"white board, chalk board",Melamine,1.5 mm,60,9,50,300,
+3/6/2017 13:45:41,Plywood,Plywood,5 mm,78,10.5,,,
+3/7/2017 20:20:26,purple heart,"Hardwood (Cherry, Alder, Walnut, Poplar)",6 mm,72,9,,,
+3/8/2017 19:20:12,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,50,300,
+3/13/2017 23:07:29,cardboard,Cardboard (Coorrugated),2 mm,40,40,,,
+3/26/2017 20:04:19,Plywood,Plywood,5 mm,70,10,35,300,0.1
+3/26/2017 20:15:28,MDF,MDF (Medium Density Fibreboard),4 mm,60,9,,,
+3/27/2017 13:18:41,masonite,MDF (Medium Density Fibreboard),4 mm,70,10,,,
+3/27/2017 21:23:34,Plywood,Plywood,5 mm,70,10,35,300,0.5
+3/28/2017 19:34:03,poplar,"Hardwood (Cherry, Alder, Walnut, Poplar)",6 mm,70,15,,,
+3/28/2017 19:46:21,Acrylic,"Acrylic (Plexiglas, Lucite)",9 mm,,,,,
+3/29/2017 21:30:08,Plywood,Plywood,3 mm,50,20,,,
+4/6/2017 20:51:01,Mahogany,"Hardwood (Cherry, Alder, Walnut, Poplar)",8.89 mm,,,40,200,0.083
+4/6/2017 20:52:35,Mahogany,"Hardwood (Cherry, Alder, Walnut, Poplar)",8.89 mm,,,20,200,833
+4/6/2017 20:53:43,Mahogany,"Hardwood (Cherry, Alder, Walnut, Poplar)",8.89 mm,,,30,100,0.833
+4/9/2017 12:29:27,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,10,,,
+4/13/2017 12:13:39,paper,Paper,0.1 mm,40,50,,,
+4/23/2017 20:07:14,Hard wood - Purple Heart,"Hardwood (Cherry, Alder, Walnut, Poplar)",3 mm,90,10,50,200,
+4/26/2017 13:34:23,MDF,MDF (Medium Density Fibreboard),3 mm,75,8,,,
+5/1/2017 21:02:59,Plywood,Plywood,5 mm,70,10,35,300,0.25
+5/1/2017 21:09:26,Plywood,Plywood,5 mm,70,10,40,300,0.15
+5/1/2017 21:22:18,Plywood,Plywood,5 mm,70,10,40,300,0.15
+5/1/2017 21:32:08,Plywood,Plywood,5 mm,70,10,60,300,0.15
+5/6/2017 07:45:42,Plywood,Plywood,5 mm,75,15,,,
+5/6/2017 21:07:24,Masonite,MDF (Medium Density Fibreboard),4 mm,70,10,,,
+5/8/2017 20:13:54,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,20,,,
+5/9/2017 21:00:06,Plywood,Plywood,3 mm,70,30,35,300,
+5/15/2017 20:15:05,Plywood,Plywood,6 mm,50,8,70,200,0.2
+5/20/2017 20:01:11,anodized aluminum,Anodized Aluminum,1 mm,1,1,45,100,0.15
+5/20/2017 21:29:21,Oak,"Hardwood (Cherry, Alder, Walnut, Poplar)",20 mm,,,50,300,0.1
+5/27/2017 13:43:01,Plywood,Plywood,5 mm,70,10,,,
+5/27/2017 21:00:45,Masonite,MDF (Medium Density Fibreboard),3 mm,65,10,40,300,0.1
+5/31/2017 12:04:47,Plywood,Plywood,5 mm,65,10,25,300,0.2
+6/5/2017 21:19:51,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,50,20,30,300,0.2
+6/5/2017 21:54:12,Plywood,Plywood,5 mm,65,30,35,30,0.15
+6/5/2017 21:55:52,Plywood,Plywood,5 mm,65,10,35,300,0.2
+6/5/2017 21:59:37,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,20,35,300,
+6/5/2017 22:05:30,Plywood,Plywood,0.5 mm,30,300,65,10,0.2
+6/6/2017 19:51:35,leather,Leather,1.8 mm,40,20,,,
+6/6/2017 20:11:12,Plywood,Plywood,5 mm,65,10,25,300,
+6/7/2017 11:28:22,Plywood,Plywood,5 mm,65,10,60,300,0.1
+6/7/2017 19:42:41,Plywood,Plywood,5 mm,65,10,,,
+6/7/2017 20:00:50,Plywood,Plywood,5 mm,65,10,35,300,2
+6/7/2017 20:33:45,bamboo,Wood,6 mm,1,1,47,300,0.15
+6/7/2017 20:46:27,anodized aluminum,Anodized Aluminum,2 mm,1,1,50,300,0.15
+6/7/2017 21:00:53,bamboo,Wood,6 mm,1,1,50,300,0.15
+6/12/2017 22:01:21,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,1,1,1,1,1
+6/13/2017 06:56:42,MDF,MDF (Medium Density Fibreboard),3 mm,75,7,,,
+6/13/2017 21:56:57,Ceramic,"Stone (Marble, Granite, etc.)",1 mm,,,100,80,0.1
+6/14/2017 20:41:07,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,20,,,
+6/14/2017 21:04:26,Paper,Paper,0.22 mm,45,25,,,
+6/14/2017 21:48:11,Plywood,Plywood,6 mm,65,8,30,300,0.1
+6/15/2017 19:33:13,Paper,Paper,0.2 mm,45,25,,,
+6/15/2017 21:31:33,Plywood,Plywood,6 mm,65,6,50,300,0.2
+6/17/2017 14:59:09,Paper,Paper,0.5 mm,40,32,30,300,0.05
+6/17/2017 15:53:22,Paper,Paper,0.5 mm,40,32,30,300,0.5
+6/26/2017 23:06:53,melamine,Melamine,3 mm,70,15,35,300,0.12
+6/28/2017 11:40:02,MDF,MDF (Medium Density Fibreboard),3 mm,85,8,35,300,0.068
+6/29/2017 07:46:55,MDF,MDF (Medium Density Fibreboard),5 mm,80,10,,,
+7/9/2017 11:45:29,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,,,70,200,0.8
+7/11/2017 20:12:56,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,10,40,250,
+7/11/2017 23:23:12,Plywood,Plywood,3 mm,70,15,,,
+7/13/2017 20:43:57,fabric,Cloth,0.3 mm,30,20,,,
+7/16/2017 12:35:27,Plywood,Plywood,6 mm,70,20,30,300,
+7/18/2017 22:05:04,Plywood,Plywood,6 mm,,,50,300,0.2
+7/23/2017 12:51:56,Plywood,Plywood,3 mm,65,15,,,
+7/25/2017 04:43:36,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,85,8,,,
+7/26/2017 12:49:34,Plywood,Plywood,3 mm,65,20,,,
+8/2/2017 15:53:55,cardboard,Cardboard (Coorrugated),3 mm,50,80,,,
+8/4/2017 22:31:06,Plywood,Plywood,3 mm,70,15,,,
+8/6/2017 18:49:25,Plywood,Plywood,3 mm,70,15,,,
+8/6/2017 18:52:27,Acrylic,"Acrylic (Plexiglas, Lucite)",1.5 mm,45,10,20,150,
+8/14/2017 20:16:23,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,10,35,300,
+8/17/2017 20:58:54,Plywood,Plywood,6 mm,,100,65,300,
+8/19/2017 20:31:33,Plywood,Plywood,1 mm,,,55,,o.oo1
+8/20/2017 12:51:29,Pink Insulation Foam,Styrofoam,25 mm,,,35,90,0.5
+8/26/2017 19:46:54,Plywood,Plywood,4 mm,80,15,40,200,0.085
+8/30/2017 13:30:21,Plywood,Plywood,3 mm,70,15,,,
+8/31/2017 03:09:17,multiple types,OTHER,4 mm,70,10,70,200,0.08
+9/2/2017 15:46:02,MDF,MDF (Medium Density Fibreboard),3 mm,85,8,35,300,
+9/2/2017 16:00:17,Plywood,Plywood,4.75 mm,45,5,30,300,
+9/2/2017 22:56:17,cardboard & mDF,MDF (Medium Density Fibreboard),4 mm,45,30,,,
+9/4/2017 02:09:28,melamine,Melamine,3 mm,75,10,,,
+9/4/2017 17:18:01,MDF,MDF (Medium Density Fibreboard),5 mm,75,8,,,
+9/4/2017 17:19:06,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,10,,,
+9/4/2017 17:20:14,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,10,,,
+9/4/2017 17:41:36,Acrylic,"Acrylic (Plexiglas, Lucite)",5.5 mm,70,7,,,
+9/4/2017 21:45:51,Acrylic,"Acrylic (Plexiglas, Lucite)",7 mm,95,5,,,
+9/5/2017 14:15:07,cardboard,Cardboard (Coorrugated),4 mm,45,30,,,
+9/6/2017 13:28:41,MDF,MDF (Medium Density Fibreboard),3 mm,85,10,40,300,
+9/12/2017 23:43:21,MDF,MDF (Medium Density Fibreboard),6 mm,85,100,85,50,0.2
+9/17/2017 13:58:39,Plywood,Plywood,12 mm,,,40,200,
+9/20/2017 02:11:58,Plywood,Plywood,12 mm,,,55,400,0.1
+9/22/2017 21:29:48,Plywood,Plywood,1 mm,,,40,100,0.1
+9/23/2017 20:08:44,MDF,MDF (Medium Density Fibreboard),6 mm,80,10,,,
+9/24/2017 01:21:44,Pink Insulation Foam,Styrofoam,1 mm,,,40,15,0.5
+9/25/2017 20:07:32,Plywood,Plywood,3 mm,77,19,40,250,0.08
+9/25/2017 20:27:27,Plywood,Plywood,3 mm,77,19,50,250,1
+9/25/2017 21:02:29,Plywood,Plywood,3 mm,77,19,55,250,0.1
+9/25/2017 21:20:01,Plywood,Plywood,3 mm,50,19,75,250,0.12
+9/27/2017 21:07:53,masonite,MDF (Medium Density Fibreboard),3 mm,80,10,,,
+9/27/2017 21:51:08,Plywood,Plywood,5 mm,75,20,,,
+9/28/2017 02:28:52,leather,Leather,0.5 mm,,,15,100,0.1
+10/2/2017 22:05:28,cardboard,Cardboard (Coorrugated),4 mm,50,80,40,300,0.5
+10/9/2017 19:50:50,felt,Cloth,3 mm,45,19,30,300,0.2
+10/9/2017 21:21:21,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,25,300,
+10/11/2017 12:47:09,Plywood,Plywood,6 mm,78,10,,,
+10/11/2017 21:37:42,cardboard,Cardboard (Coorrugated),4 mm,45,60,,,
+10/12/2017 16:59:42,Plywood,Plywood,12 mm,,,60,400,0.1
+10/21/2017 18:30:47,Glass,Glass,2 mm,,,100,300,0.1
+10/21/2017 19:42:29,Glass,Glass,3 mm,,,40,200,0.1
+10/24/2017 21:02:14,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,60,8,,,
+11/2/2017 21:23:48,Pumpkin,OTHER,1 mm,,,100,150,0.2
+11/3/2017 23:37:47,masonite,MDF (Medium Density Fibreboard),3 mm,70,10,,,
+11/5/2017 16:56:27,Plywood,Plywood,6 mm,70,15,,,
+11/6/2017 19:59:47,Plywood,Plywood,3 mm,85,25,,,
+11/7/2017 21:02:25,MDF,MDF (Medium Density Fibreboard),3 mm,85,20,,,
+11/14/2017 20:46:18,Plywood,Plywood,3 mm,77,17,,,
+11/22/2017 22:39:04,MDF,MDF (Medium Density Fibreboard),3 mm,70,10,,,
+11/25/2017 22:01:17,MDF,MDF (Medium Density Fibreboard),3 mm,70,10,,,
+12/6/2017 12:34:49,Plywood,Plywood,3 mm,,,,,
+12/6/2017 21:08:10,Plywood,Plywood,5.6 mm,65,15,40,300,0.1
+12/7/2017 19:55:50,Plywood,Plywood,6 mm,80,7.25,55,200,0.1
+12/7/2017 20:22:50,Plywood,Plywood,5 mm,80,7.5,45,200,0.1
+12/7/2017 20:37:21,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,65,12,45,200,1
+12/8/2017 22:41:11,Plywood,Plywood,3 mm,70,15,,,
+12/9/2017 13:31:55,Plywood,Plywood,3 mm,70,19,,,
+12/9/2017 16:48:49,Plywood,Plywood,6 mm,85,7,44,200,0.1
+12/9/2017 17:13:17,Plywood,Plywood,6 mm,85,7,44,200,
+12/9/2017 17:27:35,Plywood,Plywood,6 mm,85,7,44,200,0.4
+12/13/2017 15:37:01,Plywood,Plywood,5 mm,65,10,25,100,0.1
+12/14/2017 22:52:46,Plywood,Plywood,5 mm,,,,,
+12/15/2017 15:17:45,Styrene,Polystyrene,1 mm,60,40,,,
+12/23/2017 10:09:30,cherry veneer mdf,MDF (Medium Density Fibreboard),24 mm,,,,300,
+12/24/2017 20:43:29,Glass,Glass,2 mm,30,250,,,
+12/28/2017 22:09:47,Plywood,Plywood,5 mm,80,8,,,
+1/2/2018 19:58:01,Plywood,Plywood,3 mm,75,15,45,200,0.1
+1/2/2018 20:40:39,Plywood,Plywood,5 mm,85,7,45,200,0.1
+1/2/2018 20:56:17,Plywood,Plywood,6 mm,85,6,45,200,
+1/2/2018 20:59:06,Plywood,Plywood,6 mm,85,7,45,200,0.1
+1/2/2018 21:22:13,Plywood,Plywood,6 mm,82,20,50,200,0.08
+1/2/2018 21:37:11,Plywood,Plywood,3 mm,75,15,40,400,0.1
+1/2/2018 21:44:56,Plywood,Plywood,5 mm,75,15,40,400,0.1
+1/9/2018 08:30:14,Plywood,Plywood,5 mm,85,30,50,200,0.08
+1/9/2018 17:29:56,Plywood,Plywood,6 mm,85,10,50,300,0.13
+1/9/2018 21:24:49,Plywood,Plywood,3 mm,60,15,45,300,0.08
+1/11/2018 21:38:41,hard board,MDF (Medium Density Fibreboard),6 mm,85,3,,,
+1/15/2018 20:02:02,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,80,5,,,
+1/20/2018 13:48:23,Baltic Berch,Plywood,3 mm,85,7,40,200,
+1/20/2018 14:06:08,Baltic Berch,Plywood,3 mm,85,7,45,180,
+1/20/2018 15:31:08,MDF,MDF (Medium Density Fibreboard),3 mm,80,20,,,
+1/20/2018 15:59:32,Baltic Berch,Plywood,3 mm,85,7,45,180,
+1/20/2018 16:53:20,MDF,MDF (Medium Density Fibreboard),3 mm,85,20,,,
+1/20/2018 17:03:21,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+1/20/2018 17:48:45,Plywood,Plywood,3 mm,85,20,,,
+1/31/2018 13:24:58,Plywood,Plywood,5 mm,80,12,,,
+2/2/2018 09:48:41,melamine,Melamine,3 mm,70,10,,,
+2/2/2018 21:43:29,Plywood,Plywood,5 mm,80,30,80,200,
+2/7/2018 12:56:01,Plywood,Plywood,5 mm,85,10,,,
+2/9/2018 20:25:00,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,35,,,
+2/12/2018 20:10:52,Plywood,Plywood,6 mm,80,12,40,200,0.1
+2/12/2018 20:38:11,Plywood,Plywood,6 mm,80,12,25,200,0.15
+2/12/2018 21:24:55,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,20,30,200,0.15
+2/12/2018 21:43:55,Plywood,Plywood,5 mm,80,20,30,200,0.15
+2/14/2018 19:49:45,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,80,12,,,
+2/27/2018 21:15:40,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,80,5,,,
+2/28/2018 21:20:43,MDF,MDF (Medium Density Fibreboard),3 mm,80,20,25,25,
+2/28/2018 21:34:47,MDF,MDF (Medium Density Fibreboard),3 mm,80,20,25,25,
+2/28/2018 21:40:05,MDF,MDF (Medium Density Fibreboard),3 mm,80,20,25,25,
+2/28/2018 22:00:44,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,15,25,25,
+3/1/2018 20:57:20,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,80,5,,,
+3/2/2018 22:18:16,MDF,MDF (Medium Density Fibreboard),3 mm,80,10,,,
+3/5/2018 22:24:19,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,80,5,,,
+3/6/2018 20:48:52,MDF,MDF (Medium Density Fibreboard),3 mm,70,10,,,
+3/7/2018 12:35:14,Plywood,Plywood,5 mm,100,8,,,
+3/7/2018 16:17:10,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,65,15,,,
+3/7/2018 22:05:56,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,90,5,,,
+3/13/2018 17:56:10,Plywood,Plywood,5 mm,75,15,,,
+3/14/2018 10:08:32,Plywood,Plywood,5 mm,100,5,15,5,
+3/14/2018 12:11:53,Plywood,Plywood,5 mm,100,5,15,10,
+3/17/2018 12:06:26,Plywood,Plywood,6 mm,100,4,,,
+3/21/2018 20:06:14,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,90,5,,,
+3/23/2018 11:56:08,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,80,5,,,
+3/27/2018 21:05:08,Acrylic,"Acrylic (Plexiglas, Lucite)",6.5 mm,90,4,,,
+3/27/2018 21:58:27,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,80,20,,,
+3/28/2018 11:33:31,Plywood,Plywood,6 mm,100,8,,,
+3/29/2018 18:35:51,polystyrene,Styrofoam,1 mm,55,30,,,
+4/3/2018 20:53:39,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,,
+4/4/2018 11:55:12,Plywood,Plywood,6 mm,80,8,30,100,0.3
+4/8/2018 20:53:42,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,10,,,
+4/9/2018 12:17:55,Plywood,Plywood,6.35 mm,35,25,35,35,
+4/11/2018 22:04:22,leather,Leather,1.5 mm,1,1,25,120,0.1
+4/12/2018 18:30:59,Fir trim,"Softwood (Balsa, Basswood, Pine)",19 mm,,,35,200,
+4/15/2018 00:48:14,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,50,10,,,
+4/25/2018 11:46:05,Plywood,Plywood,6 mm,80,8,50,300,0.03
+4/25/2018 14:08:32,melamine,Melamine,3 mm,70,10,,,
+4/30/2018 11:35:13,Acrylic,"Acrylic (Plexiglas, Lucite)",5.588 mm,100,10,,,
+5/1/2018 21:47:19,"PETG, Polyester",Cloth,1 mm,60,30,,,
+5/2/2018 13:26:16,Plywood,Plywood,6 mm,80,8,30,300,0.3
+5/2/2018 21:37:33,cardboard,Cardboard (Coorrugated),3 mm,45,25,,,
+5/9/2018 11:36:19,Plywood,Plywood,6 mm,80,8,30,300,0.3
+5/19/2018 22:04:40,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,90,15,45,200,0.1
+5/23/2018 12:26:30,Plywood,Plywood,6 mm,80,8,50,200,0.3
+5/30/2018 12:43:55,Plywood,Plywood,3 mm,80,10,30,200,0.3
+5/31/2018 20:50:36,MDF,MDF (Medium Density Fibreboard),5 mm,70,12,,,
+5/31/2018 21:13:18,solid cherry,"Hardwood (Cherry, Alder, Walnut, Poplar)",9 mm,70,5,,,
+6/2/2018 14:20:23,Plywood,Plywood,10 mm,100,10,,,
+6/3/2018 19:18:26,cardboard,Cardboard (Coorrugated),3 mm,45,35,,,
+6/4/2018 00:06:32,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,100,10,50,50,
+6/4/2018 21:49:08,Plywood,Plywood,3 mm,75,15,45,200,0.15
+6/4/2018 21:55:36,masonite,MDF (Medium Density Fibreboard),3 mm,75,15,45,200,0.15
+6/8/2018 22:02:18,cardboard,Cardboard (Coorrugated),3 mm,45,40,,,
+6/12/2018 20:38:42,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,60,15,,,
+6/13/2018 13:16:31,Plywood,Plywood,3 mm,70,10,30,200,0.3
+6/13/2018 15:24:00,Plywood,Plywood,3 mm,70,15,,,
+6/19/2018 23:27:18,Plywood,Plywood,5 mm,70,10,,,
+6/20/2018 21:12:47,Plywood,Plywood,6 mm,80,10,40,200,0.3
+8/20/2018 19:00:37,Plywood,Plywood,3 mm,70,15,,,
+8/21/2018 20:26:58,melamine,Melamine,3 mm,70,15,,,
+8/22/2018 11:51:22,Plywood,Plywood,4 mm,80,10,40,200,0.3
+8/26/2018 14:09:33,melamine,Melamine,3 mm,70,20,,,
+8/26/2018 21:46:15,melamine,Melamine,3 mm,70,20,,,
+8/28/2018 13:52:26,Plywood,Plywood,6 mm,80,10,40,200,0.3
+8/29/2018 22:43:44,melamine,Melamine,3 mm,75,15,,,
+8/30/2018 18:41:52,Plywood,Plywood,3 mm,80,15,55,300,0.25
+8/31/2018 12:30:20,Plywood,Plywood,6 mm,80,10,,,
+9/4/2018 14:22:12,Plywood,Plywood,12.7 mm,80,4,,,
+9/4/2018 14:23:20,Plywood,Plywood,6.35 mm,65,10,,,
+9/4/2018 16:08:13,Plywood,Plywood,3 mm,,,,,
+9/4/2018 16:10:19,Plywood,Plywood,3 mm,43,20,55,300,0.15
+9/4/2018 21:33:24,Plywood,Plywood,3.175 mm,20,60,,,
+9/6/2018 21:24:38,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,45,8,,,
+9/6/2018 21:42:25,Plywood,Plywood,3 mm,70,15,,,
+9/8/2018 11:58:01,foam board,Foam Core (Non-PVC),4 mm,44,80,30,200,0.3
+9/8/2018 17:38:25,underlayment,Plywood,6.35 mm,75,10,,,
+9/10/2018 21:25:36,Plywood,Plywood,3 mm,70,15,,,
+9/10/2018 21:51:15,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+9/14/2018 10:36:47,Plywood,Plywood,3 mm,80,8,40,200,0.3
+9/18/2018 11:59:36,Plywood,Plywood,4 mm,80,10,40,200,0.2
+9/18/2018 21:07:05,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+9/18/2018 22:02:05,Birch Plywood,Plywood,6 mm,85,8,,,
+9/19/2018 12:04:43,Plywood,Plywood,4 mm,80,10,40,200,0.2
+9/19/2018 20:09:07,Plywood,Plywood,6 mm,87,5,,,
+9/19/2018 20:22:12,Plywood,Plywood,6 mm,90,10,,,
+9/20/2018 19:25:10,Plywood,Plywood,6 mm,87,7,,,
+9/20/2018 20:09:02,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+9/25/2018 13:31:39,Plywood,Plywood,3 mm,80,10,50,175,0.2
+9/26/2018 11:03:18,Plywood,Plywood,4 mm,80,10,50,150,0.2
+10/1/2018 17:06:55,foam board,Foam Core (Non-PVC),4 mm,44,80,25,200,0.3
+10/1/2018 20:29:24,Plywood,Plywood,1.5 mm,77,77,40,150,0.25
+10/2/2018 14:18:41,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,15,,,
+10/2/2018 19:28:22,Basswood,"Softwood (Balsa, Basswood, Pine)",1.5 mm,80,23,,,
+10/3/2018 13:59:05,Plywood,Plywood,12.7 mm,20,20,,,
+10/4/2018 19:30:58,Plywood,Plywood,0.8 mm,80,20,,,
+10/5/2018 22:13:51,Plywood,Plywood,6.35 mm,60,15,,,
+10/8/2018 19:06:04,Plywood,Plywood,6 mm,80,15,,,
+10/15/2018 19:41:46,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,10,,,
+10/26/2018 16:24:21,Plywood,Plywood,0.2 mm,80,10,25,200,
+10/27/2018 11:55:39,Plywood,Plywood,3 mm,80,20,30,200,0.15
+10/30/2018 11:53:20,Plywood,Plywood,3 mm,80,10,40,150,0.2
+10/31/2018 12:01:20,Plywood,Plywood,3 mm,80,10,,,
+10/31/2018 22:44:13,Plywood,Plywood,1 mm,55,20,,,
+11/1/2018 11:46:16,cardboard,Cardboard (Coorrugated),3 mm,45,35,,,
+11/4/2018 15:55:46,Rubber,"Rubber, Rubber Stamp",2 mm,50,15,50,100,0.1
+11/6/2018 11:15:16,Plywood,Plywood,3 mm,80,10,40,150,0.2
+11/10/2018 17:05:55,Acrylic,"Acrylic (Plexiglas, Lucite)",5.588 mm,100,10,,,
+11/19/2018 18:03:19,MDF,MDF (Medium Density Fibreboard),3 mm,75,11,,,
+11/20/2018 13:54:13,Plywood,Plywood,3 mm,80,10,50,200,0.3
+11/20/2018 21:47:41,popsicle,Wood,1 mm,55,20,,,
+11/20/2018 21:49:40,Plywood,Plywood,3 mm,75,15,,,
+11/21/2018 12:47:53,Plywood,Plywood,3 mm,80,10,50,180,0.2
+11/23/2018 15:52:05,foam board,Foam Core (Non-PVC),3 mm,48,80,20,200,0.3
+11/26/2018 15:35:20,Plywood,Plywood,2 mm,70,20,,,
+12/1/2018 17:01:29,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,10,,,
+12/4/2018 21:06:18,Plywood,Plywood,5 mm,45,8,30,250,0.05
+12/5/2018 21:21:51,Plywood,Plywood,5 mm,40,8,,,
+12/6/2018 12:26:15,Plywood,Plywood,3 mm,75,10,30,150,0.3
+12/6/2018 21:14:47,Plywood,Plywood,5 mm,50,6,,,
+12/7/2018 20:57:05,Birch Plywood,Plywood,4.8 mm,80,10,,,
+12/10/2018 21:33:01,Plywood,Plywood,5 mm,50,6,35,55,
+12/11/2018 22:05:30,birch hardwood,Plywood,4.6 mm,80,10,,,
+12/12/2018 16:01:11,Plywood,Plywood,5 mm,50,6,20,30,
+1/3/2019 21:26:55,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,25,10,
+1/10/2019 16:47:54,Plywood,Plywood,4 mm,63,15,,,
+1/10/2019 21:01:24,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,40,8,,,
+1/16/2019 21:16:30,paper backed veneer,Paper,0.5 mm,40,20,30,300,0.1
+1/17/2019 21:05:25,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,30,20,30,300,0.1
+1/17/2019 21:31:28,balsa,"Softwood (Balsa, Basswood, Pine)",1 mm,30,50,,,
+1/17/2019 22:02:27,Plywood,Plywood,5 mm,60,15,,,
+1/20/2019 13:03:23,Plywood,Plywood,4 mm,80,20,70,200,
+1/23/2019 12:10:39,Plywood,Plywood,5 mm,80,7,,,
+1/23/2019 22:33:24,Craft Stick,Wood,1 mm,55,20,,,
+1/24/2019 09:26:00,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,85,10,85,300,.2 and .1
+1/30/2019 17:37:17,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,75,7,50,200,0.1
+1/30/2019 21:25:39,Acrylic,"Acrylic (Plexiglas, Lucite)",3.3 mm,65,20,40,300,0.01
+1/31/2019 22:02:05,Acrylic,"Acrylic (Plexiglas, Lucite)",3.3 mm,80,30,40,300,0.1
+2/6/2019 20:47:24,MDF,MDF (Medium Density Fibreboard),5 mm,80,15,,,
+2/6/2019 23:10:47,foam board,Foam Core (Non-PVC),5 mm,45,80,25,200,0.3
+2/9/2019 15:39:14,thrifty white,MDF (Medium Density Fibreboard),5 mm,75,15,,,
+2/13/2019 22:29:22,melamine,Melamine,5 mm,70,15,,,
+2/13/2019 22:30:52,cardstock 3 sheets,Paper (cardstock),1.5 mm,45,40,,,
+2/17/2019 12:00:49,Plywood,Plywood,5 mm,80,15,,,
+2/18/2019 18:16:27,Plywood,Plywood,6.35 mm,65,10,,,
+2/18/2019 22:25:44,Plywood,Plywood,3 mm,80,10,,,
+2/19/2019 19:20:51,Plywood,Plywood,6.35 mm,65,10,,,
+2/26/2019 21:15:16,Acrylic,"Acrylic (Plexiglas, Lucite)",2.7 mm,70,10,40,150,0.1
+2/26/2019 22:04:56,Plywood,Plywood,6 mm,45,8,,,
+2/27/2019 16:23:53,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,60,8,,,
+2/27/2019 18:55:46,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,60,10,,,
+2/27/2019 20:21:53,Acrylic,"Acrylic (Plexiglas, Lucite)",2.8 mm,80,15,,,
+2/27/2019 21:12:08,Cardboard,Cardboard (Coorrugated),3 mm,50,20,,,
+2/28/2019 15:28:37,Plywood,Plywood,5 mm,35,18,15,200,
+2/28/2019 19:42:29,chalkboard,MDF (Medium Density Fibreboard),6.35 mm,60,10,40,150,0.075
+3/1/2019 00:03:47,Plywood,Plywood,6 mm,60,40,50,250,
+3/1/2019 18:50:30,Plywood,Plywood,6.35 mm,60,10,40,150,0.075
+3/3/2019 11:45:20,Plywood,Plywood,6 mm,80,12,,,
+3/4/2019 14:59:23,Acrylic,"Acrylic (Plexiglas, Lucite)",3.175 mm,80,15,,,
+3/6/2019 11:20:43,Plywood,Plywood,3 mm,80,15,,,
+3/7/2019 20:59:10,Plywood,Plywood,6 mm,75,15,,,
+3/12/2019 18:53:36,MDF,MDF (Medium Density Fibreboard),3 mm,65,15,15,300,
+3/13/2019 01:50:42,Plywood,Plywood,2.8 mm,70,30,,,
+3/17/2019 15:02:44,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,75,15,45,300,0.1
+3/19/2019 17:14:50,Plywood,Plywood,5 mm,70,15,,,
+3/19/2019 20:23:13,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,80,15,,,
+3/20/2019 20:50:06,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,80,15,,,
+3/21/2019 13:45:48,Plywood,Plywood,5 mm,80,12,,,
+3/21/2019 20:30:55,leather,Leather,2.2 mm,,,50,25,
+3/22/2019 13:12:14,Plywood,Plywood,5 mm,70,12,,,
+3/26/2019 16:43:19,Plywood,Plywood,6.35 mm,70,15,,,
+3/26/2019 20:13:06,Plywood,Plywood,3 mm,80,15,,,
+3/28/2019 16:03:37,Plywood,Plywood,4 mm,67,14,30,240,
+4/1/2019 16:54:41,melamine,Melamine,3 mm,75,15,20,80,
+4/5/2019 16:42:47,MDF,MDF (Medium Density Fibreboard),3 mm,75,12,,,
+4/6/2019 09:29:28,MDF,MDF (Medium Density Fibreboard),3 mm,75,13,,,
+4/9/2019 03:52:34,Plywood,Plywood,6.35 mm,70,15,125,30,whatever was defaulted
+4/10/2019 13:56:21,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,45,8,32,100,0.1
+4/11/2019 22:49:08,Plywood,Plywood,5 mm,80,20,,,
+4/12/2019 18:06:00,MDF,MDF (Medium Density Fibreboard),5 mm,80,10,,,
+4/14/2019 19:13:27,Plywood,Plywood,6.35 mm,70,10,,,
+4/15/2019 19:05:39,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,,
+4/16/2019 13:20:11,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,,
+4/17/2019 14:11:10,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,15,,,
+4/17/2019 21:08:06,Plywood,Plywood,5 mm,50,6,20,300,0.05
+4/18/2019 22:01:12,Plywood,Plywood,5 mm,50,6,25,300,0.05
+4/20/2019 13:54:16,Lowe's Blue Insulation Foam,Styrofoam,25 mm,65,40,35,400,0.5
+4/20/2019 17:00:09,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,75,15,,,
+4/23/2019 19:44:15,Plywood,Plywood,5 mm,50,6,25,300,0.05
+4/23/2019 21:54:06,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,75,10,,,
+4/24/2019 15:46:03,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,75,10,,,
+4/28/2019 19:35:56,melamine,Melamine,3 mm,75,15,,,
+4/29/2019 18:02:58,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,,,,,
+4/30/2019 11:49:54,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,10,,,
+4/30/2019 16:35:13,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,,,,,
+5/5/2019 18:19:27,Plywood,Plywood,6.45 mm,75,15,,,
+5/6/2019 19:23:25,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,75,10,70,200,0.1
+5/9/2019 20:12:29,Plywood,Plywood,6.35 mm,15,70,,,
+5/14/2019 12:40:12,Plywood,Plywood,5 mm,80,20,,,
+5/15/2019 14:56:35,MDF,MDF (Medium Density Fibreboard),3 mm,85,10,40,600,0.05
+5/15/2019 15:49:02,Plywood,Plywood,3 mm,75,10,,,
+5/15/2019 22:04:34,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,85,10,,,
+5/16/2019 19:47:36,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,7,,,
+5/17/2019 15:03:13,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,90,8,30,200,0.1
+5/19/2019 18:09:20,Plywood,Plywood,6.35 mm,60,15,,,
+5/20/2019 13:59:39,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,84,14,,,
+5/20/2019 18:44:10,Plywood,Plywood,3 mm,84,12,,,
+5/20/2019 22:55:15,no odor laser rubber,"Rubber, Rubber Stamp",3 mm,,,75,200,0.1
+5/21/2019 17:12:28,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,75,12,,,
+5/22/2019 16:50:03,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,12,,,
+5/26/2019 20:09:25,Plywood,Plywood,6.25 mm,75,15,,,
+5/29/2019 16:47:34,melamine,Melamine,3 mm,80,15,,,
+5/29/2019 22:10:08,Plywood,Plywood,5 mm,50,6,32,450,0.05
+5/30/2019 12:41:24,Plywood,Plywood,0.5 mm,80,25,25,150,
+5/30/2019 17:05:10,Plywood,Plywood,5.2 mm,90,20,50,150,
+5/30/2019 21:38:47,Plywood,Plywood,5.2 mm,90,7,75,400,
+5/31/2019 16:30:29,Hardboard,MDF (Medium Density Fibreboard),18 mm,84,12,,,
+6/1/2019 18:59:47,Plywood,Plywood,6.25 mm,70,35,,,
+6/3/2019 19:46:13,Plywood,Plywood,3 mm,20,50,,,
+6/3/2019 21:56:40,Plywood,Plywood,3 mm,12,50,,,
+6/7/2019 14:09:25,Plywood,Plywood,3 mm,84,14,,,
+6/11/2019 21:29:57,Plywood,Plywood,3 mm,12,50,,,
+6/12/2019 20:18:02,Plywood,Plywood,3 mm,12,50,,,
+6/13/2019 01:52:45,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,85,10,80,250,0.1
+6/13/2019 18:10:42,Plywood,Plywood,6.25 mm,75,15,,,
+6/15/2019 14:14:50,Blue Lowe's XPS,Styrofoam,25 mm,70,35,40,400,0.5
+6/19/2019 13:24:20,Plywood,Plywood,3 mm,12,50,,,
+6/22/2019 19:18:38,Plywood,Plywood,5 mm,75,10,40,300,0.1
+6/26/2019 11:16:58,Plywood,Plywood,3 mm,84,14,,,
+6/26/2019 13:40:01,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,88,300,88,300,
+6/26/2019 16:48:24,Plywood,Plywood,6 mm,85,11,40,300,0.1
+6/28/2019 10:43:56,Plywood,Plywood,1 mm,80,7,,,
+6/29/2019 20:10:20,Plywood,Plywood,3 mm,70,15,35,300,0.1
+6/29/2019 20:13:25,cardboard,Cardboard (Coorrugated),4 mm,45,25,,,
+6/30/2019 16:42:01,melamine,Melamine,3 mm,75,15,,,
+7/1/2019 22:02:53,MDF,MDF (Medium Density Fibreboard),3 mm,100,100,,,
+7/6/2019 14:03:11,Blue Lowe's XPS,Styrofoam,24 mm,70,35,40,400,0.1
+7/6/2019 22:09:34,melamine,Melamine,3 mm,75,15,,,
+7/7/2019 17:59:13,Plywood,Plywood,6.35 mm,70,15,,,
+7/10/2019 19:55:24,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,90,10,,,
+7/13/2019 17:00:50,Lowe's Blue Insulation Foam,Styrofoam,26 mm,70,35,38,400,0.5
+7/20/2019 20:20:46,MDF,MDF (Medium Density Fibreboard),1 mm,70,20,,,
+7/30/2019 21:25:12,Plywood,Plywood,6 mm,80,10,45,300,0.1
+8/1/2019 22:35:25,MDF,MDF (Medium Density Fibreboard),4 mm,80,12,,,
+8/1/2019 22:38:41,Plywood,Plywood,6.35 mm,80,3,20,100,
+8/1/2019 23:10:08,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,100,30,30,300,0.08
+8/7/2019 10:57:02,Plywood,Plywood,3 mm,84,14,,,
+8/7/2019 14:50:48,MDF,MDF (Medium Density Fibreboard),3 mm,40,12,,,
+8/9/2019 21:02:26,Plywood,Plywood,3 mm,65,25,,,
+8/12/2019 19:37:55,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,20,,,
+8/12/2019 21:51:57,Plywood,Plywood,3 mm,12,50,,,
+8/12/2019 21:57:21,Silicone and Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,50,20,30,250,standard
+8/13/2019 19:39:28,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,20,,,
+8/14/2019 20:08:26,Plywood,Plywood,3 mm,84,14,,,
+8/16/2019 11:32:44,Plywood,Plywood,3 mm,84,14,,,
+8/16/2019 20:15:52,foam board (styrene),Foam Core (Non-PVC),5 mm,45,80,,,
+8/16/2019 21:14:20,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,80,15,,,
+8/17/2019 13:50:32,Plywood,Plywood,10 mm,,,80,300,0.1
+8/18/2019 17:04:21,Plywood,Plywood,6.25 mm,75,20,,,
+8/18/2019 19:14:52,"Acrylic, Rubber, Silicone","Rubber, Rubber Stamp",3 mm,50,15,70,400,
+8/21/2019 11:21:39,Plywood,Plywood,3 mm,84,14,35,200,0.1
+8/22/2019 12:04:08,Plywood,Plywood,3 mm,84,14,,,
+8/22/2019 21:57:05,Plywood,Plywood,6.2 mm,80,4,,,
+8/23/2019 13:06:15,Plywood,Plywood,3 mm,84,14,,,
+8/23/2019 19:57:36,Plywood,Plywood,3 mm,80,20,40,250,
+8/24/2019 00:30:24,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,100,5,50,100,0.2
+8/26/2019 19:44:25,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,85,20,,,
+8/26/2019 20:49:21,Hardwood Oak,"Hardwood (Cherry, Alder, Walnut, Poplar)",15 mm,,,50,100,0.1
+8/27/2019 23:44:08,Plywood,Plywood,3 mm,85,20,50,100,
+8/28/2019 10:03:07,Plywood,Plywood,3 mm,84,14,,,
+8/29/2019 21:12:37,Plywood,Plywood,4 mm,70,20,40,300,0.1
+8/29/2019 21:18:17,Plywood,Plywood,4 mm,70,20,40,300,0.1
+8/29/2019 21:20:04,Plywood,Plywood,4 mm,70,20,40,300,1
+8/29/2019 21:21:43,MDF,MDF (Medium Density Fibreboard),4 mm,70,20,40,300,0.1
+8/30/2019 12:07:08,Plywood,Plywood,3 mm,84,14,30,200,0.2
+9/2/2019 20:02:58,Plywood,Plywood,4 mm,70,20,40,300,0.1
+9/2/2019 21:17:28,XLPE,OTHER,11 mm,40,14,40,200,
+9/2/2019 22:22:01,Plywood,Plywood,3 mm,60,20,30,200,
+9/4/2019 21:20:19,Plywood,Plywood,5 mm,70,15,35,300,0.1
+9/5/2019 21:45:30,glass,Glass,3 mm,,,30,200,0.8
+9/6/2019 11:03:33,Plywood,Plywood,3 mm,84,14,,,
+9/6/2019 20:23:30,Plywood,Plywood,3 mm,80,10,30,200,0.1
+9/12/2019 18:57:29,Plywood,Plywood,4 mm,84,13,22,200,0.08
+9/17/2019 00:55:31,paper,Paper,0.3 mm,30,30,,,
+9/18/2019 10:55:26,Plywood,Plywood,3 mm,84,14,,,
+9/19/2019 22:10:27,both acrylic and plywood,"Acrylic (Plexiglas, Lucite)",3 mm,60,20,30,200,
+9/21/2019 12:47:27,Blue Lowe's XPS,Styrofoam,26 mm,70,35,30,300,0.01
+9/23/2019 22:01:41,Acrylic,"Acrylic (Plexiglas, Lucite)",4.5 mm,70,9,,,
+9/25/2019 11:36:27,Plywood,Plywood,3 mm,85,14,25,150,0.15
+9/28/2019 12:52:00,Acrylic,"Acrylic (Plexiglas, Lucite)",4.5 mm,70,9,,,
+9/29/2019 18:08:29,PETG,OTHER,1 mm,45,25,,,
+10/2/2019 12:32:07,Plywood,Plywood,3 mm,84,14,40,200,0.15
+10/2/2019 19:37:04,cardboard,Cardboard (Coorrugated),5 mm,80,30,,,
+10/2/2019 21:23:36,Plywood,Plywood,3 mm,100,6,,,
+10/4/2019 13:23:50,Acrylic,"Acrylic (Plexiglas, Lucite)",0.188 mm,,,,,
+10/7/2019 19:20:10,Plywood,Plywood,3 mm,70,14,40,200,0.3
+10/8/2019 18:38:51,Plywood,Plywood,3 mm,45,23,,,
+10/9/2019 11:04:40,Plywood,Plywood,3 mm,60,20,,,
+10/9/2019 12:25:09,Plywood,Plywood,3 mm,84,14,25,150,0.15
+10/10/2019 00:28:58,Laser Safe Stamp Rubber,"Rubber, Rubber Stamp",3 mm,85,20,24,70,0.1
+10/10/2019 20:44:00,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,20,,,
+10/11/2019 02:19:14,Blue Lowe's XPS,Styrofoam,26 mm,70,35,36,400,0.5
+10/14/2019 21:26:40,Cardboard,Cardboard (Coorrugated),1 mm,50,20,,,
+10/16/2019 21:53:13,MDF,MDF (Medium Density Fibreboard),1.5 mm,70,60,,,
+10/18/2019 15:07:08,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,85,8,25,190,0.15
+10/18/2019 21:50:51,Plywood,Plywood,3.3 mm,60,20,,,
+10/19/2019 19:30:34,Plywood,Plywood,3 mm,75,10,25,200,0.08
+10/21/2019 21:53:00,Acrylic,"Acrylic (Plexiglas, Lucite)",2.5 mm,70,300,,,
+10/22/2019 20:20:29,Bamboo,Wood,7 mm,25,25,,,
+10/25/2019 20:24:08,Plywood,Plywood,3.175 mm,75,25,15,30,
+10/25/2019 20:27:08,Plywood,Plywood,3.175 mm,75,25,15,30,
+10/25/2019 20:30:57,Plywood,Plywood,3.175 mm,75,25,15,30,
+10/28/2019 21:14:27,Plywood,Plywood,6 mm,85,7,40,150,0.15
+10/28/2019 22:01:47,Plywood,Plywood,6 mm,85,7,40,200,0.15
+10/28/2019 22:04:26,feldt,Cloth,0.01 mm,22.5,300,22.5,300,
+10/29/2019 21:57:32,feldt,Cloth,1 mm,80,10,20,300,
+10/30/2019 13:33:23,MDF,MDF (Medium Density Fibreboard),6 mm,70,10,12,50,
+10/31/2019 23:10:47,Plywood,Plywood,6 mm,70,8,,,
+11/1/2019 23:08:45,Plywood,Plywood,3 mm,70,20,,,
+11/2/2019 15:43:02,Plywood,Plywood,5 mm,75,20,,,
+11/5/2019 21:51:02,MDF,MDF (Medium Density Fibreboard),6 mm,70,8,16,50,
+11/6/2019 13:49:48,MDF,MDF (Medium Density Fibreboard),6 mm,70,9,16,50,
+11/7/2019 08:58:28,MDF,MDF (Medium Density Fibreboard),3 mm,50,15,,,
+11/7/2019 19:50:24,Plywood,Plywood,3 mm,70,20,45,300,0.1
+11/7/2019 20:34:03,Plywood,Plywood,4 mm,40,17,30,60,20
+11/7/2019 20:58:41,Plywood,Plywood,3 mm,70,20,40,300,
+11/7/2019 21:00:33,Plywood,Plywood,3 mm,70,20,30,300,0.1
+11/7/2019 21:05:15,Plywood,Plywood,3 mm,40,300,40,300,
+11/7/2019 22:17:24,Plywood,Plywood,3 mm,70,20,45,300,0.1
+11/10/2019 17:10:38,Plywood,Plywood,2.5 mm,60,15,,,
+11/10/2019 18:04:02,Plywood,Plywood,5 mm,75,20,,,
+11/11/2019 22:31:42,Plywood,Plywood,1 mm,15,30,,,
+11/12/2019 21:34:18,MDF,MDF (Medium Density Fibreboard),6 mm,75,9,12,50,
+11/13/2019 14:12:45,Acrylic,"Acrylic (Plexiglas, Lucite)",12 mm,75,8,60,200,
+11/13/2019 14:41:55,Acrylic,"Acrylic (Plexiglas, Lucite)",12 mm,75,8,60,200,
+11/14/2019 14:31:36,cardboard,Cardboard (Coorrugated),3 mm,45,25,,,
+11/14/2019 15:07:27,Plywood,Plywood,5 mm,75,12,,,
+11/14/2019 21:19:39,MDF,MDF (Medium Density Fibreboard),6 mm,70,9,12,50,
+11/16/2019 21:55:08,Plywood,Plywood,5.8 mm,70,10,,,
+11/18/2019 20:20:45,Plywood,Plywood,1 mm,15,30,,,
+11/18/2019 21:39:10,Plywood,Plywood,6 mm,75,9,14,50,
+11/18/2019 22:01:05,Plywood,Plywood,3 mm,15,30,20,200,0.1
+11/19/2019 21:43:00,Plywood,Plywood,6 mm,75,8,13,50,
+11/20/2019 14:01:01,Plywood,Plywood,6 mm,75,9,13,50,
+11/20/2019 21:23:08,Acrylic,"Acrylic (Plexiglas, Lucite)",2.5 mm,40,10,,,
+11/20/2019 22:09:00,Acrylic,"Acrylic (Plexiglas, Lucite)",4.4 mm,40,10,50,200,
+11/21/2019 21:34:34,Plywood,Plywood,6.35 mm,100,10,,,
+11/25/2019 13:43:24,Plywood,Plywood,5 mm,65,15,,,
+11/25/2019 18:13:00,Plywood,Plywood,5 mm,65,15,10,200,0.1
+11/26/2019 21:12:47,Plywood,Plywood,4.7 mm,95,10,,,
+11/26/2019 23:20:01,Plywood,Plywood,6 mm,90,10,35,300,"0.5, 0.4, 0.3"
+11/27/2019 13:46:51,Plywood,Plywood,3 mm,84,14,25,150,0.15
+11/29/2019 16:42:52,cardboard,Cardboard (Coorrugated),3 mm,45,35,,,
+12/1/2019 14:30:47,MDF,MDF (Medium Density Fibreboard),4 mm,80,20,,,
+12/2/2019 20:22:47,MDF,MDF (Medium Density Fibreboard),6 mm,80,8,12,50,
+12/2/2019 22:43:31,Plywood,Plywood,3 mm,60,20,23,200,
+12/3/2019 01:02:01,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,15,,,
+12/5/2019 20:05:45,Plywood,Plywood,5 mm,67,14,,,
+12/5/2019 20:40:31,Plywood,Plywood,6 mm,67,12,,,
+12/5/2019 22:17:24,Plywood,Plywood,3 mm,60,20,23,200,
+12/6/2019 22:21:41,Plywood,Plywood,3 mm,,16,,,
+12/8/2019 16:05:09,cardboard,Cardboard (Coorrugated),3 mm,45,35,,,
+12/10/2019 19:35:09,Plywood,Plywood,3 mm,75,16,50,300,
+12/10/2019 19:55:19,Plywood,Plywood,5 mm,75,10,,,
+12/10/2019 20:16:16,Plywood,Plywood,6 mm,80,8,,,
+12/10/2019 21:12:06,MDF,MDF (Medium Density Fibreboard),6 mm,80,8,12,50,
+12/10/2019 22:34:36,Plywood,Plywood,3 mm,75,16,50,300,
+12/11/2019 03:08:36,Plywood,Plywood,3 mm,80,15,50,300,
+12/11/2019 11:04:07,Plywood,Plywood,3 mm,84,14,30,150,0.15
+12/11/2019 17:54:36,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,85,5,,,
+12/14/2019 16:43:01,Plywood,Plywood,3.3 mm,70,12,,,
+12/14/2019 21:28:17,Plywood,Plywood,4 mm,79,10,,,
+12/15/2019 14:46:11,Plywood,Plywood,0.25 mm,90,15,,,
+12/16/2019 18:21:31,Plywood,Plywood,5 mm,67,14,,,
+12/16/2019 20:03:39,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,10,,,
+12/16/2019 20:33:54,MDF,MDF (Medium Density Fibreboard),6 mm,100,20,70,300,
+12/17/2019 21:25:28,MDF,MDF (Medium Density Fibreboard),6 mm,80,8,11,60,
+12/18/2019 12:17:39,Plywood,Plywood,3 mm,60,10,,,
+12/18/2019 12:51:57,cardboard,Cardboard (Coorrugated),3 mm,45,35,,,
+12/18/2019 14:21:27,MDF,MDF (Medium Density Fibreboard),6 mm,80,8,11,60,
+12/18/2019 17:07:27,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,30,15,,,
+12/18/2019 21:58:35,MDF,MDF (Medium Density Fibreboard),6 mm,80,8,11,50,
+12/19/2019 17:00:08,cardboard,Cardboard (Coorrugated),3 mm,45,35,,,
+12/19/2019 21:12:26,Plywood,Plywood,4 mm,70,10,75,200,
+12/22/2019 18:54:57,Plywood,Plywood,4 mm,90,10,20,30,0.1
+12/23/2019 20:52:37,MDF,MDF (Medium Density Fibreboard),6 mm,100,10,40,280,0.2
+12/30/2019 13:13:13,Cardboard,Cardboard (Coorrugated),3 mm,36,30,,,
+12/30/2019 18:04:50,Plywood,Plywood,5 mm,50,15,,,
+1/2/2020 18:33:55,Plywood,Plywood,3 mm,62,22,,,
+1/2/2020 20:57:45,Plywood,Plywood,3 mm,93,10,40,300,0.1
+1/2/2020 21:01:45,Plywood,Plywood,3 mm,93,10,45,300,0.1
+1/2/2020 21:05:07,Plywood,Plywood,3 mm,,,,,
+1/2/2020 21:07:20,Plywood,Plywood,3 mm,12,10,,,
+1/3/2020 07:31:44,Plywood,Plywood,6 mm,70,7.5,,,
+1/3/2020 12:20:47,Plywood,Plywood,3 mm,84,14,25,150,0.15
+1/3/2020 16:31:45,melamine,Melamine,3 mm,75,15,,,
+1/3/2020 21:12:29,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,15,,,
+1/4/2020 12:11:50,Plywood,Plywood,5 mm,67,12,,,
+1/4/2020 16:11:53,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,70,5,,,
+1/4/2020 20:29:42,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,70,10,,,
+1/6/2020 19:26:12,Plywood,Plywood,3 mm,,,40,300,0.1
+1/6/2020 21:33:10,MDF,MDF (Medium Density Fibreboard),6 mm,11,60,,,
+1/6/2020 22:06:49,MDF,MDF (Medium Density Fibreboard),6 mm,11,60,,,
+1/7/2020 17:32:36,Plywood,Plywood,4 mm,70,10,40,300,
+1/7/2020 20:59:11,MDF,MDF (Medium Density Fibreboard),6 mm,11,90,,,
+1/7/2020 22:24:08,MDF,MDF (Medium Density Fibreboard),10 mm,80,10,,,
+1/8/2020 12:07:36,Plywood,Plywood,3 mm,80,20,,,
+1/8/2020 13:50:56,Plywood,Plywood,3 mm,65,22,,,
+1/8/2020 22:02:34,Plywood,Plywood,3 mm,70,25,30,300,
+1/8/2020 22:05:23,Plywood,Plywood,3 mm,70,25,30,300,
+1/8/2020 22:07:26,Plywood,Plywood,3 mm,70,25,30,300,0.1
+1/8/2020 22:08:51,Plywood,Plywood,3 mm,70,25,30,300,
+1/8/2020 22:10:28,Plywood,Plywood,3 mm,70,25,45,300,0.1
+1/9/2020 17:43:12,Plywood,Plywood,5 mm,80,10,,,
+1/9/2020 22:04:04,MDF,MDF (Medium Density Fibreboard),10 mm,80,8,,,
+1/10/2020 13:21:31,melamine,Melamine,3 mm,75,15,,,
+1/10/2020 23:03:13,Plywood,Plywood,6 mm,70,8,,,
+1/11/2020 20:47:43,Plywood,Plywood,4 mm,65,15,60,300,
+1/13/2020 13:46:55,Plywood,Plywood,3 mm,67,22,,,
+1/13/2020 21:11:48,MDF,MDF (Medium Density Fibreboard),6 mm,11,120,,,
+1/14/2020 17:16:37,walnut,"Hardwood (Cherry, Alder, Walnut, Poplar)",7 mm,65,5,,,
+1/14/2020 17:21:08,Plywood,Plywood,4 mm,60,15,,,
+1/14/2020 21:12:39,MDF,MDF (Medium Density Fibreboard),6 mm,11,100,,,
+1/15/2020 11:26:34,Plywood,Plywood,6 mm,86,9,,,
+1/15/2020 21:00:07,MDF,MDF (Medium Density Fibreboard),6 mm,11,120,,,
+1/16/2020 17:10:58,Plywood,Plywood,3 mm,36,22,,,
+1/17/2020 15:59:41,Birch Plywood,Plywood,5.2 mm,80,10,,,
+1/18/2020 13:18:28,Blue Lowe's XPS Foam,Styrofoam,27 mm,75,35,35,400,0.1
+1/18/2020 14:23:32,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,80,20,,,
+1/18/2020 20:19:28,Plywood,Plywood,3 mm,65,20,,,
+1/20/2020 21:05:20,Plywood,Plywood,5.5 mm,70,15,30,300,
+1/20/2020 22:00:03,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,,,,,
+1/21/2020 14:15:01,Plywood,Plywood,3 mm,75,30,,,
+1/22/2020 11:43:49,Plywood,Plywood,3 mm,86,14,,,
+1/22/2020 21:06:24,Plywood,Plywood,3 mm,12,60,65,20,
+1/23/2020 11:33:07,Plywood,Plywood,3 mm,65,20,30,300,0.08
+1/23/2020 13:48:59,Plywood,Plywood,5 mm,75,12,,,
+1/23/2020 22:09:07,Plywood,Plywood,6.35 mm,80,11,,,
+1/23/2020 23:53:11,Acrylic,"Acrylic (Plexiglas, Lucite)",12 mm,75,8,,,
+1/24/2020 10:37:43,Plywood,Plywood,3 mm,86,14,,,
+1/24/2020 21:28:56,Acrylic,"Acrylic (Plexiglas, Lucite)",12 mm,65,15,,,
+1/25/2020 22:55:16,Plywood,Plywood,3 mm,70,25,30,400,0.1
+1/27/2020 12:31:35,Plywood,Plywood,3 mm,67,22,,,
+1/28/2020 13:27:05,Plywood,Plywood,4 mm,65,20,40,300,
+1/28/2020 17:30:28,Plywood,Plywood,3 mm,67,22,,,
+1/28/2020 21:37:42,Plywood,Plywood,3 mm,60,12,40,,
+1/28/2020 22:03:59,Plywood,Plywood,1 mm,55,20,,,
+1/28/2020 22:06:33,Acrylic,"Acrylic (Plexiglas, Lucite)",1.5 mm,40,10,,,
+1/29/2020 14:24:48,Plywood,Plywood,5.2 mm,90,10,,,
+1/31/2020 21:13:59,walnut MDF,MDF (Medium Density Fibreboard),12 mm,,,40,300,
+2/2/2020 09:46:45,Plywood,Plywood,3 mm,67,22,,,
+2/2/2020 10:14:09,Plywood,Plywood,3 mm,67,22,,,
+2/2/2020 18:15:30,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,75,10,45,300,0.1
+2/3/2020 18:17:37,Plywood,Plywood,3 mm,75,20,,,
+2/3/2020 21:36:32,Acrylic,"Acrylic (Plexiglas, Lucite)",1 mm,,,,,
+2/5/2020 15:04:04,Plywood,Plywood,5 mm,100,8,,,
+2/5/2020 23:29:13,Plywood,Plywood,5 mm,20,75,,,
+2/6/2020 23:18:28,Plywood,Plywood,5 mm,90,12,,,
+2/7/2020 12:01:16,Plywood,Plywood,3 mm,86,14,,,
+2/9/2020 18:23:12,masonite,MDF (Medium Density Fibreboard),3 mm,85,10,,,
+2/10/2020 17:37:21,Plywood,Plywood,3 mm,67,22,30,250,0.1
+2/11/2020 05:13:20,Mat board,Mat Board,1.3 mm,60,20,,,
+2/11/2020 13:51:37,Plywood,Plywood,3 mm,65,,,,
+2/11/2020 21:23:42,fabric,Cloth,1 mm,30,30,,,
+2/12/2020 05:00:53,Mat board,Mat Board,1.3 mm,60,20,,,
+2/12/2020 21:45:05,Acrylic,"Acrylic (Plexiglas, Lucite)",12 mm,65,15,,,
+2/14/2020 11:31:54,Plywood,Plywood,3 mm,85,14,,,
+2/15/2020 02:35:44,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,95,7,30,300,0.09
+2/17/2020 04:39:13,Paper Mat,Paper,1.3 mm,60,25,,,
+2/17/2020 15:49:16,cardboard,Cardboard (Coorrugated),3 mm,45,40,,,
+2/18/2020 12:16:20,Plywood,Plywood,3 mm,70,20,70,20,0.08
+2/18/2020 20:37:57,Acrylic,"Acrylic (Plexiglas, Lucite)",5.8 mm,80,5,,,
+2/18/2020 21:01:45,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,70,10,,,
+2/19/2020 04:09:38,Paper Mat board,Mat Board,1.3 mm,60,25,,,
+2/19/2020 15:10:07,Plywood,Plywood,3 mm,67,22,,,
+2/19/2020 22:07:30,Plywood,Plywood,3.8 mm,80,50,30,100,
+2/19/2020 22:53:33,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,60,15,,,
+2/20/2020 23:17:00,melamine,Melamine,3 mm,75,15,,,
+2/21/2020 10:43:26,Plywood,Plywood,3 mm,85,14,,,
+2/21/2020 20:21:31,Plywood,Plywood,5 mm,90,3,,,
+2/22/2020 13:40:59,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,45,6,80,150,0.09
+2/22/2020 21:50:15,Plywood,Plywood,3 mm,70,20,,,
+2/23/2020 19:16:29,Plywood,Plywood,1.5 mm,70,15,,,
+2/24/2020 22:06:02,Plywood,Plywood,3 mm,70,15,,,
+2/24/2020 22:14:26,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,80,5,,,
+2/25/2020 21:32:44,Plywood,Plywood,1.5 mm,75,40,,,
+2/26/2020 11:33:03,Plywood,Plywood,3 mm,85,15,,,
+2/26/2020 13:36:18,MDF,MDF (Medium Density Fibreboard),6 mm,86,5,40,600,0.08
+2/26/2020 15:11:05,Plywood,Plywood,3 mm,67,22,,,
+2/27/2020 13:36:04,Plywood,Plywood,3 mm,86,16,,,
+2/27/2020 19:47:51,Acrylic,"Acrylic (Plexiglas, Lucite)",3 mm,65,8,,,
+2/28/2020 13:25:17,coroplast,OTHER,2 mm,90,30,,,
+2/29/2020 23:08:58,Plywood,Plywood,3 mm,85,15,,,
+3/1/2020 10:05:31,Plywood,Plywood,3 mm,67,22,,,
+3/3/2020 21:05:58,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,80,5,,,
+3/3/2020 21:06:55,Acrylic,"Acrylic (Plexiglas, Lucite)",2.2 mm,80,15,,,
+3/4/2020 10:29:25,Plywood,Plywood,3 mm,86,16,,,
+3/4/2020 14:23:47,Plywood,Plywood,3 mm,70,20,,,
+3/5/2020 00:21:34,Plywood,Plywood,3 mm,80,17,,,
+3/5/2020 12:54:42,Plywood,Plywood,3 mm,,3,25,600,0.1
+3/5/2020 20:45:30,Plywood,Plywood,6.35 mm,70,70,,,
+3/6/2020 21:22:20,Plywood,Plywood,6 mm,80,8,,,
+3/7/2020 09:25:11,melamine,Melamine,3 mm,85,10,,,
+3/8/2020 15:57:59,Plywood,Plywood,6 mm,,,,,
+3/8/2020 17:42:30,Plywood,Plywood,3 mm,70,20,50,300,0.1
+3/8/2020 17:43:53,Plywood,Plywood,3 mm,70,20,50,300,0.15
+3/8/2020 17:47:38,Plywood,Plywood,4 mm,70,20,50,300,0.1
+3/8/2020 17:49:15,Plywood,Plywood,3 mm,300,20,50,70,0.1
+3/8/2020 17:52:58,Plywood,Plywood,3 mm,70,20,50,300,0.1
+3/8/2020 17:58:14,Plywood,Plywood,3 mm,70,20,50,300,.1mm
+3/8/2020 18:00:34,Plywood,Plywood,3 mm,70,20,50,300,
+3/9/2020 12:54:12,Plywood,Plywood,3 mm,72,20,,,
+3/9/2020 17:58:31,Plywood,Plywood,6 mm,80,8,,,
+3/10/2020 13:52:59,Plywood,Plywood,3 mm,70,17,,,
+3/10/2020 20:02:03,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,80,20,40,250,0.05
+3/10/2020 21:53:06,Acrylic,"Acrylic (Plexiglas, Lucite)",2 mm,80,20,40,250,0.05
+3/11/2020 21:45:01,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,80,150,,,
+3/13/2020 14:53:34,Acrylic,"Acrylic (Plexiglas, Lucite)",6 mm,65,8,,,
+3/13/2020 16:53:56,Plywood,Plywood,3 mm,80,19,,,
+3/15/2020 18:44:54,Plywood,Plywood,3 mm,50,23,,,
+3/17/2020 13:18:16,Acrylic,"Acrylic (Plexiglas, Lucite)",5 mm,100,8,,,
+3/27/2020 17:11:00,"PETG clear .063""",OTHER,1.6 mm,80,10,,,
+4/2/2020 08:47:09,Acrylic,"Acrylic (Plexiglas, Lucite)",4.5 mm,90,10,,,
+4/3/2020 09:35:28,Acrylic,"Acrylic (Plexiglas, Lucite)",4.5 mm,90,10,,,
+4/4/2020 17:45:53,Acrylic,"Acrylic (Plexiglas, Lucite)",4.5 mm,90,10,,,
+4/17/2020 16:20:53,Plywood,Plywood,6.35 mm,90,8,,,
+4/19/2020 02:12:33,PETG,OTHER,0.3 mm,60,80,,,
+4/22/2020 05:56:54,PET,OTHER,0.3 mm,65,90,,,
+5/1/2020 20:45:28,Plywood,Plywood,3 mm,73,14,25,250,0.15
+5/4/2020 16:15:19,Plywood,Plywood,6.25 mm,85,8,,,
+5/5/2020 02:57:07,foam board,Foam Core (Non-PVC),3 mm,45,80,,,
+5/6/2020 04:10:43,PETG,OTHER,0.03 mm,85,60,,,
+5/6/2020 11:37:38,Plywood,Plywood,3 mm,86,14,40,250,0.15
+5/6/2020 14:25:13,Plywood,Plywood,6.25 mm,,,,,
+5/6/2020 22:36:44,Plywood,Plywood,6.25 mm,90,10,,,
+5/19/2020 18:36:54,Acrylic,"Acrylic (Plexiglas, Lucite)",4 mm,60,15,,,
+5/25/2020 12:39:21,Plywood,Plywood,6.25 mm,90,6,,,
+6/9/2020 11:50:09,Plywood,Plywood,3 mm,86,14,35,300,0.1
+6/9/2020 17:02:17,Plywood,Plywood,6.25 mm,,,,,
+6/9/2020 20:56:57,Plywood,Plywood,6.25 mm,,,,,
+6/9/2020 20:59:42,Plywood,Plywood,6 mm,90,5,,,
+6/17/2020 03:20:05,Plywood,Plywood,6 mm,75,10,40,400,0.15
+6/18/2020 22:50:08,Plywood,Plywood,6 mm,75,10,45,400,0.15
+6/19/2020 18:49:25,Plywood,Plywood,6 mm,75,10,45,400,0.15
+6/20/2020 10:11:29,Plywood,Plywood,3 mm,85,14,400,40,0.1
+6/20/2020 12:55:58,Plywood,Plywood,6 mm,20,10,,,
+6/20/2020 17:55:38,wood,Wood,1 mm,50,200,50,280,0.03
