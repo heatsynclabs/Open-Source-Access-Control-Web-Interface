@@ -55,9 +55,30 @@ module Analytics
       held.group_by_period(@period.unit, :held_on, range: @period.dates).sum(:dollars).transform_values(&:to_f)
     end
 
-    # When the guestlist data was last loaded.
-    def loaded_on
-      TicketedEvent.maximum(:updated_at)&.to_date
+    # Per year: held events, people, check-ins, money and events not
+    # counted. [{ year:, events:, people:, checkin_events:, checkin_people:, came:, dollars:, not_counted: }]
+    def by_year
+      held_rows = held.group(Arel.sql("EXTRACT(YEAR FROM held_on)::int")).pluck(
+        Arel.sql("EXTRACT(YEAR FROM held_on)::int"), Arel.sql("COUNT(*)"), Arel.sql("SUM(attendees)"),
+        Arel.sql("COUNT(*) FILTER (WHERE checked_in > 0)"), Arel.sql("COALESCE(SUM(attendees) FILTER (WHERE checked_in > 0), 0)"),
+        Arel.sql("SUM(checked_in)"), Arel.sql("SUM(dollars)")
+      )
+      others = TicketedEvent.where(held_on: @period.dates).where.not(status: ["held", "upcoming"])
+        .group(Arel.sql("EXTRACT(YEAR FROM held_on)::int")).count
+      held_rows.map do |year, events, people, checkin_events, checkin_people, came, dollars|
+        { year: year, events: events, people: people, checkin_events: checkin_events, checkin_people: checkin_people,
+          came: came, dollars: dollars.to_f, not_counted: others.fetch(year, 0) }
+      end.sort_by { |row| -row[:year] }
+    end
+
+    # Every event in the period, newest first, whatever its status.
+    def events(limit = 400)
+      TicketedEvent.where(held_on: @period.dates).order(held_on: :desc, id: :desc).limit(limit)
+    end
+
+    # When the numbers were last read from guestlist, by source.
+    def collected
+      TicketedEvent.collected
     end
 
     private

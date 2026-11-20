@@ -1,0 +1,38 @@
+<div class="section-head"><p class="eyebrow">Members</p><h2>Joining and staying</h2></div>
+<div class="grid two">
+  <%= render ChartCardComponent.new(title: "Signups", note: "New accounts on the members site.", rows: by_bucket(@members[:signups], @period), columns: ["When", "Signups"]) do %>
+    <%= column_chart by_bucket(@members[:signups], @period) %>
+  <% end %>
+
+  <section class="card">
+    <h3>From signup to card</h3>
+    <p class="note">People who signed up in the last <%= @period.label.downcase %>, and how many reached each step since.</p>
+    <% first = @members[:funnel].values.first %>
+    <div class="funnel">
+      <% @members[:funnel].each do |step, count| %>
+        <div class="funnel-step">
+          <span><%= step %></span>
+          <span class="bar" role="presentation"><span style="--v: <%= share(count, first) %>"></span></span>
+          <span class="value"><%= count %></span>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <%= render ChartCardComponent.new(title: "Orientations, waivers and tool checkouts", rows: nil) do %>
+    <%= line_chart [
+          { name: "Orientations", data: by_bucket(@members[:orientations], @period) },
+          { name: "Waivers signed", data: by_bucket(@members[:waivers], @period) },
+          { name: "Certifications", data: by_bucket(@members[:certifications], @period) },
+        ], curve: false, points: false %>
+  <% end %>
+
+  <%= render ChartCardComponent.new(title: "Member levels now", note: "Everyone on a member level today, whether or not they are paid up.", rows: @members[:level_mix], columns: ["Level", "Members"]) do %>
+    <%= bar_chart @members[:level_mix] %>
+  <% end %>
+</div>
+
+<section class="card">
+  <h3>Most granted certifications</h3>
+  <%= render "bar_list", rows: @members[:top_certifications], empty: "No certifications granted in this period." %>
+</section>

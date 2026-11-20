@@ -1,0 +1,36 @@
+<% if @classes %>
+  <div class="section-head"><p class="eyebrow">Classes</p><h2>Who signs up</h2></div>
+  <p class="msg info"><%= classes_collection_note(@classes[:collected]) %></p>
+  <div class="tiles">
+    <%= render StatTileComponent.new(value: @classes[:events], label: "Classes and workshops held", sub: "With sign-ups on guestlist") %>
+    <%= render StatTileComponent.new(value: number_with_delimiter(@classes[:attendees]), label: "People signed up", sub: @period.label) %>
+    <% if @classes[:show_up] %>
+      <%= render StatTileComponent.new(value: number_to_percentage(@classes[:show_up][:rate] * 100, precision: 0), label: "Showed up", sub: "At the #{pluralize(@classes[:show_up][:events], "event")} that checked people in") %>
+    <% end %>
+    <% if @class_money %>
+      <%= render StatTileComponent.new(value: number_to_currency(@class_money[:total], precision: 0), label: "Collected for classes", sub: "Before refunds and fees") %>
+    <% end %>
+    <% if @section == "all" %>
+      <%= render StatTileComponent.new(value: "More", label: "Every class, by year", sub: "Show-up, money and each event", href: analytics_path(period: @period.key, section: "classes")) %>
+    <% end %>
+  </div>
+  <%= render ChartCardComponent.new(title: "People signed up per #{@period.unit}", note: classes_note(@classes), rows: by_bucket(@classes[:by_period], @period), columns: ["When", "People"]) do %>
+    <%= column_chart by_bucket(@classes[:by_period], @period) %>
+  <% end %>
+  <div class="grid two">
+    <%= render ChartCardComponent.new(title: "Sign-ups by kind of class", note: "Kinds are read from the event name, so they are approximate.", rows: @classes[:by_kind], columns: ["Kind", "People"]) do %>
+      <%= bar_chart @classes[:by_kind], height: "260px" %>
+    <% end %>
+    <section class="card">
+      <h3>Best attended</h3>
+      <%= render "bar_list", rows: @classes[:top], empty: "No classes with sign-ups in this period." %>
+    </section>
+  </div>
+  <% if @class_money %>
+    <%= render ChartCardComponent.new(title: "Class money per #{@period.unit}", note: "What guestlist collected for events in each #{@period.unit}, before refunds and fees.", rows: by_bucket(@class_money[:by_period], @period), columns: ["When", "Dollars"]) do %>
+      <%= column_chart by_bucket(@class_money[:by_period], @period), prefix: "$" %>
+    <% end %>
+  <% end %>
+<% elsif @section == "classes" %>
+  <%= render EmptyStateComponent.new("Class sign-ups have not been loaded on this site yet. See docs/analytics.md in the members site repository.") %>
+<% end %>

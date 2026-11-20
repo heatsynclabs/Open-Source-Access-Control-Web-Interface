@@ -19,6 +19,7 @@ is the operations folder's `docs/24-door-system-now.md`.
 |---|---|---|
 | `door-log-import` | every 2 minutes | recent executions "success"; Admin > Door logs shows new rows after door use |
 | `door-after-hours-lock` | :00, :15, :30, :45 from 22:00 to 08:45 | executions "success"; the doors show locked overnight |
+| `guestlist-sync` | 03:10 daily | executions "success", output like `guestlist sync: 26 read`; see [Analytics](analytics.md) |
 
 To pause one (for maintenance), turn it off in Scheduled Tasks and back on afterwards.
 Pausing the log import loses nothing unless the board fills its 40 events.
@@ -40,24 +41,9 @@ Pausing the log import loses nothing unless the board fills its 40 events.
 
 ## Class sign-ups on the analytics page
 
-The analytics page's "Who signs up" section counts the lab's classes and workshops sold
-on guestlist.co, the lab's ticketing site: events held, people signed up, how many came
-(at the events that checked people in), the best attended events and, for the treasurer
-and admins, the money collected. Guestlist has no feed the site can read without the
-organizer login, so the numbers are a snapshot in the table `ticketed_events`, one row
-per event with its name, day, kind, status and counts (no attendee names).
-
-The snapshot is built off the server by the operations folder's
-`data/scripts/guestlist.py` from a pull of the organizer account, checked against the lab
-calendar so that cancelled events, drafts, empty copies and events nobody signed up for
-are marked and left out of the counts. To refresh it, rebuild `guestlist_events.csv`
-there, then on the server:
-
-    bin/rails db:migrate     # once, to create ticketed_events
-    bin/rails runner script/ticketed_events.rb load guestlist_events.csv
-
-Loading replaces every row in one transaction, so it can be rerun. Until the table exists
-the section is left out and the rest of the page works as before.
+The class numbers are copied from guestlist.co: a nightly check of its public pages
+(`guestlist-sync`, below) plus an organizer export by hand. How both work and how to run
+an export: [Analytics](analytics.md).
 
 ## When something breaks
 

@@ -1,0 +1,55 @@
+<% if @classes_detail %>
+  <% years = @classes_detail[:by_year] %>
+  <% shown = years.select { |row| row[:checkin_events].positive? }.reverse %>
+  <% if shown.any? %>
+    <%= render ChartCardComponent.new(title: "Show-up by year", note: "Of the people signed up for events that checked people in at the door, how many came. Most events did not check people in, so years without any are left out.", rows: shown.to_h { |row| [row[:year].to_s, ["#{row[:came]} of #{row[:checkin_people]}", "#{(100.0 * row[:came] / row[:checkin_people]).round}%"]] }, columns: ["Year", "Came", "Show-up"]) do %>
+      <%= column_chart shown.to_h { |row| [row[:year].to_s, (100.0 * row[:came] / row[:checkin_people]).round] }, suffix: "%", max: 100, height: "200px" %>
+    <% end %>
+  <% end %>
+
+  <section class="card">
+    <h3>By year</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Year</th><th class="num">Held</th><th class="num">People</th><th class="num">Per event</th><th class="num">Show-up</th><% if @class_money %><th class="num">Collected</th><% end %><th class="num">Not counted</th></tr></thead>
+        <tbody>
+          <% years.each do |row| %>
+            <tr>
+              <td><%= row[:year] %></td>
+              <td class="num"><%= row[:events] %></td>
+              <td class="num"><%= number_with_delimiter(row[:people]) %></td>
+              <td class="num"><%= (row[:people].to_f / row[:events]).round(1) %></td>
+              <td class="num"><%= row[:checkin_people].positive? ? "#{(100.0 * row[:came] / row[:checkin_people]).round}%" : "" %></td>
+              <% if @class_money %><td class="num"><%= number_to_currency(row[:dollars], precision: 0) %></td><% end %>
+              <td class="num"><%= row[:not_counted].positive? ? row[:not_counted] : "" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Not counted: cancelled, no sign-ups, never published or an empty copy.</p>
+  </section>
+
+  <section class="card">
+    <h3>Every event in this period</h3>
+    <p class="note">Newest first<%= ", the latest #{@classes_detail[:events].size}" if @classes_detail[:events].size >= 400 %>. Each ticket is one person; donation tickets are not counted. "Came" is blank where nobody checked people in.</p>
+    <div class="table-wrap tall">
+      <table>
+        <thead><tr><th>Date</th><th>Event</th><th>Kind</th><th>Status</th><th class="num">People</th><th class="num">Came</th><% if @class_money %><th class="num">Collected</th><% end %></tr></thead>
+        <tbody>
+          <% @classes_detail[:events].each do |event| %>
+            <tr>
+              <td class="nowrap"><%= l(event.held_on, format: :short) %> <%= event.held_on.year %></td>
+              <td><%= event.name %></td>
+              <td><%= event.kind %></td>
+              <td><%= ticketed_status_chip(event.status) %></td>
+              <td class="num"><%= event.attendees %></td>
+              <td class="num"><%= event.checked_in if event.checked_in.positive? %></td>
+              <% if @class_money %><td class="num"><%= number_to_currency(event.dollars, precision: 0) if event.dollars.positive? %></td><% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<% end %>

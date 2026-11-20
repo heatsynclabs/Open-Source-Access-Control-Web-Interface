@@ -21,10 +21,11 @@ class AnalyticsClassesTest < ActionDispatch::IntegrationTest
                           status: "held", attendees: 17, checked_in: 15, dollars: 340)
     TicketedEvent.create!(guestlist_id: 2, name: "Cancelled Laser Class", held_on: Date.current - 10, kind: "Laser",
                           status: "cancelled", attendees: 6, dollars: 60)
+    TicketedEvent.update_all(collected_at: Time.zone.local(2026, 11, 19, 16, 14))
   end
 
-  def analytics_page
-    LabCalendar.stub(:between, ->(_range) { raise LabCalendar::Unavailable }) { get analytics_path }
+  def analytics_page(**params)
+    LabCalendar.stub(:between, ->(_range) { raise LabCalendar::Unavailable }) { get analytics_path(params) }
     assert_response :success
   end
 
@@ -45,6 +46,32 @@ class AnalyticsClassesTest < ActionDispatch::IntegrationTest
     analytics_page
     assert_select ".tile .label", "Collected for classes"
     assert_select ".tile .num", "$340"
+  end
+
+  test "the page says the numbers are copied from guestlist, and when" do
+    sign_in member
+    analytics_page
+    assert_match "Not live", response.body
+    assert_match "exported from the organizer account on November 19, 2026", response.body
+  end
+
+  test "the Classes tab lists every event with its status" do
+    sign_in member
+    analytics_page(section: "classes")
+    assert_select ".tabs a.on", "Classes"
+    assert_select "h3", "By year"
+    assert_select "td", "Cancelled Laser Class"
+    assert_select ".chip.err", "cancelled"
+    assert_select "h2", text: "When people come in", count: 0 # only the classes section
+  end
+
+  test "the All tab draws everything together, and Dues is for the treasurer" do
+    sign_in member
+    analytics_page
+    assert_select "h3", "Everything together"
+    assert_select ".tabs a", text: "Dues", count: 0
+    analytics_page(section: "dues")
+    assert_select ".tabs a.on", "All" # an unknown or forbidden tab falls back to All
   end
 
   test "the section is left out until the table exists" do

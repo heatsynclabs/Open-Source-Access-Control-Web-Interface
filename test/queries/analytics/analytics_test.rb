@@ -120,4 +120,19 @@ class Analytics::QueriesTest < ActiveSupport::TestCase
     ticketed(attendees: 5)
     assert_nil Analytics::Classes.new(period).show_up
   end
+
+  test "the overview scales each line to its own busy level and starts it with its data" do
+    months = (1..12).map { |m| Date.new(2026, m, 1) }
+    entries = months.to_h { |month| [month, month.month == 1 ? 0 : 100] }.merge(months.last => 1000)
+    overview = Analytics::Overview.new(entries: entries, cards: nil, events: months.to_h { |month| [month, 4] },
+                                       signups: {}, accounts: { months.first => 0 })
+    lines = overview.indexed.to_h { |line| [line[:name], line[:data]] }
+    assert_nil lines["Card entries"][months.first] # before the line's first data
+    assert_equal 100, lines["Card entries"][months[5]]
+    assert_equal 200, lines["Card entries"][months.last] # one freak month is clipped at the ceiling
+    assert_equal [100], lines["Calendar events"].values.uniq
+    assert_equal [nil], lines["Class sign-ups"].values.uniq
+    assert_equal ["Card entries", "Calendar events", "Class sign-ups", "New accounts"], overview.names
+    assert_equal [1000, 4, 0, 0], overview.actual[months.last]
+  end
 end
