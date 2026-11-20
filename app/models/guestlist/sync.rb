@@ -16,7 +16,7 @@ module Guestlist
       @now = now
     end
 
-    # { read:, skipped:, failed:, taken_down: } for the task's log line.
+    # { read:, skipped:, failed:, taken_down:, not_found: } for the task's log line.
     def run
       tally = Hash.new(0)
       calendar = calendar_titles
@@ -60,9 +60,11 @@ module Guestlist
       :failed
     end
 
+    # Guestlist has no such event: an upcoming one was taken down; anything
+    # else (an old calendar link) is left alone.
     def taken_down(id)
-      TicketedEvent.where(guestlist_id: id, status: "upcoming").update_all(status: "cancelled", collected_at: @now, updated_at: @now)
-      :taken_down
+      updated = TicketedEvent.where(guestlist_id: id, status: "upcoming").update_all(status: "cancelled", collected_at: @now, updated_at: @now)
+      updated.positive? ? :taken_down : :not_found
     end
   end
 end

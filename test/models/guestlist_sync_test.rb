@@ -55,7 +55,11 @@ class GuestlistSyncTest < ActiveSupport::TestCase
   test "an upcoming event guestlist took down is marked cancelled" do
     TicketedEvent.create!(guestlist_id: 40, name: "Kumihimo", held_on: NOW.to_date + 3, kind: "Crafts and textiles", status: "upcoming",
                           attendees: 4, checked_in: 0, dollars: 0)
-    assert_equal 1, sync(FakeClient.new({}))[:taken_down]
+    TicketedEvent.create!(guestlist_id: 41, name: "Old class", held_on: NOW.to_date - 3, kind: "Other", status: "held",
+                          attendees: 4, checked_in: 0, dollars: 0)
+    tally = sync(FakeClient.new({}))
+    assert_equal [1, 1], [tally[:taken_down], tally[:not_found]]
+    assert_equal "held", TicketedEvent.find_by!(guestlist_id: 41).status
     assert_equal "cancelled", TicketedEvent.find_by!(guestlist_id: 40).status
   end
 
