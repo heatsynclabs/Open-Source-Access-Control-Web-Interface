@@ -1,0 +1,117 @@
+<% if @math.nil? %>
+  <%= render EmptyStateComponent.new("Not enough clean cuts logged yet for the laser math.") %>
+<% else %>
+<% m = @math %>
+<% energy = ->(material, mm) { m[:k][material] * mm**m[:b] } %>
+<% b_lo, b_hi = m[:b_range] %>
+<div class="laser-math">
+<p class="muted">Fitted to <%= number_with_delimiter(m[:worked]) %> clean cuts through wood, MDF and acrylic. These are patterns in what members logged, not bench measurements.</p>
+
+<h2>1. One number for a cut</h2>
+<p>Power and speed only matter together. Divide one by the other and you get the energy the beam leaves in each millimetre of cut.</p>
+<div class="laser-eq">E = 0.8 &times; power % &divide; speed mm/s &times; passes<small>E is in joules per mm. The 0.8 turns percent into watts on an 80 W tube, assuming output is proportional to the setting. Example: 60% at 15 mm/s is 0.8 &times; 60 &divide; 15 = 3.2 J/mm.</small></div>
+<p>Any two settings with the same E should cut about the same: 60% at 15 mm/s and 80% at 20 mm/s are both 3.2 J/mm.</p>
+
+<h2>2. Energy scales with thickness</h2>
+<p>Across the log, the energy people used grows roughly in step with thickness. The fitted exponent is <%= format("%.2f", m[:b]) %>, but it is not pinned down: resampling people gives <%= b_lo || "?" %> to <%= b_hi || "?" %>, single pass jobs alone give <%= m[:b_single] || "?" %>, and one vote per person gives <%= m[:b_vote] || "?" %>.<% if b_lo %> So twice the thickness took about <%= format("%.1f", 2**b_lo) %> to <%= format("%.1f", 2**b_hi) %> times the energy.<% end %> Half of jobs land within <%= (m[:spread][:half] * 100).round %>% of the line, and 8 in 10 fall between <%= m[:spread][:low] %>x and <%= m[:spread][:high] %>x of it.</p>
+<div class="laser-eq">E used = k &times; thickness<sup><%= format("%.2f", m[:b]) %></sup><small>k is the J/mm people used on 1 mm of that material. This is what worked with margin, not the least that would cut. Softwood, hardwood and melamine rest on <%= m[:jobs]["Softwood (basswood, balsa, pine)"] %>, <%= m[:jobs]["Hardwood"] %> and <%= m[:jobs]["Melamine / whiteboard"] %> jobs, so treat those as rough.</small></div>
+<section class="card">
+  <%= laser_law_chart(m) %>
+  <p class="muted small">Lines are the fitted law. Dots are the median of logged jobs at that thickness; bigger dot, more jobs.</p>
+</section>
+<div class="table-wrap card">
+  <table>
+    <thead><tr><th>Material</th><th class="num">Jobs</th><th class="num">k</th><th class="num">3 mm</th><th class="num">6 mm</th><th class="num">12 mm</th></tr></thead>
+    <tbody>
+      <% m[:k].each do |material, k| %>
+        <tr><td><%= material %></td><td class="num"><%= m[:jobs][material] %></td><td class="num"><%= format("%.2f", k) %></td>
+          <% [[3, 60], [6, 80], [12, 100]].each do |mm, power| %>
+            <% e = energy.(material, mm) %>
+            <% far = mm > m[:thickest][material].to_f + 1 %>
+            <td class="num<%= " muted" if far %>"><%= format("%.1f", e) %> J/mm<br><span class="muted small"><%= far ? "beyond logged stock" : "#{power}% at #{(0.8 * power / e).round} mm/s" %></span></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<h2>3. Estimate a setting</h2>
+<p class="muted">For thicknesses nobody has logged. Where the finder has real jobs, trust those first.</p>
+<% logged = @jobs.select { |j| j.cut_op == "cut" && j.mm }.group_by(&:material).transform_values { |js| js.map(&:mm).tally.transform_keys { |mm| laser_number(mm, 1) } } %>
+<section class="card laser-estimate" data-controller="laser-estimate" data-laser-estimate-law-value="<%= { k: m[:k], b: m[:b], low: m[:spread][:low], high: m[:spread][:high], thickest: m[:thickest], logged: logged }.to_json %>">
+  <div class="laser-estimate-inputs">
+    <label><span class="label">Material</span><select data-laser-estimate-target="material" data-action="laser-estimate#update"><% m[:k].each_key do |material| %><option><%= material %></option><% end %></select></label>
+    <label><span class="label">Thickness mm</span><input type="number" min="1" max="25" step="0.5" value="4" data-laser-estimate-target="thickness" data-action="input->laser-estimate#update"></label>
+    <label><span class="label">Power <span data-laser-estimate-target="powerLabel">70%</span></span><input type="range" min="20" max="100" step="5" value="70" data-laser-estimate-target="power" data-action="input->laser-estimate#update"></label>
+    <label><span class="label">Beam</span><select data-laser-estimate-target="beam" data-action="laser-estimate#update"><option value="0.85">Strong beam (0.85x)</option><option value="1" selected>Average (1x)</option><option value="1.25">Weak beam (1.25x)</option></select></label>
+  </div>
+  <div class="tiles" data-laser-estimate-target="output"></div>
+  <p class="muted small" data-laser-estimate-target="note">Turn on JavaScript to use the estimator; the table above has the same law at 3, 6 and 12 mm.</p>
+</section>
+
+<h2>4. Does a lens clean show up?</h2>
+<% pooled = m[:optics].count { |o| o[:window] && o[:window][:after] < o[:window][:before] - 0.05 } %>
+<% moved = m[:optics].count { |o| o[:same][:change] && o[:same][:change].abs > 2 } %>
+<% ot = m[:optics_trouble] %>
+<p>Pooling every job, energy used fell after <%= pooled %> of <%= m[:optics].size %> optics events. That does not hold up. Members who logged cuts on both sides of an event kept the same settings: their median change was within 2% in <%= m[:optics].size - moved %> of <%= m[:optics].size %> events. The pooled drops come from a different mix of people cutting before and after.</p>
+<p>Trouble is the better signal, and it is only suggestive: <%= Laser::Stats.percent(*ot[:before]) %>% of cuts had trouble in the 60 days before optics work (<%= ot[:before][0] %> of <%= ot[:before][1] %>) against <%= Laser::Stats.percent(*ot[:after]) %>% after (<%= ot[:after][0] %> of <%= ot[:after][1] %>). With counts this small the gap could be chance (p = <%= format("%.2f", ot[:p]) %>).</p>
+<div class="table-wrap card">
+  <table>
+    <thead><tr><th>Date</th><th>Work</th><th class="num">All jobs</th><th class="num">Per person</th><th class="num">Same people</th><th class="num">Trouble before</th><th class="num">After</th></tr></thead>
+    <tbody>
+      <% m[:optics].each do |o| %>
+        <% w = o[:window] %>
+        <tr><td><%= o[:day].iso8601 %></td><td><%= o[:label] %></td>
+          <td class="num"><%= laser_change(w && (w[:after] / w[:before] - 1) * 100) %></td>
+          <td class="num"><%= laser_change(o[:vote]) %></td>
+          <td class="num"><%= laser_change(o[:same][:change]) %> <span class="muted">(<%= o[:same][:n] %>)</span></td>
+          <td class="num"><%= "#{w[:trouble_before]}% of #{w[:jobs_before]}" if w %></td>
+          <td class="num"><%= "#{w[:trouble_after]}% of #{w[:jobs_after]}" if w %></td></tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<% if (h = m[:hours]) %>
+<h2>5. Do laser hours wear it down?</h2>
+<% long = h[:stretches].select { |s| s[:hours] >= 100 } %>
+<% first_long, recent = long.first, long.last(2) %>
+<p>Pooled across the log, energy used rose about <%= h[:per100].round %>% per 100 laser hours since the last optics work<% if h[:low] %> (<%= h[:low].round %> to <%= h[:high].round %>% when people are resampled)<% end %>. Split by stretch and compared person against the same person, it is not steady wear.<% if first_long && recent.any? %> In the stretch after <%= first_long[:from].iso8601 %> the same people needed <%= laser_change(first_long[:within]) %> per 100 hours, the period the machine notes complain about a weak beam. In the long stretches since, the same people needed <%= safe_join(recent.map { |s| laser_change(s[:within]) }, " and ") %> per 100 hours.<% end %> Lens trouble looks like an event, such as contamination or a fire, more than a clock.</p>
+<div class="table-wrap card">
+  <table>
+    <thead><tr><th>Stretch starting</th><th class="num">Laser hours</th><th class="num">All jobs, per 100 h</th><th class="num">Same people, per 100 h</th><th class="num">Cuts</th></tr></thead>
+    <tbody>
+      <% h[:stretches].each do |s| %>
+        <tr><td><%= s[:from].iso8601 %></td><td class="num"><%= s[:hours] %></td>
+          <td class="num"><%= s[:hours] < 100 ? tag.span("too short", class: "muted") : laser_change(s[:per100]) %></td>
+          <td class="num"><%= s[:hours] < 100 ? tag.span("too short", class: "muted") : laser_change(s[:within]) %> <span class="muted">(<%= pluralize(s[:people], "person") %>)</span></td>
+          <td class="num"><%= s[:n] %></td></tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<p class="muted">To hold the same cut when the beam weakens, slow down or add power by the same percentage:</p>
+<div class="table-wrap card">
+  <table>
+    <thead><tr><th>If the beam needs</th><th class="num">15 mm/s becomes</th><th class="num">or 60% becomes</th></tr></thead>
+    <tbody><% [5, 10, 20, 30, 45].each do |more| %><tr><td><%= more %>% more energy</td><td class="num"><%= format("%.1f", 15 / (1 + more / 100.0)) %> mm/s</td><td class="num"><%= (60 * (1 + more / 100.0)).round %>%</td></tr><% end %></tbody>
+  </table>
+</div>
+<p class="msg info">Right now: <%= h[:since_last] %> laser hours are logged since the <%= h[:last].last.downcase %> on <%= h[:last].first.iso8601 %>.</p>
+<% end %>
+<% index = m[:quarters].to_h { |q| [q[:quarter].sub("Q", " Q"), q[:vote]] } %>
+<%= render ChartCardComponent.new(title: "Energy index by quarter", note: "One vote per person, so a heavy user cannot move it. 1.00 is the law from section 2; 1.10 means people used 10% more energy than that for the same stock.", rows: m[:quarters].map { |q| [q[:quarter], [q[:vote], q[:people], q[:n]]] }, columns: ["Quarter", "Index", "People", "Cuts"]) do %>
+  <%= line_chart index, discrete: true, curve: false, min: 0.7, max: 1.3 %>
+<% end %>
+
+<h2>6. What this math cannot tell you</h2>
+<ul>
+  <li>People are the unit, not jobs. A few people logged about half of all jobs, so any number that pools jobs can swing on who was busy that month. Sections 4 and 5 show how much that matters.</li>
+  <li>The log records habits, not limits. Inside one material and thickness, power and speed are uncorrelated, so nobody is hunting for the least energy that cuts. After the December 2023 lens clean a machine note says 6 mm plywood cut at 30% and 10 mm/s (2.4 J/mm), well under the 3.2 J/mm people kept using on 3 mm.</li>
+  <li>The index moves in steps because people copy the class settings. It jumped in spring 2023 when the taught 3 mm plywood setting went from about 42% at 19 mm/s to 60% at 15.</li>
+  <li>Percent is not watts. Tube output is not exactly proportional to the setting and falls as the tube ages, so J/mm here is a consistent yardstick, not a calibrated one.</li>
+  <li>A 15 minute power by speed test grid on scrap after each lens clean would measure the real threshold, which years of job logs cannot.</li>
+</ul>
+</div>
+<% end %>

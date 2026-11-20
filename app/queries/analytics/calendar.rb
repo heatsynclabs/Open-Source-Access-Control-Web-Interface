@@ -36,6 +36,21 @@ module Analytics
       Date::ABBR_DAYNAMES.each_with_index.to_h { |name, wday| [name, counts.fetch(wday, []).size] }
     end
 
+    # Chartkick series, one per category, counting events per year (the
+    # year we are in marked "so far"): the Over the years calendar deep dive.
+    def by_year_series
+      LabCalendar::Category.all.reject { |category| category.key == "open" }.map do |category|
+        counts = events.select { |event| event.category == category }.group_by { |event| event.day.year }.transform_values(&:size)
+        { name: category.label, data: years.to_h { |year| [year_label(year), counts.fetch(year, 0)] } }
+      end
+    end
+
+    # { "2013" => hours } of timed events a year.
+    def hours_by_year
+      timed = events.reject(&:all_day).group_by { |event| event.day.year }
+      years.to_h { |year| [year_label(year), (timed.fetch(year, []).sum { |event| (event.ends_at - event.starts_at) / 3600.0 }).round] }
+    end
+
     # The events that happened most often in the period.
     def top_series(limit = 10)
       events.group_by(&:display_title).map { |title, list| [title, list.size, list.first.category] }
@@ -56,6 +71,14 @@ module Analytics
     def average(day_counts)
       return 0 if day_counts.empty?
       (day_counts.sum { |_day, count| count }.to_f / day_counts.size).round(1)
+    end
+
+    def years
+      (@period.starts_at.year..Date.current.year).to_a
+    end
+
+    def year_label(year)
+      year == Date.current.year ? "#{year}#{Period::SO_FAR}" : year.to_s
     end
 
     def bucket_of(date)

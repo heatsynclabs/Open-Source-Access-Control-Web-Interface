@@ -1,0 +1,13 @@
+<div class="laser<%= " laser-print" if @view == "sheet" %>">
+<%= render PageHeaderComponent.new(eyebrow: "The large 80 W laser", title: "Laser settings", lead: "What worked on the big laser, from the jobs members logged on the form by the machine: #{number_with_delimiter(@jobs.count(&:settings?))} jobs with settings, #{@jobs.first.date.year} to #{@jobs.last.date.year}. Member reported, not a guarantee: test on scrap, and never leave the laser while it is firing.") %>
+
+<nav class="tabs" aria-label="Views">
+  <% LaserController::VIEWS.each do |key, label| %>
+    <%= link_to label, laser_path(view: key), class: ("on" if @view == key), "aria-current": ("page" if @view == key) %>
+  <% end %>
+</nav>
+
+<%= render @view %>
+
+<p class="muted small laser-foot">Read from the laser log nightly; last read <%= l(@synced_at, format: :short) %>. Log a job, failures included, on <%= link_to "the laser log form", LaserLog::SHEET_URL %>: this page is built from it. Usage over the years is on <%= link_to "Analytics", analytics_path(section: "history", topic: "laser") %>.</p>
+</div>

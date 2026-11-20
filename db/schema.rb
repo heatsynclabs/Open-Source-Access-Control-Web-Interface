@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_21_000000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_21_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -128,6 +128,45 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["key", "label", "starts_on"], name: "index_lab_metrics_on_key_and_label_and_starts_on", unique: true
+  end
+
+  create_table "laser_jobs", force: :cascade do |t|
+    t.integer "sheet_row", null: false
+    t.datetime "logged_at", null: false
+    t.date "logged_on", null: false
+    t.string "person_key", null: false
+    t.string "title", default: "", null: false
+    t.string "material_raw", default: "", null: false
+    t.string "material", null: false
+    t.string "family", null: false
+    t.string "thickness_raw", default: "", null: false
+    t.decimal "mm", precision: 6, scale: 2
+    t.string "bucket", null: false
+    t.string "cut_op"
+    t.decimal "cut_power", precision: 8, scale: 2
+    t.decimal "cut_speed", precision: 8, scale: 2
+    t.decimal "cut_passes", precision: 6, scale: 2
+    t.string "eng_mode"
+    t.decimal "eng_power", precision: 8, scale: 2
+    t.decimal "eng_speed", precision: 8, scale: 2
+    t.decimal "eng_passes", precision: 6, scale: 2
+    t.decimal "eng_gap", precision: 6, scale: 3
+    t.string "result", null: false
+    t.string "result_raw", default: "", null: false
+    t.string "issues", default: "", null: false
+    t.decimal "minutes", precision: 8, scale: 2
+    t.decimal "copies", precision: 8, scale: 2
+    t.string "clean_start", default: "", null: false
+    t.string "cleaned_after", default: "", null: false
+    t.text "notes", default: "", null: false
+    t.text "machine_notes", default: "", null: false
+    t.text "software_notes", default: "", null: false
+    t.text "fixes", default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["logged_on"], name: "index_laser_jobs_on_logged_on"
+    t.index ["material", "bucket"], name: "index_laser_jobs_on_material_and_bucket"
+    t.index ["sheet_row"], name: "index_laser_jobs_on_sheet_row", unique: true
   end
 
   create_table "mac_logs", force: :cascade do |t|

@@ -1,0 +1,90 @@
+<%# Find a setting: pick material, job and thickness (plain links, so it works without script); the answer is worked out on the server. %>
+<% top, rest = @settings.materials.first(6), @settings.materials.drop(6) %>
+<section class="laser-step">
+  <p class="label">1. Material</p>
+  <nav class="filters" aria-label="Material">
+    <% top.each do |material| %>
+      <%= link_to material, laser_path(material: material, op: @op), class: ["toggle", ("on" if material == @material)], "aria-current": ("true" if material == @material) %>
+    <% end %>
+    <%= form_with url: laser_path, method: :get, data: { controller: "autosubmit" }, class: "inline-form" do |f| %>
+      <%= f.select :material, options_for_select(rest, (@material if rest.include?(@material))), { include_blank: "More materials" }, "aria-label": "More materials", data: { action: "change->autosubmit#submit" } %>
+      <%= f.hidden_field :op, value: @op %>
+      <noscript><%= f.submit "Show" %></noscript>
+    <% end %>
+  </nav>
+</section>
+
+<section class="laser-step">
+  <p class="label">2. Job</p>
+  <nav class="filters" aria-label="Job">
+    <% @settings.ops_for(@material).each do |op| %>
+      <%= link_to Laser::Settings::OPS[op], laser_path(material: @material, op: op), class: ["toggle", ("on" if op == @op)], "aria-current": ("true" if op == @op) %>
+    <% end %>
+  </nav>
+</section>
+
+<% if @op == "cut" %>
+  <section class="laser-step">
+    <p class="label">3. Thickness</p>
+    <nav class="filters" aria-label="Thickness">
+      <% @settings.buckets_for(@material).each do |bucket| %>
+        <%= link_to bucket, laser_path(material: @material, op: @op, bucket: bucket), class: ["toggle", ("on" if bucket == @bucket)], "aria-current": ("true" if bucket == @bucket) %>
+      <% end %>
+    </nav>
+  </section>
+<% end %>
+
+<% s = @stats %>
+<section class="card laser-answer">
+  <div class="laser-answer-head">
+    <h2><%= @material %>, <%= @op == "cut" ? @bucket : "engrave" %></h2>
+    <%= laser_reliability_chip(@reliability) %>
+  </div>
+  <div class="tiles">
+    <%= render StatTileComponent.new(value: laser_number(s[:power]), label: "Power %", tone: :headline) %>
+    <%= render StatTileComponent.new(value: laser_number(s[:speed]), label: "Speed mm/s", tone: :headline) %>
+    <% if @op == "engrave" %>
+      <%= render StatTileComponent.new(value: s[:gap] ? laser_number(s[:gap], 2) : "?", label: "Scan gap mm") %>
+    <% else %>
+      <%= render StatTileComponent.new(value: laser_number(s[:passes]), label: s[:passes] > 1 ? "Passes" : "Pass") %>
+    <% end %>
+  </div>
+  <%= laser_results_bar(s[:counts], s[:n]) %>
+  <p class="muted small"><%= pluralize(s[:n], "logged job") %>: <%= s[:counts]["success"] %> worked<%= ", #{s[:counts]["conditional"]} partly" if s[:counts]["conditional"].positive? %><%= ", #{s[:counts]["fail"]} failed" if s[:counts]["fail"].positive? %>.</p>
+</section>
+
+<% key, = @reliability %>
+<% if s[:scattered] && s[:basis] >= 5 %>
+  <p class="msg info">People got this to work with very different settings, so the typical numbers are a rough middle. Look at the dots under More detail before you trust them.</p>
+<% elsif key == "thin" %>
+  <p class="msg info">Only <%= pluralize(s[:basis], "good job") %> behind this. Treat it as a starting guess and test on scrap.</p>
+<% elsif key == "poor" %>
+  <p class="msg warn"><%= s[:counts]["conditional"] + s[:counts]["fail"] %> of <%= s[:n] %> jobs had trouble here. Read the notes below before you commit good stock.</p>
+<% elsif @op == "cut" %>
+  <p class="msg info">Not cutting through? Check focus, then slow down before adding power or passes.</p>
+<% end %>
+
+<details class="card laser-more">
+  <summary>More detail</summary>
+  <dl class="laser-facts">
+    <div><dt>Average</dt><dd><%= laser_number(s[:power_mean], 1) %>% at <%= laser_number(s[:speed_mean], 1) %> mm/s</dd></div>
+    <div><dt>Most people stay within</dt><dd><%= laser_number(s[:power_lo]) %> to <%= laser_number(s[:power_hi]) %>% / <%= laser_number(s[:speed_lo]) %> to <%= laser_number(s[:speed_hi]) %> mm/s</dd></div>
+    <div><dt>Most used setting</dt><dd><%= s[:top]&.first %> (<%= pluralize(s[:top]&.last.to_i, "job") %>)</dd></div>
+    <div><dt>One vote per person</dt><dd><%= laser_number(s[:people_power]) %>% at <%= laser_number(s[:people_speed]) %> mm/s<span class="muted small"><%= pluralize(s[:people], "person") %>; the busiest logged <%= s[:busiest_share] %>% of these jobs</span></dd></div>
+  </dl>
+  <%= laser_scatter(@settings.tried(@rows, @op)) %>
+  <p class="laser-legend muted small"><span><i class="ok"></i>worked every time</span><span><i class="cond"></i>partly worked at least once</span><span><i class="bad"></i>failed at least once</span><span>bigger dot, more jobs</span></p>
+</details>
+
+<% struggled = @settings.struggled(@rows) %>
+<% if struggled.any? %>
+  <details class="card laser-more">
+    <summary>Notes from jobs that struggled (<%= struggled.size %>)</summary>
+    <% struggled.each do |job| %>
+      <div class="laser-note <%= job.result %>">
+        <p class="muted small"><%= job.date.iso8601 %> / <%= laser_number(@op == "engrave" ? job.eng_power : job.cut_power) %>% at <%= laser_number(@op == "engrave" ? job.eng_speed : job.cut_speed) %> mm/s</p>
+        <p><%= truncate([@settings.free_result(job), job.notes, job.machine_notes].compact_blank.join(" / "), length: 360) %></p>
+      </div>
+    <% end %>
+  </details>
+<% end %>

@@ -1,0 +1,73 @@
+// The Laser page (laser#show): the settings finder, its scatter and the
+// laser math charts, and the printable cheat sheet.
+@layer pages {
+  .laser .tabs { margin-bottom: var(--space-6); }
+  .laser-step { margin-bottom: var(--space-4); .label { margin-bottom: var(--space-2); } }
+  .laser .inline-form { display: inline-flex; gap: var(--space-2); }
+  .laser-answer { margin-top: var(--space-6); }
+  .laser-answer-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); }
+  .laser-answer .tiles { margin-bottom: var(--space-4); }
+
+  // Worked / partly / failed, side by side.
+  .laser-bar { display: flex; height: 12px; background: var(--slab-hi); margin-bottom: var(--space-2); }
+  .laser-bar i { display: block; height: 100%; }
+  .laser-bar .ok, .laser-legend .ok { background: var(--live); }
+  .laser-bar .cond, .laser-legend .cond { background: var(--hazard); }
+  .laser-bar .bad, .laser-legend .bad { background: var(--fault); }
+
+  .laser-more { margin-top: var(--space-4); summary { cursor: pointer; font-weight: 600; } }
+  .laser-facts { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin: var(--space-4) 0; }
+  .laser-facts dt { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--ash); }
+  .laser-facts dd { margin: var(--space-1) 0 0; font-weight: 600; span { display: block; font-weight: 400; } }
+  .laser-legend { display: flex; flex-wrap: wrap; gap: var(--space-4); i { display: inline-block; width: 10px; height: 10px; margin-right: var(--space-1); border-radius: 50%; } }
+  .laser-note { border-left: 3px solid var(--hazard); padding-left: var(--space-3); margin-top: var(--space-3); &.fail { border-color: var(--fault); } p { margin: 0; } }
+
+  // Drawn charts: grid and labels in the chart tokens, marks in signal colours.
+  .laser-chart { width: 100%; height: auto; font-family: var(--font-ui); font-size: 11px; fill: var(--ash); }
+  .laser-chart .grid { stroke: var(--chart-grid); }
+  .laser-chart .axis { fill: var(--bone); font-size: 12px; }
+  .laser-chart circle { fill-opacity: 0.85; stroke: var(--steel-hi); stroke-width: 1.5; }
+  .laser-chart circle.ok { fill: var(--live); }
+  .laser-chart circle.cond { fill: var(--hazard); }
+  .laser-chart circle.bad { fill: var(--fault); }
+  .laser-chart polyline { fill: none; stroke-width: 2.5; }
+  .laser-chart .law-plywood { stroke: var(--rust); fill: var(--rust); }
+  .laser-chart .law-acrylic { stroke: var(--info); fill: var(--info); }
+  .laser-chart .law-mdf { stroke: var(--violet); fill: var(--violet); }
+  .laser-chart polyline.law-plywood, .laser-chart polyline.law-acrylic, .laser-chart polyline.law-mdf { fill: none; }
+  .laser-chart .end-label { fill: var(--bone); font-size: 12px; }
+
+  .laser-table td.big, .laser-sheet td.big { font-family: var(--font-display); font-size: var(--text-lg); }
+  .laser-table tr.family th { background: var(--slab-hi); text-transform: uppercase; letter-spacing: var(--tracking-wide); font-size: var(--text-xs); }
+
+  .laser-stats { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin: var(--space-4) 0 var(--space-6); }
+  .laser-stats .num { font-family: var(--font-display); font-size: var(--text-2xl); margin: 0 0 var(--space-2); }
+
+  .laser-math h2 { margin-top: var(--space-8); }
+  .laser-math section.card, .laser-math .table-wrap { margin: var(--space-4) 0; }
+  .laser-eq { border-left: 4px solid var(--hazard); padding: var(--space-3) var(--space-4); background: var(--slab); font-family: var(--font-ui); font-size: var(--text-lg); margin: var(--space-4) 0;
+    small { display: block; font-family: var(--font-body, inherit); font-size: var(--text-sm); color: var(--ash); margin-top: var(--space-2); } }
+  .laser-math .down { color: var(--ink-ok); }
+  .laser-math .up { color: var(--ink-err); }
+  .laser-estimate-inputs { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: var(--space-4); label { display: grid; gap: var(--space-1); } }
+
+  .laser-log-filters { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); input[type="search"] { flex: 1; min-width: 200px; } }
+  .laser-foot { margin-top: var(--space-8); }
+
+  // The cheat sheet: on screen a card; printed, the only thing on the page.
+  .laser-printbar { margin-bottom: var(--space-6); }
+  .laser-sheet { background: var(--slab); border: 2px solid var(--steel-hi); padding: var(--space-6); }
+  .laser-sheet header p { font-size: var(--text-sm); }
+  .laser-sheet-body { columns: 2 340px; column-gap: var(--space-6); margin: var(--space-4) 0; }
+  .laser-sheet table { width: 100%; break-inside: avoid; margin-bottom: var(--space-4); font-size: var(--text-sm); }
+  .laser-sheet tr.thin td { color: var(--smoke); }
+  .laser-sheet-notes { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); font-size: var(--text-sm); h3 { margin-bottom: var(--space-2); } p { margin: 0 0 var(--space-2); } }
+  .laser-sheet footer { margin-top: var(--space-4); font-size: var(--text-xs); color: var(--ash); }
+
+  @media print {
+    body:has(.laser-print) > *:not(main), .laser-print > :not(.laser-sheet) { display: none !important; }
+    body:has(.laser-print) main { padding: 0; margin: 0; max-width: none; }
+    .laser-sheet { border: 0; padding: 0; background: #fff; color: #000; }
+    .laser-sheet-body { columns: 2; }
+  }
+}

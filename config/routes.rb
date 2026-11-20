@@ -102,6 +102,7 @@ Dooraccess::Application.routes.draw do
 
   # Aggregate charts for the board and the treasurer.
   get 'analytics' => 'analytics#index', :as => :analytics
+  get 'laser' => 'laser#show', :as => :laser
   get 'analytics/section' => 'analytics#section', :as => :analytics_section
 
   # Who opens the lab most, for any signed-in member.

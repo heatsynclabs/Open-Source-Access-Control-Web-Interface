@@ -34,6 +34,8 @@ class AnalyticsController < ApplicationController
     if (all || @section == "history") && LabMetric.available?
       @history = Analytics::History.new
       @history_topics = history_topics
+      @laser = Laser::Usage.new(Laser::Log.jobs) if LaserJob.available? && LaserJob.exists?
+      @calendar_years = calendar_years if @topic == "calendar"
     end
     render layout: false
   end
@@ -116,6 +118,17 @@ class AnalyticsController < ApplicationController
     ]
     lines += [["People paying dues", @payments[:payers], false], ["Dues recorded", @payments[:dues], false, "$"]] if @payments
     Analytics::Overview.new(@period, lines)
+  end
+
+  # The live calendar over every year, for the calendar deep dive.
+  def calendar_years
+    cached(:calendar_years) do
+      calendar = Analytics::Calendar.new(Analytics::Period.new("all"))
+      { series: calendar.by_year_series, hours: calendar.hours_by_year, weekdays: calendar.by_weekday,
+        top: calendar.top_series(15).map { |title, count, category| [title, count, category.key] } }
+    end
+  rescue LabCalendar::Unavailable
+    nil
   end
 
   # The calendar section reads the Google feed. If that is down the rest of
