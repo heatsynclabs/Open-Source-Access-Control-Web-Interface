@@ -1,6 +1,6 @@
 <div class="section-head"><p class="eyebrow">Members</p><h2>Joining and staying</h2></div>
 <div class="grid two">
-  <%= render ChartCardComponent.new(title: "Signups", note: "New accounts on the members site.", rows: by_bucket(@members[:signups], @period), columns: ["When", "Signups"]) do %>
+  <%= render ChartCardComponent.new(title: "Signups", note: "New accounts on the members site. Accounts loaded in bulk (the 2012 launch and the 2013 imports) are left out.", rows: by_bucket(@members[:signups], @period), columns: ["When", "Signups"]) do %>
     <%= column_chart by_bucket(@members[:signups], @period) %>
   <% end %>
 

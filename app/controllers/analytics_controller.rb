@@ -28,7 +28,7 @@ class AnalyticsController < ApplicationController
     @door = cached(:door) { door_section(Analytics::Door.new(@period)) } if all || @section.in?(%w[door calendar])
     @calendar = calendar_section if all || @section.in?(%w[door calendar])
     classes_sections if (all || @section == "classes") && TicketedEvent.available?
-    @payments = cached(:payments) { payments_section(Analytics::Payments.new(@period)) } if @section == "dues"
+    @payments = cached(:payments) { payments_section(Analytics::Payments.new(@period)) } if (all || @section == "dues") && @sections.key?("dues")
     @overview = overview if all
     render layout: false
   end
@@ -88,14 +88,23 @@ class AnalyticsController < ApplicationController
     }
   end
 
+  # The lines of the Everything together chart: the four main ones shown at
+  # first, the rest a click away in the legend; money only for those who
+  # can see dues.
   def overview
     calendar_counts = @calendar && @calendar[:series].each_with_object(Hash.new(0)) do |series, totals|
       series[:data].each { |bucket, count| totals[bucket] += count }
     end
-    Analytics::Overview.new(
-      entries: @door[:entries_by_period], cards: @door[:cards_by_period], events: calendar_counts,
-      signups: @classes&.dig(:by_period), accounts: @members[:signups]
-    )
+    lines = [
+      ["Card entries", @door[:entries_by_period], true],
+      ["Members coming in", @door[:cards_by_period], true],
+      ["Calendar events", calendar_counts, true],
+      ["Class sign-ups", @classes&.dig(:by_period), true],
+      ["New accounts", @members[:signups], false],
+      ["Tool sign-offs", @members[:certifications], false],
+    ]
+    lines += [["People paying dues", @payments[:payers], false], ["Dues recorded", @payments[:dues], false, "$"]] if @payments
+    Analytics::Overview.new(@period, lines)
   end
 
   # The calendar section reads the Google feed. If that is down the rest of

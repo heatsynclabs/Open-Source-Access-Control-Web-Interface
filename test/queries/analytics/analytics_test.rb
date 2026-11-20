@@ -128,18 +128,37 @@ class Analytics::QueriesTest < ActiveSupport::TestCase
     assert_nil Analytics::Classes.new(period).show_up
   end
 
-  test "the overview scales each line to its own busy level and starts it with its data" do
-    months = (1..12).map { |m| Date.new(2026, m, 1) }
+  test "the overview scales each line to its own busy level, starts it with its data and keeps the real numbers" do
+    months = (1..12).map { |m| Date.new(2025, m, 1) }
     entries = months.to_h { |month| [month, month.month == 1 ? 0 : 100] }.merge(months.last => 1000)
-    overview = Analytics::Overview.new(entries: entries, cards: nil, events: months.to_h { |month| [month, 4] },
-                                       signups: {}, accounts: { months.first => 0 })
-    lines = overview.indexed.to_h { |line| [line[:name], line[:data]] }
-    assert_nil lines["Card entries"][months.first] # before the line's first data
-    assert_equal 100, lines["Card entries"][months[5]]
-    assert_equal 200, lines["Card entries"][months.last] # one freak month is clipped at the ceiling
-    assert_equal [100], lines["Calendar events"].values.uniq
-    assert_equal [nil], lines["Class sign-ups"].values.uniq
-    assert_equal ["Card entries", "Calendar events", "Class sign-ups", "New accounts"], overview.names
-    assert_equal [1000, 4, 0, 0], overview.actual[months.last]
+    overview = Analytics::Overview.new(period("3y"), [
+      ["Card entries", entries, true], ["Members coming in", nil, true],
+      ["Calendar events", months.to_h { |month| [month, 4] }, true], ["Dues recorded", { months.first => 50.0 }, false, "$"],
+    ])
+    lines = overview.chart_series.to_h { |line| [line[:name], line] }
+    entry_points = lines["Card entries"][:data]
+    assert_nil entry_points["Jan 2025"] # before the line's first data
+    assert_equal 100, entry_points["Jun 2025"]
+    assert_equal 200, entry_points["Dec 2025"] # one freak month is clipped at the ceiling
+    assert_equal 1000.0, lines["Card entries"][:dataset][:actualByLabel]["Dec 2025"] # the tooltip's real number
+    assert lines["Dues recorded"][:dataset][:hidden]
+    assert_equal ["Card entries", "Calendar events", "Dues recorded"], overview.names
+    assert_equal ["1,000", "4", ""], overview.table["Dec 2025"]
+    assert_equal "$50", overview.table["Jan 2025"].last
+  end
+
+  test "all time is drawn by quarter, each the average month" do
+    overview = Analytics::Overview.new(period("all"), [["Card entries", { Date.new(2024, 1, 1) => 30, Date.new(2024, 2, 1) => 60, Date.new(2024, 3, 1) => 90 }, true]])
+    assert overview.quarterly?
+    assert_equal({ "Q1 2024" => ["60"] }, overview.table)
+  end
+
+  test "bulk-loaded accounts are not counted as sign-ups" do
+    day = Time.zone.local(2026, 3, 4, 12)
+    Analytics::Members::BULK_DAY.times { |i| member(email: "bulk#{i}-#{SecureRandom.hex(3)}@example.invalid", created_at: day) }
+    member(created_at: day + 1.day)
+    march = Date.new(2026, 3, 1)
+    self_made = User.where(created_at: march.all_month).where.not(created_at: day.all_day).count
+    assert_equal self_made, Analytics::Members.new(period("all")).signups[march] # the bulk day is left out
   end
 end

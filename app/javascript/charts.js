@@ -9,8 +9,8 @@ import "chartkick"
 // (lightness band, chroma, colour-blind separation). The first is the GANTRY
 // amber; one-series charts use it.
 const PALETTES = {
-  light: ["#c98714", "#3a7bc8", "#2f9a6a", "#8a5cd0", "#d0502a"],
-  dark: ["#c08214", "#4a86d0", "#33a06f", "#9468d8", "#d65a32"],
+  light: ["#c98714", "#3a7bc8", "#2f9a6a", "#8a5cd0", "#d0502a", "#1a9bb0", "#c2457f", "#6f7d22"],
+  dark: ["#c08214", "#4a86d0", "#33a06f", "#9468d8", "#d65a32", "#2199ad", "#d0548c", "#808f2c"],
 }
 
 function token(name) {
@@ -85,7 +85,26 @@ const unfinishedPeriod = {
     })
   },
 }
-window.Chart.register(unfinishedPeriod)
+// A chart whose lines are scaled (the analytics overview) sends each line's
+// real values by label as dataset.actualByLabel; the tooltip shows those.
+const realValues = {
+  id: "realValues",
+  beforeUpdate(chart) {
+    if (!chart.data.datasets.some((dataset) => dataset.actualByLabel)) return
+    const options = chart.config.options
+    options.plugins = options.plugins || {}
+    options.plugins.tooltip = options.plugins.tooltip || {}
+    options.plugins.tooltip.callbacks = {
+      ...(options.plugins.tooltip.callbacks || {}),
+      label(ctx) {
+        const value = (ctx.dataset.actualByLabel || {})[ctx.label]
+        const shown = value == null ? "no data" : (ctx.dataset.valuePrefix || "") + Number(value).toLocaleString("en-US")
+        return `${ctx.dataset.label}: ${shown}`
+      },
+    }
+  },
+}
+window.Chart.register(unfinishedPeriod, realValues)
 
 applyTheme()
 redrawAll()
