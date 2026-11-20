@@ -108,7 +108,13 @@ outbound HTTPS to guestlist.co.
 ## Over the years (older records)
 
 This tab shows long series from records the site does not keep itself, each over every
-year its records reach; the period buttons do not change it. The figures are worked out
+year its records reach; it has no period buttons. Each chart has a **Deep dive** link to a
+page with everything behind it (`?section=history&topic=`, the list is
+`Analytics::History::TOPICS`): paying members against this site's own payment records
+and by tier; the Wi-Fi by weekday and arrival hour beside card swipes of the same years;
+electricity through the year; the mailing list and Slack with first-time posters; the
+wiki; the calendar; the laser cutter; how people find the lab; and money (treasurer and
+admins only). The figures are worked out
 in the operations folder (`HeatSync Labs Operations 2026/data/`, one script per source,
 described in its `README.md`) and loaded into the table `lab_metrics`: one row per metric,
 breakdown (for example a building, a ZIP code or a wiki page) and month, year or total.
@@ -117,14 +123,15 @@ data writes any count of people under 5 as "<5"), and the tab says "fewer than 5
 
 | Chart | Source (operations `data/`) | Period | Left out or partial |
 |---|---|---|---|
-| Paying members | `membership/paypal_monthly.csv`: every PayPal record (the Board's exports 2014 to 2022, this site's `paypal_csvs` imports, a PayPal download), each transaction counted once | Apr 2013 to Sep 2026 | dues at $25, $50 or $100 only; months with missing or part records (Oct and Nov 2025 have none) |
+| Paying members | `membership/paypal_monthly.csv`: every PayPal record (the Board's exports 2014 to 2022, this site's `paypal_csvs` imports, a PayPal download), each transaction counted once | Apr 2013 to Sep 2026 | subscription dues of $25 or more only (cash and checks are never in PayPal); months with missing or part records (Oct and Nov 2025 have none) |
+| Laser cutter | `equipment/laser_monthly.csv`, `laser_materials_by_year.csv`, from the Google Sheet behind the form at the 80 W laser | May 2022 to Oct 2026 | only logged jobs; names and notes on the form are never copied |
 | Devices on the lab Wi-Fi | `attendance/wifi_monthly.csv`, from the old `mac_logs` table | Feb 2013 to Feb 2017 | always-on equipment; months with under 15 days of data |
 | Electricity used a day | `finances/utilities_monthly.csv`, from the City of Mesa bills on the Board drive | Jun 2011 to Jun 2022 | the two buildings are separate lines |
 | Messages and people posting | `community/mailing_list_monthly.csv` (one member's copy of the Google Group, counted from its daily summaries) and `community/slack_monthly.csv` | Aug 2011 to Apr 2026; Slack Apr 2018 to Aug 2026 | Slack's part months at each end |
 | Wiki edits, most-read pages | `community/wiki_activity_by_year.csv`, `community/wiki_most_read.csv` | 2009 to 2025; views to Oct 2026 | articles only (no user or talk pages) |
 | Where events were held, who keeps the calendar | `events/calendar_places_by_year.csv`, `events/calendar_contributors_by_year.csv`, from the December 2025 calendar download | 2010 to 2025 | 2025 ends on 10 December |
 | How people heard about the lab, where members live | `membership/how_heard_by_year.csv`, `membership/members_by_zip.csv`, from the September 2026 database copy | 2012 to 2026 | the free-text answers are never copied, only kinds by keyword; ZIP codes with fewer than 5 people grouped |
-| Money (treasurer, admins) | PayPal dues and donations by year, `finances/form990_by_year.csv` (the Form 990-EZ returns), utility bills by year | 2010 to 2026 | donations from mid-2022 to mid-2025 (only dues were imported then) |
+| Money (treasurer, admins) | PayPal dues and donations by year, `finances/form990_by_year.csv` (the Form 990-EZ returns, 2010 to 2024), utility bills by year | 2010 to 2026 | donations from mid-2022 to mid-2025 (only dues were imported then) |
 
 ### Refreshing the figures
 
