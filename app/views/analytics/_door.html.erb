@@ -1,14 +1,14 @@
 <div class="section-head"><p class="eyebrow">The door</p><h2>When people come in</h2></div>
-<%= render ChartCardComponent.new(title: "Card entries and distinct cards", note: "Entries are door opens with a card; distinct cards counts each card once per #{@period.unit}. The log reaches back to 2012; #{door_lost_span} was lost.") do %>
+<%= render ChartCardComponent.new(title: "Card swipes and cardholders who came in", note: "Swipes counts every time a card opened the door; cardholders counts each card once per #{@period.unit}, however often it was used. The log reaches back to 2012; #{door_lost_span} was lost.") do %>
   <%= line_chart [
-        { name: "Entries", data: by_bucket(@door[:entries_by_period], @period) },
-        { name: "Distinct cards", data: by_bucket(@door[:cards_by_period], @period) },
+        { name: "Card swipes", data: by_bucket(@door[:entries_by_period], @period) },
+        { name: "Cardholders who came in", data: by_bucket(@door[:cards_by_period], @period) },
       ], discrete: true, height: "240px", curve: false, points: false %>
 <% end %>
 
 <section class="card">
   <h3>Busiest hours</h3>
-  <p class="note">Card entries by day of the week and hour, lab time. Darker is busier.</p>
+  <p class="note">Card swipes by day of the week and hour, lab time. Darker is busier.</p>
   <%= render "shared/week_heatmap", grid: @door[:grid], noun: "entries" %>
 </section>
 
@@ -17,7 +17,7 @@
     <%= column_chart by_bucket_series(@door[:remote], @period), discrete: true, stacked: true %>
   <% end %>
   <% if @calendar %>
-    <%= render ChartCardComponent.new(title: "Does the calendar bring people in?", note: "Average card entries per day, on days with an event against days with nothing on.", rows: @calendar[:door_on_event_days], columns: ["Days", "Entries per day"]) do %>
+    <%= render ChartCardComponent.new(title: "Does the calendar bring people in?", note: "Average card swipes per day, on days with an event against days with nothing on.", rows: @calendar[:door_on_event_days], columns: ["Days", "Swipes per day"]) do %>
       <%= bar_chart @calendar[:door_on_event_days], height: "160px" %>
     <% end %>
   <% end %>
