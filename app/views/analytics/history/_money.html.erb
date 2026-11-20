@@ -11,8 +11,8 @@
   <% end %>
 
   <% sources = @history.yearly(["Gifts and grants", "irs_contributions"], ["Programs and classes", "irs_program"], ["Membership dues", "irs_dues"], ["Other", "irs_other"]) %>
-  <%= render ChartCardComponent.new(title: "Where income came from, as filed", note: "Part I of the returns on file. From 2018 the preparer reported dues under gifts and grants, so the dues line is empty: compare totals across years, not the split.", rows: series_rows(sources), columns: ["Year", "Gifts and grants", "Programs and classes", "Membership dues", "Other"]) do %>
-    <%= column_chart sources, discrete: true, stacked: true, prefix: "$" %>
+  <%= render ChartCardComponent.new(title: "Where income came from, as filed", note: "Part I of the returns on file. From 2018 the preparer reported dues under gifts and grants, so the dues line is empty: compare totals across years, not the split. 2013's other revenue was a $742 loss on sales, in the table but not drawn.", rows: series_rows(sources), columns: ["Year", "Gifts and grants", "Programs and classes", "Membership dues", "Other"]) do %>
+    <%= column_chart sources, discrete: true, stacked: true, prefix: "$", min: 0 %>
   <% end %>
 
   <% returns = @history.yearly(["Income", "irs_revenue"], ["Spending", "irs_expenses"], ["Rent, utilities and upkeep", "irs_occupancy"]) %>
