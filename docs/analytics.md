@@ -67,9 +67,9 @@ manager) and shell access to run a command on the server.
    (a few minutes for about 700; keep the tab in front) and saves
    `guestlist-export-YYYY-MM-DD.json` to your Downloads. It reads no attendee names,
    emails or orders.
-4. Copy the file into the production container and load it:
+4. Copy the file into the production container (`members_web`) and load it from `/app`:
 
-       bin/rails runner script/ticketed_events.rb load guestlist-export-YYYY-MM-DD.json
+       bundle exec rails runner script/ticketed_events.rb load guestlist-export-YYYY-MM-DD.json
 
    It prints how many events were loaded, held and cancelled. Loading replaces every row
    in one transaction, so it can be rerun; the next nightly check brings recent events up
@@ -82,7 +82,9 @@ against the PayPal export.
 ### The nightly task
 
 A Coolify scheduled task on members-production, `guestlist-sync`, runs
-`bin/rails guestlist:sync` at 03:10 Arizona time. It prints one line, for example
+`sh -c 'cd /app && bundle exec rails guestlist:sync'` in `members_web` at 03:10 Arizona
+time (frequency `10 10 * * *`, which Coolify reads as UTC). It prints one line, for example
 `guestlist sync: 26 read, 1 taken_down`, and fails only when guestlist answered nothing at
-all. To run it by hand: `bin/rails guestlist:sync` in the container. It needs nothing but
+all. To run it by hand, use Execute on the task in Coolify, or run
+`bundle exec rails guestlist:sync` in the container from `/app`. It needs nothing but
 outbound HTTPS to guestlist.co.
