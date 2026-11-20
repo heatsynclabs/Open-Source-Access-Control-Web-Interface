@@ -1,5 +1,5 @@
 <div class="analytics">
-<%= render PageHeaderComponent.new(eyebrow: "The lab", title: "Analytics", lead: "How the lab is doing, from the members database, the door log and the lab calendar. Counts only: nothing here names a person.") %>
+<%= render PageHeaderComponent.new(eyebrow: "The lab", title: "Analytics", lead: "How the lab is doing, from the members database, the door log, the lab calendar and class sign-ups. Counts only: nothing here names a person.") %>
 <p class="msg info"><strong>Some of this is incomplete.</strong> The numbers only cover what got recorded. Dues paid in cash, by check or outside PayPal are missing unless the treasurer entered them, there are gaps of years in the PayPal imports, and waivers, orientations and sign-offs were not always written down. Read the charts as trends, not exact counts.</p>
 
 <nav class="filters" aria-label="Period">
@@ -67,6 +67,38 @@
   </div>
 <% else %>
   <p class="msg warn">The lab calendar could not be read from Google just now, so this section is missing. The rest of the page is current.</p>
+<% end %>
+
+<%# ---------------------------------------------------------------- classes %>
+<% if @classes %>
+  <div class="section-head"><p class="eyebrow">Classes</p><h2>Who signs up</h2></div>
+  <div class="tiles">
+    <%= render StatTileComponent.new(value: @classes[:events], label: "Classes and workshops held", sub: "With sign-ups on guestlist") %>
+    <%= render StatTileComponent.new(value: number_with_delimiter(@classes[:attendees]), label: "People signed up", sub: @period.label) %>
+    <% if @classes[:show_up] %>
+      <%= render StatTileComponent.new(value: number_to_percentage(@classes[:show_up][:rate] * 100, precision: 0), label: "Showed up", sub: "At the #{pluralize(@classes[:show_up][:events], "event")} that checked people in") %>
+    <% end %>
+    <% if @class_money %>
+      <%= render StatTileComponent.new(value: number_to_currency(@class_money[:total], precision: 0), label: "Collected for classes", sub: "Before refunds and fees") %>
+    <% end %>
+  </div>
+  <%= render ChartCardComponent.new(title: "People signed up per #{@period.unit}", note: classes_note(@classes), rows: by_bucket(@classes[:by_period], @period), columns: ["When", "People"]) do %>
+    <%= column_chart by_bucket(@classes[:by_period], @period) %>
+  <% end %>
+  <div class="grid two">
+    <%= render ChartCardComponent.new(title: "Sign-ups by kind of class", note: "Kinds are read from the event name, so they are approximate.", rows: @classes[:by_kind], columns: ["Kind", "People"]) do %>
+      <%= bar_chart @classes[:by_kind], height: "260px" %>
+    <% end %>
+    <section class="card">
+      <h3>Best attended</h3>
+      <%= render "bar_list", rows: @classes[:top], empty: "No classes with sign-ups in this period." %>
+    </section>
+  </div>
+  <% if @class_money %>
+    <%= render ChartCardComponent.new(title: "Class money per #{@period.unit}", note: "What guestlist collected for events in each #{@period.unit}, before refunds and fees.", rows: by_bucket(@class_money[:by_period], @period), columns: ["When", "Dollars"]) do %>
+      <%= column_chart by_bucket(@class_money[:by_period], @period), prefix: "$" %>
+    <% end %>
+  <% end %>
 <% end %>
 </div>
 

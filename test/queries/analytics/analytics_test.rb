@@ -91,4 +91,33 @@ class Analytics::QueriesTest < ActiveSupport::TestCase
       assert_kind_of Integer, Analytics::Door.new(Analytics::Period.new("all")).entries_total
     end
   end
+
+  def ticketed(attributes)
+    TicketedEvent.create!({ guestlist_id: rand(1..9_999_999), name: "Laser Class", held_on: Date.current - 10, kind: "Laser",
+                            status: "held", attendees: 0, checked_in: 0, dollars: 0 }.merge(attributes))
+  end
+
+  test "class sign-ups count only events that went ahead" do
+    TicketedEvent.delete_all
+    ticketed(attendees: 8, checked_in: 6, dollars: 120)
+    ticketed(attendees: 4, kind: "Electronics", name: "Solder a Robot")
+    ticketed(attendees: 15, status: "cancelled")
+    ticketed(status: "no sign-ups")
+    ticketed(attendees: 9, held_on: Date.current - 800)
+    classes = Analytics::Classes.new(period)
+    assert_equal 2, classes.events_count
+    assert_equal 12, classes.attendees_total
+    assert_equal({ rate: 0.75, events: 1 }, classes.show_up)
+    assert_equal({ "Laser" => 8, "Electronics" => 4 }, classes.by_kind)
+    assert_equal ["Laser Class", 8], classes.top_events.first
+    assert_equal({ "cancelled" => 1, "no sign-ups" => 1 }, classes.left_out)
+    assert_equal 120.0, classes.dollars_total
+    assert_equal 12, classes.attendees_by_period.values.sum
+  end
+
+  test "show-up is unknown when no event checked people in" do
+    TicketedEvent.delete_all
+    ticketed(attendees: 5)
+    assert_nil Analytics::Classes.new(period).show_up
+  end
 end

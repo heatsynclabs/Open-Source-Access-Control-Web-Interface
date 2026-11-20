@@ -25,6 +25,16 @@ module AnalyticsHelper
     series.map { |line| CATEGORY_PALETTE_SLOTS.fetch(LabCalendar::Category.all.find { |c| c.label == line[:name] }&.key, 1) }
   end
 
+  # What the class sign-up numbers cover and leave out.
+  def classes_note(classes)
+    left_out = classes[:left_out].map { |status, count| "#{count} #{status == "cancelled" ? "cancelled" : "with no sign-ups"}" }
+    note = "From guestlist.co, the lab's ticketing site"
+    note += classes[:loaded_on] ? ", as of #{classes[:loaded_on].strftime("%B %-d, %Y")}. " : ". "
+    note += "Each ticket is one person; donation tickets are not counted. "
+    note += "Not counted: #{left_out.to_sentence} in this period. " if left_out.any?
+    note + "Classes paid for some other way are missing."
+  end
+
   def share(value, max)
     max.to_f.zero? ? 0 : (value.to_f / max).round(3)
   end
