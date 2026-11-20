@@ -1,0 +1,22 @@
+<%= turbo_frame_tag "analytics-section", target: "_top" do %>
+<% case @section %>
+<% when "all" %>
+  <%= render "overview" %>
+  <%= render "door" %>
+  <%= render "calendar" %>
+  <%= render "classes" %>
+  <%= render "members" %>
+  <%= render "dues" %>
+<% when "door" %>
+  <%= render "door" %>
+<% when "calendar" %>
+  <%= render "calendar" %>
+<% when "classes" %>
+  <%= render "classes" %>
+  <%= render "classes_detail" %>
+<% when "members" %>
+  <%= render "members" %>
+<% when "dues" %>
+  <%= render "dues" %>
+<% end %>
+<% end %>

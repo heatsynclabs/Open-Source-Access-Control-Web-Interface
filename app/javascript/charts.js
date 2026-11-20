@@ -9,8 +9,8 @@ import "chartkick"
 // (lightness band, chroma, colour-blind separation). The first is the GANTRY
 // amber; one-series charts use it.
 const PALETTES = {
-  light: ["#c98714", "#3a7bc8", "#2f9a6a", "#8a5cd0", "#d0502a"],
-  dark: ["#c08214", "#4a86d0", "#33a06f", "#9468d8", "#d65a32"],
+  light: ["#c98714", "#3a7bc8", "#2f9a6a", "#8a5cd0", "#d0502a", "#1a9bb0", "#c2457f", "#6f7d22"],
+  dark: ["#c08214", "#4a86d0", "#33a06f", "#9468d8", "#d65a32", "#2199ad", "#d0548c", "#808f2c"],
 }
 
 function token(name) {
@@ -56,6 +56,55 @@ function redrawAll() {
     chart.updateData(data, { ...options, colors: colorsFor(options, data), themeColors: true })
   })
 }
+
+// The bucket we are in is not over yet: the server ends its label with
+// " (so far)" (Analytics::Period::SO_FAR). Its line segment is dashed and its
+// bars paler, so a half-counted month does not read as a drop.
+const SO_FAR = " (so far)"
+
+function paler(color) {
+  const hex = /^#([0-9a-f]{6})$/i.exec(color || "")
+  if (!hex) return color
+  const n = parseInt(hex[1], 16)
+  return `rgba(${n >> 16}, ${(n >> 8) & 255}, ${n & 255}, 0.4)`
+}
+
+const unfinishedPeriod = {
+  id: "unfinishedPeriod",
+  beforeUpdate(chart) {
+    const labels = chart.data.labels || []
+    const last = labels.length - 1
+    if (last < 0 || !String(labels[last]).endsWith(SO_FAR)) return
+    chart.data.datasets.forEach((dataset) => {
+      if ((dataset.type || chart.config.type) === "line") {
+        dataset.segment = { borderDash: (ctx) => (ctx.p1DataIndex === last ? [5, 4] : undefined) }
+      } else {
+        const base = Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor[0] : dataset.backgroundColor
+        dataset.backgroundColor = labels.map((_label, i) => (i === last ? paler(base) : base))
+      }
+    })
+  },
+}
+// A chart whose lines are scaled (the analytics overview) sends each line's
+// real values by label as dataset.actualByLabel; the tooltip shows those.
+const realValues = {
+  id: "realValues",
+  beforeUpdate(chart) {
+    if (!chart.data.datasets.some((dataset) => dataset.actualByLabel)) return
+    const options = chart.config.options
+    options.plugins = options.plugins || {}
+    options.plugins.tooltip = options.plugins.tooltip || {}
+    options.plugins.tooltip.callbacks = {
+      ...(options.plugins.tooltip.callbacks || {}),
+      label(ctx) {
+        const value = (ctx.dataset.actualByLabel || {})[ctx.label]
+        const shown = value == null ? "no data" : (ctx.dataset.valuePrefix || "") + Number(value).toLocaleString("en-US")
+        return `${ctx.dataset.label}: ${shown}`
+      },
+    }
+  },
+}
+window.Chart.register(unfinishedPeriod, realValues)
 
 applyTheme()
 redrawAll()

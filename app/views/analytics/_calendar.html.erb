@@ -6,7 +6,7 @@
     <%= render StatTileComponent.new(value: @calendar[:hyh], label: "Hack Your Hackerspace meetings") %>
   </div>
   <%= render ChartCardComponent.new(title: "Events per #{@period.unit}, by kind") do %>
-    <%= column_chart by_bucket_series(@calendar[:series], @period), stacked: true, height: "260px", paletteOrder: calendar_palette_order(@calendar[:series]) %>
+    <%= column_chart by_bucket_series(@calendar[:series], @period), discrete: true, stacked: true, height: "260px", paletteOrder: calendar_palette_order(@calendar[:series]) %>
   <% end %>
   <div class="grid two">
     <section class="card">

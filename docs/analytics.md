@@ -5,10 +5,21 @@ five sources. Some are live, some are copies that have to be refreshed. This gui
 which is which, how each one gets in, and how to refresh the copies. Counts only: nothing
 on the page names a person.
 
-The page has a tab per source and an **All** tab. All starts with **Everything together**:
-the main numbers on one chart, each line drawn against its own busiest month (= 100) so
-lines counted in hundreds and in tens can be compared by shape. Click a name in the legend
-to hide or show its line; the real numbers are in the table under the chart.
+The page has a tab per source and an **All** tab, which shows every section (Dues only
+for the treasurer and admins). All starts with **Everything together**: the main numbers
+on one chart. They are counted in very different amounts, so each line is measured
+against its own busy month (its 90th percentile month = 100, clipped at 200), and starts
+when its records do. The tooltip and the table under the chart give the real numbers.
+Card entries, members coming in, calendar events and class sign-ups show at first; new
+accounts, tool sign-offs and, for the treasurer and admins, dues payers and dues recorded
+are a click away in the legend. All time is drawn by quarter (the average month in each).
+
+The month or week we are in is labelled "so far" and drawn dashed (lines) or paler
+(bars), so a half-counted period does not read as a drop.
+
+New accounts leave out bulk loads: any day with 15 or more new accounts (the 2012 launch
+and the 2013 imports of the older member list, 264 accounts on four days). The sign-up
+form has never made more than 5 in a day since.
 
 | Tab | Source | How it gets in | How fresh |
 |---|---|---|---|
@@ -18,7 +29,10 @@ to hide or show its line; the real numbers are in the table under the chart.
 | Classes | guestlist.co, the lab's ticketing site (`ticketed_events`) | an organizer export by hand, plus a nightly check of guestlist's public pages | nightly for new and recent events; the full history as of the last export |
 | Dues (treasurer, admins) | `payments`, from PayPal CSV imports and hand entries | the treasurer imports PayPal CSVs on the PayPal page | as of the last import |
 
-Every chart is cached for 10 minutes.
+Every chart is cached for 10 minutes. The page itself (header, tabs, period buttons)
+shows at once; the numbers load into it from `/analytics/section` in a Turbo Frame, with a
+placeholder and a "Working out the numbers" line meanwhile, because the first view after
+the cache expires can take a few seconds.
 
 ## Classes (guestlist.co)
 

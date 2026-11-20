@@ -11,6 +11,10 @@
   <% end %>
 </div>
 
-<%= render ChartCardComponent.new(title: "Everything together", note: "Each line is scaled to its own busy level: 100 is a busy #{@period.unit} for that line (its 90th percentile), so lines counted in hundreds and in tens can be compared by shape. A line starts when its records do. Click a name to hide or show its line; the real numbers are in the table.", rows: @overview.actual.transform_keys { |bucket| @period.bucket_label(bucket) }, columns: ["When", *@overview.names]) do %>
-  <%= line_chart @overview.indexed.map { |line| line.merge(data: by_bucket(line[:data], @period)) }, height: "300px", curve: false, points: false, max: Analytics::Overview::CEILING, library: { interaction: { mode: "index", intersect: false } } %>
+<%= render ChartCardComponent.new(title: "Everything together",
+      note: "How the lab's numbers rise and fall together. They are counted in very different amounts, so each line is measured against its own busy #{@overview.bucket_name}: 100 is a busy #{@overview.bucket_name} for that number, 50 is half of one. Hover for the real numbers. Click a name to show or hide its line; #{pluralize(@overview.names.size - 4, "more line")} start hidden.#{" All time is shown by quarter (the average month in each)." if @overview.quarterly?}",
+      rows: @overview.table, columns: ["When", *@overview.names]) do %>
+  <%= line_chart @overview.chart_series, discrete: true, height: "320px", curve: false, points: false, max: Analytics::Overview::CEILING,
+        library: { interaction: { mode: "index", intersect: false },
+                   scales: { y: { title: { display: true, text: "Against a busy #{@overview.bucket_name} (100)" } } } } %>
 <% end %>

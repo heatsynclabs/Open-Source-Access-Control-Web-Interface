@@ -43,9 +43,20 @@ module Analytics
       starts_at.to_date..ends_at.to_date
     end
 
+    # Marks the bucket that is not over yet. charts.js draws a bucket whose
+    # label ends with it dashed (lines) or paler (bars), so a half-counted
+    # week or month does not read as a drop.
+    SO_FAR = " (so far)"
+
     # How a bucket's date reads on an axis or in a table.
     def bucket_label(date)
-      unit == :week ? date.strftime("%b %-d") : date.strftime("%b %Y")
+      label = unit == :week ? date.strftime("%b %-d") : date.strftime("%b %Y")
+      unfinished?(date) ? label + SO_FAR : label
+    end
+
+    # Whether the bucket starting on date includes today.
+    def unfinished?(date)
+      date == (unit == :week ? Date.current.beginning_of_week : Date.current.beginning_of_month)
     end
   end
 end

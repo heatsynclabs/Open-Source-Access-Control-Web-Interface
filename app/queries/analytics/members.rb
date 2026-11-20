@@ -11,6 +11,11 @@ module Analytics
       ["Volunteer", 10...25],
     ].freeze
 
+    # A day with this many new accounts was a bulk load (the 2012 launch and
+    # the 2013 imports of the older member list), not people signing up; the
+    # sign-up form has never seen more than 5 in a day since.
+    BULK_DAY = 15
+
     def initialize(period)
       @period = period
     end
@@ -27,8 +32,9 @@ module Analytics
       Card.where(card_permissions: 1).where.not(user_id: nil).distinct.count(:user_id)
     end
 
+    # Accounts people made themselves (bulk loads left out).
     def signups
-      group(User, :created_at)
+      group(self_made, :created_at)
     end
 
     def orientations
@@ -58,7 +64,7 @@ module Analytics
 
     # Of the people who signed up in the period, how many reached each step.
     def funnel
-      joined = User.where(created_at: @period.range)
+      joined = self_made.where(created_at: @period.range)
       {
         "Signed up" => joined.count,
         "Signed a waiver" => joined.where("users.waiver IS NOT NULL OR EXISTS (SELECT 1 FROM contracts WHERE contracts.user_id = users.id)").count,
@@ -69,6 +75,10 @@ module Analytics
     end
 
     private
+
+    def self_made
+      User.where.not(Arel.sql("(users.created_at)::date IN (SELECT (created_at)::date FROM users GROUP BY 1 HAVING COUNT(*) >= #{BULK_DAY})"))
+    end
 
     def group(scope, column)
       scope.where(column => @period.range).group_by_period(@period.unit, column, range: @period.range).count

@@ -6,9 +6,18 @@ module AnalyticsHelper
   CATEGORY_PALETTE_SLOTS = { "class" => 0, "hack" => 4, "group" => 3, "recurring" => 2, "default" => 1 }.freeze
 
   # A { date => value } series with its dates written the way the period's
-  # axis reads them ("Mar 2026", or "Mar 4" for weeks).
+  # axis reads them ("Mar 2026", or "Mar 4" for weeks). Charts drawn from
+  # these pass discrete: true, or Chartkick reads the labels as dates again
+  # and drops the "(so far)" mark charts.js looks for.
   def by_bucket(series, period)
     series.transform_keys { |date| period.bucket_label(date.to_date) }
+  end
+
+  # "Nov 2026", or "Nov 2026 (so far)" for the month we are in (see
+  # Analytics::Period::SO_FAR).
+  def month_label(month, format = "%b %Y")
+    label = month.strftime(format)
+    month == Date.current.beginning_of_month ? label + Analytics::Period::SO_FAR : label
   end
 
   # The same for a list of Chartkick series ({ name:, data: }).

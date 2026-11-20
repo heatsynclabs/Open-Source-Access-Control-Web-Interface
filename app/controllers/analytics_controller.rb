@@ -2,8 +2,11 @@
 # and class sign-ups, plus dues and class money for the treasurer and
 # admins. Counts only; nothing on this page names a person.
 #
-# The page has one tab per source (section) and "All". Only the sections a
-# tab shows are worked out.
+# The page has one tab per source (section) and "All". The page itself is
+# only the header, tabs and period buttons, so it shows at once; the numbers
+# load into it from #section (a Turbo Frame), which works out only the
+# sections the tab shows. The first view after the cache expires can take a
+# few seconds, and the frame shows a placeholder meanwhile.
 class AnalyticsController < ApplicationController
   before_action :authenticate_user!
 
@@ -13,21 +16,30 @@ class AnalyticsController < ApplicationController
     "members" => "Members", "dues" => "Dues",
   }.freeze
 
+  before_action :choose_section
+
   def index
-    @period = Analytics::Period.new(params[:period])
-    @sections = SECTIONS.reject { |key, _label| key == "dues" && !can?(:manage, Payment) }
-    @section = @sections.key?(params[:section]) ? params[:section] : "all"
+  end
+
+  def section
     all = @section == "all"
 
     @members = cached(:members) { members_section(Analytics::Members.new(@period)) } if all || @section == "members"
     @door = cached(:door) { door_section(Analytics::Door.new(@period)) } if all || @section.in?(%w[door calendar])
     @calendar = calendar_section if all || @section.in?(%w[door calendar])
     classes_sections if (all || @section == "classes") && TicketedEvent.available?
-    @payments = cached(:payments) { payments_section(Analytics::Payments.new(@period)) } if @section == "dues"
+    @payments = cached(:payments) { payments_section(Analytics::Payments.new(@period)) } if (all || @section == "dues") && @sections.key?("dues")
     @overview = overview if all
+    render layout: false
   end
 
   private
+
+  def choose_section
+    @period = Analytics::Period.new(params[:period])
+    @sections = SECTIONS.reject { |key, _label| key == "dues" && !can?(:manage, Payment) }
+    @section = @sections.key?(params[:section]) ? params[:section] : "all"
+  end
 
   def cached(section, &block)
     Rails.cache.fetch(["analytics", section, @period.key], expires_in: CACHE_FOR, &block)
@@ -76,14 +88,23 @@ class AnalyticsController < ApplicationController
     }
   end
 
+  # The lines of the Everything together chart: the four main ones shown at
+  # first, the rest a click away in the legend; money only for those who
+  # can see dues.
   def overview
     calendar_counts = @calendar && @calendar[:series].each_with_object(Hash.new(0)) do |series, totals|
       series[:data].each { |bucket, count| totals[bucket] += count }
     end
-    Analytics::Overview.new(
-      entries: @door[:entries_by_period], cards: @door[:cards_by_period], events: calendar_counts,
-      signups: @classes&.dig(:by_period), accounts: @members[:signups]
-    )
+    lines = [
+      ["Card entries", @door[:entries_by_period], true],
+      ["Members coming in", @door[:cards_by_period], true],
+      ["Calendar events", calendar_counts, true],
+      ["Class sign-ups", @classes&.dig(:by_period), true],
+      ["New accounts", @members[:signups], false],
+      ["Tool sign-offs", @members[:certifications], false],
+    ]
+    lines += [["People paying dues", @payments[:payers], false], ["Dues recorded", @payments[:dues], false, "$"]] if @payments
+    Analytics::Overview.new(@period, lines)
   end
 
   # The calendar section reads the Google feed. If that is down the rest of

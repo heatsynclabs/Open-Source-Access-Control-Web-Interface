@@ -7,10 +7,10 @@
   </div>
   <div class="grid two">
     <%= render ChartCardComponent.new(title: "Dues per #{@period.unit}", rows: by_bucket(@payments[:dues], @period), columns: ["When", "Dollars"]) do %>
-      <%= column_chart by_bucket(@payments[:dues], @period), prefix: "$" %>
+      <%= column_chart by_bucket(@payments[:dues], @period), discrete: true, prefix: "$" %>
     <% end %>
     <%= render ChartCardComponent.new(title: "People paying per #{@period.unit}", rows: by_bucket(@payments[:payers], @period), columns: ["When", "Payers"]) do %>
-      <%= line_chart by_bucket(@payments[:payers], @period), curve: false %>
+      <%= line_chart by_bucket(@payments[:payers], @period), discrete: true, curve: false %>
     <% end %>
     <%= render ChartCardComponent.new(title: "Payments by amount", rows: @payments[:tiers], columns: ["Amount", "Payments"]) do %>
       <%= bar_chart @payments[:tiers], height: "200px" %>
