@@ -1,0 +1,27 @@
+<%= render "analytics/history/head", topic: "talk", note: "The heatsynclabs Google Group, counted from one member's copy: from August 2011 it holds the list's daily summaries, which list every post with its link, so every post since then is here (8,501 of the Group's 9,539 conversations; the rest are from before August 2011). Slack is its public channels from April 2018 (no private channels or direct messages). Counts only: no names, subjects or text. Blanks are months with fewer than 5 people." %>
+<div class="grid two">
+  <% talk = @history.monthly(["Mailing list posts", "mailing_list_posts"], ["Slack messages", "slack_messages"]) %>
+  <%= render ChartCardComponent.new(title: "Messages a month", rows: series_rows(talk), columns: ["Month", "Mailing list", "Slack"]) do %>
+    <%= line_chart talk, discrete: true, curve: false, points: false %>
+  <% end %>
+
+  <% posters = @history.monthly(["On the mailing list", "mailing_list_posters"], ["In Slack", "slack_posters"]) %>
+  <%= render ChartCardComponent.new(title: "People posting a month", rows: series_rows(posters), columns: ["Month", "Mailing list", "Slack"]) do %>
+    <%= line_chart posters, discrete: true, curve: false, points: false %>
+  <% end %>
+
+  <% newcomers = @history.yearly(["Mailing list", "mailing_list_new_posters"], ["Slack", "slack_new_posters"]) %>
+  <%= render ChartCardComponent.new(title: "First-time posters a year", note: "People posting for the first time in each record (the first year of each counts everyone already posting).", rows: series_rows(newcomers), columns: ["Year", "Mailing list", "Slack"]) do %>
+    <%= column_chart newcomers, discrete: true %>
+  <% end %>
+
+  <% threads = @history.monthly(["Conversations", "mailing_list_conversations"]) %>
+  <%= render ChartCardComponent.new(title: "Mailing list conversations a month", note: "Different conversations (topics) with a post that month.", rows: series_rows(threads), columns: ["Month", "Conversations"]) do %>
+    <%= line_chart threads, discrete: true, curve: false, points: false %>
+  <% end %>
+
+  <% channels = @history.monthly(["Channels", "slack_channels"]) %>
+  <%= render ChartCardComponent.new(title: "Slack channels in use a month", note: "Public channels with at least one message that month.", rows: series_rows(channels), columns: ["Month", "Channels"]) do %>
+    <%= line_chart channels, discrete: true, curve: false, points: false %>
+  <% end %>
+</div>

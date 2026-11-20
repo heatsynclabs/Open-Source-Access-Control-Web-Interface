@@ -1,0 +1,12 @@
+<%= render "analytics/history/head", topic: "calendar", note: "From the lab calendar's full download (2010 to 10 December 2025). Held events leave out cancellation and closure notices and merge duplicates, as the operations data does. Who added an event is read only to count people; nobody is named. The Calendar tab, set to All time, has the live calendar by category." %>
+<div class="grid two">
+  <% places = @history.yearly(["At the lab", "calendar_places", "At the lab"], ["Online", "calendar_places", "Online"], ["Elsewhere", "calendar_places", "Elsewhere"]) %>
+  <%= render ChartCardComponent.new(title: "Where events were held", note: "At the lab: its name or address, or no location. Online: a web link, Jitsi, Zoom or Google Meet. Elsewhere: Gangplank in Chandler, the lab's first home, or another venue.", rows: series_rows(places), columns: ["Year", "At the lab", "Online", "Elsewhere"]) do %>
+    <%= column_chart places, discrete: true, stacked: true %>
+  <% end %>
+
+  <% added = @history.yearly(["Events or series added", "calendar_items_added"]) %>
+  <%= render ChartCardComponent.new(title: "Events added, and by how many people", note: "A repeating series counts once, the year it was added.", rows: @history.table("calendar_items_added", "calendar_contributors"), columns: ["Year", "Events or series added", "People adding them"]) do %>
+    <%= column_chart added, discrete: true %>
+  <% end %>
+</div>

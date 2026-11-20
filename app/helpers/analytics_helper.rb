@@ -25,11 +25,15 @@ module AnalyticsHelper
     series_list.map { |series| series.merge(data: by_bucket(series[:data], period)) }
   end
 
-  # Table rows [[label, [value, ...]]] for Chartkick series that share their
-  # labels (one column per series), for a chart card's numbers.
+  # Table rows [[label, [value, ...]]] for Chartkick series (one column per
+  # series, every label any of them has), for a chart card's numbers.
   def series_rows(series)
-    return [] if series.empty?
-    series.first[:data].keys.map { |label| [label, series.map { |line| line[:data][label] }] }
+    series.flat_map { |line| line[:data].keys }.uniq.map { |label| [label, series.map { |line| line[:data][label] }] }
+  end
+
+  # An Over the years deep dive (Analytics::History::TOPICS).
+  def history_topic_path(topic)
+    analytics_path(section: "history", topic: topic)
   end
 
   # "12am", "3pm": an hour of the day on the door heatmap.

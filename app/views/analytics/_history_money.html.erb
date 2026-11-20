@@ -2,22 +2,22 @@
 <div class="section-head"><p class="eyebrow">Over the years</p><h2>Money</h2></div>
 <div class="grid two">
   <% paypal = [{ name: "Dues", data: @history.sum_by_year("dues_dollars") }, { name: "Donations", data: @history.sum_by_year("donation_dollars") }] %>
-  <%= render ChartCardComponent.new(title: "Dues and donations through PayPal", note: "PayPal payments by year, each counted once. #{@history.short_years("dues_dollars").to_sentence} have fewer than twelve months on record. Donations are missing from mid-2022 to mid-2025, when this site imported dues only.", rows: series_rows(paypal), columns: ["Year", "Dues", "Donations"]) do %>
+  <%= render ChartCardComponent.new(title: "Dues and donations through PayPal", note: "PayPal payments by year, each counted once. #{@history.short_years("dues_dollars").to_sentence} have fewer than twelve months on record. Donations are missing from mid-2022 to mid-2025, when this site imported dues only.", rows: series_rows(paypal), columns: ["Year", "Dues", "Donations"], more: history_topic_path("money")) do %>
     <%= column_chart paypal, discrete: true, prefix: "$" %>
   <% end %>
 
   <% returns = @history.yearly(["Income", "irs_revenue"], ["Spending", "irs_expenses"], ["Rent, utilities and upkeep", "irs_occupancy"]) %>
-  <%= render ChartCardComponent.new(title: "Income and spending, from the tax returns", note: "As filed on the lab's Form 990-EZ. 2012, 2022 and 2023 are rounded to $1,000 (no copy of the return on file); 2014 to 2017 were postcard returns with no figures. Rent, utilities and upkeep only where the return is on file.", rows: series_rows(returns), columns: ["Year", "Income", "Spending", "Rent, utilities and upkeep"]) do %>
+  <%= render ChartCardComponent.new(title: "Income and spending, from the tax returns", note: "As filed on the lab's Form 990-EZ. 2012, 2022 and 2023 are rounded to $1,000 (no copy of the return on file); 2014 to 2017 were postcard returns with no figures. Rent, utilities and upkeep only where the return is on file.", rows: series_rows(returns), columns: ["Year", "Income", "Spending", "Rent, utilities and upkeep"], more: history_topic_path("money")) do %>
     <%= column_chart returns, discrete: true, prefix: "$" %>
   <% end %>
 
   <% assets = @history.yearly(["Net assets", "irs_net_assets"]) %>
-  <%= render ChartCardComponent.new(title: "Net assets at year end", note: "What the lab held at the end of each year, from the same returns.", rows: series_rows(assets), columns: ["Year", "Net assets"]) do %>
+  <%= render ChartCardComponent.new(title: "Net assets at year end", note: "What the lab held at the end of each year, from the same returns.", rows: series_rows(assets), columns: ["Year", "Net assets"], more: history_topic_path("money")) do %>
     <%= column_chart assets, discrete: true, prefix: "$" %>
   <% end %>
 
   <% bills = @history.sum_by_year("utility_dollars") %>
-  <%= render ChartCardComponent.new(title: "Utility bills", note: "City of Mesa bills (electricity, water, sewer and trash) by year. 2011 starts in June and 2022 ends in June; in 2018 both buildings were billed for a few months.", rows: bills, columns: ["Year", "Billed"]) do %>
+  <%= render ChartCardComponent.new(title: "Utility bills", note: "City of Mesa bills (electricity, water, sewer and trash) by year. 2011 starts in June and 2022 ends in June; in 2018 both buildings were billed for a few months.", rows: bills, columns: ["Year", "Billed"], more: history_topic_path("power")) do %>
     <%= column_chart bills, discrete: true, prefix: "$" %>
   <% end %>
 </div>

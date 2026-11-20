@@ -8,20 +8,18 @@
   <% end %>
 </nav>
 
+<% unless @section == "history" %>
 <nav class="filters" aria-label="Period">
   <% Analytics::Period::CHOICES.each do |key, choice| %>
     <%= link_to choice[:label], analytics_path(period: key, section: @section), class: ["toggle", ("on" if @period.key == key)], "aria-current": ("page" if @period.key == key) %>
   <% end %>
-  <% if @section == "history" %>
-    <span class="muted small">Over the years always shows every year on record; the period only changes the other tabs.</span>
-  <% else %>
-    <span class="muted small">Grouped by <%= @period.unit %>. The <%= @period.unit %> we are in is marked "so far" and drawn dashed or paler, since it is not over. Figures refresh every <%= distance_of_time_in_words(AnalyticsController::CACHE_FOR) %>.</span>
-  <% end %>
+  <span class="muted small">Grouped by <%= @period.unit %>. The <%= @period.unit %> we are in is marked "so far" and drawn dashed or paler, since it is not over. Figures refresh every <%= distance_of_time_in_words(AnalyticsController::CACHE_FOR) %>.</span>
 </nav>
+<% end %>
 
 <%# The numbers load from analytics#section; its charts need the chart scripts on this page. %>
 <% load_chart_scripts %>
-<%= turbo_frame_tag "analytics-section", src: analytics_section_path(period: @period.key, section: @section), target: "_top" do %>
+<%= turbo_frame_tag "analytics-section", src: analytics_section_path(period: @period.key, section: @section, topic: @topic), target: "_top" do %>
   <div class="analytics-loading" aria-busy="true">
     <p class="muted"><span class="spinner" role="presentation"></span> Working out the numbers for <%= @sections[@section].downcase == "all" ? "every section" : @sections[@section] %><%= ", #{@period.label.downcase}" unless @section == "history" %>. The first look after a while can take a few seconds.</p>
     <div class="tiles"><% 4.times do %><div class="tile skeleton short" role="presentation"></div><% end %></div>

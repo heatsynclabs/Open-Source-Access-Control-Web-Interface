@@ -1,0 +1,33 @@
+<%= render "analytics/history/head", topic: "laser", note: "From the form members fill in at the 80 W laser (Google Sheet \"Large 80W Laser Log\"), May 2022 on; this month is left out until it is over. Only logged jobs are here. Names and notes on the form are read only to count; nobody is named. Blanks are months with fewer than 5 people." %>
+<div class="grid two">
+  <% jobs = @history.monthly(["Jobs logged", "laser_jobs"]) %>
+  <%= render ChartCardComponent.new(title: "Jobs a month", rows: series_rows(jobs), columns: ["Month", "Jobs"]) do %>
+    <%= column_chart jobs, discrete: true %>
+  <% end %>
+
+  <% people = @history.monthly(["People", "laser_people"]) %>
+  <%= render ChartCardComponent.new(title: "People using it a month", rows: series_rows(people), columns: ["Month", "People"]) do %>
+    <%= line_chart people, discrete: true, curve: false, points: false %>
+  <% end %>
+
+  <% hours = @history.monthly(["Laser hours", "laser_hours"]) %>
+  <%= render ChartCardComponent.new(title: "Laser hours a month", note: "The run time people logged, all copies of a job together.", rows: series_rows(hours), columns: ["Month", "Hours"]) do %>
+    <%= column_chart hours, discrete: true, suffix: " h" %>
+  <% end %>
+
+  <% results = @history.labels("laser_results").map { |label| { name: label, data: @history.sum_by_year("laser_results", label) } } %>
+  <%= render ChartCardComponent.new(title: "How jobs turned out, by year", rows: series_rows(results), columns: ["Year", *results.map { |line| line[:name] }]) do %>
+    <%= column_chart results, discrete: true, stacked: true %>
+  <% end %>
+
+  <% materials = @history.labels("laser_materials").map { |label| [label, "laser_materials", label] } %>
+  <% by_material = @history.yearly(*materials) %>
+  <%= render ChartCardComponent.new(title: "What was cut, by year", note: "Jobs by material, grouped (wood, MDF and hardwoods; acrylic; other plastics and foam; paper and card; other).", rows: series_rows(by_material), columns: ["Year", *by_material.map { |line| line[:name] }]) do %>
+    <%= column_chart by_material, discrete: true, stacked: true %>
+  <% end %>
+
+  <% clean = @history.monthly(["Found it clean", "laser_found_clean"], ["Left it clean", "laser_left_clean"]) %>
+  <%= render ChartCardComponent.new(title: "Keeping it clean", note: "The share of jobs whose maker found the machine clean, and said they left it clean.", rows: series_rows(clean), columns: ["Month", "Found clean (%)", "Left clean (%)"]) do %>
+    <%= line_chart clean, discrete: true, curve: false, points: false, suffix: "%", max: 100 %>
+  <% end %>
+</div>

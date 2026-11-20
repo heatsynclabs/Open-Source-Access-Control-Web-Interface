@@ -42,13 +42,18 @@ class AnalyticsHistoryTest < ActionDispatch::IntegrationTest
     assert_select "h2", "Since the lab began"
     assert_select "h3", "Paying members"
     assert_select "td", "Mar 2016"
-    assert_select ".bar-list span", "Rules"
-    assert_match "5,734,654 views in all", response.body
     assert_select "td", "fewer than 5"
     assert_match "Different people added them: 20 in 2013, fewer than 5 in 2025", response.body
-    assert_select ".bar-list .value", "152,998"
     assert_select "h2", text: "Money", count: 0
     assert_no_match "$1,850", response.body
+  end
+
+  test "the wiki deep dive lists the most-read pages" do
+    sign_in member
+    LabCalendar.stub(:between, ->(_range) { raise LabCalendar::Unavailable }) { get analytics_section_path(section: "history", topic: "wiki") }
+    assert_select ".bar-list span", "Rules"
+    assert_select ".bar-list .value", "152,998"
+    assert_match "5,734,654 views in all", response.body
   end
 
   test "the treasurer and admins also see the money" do
@@ -59,11 +64,38 @@ class AnalyticsHistoryTest < ActionDispatch::IntegrationTest
     assert_match "2016 have fewer than twelve months", response.body
   end
 
-  test "the tab is listed, and the period buttons say they do not apply to it" do
+  test "the tab is listed and has no period buttons" do
     sign_in member
     get analytics_path(section: "history")
     assert_select ".tabs a.on", "Over the years"
-    assert_match "always shows every year on record", response.body
+    assert_select "nav[aria-label=Period]", count: 0
+    get analytics_path(section: "door")
+    assert_select "nav[aria-label=Period]"
+  end
+
+  test "each chart leads to its deep dive, and the deep dives link to each other" do
+    sign_in member
+    history_tab
+    assert_select ".card-more a[href=?]", analytics_path(section: "history", topic: "members")
+    LabCalendar.stub(:between, ->(_range) { raise LabCalendar::Unavailable }) { get analytics_section_path(section: "history", topic: "members") }
+    assert_select "h2", "Paying members"
+    assert_select "h3", "PayPal against this site's records"
+    assert_select "nav[aria-label='Deep dives'] a.on", "Paying members"
+    assert_select "nav[aria-label='Deep dives'] a", text: "Money", count: 0
+  end
+
+  test "every deep dive renders, and money only for the treasurer and admins" do
+    sign_in member(admin: true)
+    Analytics::History::TOPICS.each_key do |topic|
+      LabCalendar.stub(:between, ->(_range) { raise LabCalendar::Unavailable }) { get analytics_section_path(section: "history", topic: topic) }
+      assert_response :success
+      assert_select "h2", Analytics::History::TOPICS[topic][:title]
+    end
+    sign_out :user
+    sign_in member
+    get analytics_section_path(section: "history", topic: "money")
+    assert_select "h2", text: "Money", count: 0
+    assert_select "h2", "Since the lab began" # a topic you cannot open falls back to the tab
   end
 
   test "before the figures are loaded the tab says so" do

@@ -7,6 +7,20 @@ module Analytics
   class History
     FEWER_THAN_FIVE = "fewer than 5"
 
+    # The deep dives, one per subject on the tab (?section=history&topic=).
+    # Money ones show only to those who can see dues.
+    TOPICS = {
+      "members" => { title: "Paying members" },
+      "wifi" => { title: "Devices on the lab Wi-Fi" },
+      "power" => { title: "Electricity" },
+      "talk" => { title: "The mailing list and Slack" },
+      "wiki" => { title: "The wiki" },
+      "calendar" => { title: "The calendar" },
+      "laser" => { title: "The laser cutter" },
+      "joining" => { title: "How people find the lab" },
+      "money" => { title: "Money", money: true },
+    }.freeze
+
     def initialize
       @rows = LabMetric.order(:starts_on, :id).to_a.group_by(&:key)
     end
@@ -15,14 +29,15 @@ module Analytics
       @rows.any?
     end
 
-    # Chartkick series on one shared run of months: lines are [name, key]
-    # or [name, key, label].
-    def monthly(*lines)
-      shared(lines, "%b %Y") { |from, to| months(from, to) }
+    # Chartkick series on one shared run of months: lines are [name, key],
+    # [name, key, label], or [name, { date => value }] for a live series
+    # (clipped to the months the stored lines cover, or those of within:).
+    def monthly(*lines, within: nil)
+      shared(lines, "%b %Y", within) { |from, to| months(from, to) }
     end
 
     def yearly(*lines)
-      shared(lines, "%Y") { |from, to| (from.year..to.year).map { |year| Date.new(year) } }
+      shared(lines, "%Y", nil) { |from, to| (from.year..to.year).map { |year| Date.new(year) } }
     end
 
     # [[label, value]]: a breakdown read at one date, in the order it was
@@ -33,10 +48,37 @@ module Analytics
       found.sort_by { |label, value| [label == "Other" ? 1 : 0, -(value || 0)] }
     end
 
-    # { "2013" => total }: a monthly money series added up by year, every
-    # label together.
-    def sum_by_year(key)
-      rows(key).group_by { |row| row.starts_on.year.to_s }.transform_values { |year| year.sum { |row| row.value.to_f }.round }
+    # { "2013" => total }: a monthly series added up by year (every label
+    # together, or one).
+    def sum_by_year(key, label = nil)
+      rows(key, label).group_by { |row| row.starts_on.year.to_s }.transform_values { |year| year.sum { |row| row.value.to_f }.round }
+    end
+
+    # { "2013" => average } of a monthly series, over the months on record.
+    def average_by_year(key, label = "")
+      rows(key, label).reject { |row| row.value.nil? }.group_by { |row| row.starts_on.year.to_s }
+        .transform_values { |year| (year.sum { |row| row.value.to_f } / year.size).round(1) }
+    end
+
+    # { "Jan" => average } of a monthly series over every year: its seasons.
+    def average_by_calendar_month(key, label = "")
+      by_month = rows(key, label).reject { |row| row.value.nil? }.group_by { |row| row.starts_on.month }
+      (1..12).to_h { |m| [Date::ABBR_MONTHNAMES[m], by_month[m] && (by_month[m].sum { |row| row.value.to_f } / by_month[m].size).round(1)] }
+    end
+
+    # { "2013" => a / b }, the yearly totals of two monthly series divided
+    # (for example dues dollars per paying member a month).
+    def ratio_by_year(numerator, denominator)
+      below = sum_by_year(denominator)
+      sum_by_year(numerator).filter_map { |year, total| [year, (total.to_f / below[year]).round(2)] if below[year].to_f.positive? }.to_h
+    end
+
+    # One Chartkick series per year, with the labels along the axis (for
+    # example the weekdays of each year).
+    def by_year_series(key)
+      rows(key).group_by { |row| row.starts_on.year.to_s }.map do |year, year_rows|
+        { name: year, data: year_rows.to_h { |row| [row.label, number(row.value)] } }
+      end
     end
 
     # Years in which the series has fewer than twelve months.
@@ -74,9 +116,11 @@ module Analytics
       label ? found.select { |row| row.label == label } : found
     end
 
-    def shared(lines, format)
-      found = lines.to_h { |name, key, label = ""| [name, rows(key, label).to_h { |row| [row.starts_on, number(row.value)] }] }
-      dates = found.values.flat_map(&:keys)
+    def shared(lines, format, within)
+      stored, live = lines.partition { |_name, key| key.is_a?(String) }
+      found = stored.to_h { |name, key, label = ""| [name, rows(key, label).to_h { |row| [row.starts_on, number(row.value)] }] }
+      dates = within ? rows(within).map(&:starts_on) : found.values.flat_map(&:keys)
+      live.each { |name, series| found[name] = series.transform_keys(&:to_date) }
       return [] if dates.empty?
       periods = yield(dates.min, dates.max)
       found.map do |name, data|

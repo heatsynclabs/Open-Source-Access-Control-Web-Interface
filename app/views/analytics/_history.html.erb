@@ -1,61 +1,58 @@
 <div class="section-head"><p class="eyebrow">Over the years</p><h2>Since the lab began</h2></div>
 <% if @history&.loaded? %>
-  <p class="note">Records the members site does not keep itself: PayPal and utility records, the old Wi-Fi log, the mailing list and wiki, the calendar's history and the tax returns. Each chart covers every year its records reach. They were gathered by hand and do not update on their own; a gap in a line is a month or year with no record.</p>
+  <p class="note">Records the members site does not keep itself: PayPal and utility records, the old Wi-Fi log, the laser log, the mailing list and wiki, the calendar's history and the tax returns. Each chart covers every year its records reach; a gap in a line is a month or year with no record. They were gathered by hand and do not update on their own. "Deep dive" under a chart opens everything behind it.</p>
   <div class="grid two">
     <% payers = @history.monthly(["Paying members", "dues_payers"]) %>
-    <%= render ChartCardComponent.new(title: "Paying members", note: "People who paid dues ($25, $50 or $100) through PayPal each month, each payment counted once across the Board's PayPal exports, this site's imports and a recent PayPal download. Dues paid in cash or by check are not in PayPal.", rows: series_rows(payers), columns: ["Month", "Paying members"]) do %>
+    <%= render ChartCardComponent.new(title: "Paying members", note: "People who paid dues through PayPal each month ($25 or more on a subscription), each payment counted once across the Board's PayPal exports, this site's imports and a recent PayPal download. Dues paid in cash or by check are not in PayPal.", rows: series_rows(payers), columns: ["Month", "Paying members"], more: history_topic_path("members")) do %>
       <%= line_chart payers, discrete: true, curve: false, points: false %>
     <% end %>
 
     <% wifi = @history.monthly(["Devices a day", "wifi_devices_per_day"]) %>
-    <%= render ChartCardComponent.new(title: "Devices on the lab Wi-Fi", note: "Devices that joined the lab Wi-Fi on an average day, from the scanner that logged them from 2013 to 2017, always-on equipment left out. A device is not a person: people bring a phone and a laptop, and guests' phones count too.", rows: series_rows(wifi), columns: ["Month", "Devices a day"]) do %>
+    <%= render ChartCardComponent.new(title: "Devices on the lab Wi-Fi", note: "Devices that joined the lab Wi-Fi on an average day, from the scanner that logged them from 2013 to 2017, always-on equipment left out. A device is not a person: people bring a phone and a laptop, and guests' phones count too.", rows: series_rows(wifi), columns: ["Month", "Devices a day"], more: history_topic_path("wifi")) do %>
       <%= line_chart wifi, discrete: true, curve: false, points: false %>
     <% end %>
 
     <% power = @history.monthly(["140 W Main", "kwh_per_day", "140 W Main"], ["108 W Main", "kwh_per_day", "108 W Main"]) %>
-    <%= render ChartCardComponent.new(title: "Electricity used a day", note: "Average kilowatt-hours a day on each City of Mesa bill. The lab moved from 140 to 108 W Main in 2018, a bigger building, and both were billed for a few months. Summer air conditioning makes most of the yearly swing.", rows: series_rows(power), columns: ["Month", "140 W Main", "108 W Main"]) do %>
+    <%= render ChartCardComponent.new(title: "Electricity used a day", note: "Average kilowatt-hours a day on each City of Mesa bill. The lab moved from 140 to 108 W Main in 2018, a bigger building, and both were billed for a few months. Summer air conditioning makes most of the yearly swing.", rows: series_rows(power), columns: ["Month", "140 W Main", "108 W Main"], more: history_topic_path("power")) do %>
       <%= line_chart power, discrete: true, curve: false, points: false, suffix: " kWh" %>
     <% end %>
 
+    <% laser = @history.monthly(["Jobs logged", "laser_jobs"]) %>
+    <%= render ChartCardComponent.new(title: "The laser cutter", note: "Jobs members logged on the form by the 80 W laser each month, from May 2022. Unlogged use is not counted.", rows: series_rows(laser), columns: ["Month", "Jobs logged"], more: history_topic_path("laser")) do %>
+      <%= column_chart laser, discrete: true %>
+    <% end %>
+
     <% talk = @history.monthly(["Mailing list posts", "mailing_list_posts"], ["Slack messages", "slack_messages"]) %>
-    <%= render ChartCardComponent.new(title: "Messages a month", note: "Posts to the heatsynclabs mailing list (from one member's copy of the list, every post from August 2011) and messages in Slack's public channels (from April 2018).", rows: series_rows(talk), columns: ["Month", "Mailing list", "Slack"]) do %>
+    <%= render ChartCardComponent.new(title: "Messages a month", note: "Posts to the heatsynclabs mailing list (every post from August 2011, counted from the list's daily summaries) and messages in Slack's public channels (from April 2018).", rows: series_rows(talk), columns: ["Month", "Mailing list", "Slack"], more: history_topic_path("talk")) do %>
       <%= line_chart talk, discrete: true, curve: false, points: false %>
     <% end %>
 
     <% posters = @history.monthly(["On the mailing list", "mailing_list_posters"], ["In Slack", "slack_posters"]) %>
-    <%= render ChartCardComponent.new(title: "People posting a month", note: "Different people who posted that month. Months with fewer than 5 on the mailing list are left blank.", rows: series_rows(posters), columns: ["Month", "Mailing list", "Slack"]) do %>
+    <%= render ChartCardComponent.new(title: "People posting a month", note: "Different people who posted that month. Months with fewer than 5 on the mailing list are left blank.", rows: series_rows(posters), columns: ["Month", "Mailing list", "Slack"], more: history_topic_path("talk")) do %>
       <%= line_chart posters, discrete: true, curve: false, points: false %>
     <% end %>
 
-    <% edits = @history.yearly(["Edits", "wiki_edits"]) %>
-    <%= render ChartCardComponent.new(title: "Wiki edits a year", note: "Edits to the old wiki, from its full history. The people editing it are in the table (years with fewer than 5 say so).", rows: @history.table("wiki_edits", "wiki_editors"), columns: ["Year", "Edits", "People editing"]) do %>
-      <%= column_chart edits, discrete: true %>
-    <% end %>
-
     <% places = @history.yearly(["At the lab", "calendar_places", "At the lab"], ["Online", "calendar_places", "Online"], ["Elsewhere", "calendar_places", "Elsewhere"]) %>
-    <%= render ChartCardComponent.new(title: "Where events were held", note: "Events on the calendar each year by where they took place (to 10 December 2025). The lab met at Gangplank in Chandler until it moved to Mesa in 2011; online events are mostly 2020 to 2022.", rows: series_rows(places), columns: ["Year", "At the lab", "Online", "Elsewhere"]) do %>
+    <%= render ChartCardComponent.new(title: "Where events were held", note: "Events on the calendar each year by where they took place (to 10 December 2025). The lab met at Gangplank in Chandler until it moved to Mesa in 2011; online events are mostly 2020 to 2022.", rows: series_rows(places), columns: ["Year", "At the lab", "Online", "Elsewhere"], more: history_topic_path("calendar")) do %>
       <%= column_chart places, discrete: true, stacked: true %>
     <% end %>
 
     <% added = @history.yearly(["Events or series added", "calendar_items_added"]) %>
     <% most, latest = @history.highest("calendar_contributors"), @history.table("calendar_contributors").last %>
-    <%= render ChartCardComponent.new(title: "Who keeps the calendar", note: "Events and repeating series added to the calendar each year (a series counts once)#{". Different people added them: #{most[1]} in #{most[0]}, #{latest[1].first} in #{latest[0]}; the table has every year" if most && latest}.", rows: @history.table("calendar_items_added", "calendar_contributors"), columns: ["Year", "Events or series added", "People adding them"]) do %>
+    <%= render ChartCardComponent.new(title: "Who keeps the calendar", note: "Events and repeating series added to the calendar each year (a series counts once)#{". Different people added them: #{most[1]} in #{most[0]}, #{latest[1].first} in #{latest[0]}; the table has every year" if most && latest}.", rows: @history.table("calendar_items_added", "calendar_contributors"), columns: ["Year", "Events or series added", "People adding them"], more: history_topic_path("calendar")) do %>
       <%= column_chart added, discrete: true %>
     <% end %>
 
-    <%= render ChartCardComponent.new(title: "Most-read wiki pages", note: "Views counted by the wiki itself from 2009 to October 2026, search engines included: #{number_with_delimiter(@history.totals("wiki_views").first&.last.to_i)} views in all.") do %>
-      <%= render "bar_list", rows: @history.totals("wiki_page_views").first(10), empty: "No wiki figures loaded." %>
+    <% edits = @history.yearly(["Edits", "wiki_edits"]) %>
+    <%= render ChartCardComponent.new(title: "Wiki edits a year", note: "Edits to the old wiki, from its full history. The people editing it are in the table (years with fewer than 5 say so).", rows: @history.table("wiki_edits", "wiki_editors"), columns: ["Year", "Edits", "People editing"], more: history_topic_path("wiki")) do %>
+      <%= column_chart edits, discrete: true %>
     <% end %>
 
-    <%= render ChartCardComponent.new(title: "How people heard about the lab", note: "What people wrote under \"How did you hear about us?\" when they made an account, sorted into rough kinds by keyword (members database, September 2026). The answers themselves are not shown.", rows: @history.breakdown_table("how_heard"), columns: ["Year joined", *@history.labels("how_heard")]) do %>
+    <%= render ChartCardComponent.new(title: "How people heard about the lab", note: "What people wrote under \"How did you hear about us?\" when they made an account, sorted into rough kinds by keyword (members database, September 2026). The answers themselves are not shown.", rows: @history.breakdown_table("how_heard"), columns: ["Year joined", *@history.labels("how_heard")], more: history_topic_path("joining")) do %>
       <%= render "bar_list", rows: @history.totals("how_heard_all", largest_first: true), empty: "No answers loaded." %>
     <% end %>
-
-    <%= render ChartCardComponent.new(title: "Where members live", note: "People who have paid dues, by the ZIP code on their account (members database, September 2026). ZIP codes with fewer than 5 such people are grouped.") do %>
-      <%= render "bar_list", rows: @history.totals("members_by_zip"), empty: "No ZIP codes loaded." %>
-    <% end %>
   </div>
-  <%= render "history_money" if @sections.key?("dues") %>
+  <%= render "history_money" if @history_topics.key?("money") %>
 <% else %>
   <%= render EmptyStateComponent.new("The older records have not been loaded on this site yet (docs/analytics.md, \"Over the years\").") %>
 <% end %>

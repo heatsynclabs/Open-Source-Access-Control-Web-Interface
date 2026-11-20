@@ -20,6 +20,6 @@
 <% when "dues" %>
   <%= render "dues" %>
 <% when "history" %>
-  <%= render "history" %>
+  <%= @topic && @history&.loaded? ? render("analytics/history/#{@topic}") : render("history") %>
 <% end %>
 <% end %>

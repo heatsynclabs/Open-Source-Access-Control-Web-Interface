@@ -31,7 +31,10 @@ class AnalyticsController < ApplicationController
     classes_sections if (all || @section == "classes") && TicketedEvent.available?
     @payments = cached(:payments) { payments_section(Analytics::Payments.new(@period)) } if (all || @section == "dues") && @sections.key?("dues")
     @overview = overview if all
-    @history = Analytics::History.new if (all || @section == "history") && LabMetric.available?
+    if (all || @section == "history") && LabMetric.available?
+      @history = Analytics::History.new
+      @history_topics = history_topics
+    end
     render layout: false
   end
 
@@ -41,6 +44,12 @@ class AnalyticsController < ApplicationController
     @period = Analytics::Period.new(params[:period])
     @sections = SECTIONS.reject { |key, _label| key == "dues" && !can?(:manage, Payment) }
     @section = @sections.key?(params[:section]) ? params[:section] : "all"
+    @topic = params[:topic] if @section == "history" && history_topics.key?(params[:topic])
+  end
+
+  # The Over the years deep dives this person may open.
+  def history_topics
+    Analytics::History::TOPICS.reject { |_key, topic| topic[:money] && !@sections.key?("dues") }
   end
 
   def cached(section, &block)
