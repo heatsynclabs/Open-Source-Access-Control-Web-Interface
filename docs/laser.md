@@ -3,8 +3,9 @@
 `/laser` (menu: **Laser**, any signed-in member) is a settings guide for the lab's two
 laser cutters, the Large 80W (the default) and the Mini 60W (`?machine=mini`), built from
 the jobs members log on the form by each machine. A switch at the top picks the machine;
-every view is that machine's alone. Above every view of the Mini sits its **tube reading**:
-how strong it cuts by the log, against the Large (below, The numbers). For the large laser it is the members-site version of
+every view is that machine's alone. Above every view sits the machine's **tube reading**:
+how strong it cuts by the log, the Mini against the Large and the Large against its own
+past (below, The numbers). For the large laser it is the members-site version of
 the "80W Laser Log Explorer" a member built from the same log: the same cleaning rules and
 the same numbers, in the site's own design, with no names.
 
@@ -13,7 +14,7 @@ the same numbers, in the site's own design, with no names.
 | Find a setting | Pick a material, a job (cut through or engrave) and a thickness: the typical power, speed and passes (or scan gap) from jobs that worked, how reliable that is, the spread, one vote per person, every setting tried (a power against speed chart) and the notes from jobs that struggled |
 | All settings | One row per material and thickness with 3 or more jobs |
 | What goes wrong | Trouble rates (MDF, thick plywood, multiple passes, a dirty start), the top complaints from the notes, and how the 3 mm plywood setting drifted by half year, with optics work as dashed lines |
-| Laser math | On the Mini, the tube reading in full first. Then the energy per mm a cut takes (E = watts / 100 x power / speed x passes: 0.8 on the large laser, 0.6 on the mini), how it grows with thickness, an estimator for unlogged stock, whether lens cleans show up, whether laser hours wear the beam, and what the log cannot tell you |
+| Laser math | The tube reading in full first. Then the energy per mm a cut takes (E = watts / 100 x power / speed x passes: 0.8 on the large laser, 0.6 on the mini), how it grows with thickness, an estimator for unlogged stock, whether lens cleans show up, whether laser hours wear the beam, and what the log cannot tell you |
 | Cheat sheet | The laser explorer's 11 x 17 in wall sheet, ported as drawn (logo plate, hazard tape, key, family tables with the big power and speed figures, three cards, footer, in its own print colours; `_sheet.html.erb`, `.sheet` in `pages/laser.scss`). It zooms to fit the screen; pick a paper size and print (only the sheet prints): the whole sheet scaled to one page of any size (Letter at about 64%), so nothing spills onto a second page. If the logged materials outgrow one sheet, `sheet_fit_controller.js` switches it to a denser layout |
 | The log | Every job from the machine's current and old forms, newest first, searchable by project and notes and filterable by form, material and result; names are not shown. "How the log was cleaned" lists every repair |
 
@@ -119,7 +120,7 @@ since they are what makes the log useful; nothing on the page shows who logged a
   log at its own wattage (`LaserJob::WATTS`). Optics work comes from the machine notes and
   is listed per machine in `Laser::Model::OPTICS`: add a line when a lens is cleaned or a
   beam realigned. None is noted for the mini, so its math has no optics sections.
-- **Tube reading** (`Laser::Tube`, the Mini only): how strong the Mini cuts, in watts,
+- **Tube reading, Mini** (`Laser::Tube`): how strong the Mini cuts, in watts,
   against the Large. Take the clean cuts through rigid stock at 2 mm and up on both current
   forms. For each person who cut the same material and thickness on both lasers, the gap is
   log(power x passes / speed) on the Large minus the same on the Mini, as a median over
@@ -135,6 +136,14 @@ since they are what makes the log useful; nothing on the page shows who logged a
   laser gets a new tube, add the date to `Laser::Tube::REPLACED`: the reading starts over
   from that day, and the strip says how many people it still needs. It is worked out once
   per sync (about a second) and cached.
+- **Tube reading, Large** (`Laser::Tube::Own`): the Large has nothing to be read against,
+  so it is read against itself. The laser math law is fitted to all its clean cuts since
+  the current form began (or its last new tube); each person's cuts of the last 12 months
+  (`Tube::WINDOW`) are compared with it, one vote per person, and the reading is the rated
+  80 W times exp(minus the Hodges-Lehmann middle). 80 W means as strong as its own average
+  over the log, not a measured 80 W. On 2026-11-20: 72.9 W (66.0 to 80.6) from 48 people,
+  so older settings need about 10% more energy now. Stocks with 5 or more people are listed.
+  The printed sheet adds a line only when the reading is more than 3% under.
 
 ## Code
 
