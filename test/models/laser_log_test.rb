@@ -145,4 +145,19 @@ class LaserLogTest < ActiveSupport::TestCase
     assert_match "fewer", sync(CSV.generate { |out| out << HEADER; out << row })[:error]
     assert_equal 10, LaserJob.count
   end
+
+  test "a sheet that comes back as a web page fails alone; the other sheets still update" do
+    LaserJob.delete_all
+    large, mini = LaserLog.sheet("large"), LaserLog.sheet("mini")
+    page = %(<html><a href="x">Sign in</a>"broken</html>\n)
+    good = CSV.generate { |out| out << HEADER; out << row }
+    result = LaserLog::Sync.new([large, mini], texts: { large => page, mini => good }).run
+    assert result.fetch(large)[:error]
+    assert_equal 1, LaserJob.where(machine: "mini").count
+  end
+
+  test "the cast stone rows are read from their timestamps, not from who logged them" do
+    assert_equal "Cast stone (manufactured)", clean(stamp: "6/1/2022 12:09:41", material: "OTHER", title: "Marker")[:material]
+    assert_not_equal "Cast stone (manufactured)", clean(stamp: "6/9/2022 12:00:00", material: "OTHER", title: "Marker")[:material]
+  end
 end

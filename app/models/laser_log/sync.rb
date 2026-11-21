@@ -21,6 +21,8 @@ module LaserLog
         [sheet, replace(sheet)]
       rescue Error => e
         [sheet, { error: e.message }]
+      rescue StandardError => e # an HTML login page, a dropped connection: this sheet only
+        [sheet, { error: "#{e.class}: #{e.message.to_s[0, 200]}" }]
       end
       Rails.cache.delete_matched("laser") rescue nil
       Rails.cache.delete_matched("analytics") rescue nil

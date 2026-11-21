@@ -83,19 +83,20 @@ The form accepts anything, so each row is repaired and every repair is recorded
 - free-text results become success, conditional (partly worked) or fail;
 - notes on jobs that did not work are tagged by keyword (did not cut through, fire or
   burning, software, focus or alignment, smoke, warped material);
-- three rows of the large laser's current form have hand corrections, keyed by their
-  timestamp (`Cleaner::OVERRIDE`; not applied to the other sheets).
+- three rows of the large laser's current form have hand corrections, and six rows logged as
+  OTHER are cast stone, keyed by their timestamps (`Cleaner::OVERRIDE`, `Cleaner::CAST_STONE`;
+  not applied to the other sheets).
 
 The rules are a Ruby port of the explorer's `process_laser_log.py`; on the large laser's log
 of 2026-11-19 they give the same result for every field of all 1,424 jobs. The same rules
 clean the mini's and the old forms; their repair counts are under The log.
 
-**Names.** The name on the form is read only while cleaning (one material rule uses it) and
-to tell people apart: `person_key` is a keyed hash of a short form of the name (the app's
+**Names.** The name on the form is read only to tell people apart: `person_key` is a keyed hash of a short form of the name (the app's
 secret is the key), so jobs by the same person group together for "one vote per person"
 and people counts without anyone being named. Jobs logged with no name (45, all on the
 large laser's old form) get a blank key and count toward jobs, not people. Project titles and notes are kept and shown,
-since they are what makes the log useful; nothing on the page shows who logged a job.
+since they are what makes the log useful; nothing on the page shows who logged a job, and the page does not link the response sheets
+(they hold names). A failing sheet (an error page, a dropped connection) is reported and keeps its rows; the others still update.
 
 ## The numbers
 

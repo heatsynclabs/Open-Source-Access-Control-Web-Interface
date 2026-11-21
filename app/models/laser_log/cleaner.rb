@@ -76,6 +76,11 @@ module LaserLog
       "7/23/2026 15:38:02" => { cut_op: "score", why: "note says test, not through" },
     }.freeze
 
+    # Large laser current-form rows logged as OTHER that were cast stone,
+    # though neither title nor notes say so (found by hand, June 2022).
+    CAST_STONE = ["6/1/2022 12:09:41", "6/1/2022 17:48:00", "6/2/2022 17:25:41",
+                  "6/3/2022 10:44:23", "6/6/2022 18:50:49", "6/7/2022 13:08:04"].freeze
+
     # Keyword tags for what went wrong, approximate by nature (checked by hand
     # against every row that was not a success when they were written).
     ISSUES = [
@@ -109,7 +114,7 @@ module LaserLog
       end
       who = who.split.join(" ")
       mm, bucket = thickness_of(thickness)
-      material, why = material_of(material_raw, mm, title, who, notes)
+      material, why = material_of(material_raw, mm, title, stamp, notes)
       fixes << "material: #{why}" if why
 
       override = @overrides.fetch(stamp, {})
@@ -189,13 +194,12 @@ module LaserLog
       words.any? { |word| text.include?(word) }
     end
 
-    def material_of(raw, mm, title, who, notes)
+    def material_of(raw, mm, title, stamp, notes)
       text = "#{title} #{notes}".downcase
-      who = who.downcase
       if raw == "OTHER"
         return ["Food", "OTHER + note"] if has?(text, "pumpkin", "graham", "chocolate", "steak")
         return ["Stone / slate / tile", "OTHER + note"] if has?(text, "slate", "rock engrave")
-        if (has?(text, "stone") && !has?(text, "tombstone")) || (who.start_with?("greg") && %w[marker picture].include?(title.strip.downcase))
+        if (has?(text, "stone") && !has?(text, "tombstone")) || (@overrides.any? && CAST_STONE.include?(stamp))
           return ["Cast stone (manufactured)", "OTHER + note"]
         end
         return ["XPS foam (polystyrene)", "OTHER + note"] if has?(text, "polystyrene", "tombstone", "haunter") && !has?(text, "high impact")
