@@ -66,6 +66,13 @@ module Laser
 
     def energy_at(material, mm) = k[material] * mm**b
 
+    # How far a cut's energy sits from the law, in log terms (0 on the line;
+    # the tube reading reads recent cuts this way). nil off the law's stock.
+    def residual(job)
+      return nil unless job.cut_op == "cut" && job.mm && RIGID.include?(job.material) && job.cut_power.to_f.positive? && job.cut_speed.to_f.positive?
+      Math.log(energy(job)) - predict(job)
+    end
+
     def jobs_per_material = RIGID.to_h { |m| [m, @ok.count { |c| c.job.material == m }] }
     def thickest = RIGID.to_h { |m| [m, @ok.select { |c| c.job.material == m }.map { |c| c.job.mm }.max] }
 

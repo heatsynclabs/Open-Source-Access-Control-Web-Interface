@@ -182,12 +182,13 @@ module LaserHelper
   def laser_tube_gauge(tube, compact: false)
     w, h, l, r = compact ? [340, 54, 4, 4] : [860, 84, 10, 10]
     bar_y, bar_h = compact ? [19, 12] : [30, 16]
-    top = tube.against
+    top = tube.own? ? [100, (tube.high / 10.0).ceil * 10].max : tube.against
     x = ->(v) { (l + v.clamp(0, top) / top.to_f * (w - l - r)).round(1) }
     below = bar_y + bar_h + (compact ? 16 : 20)
     watts, rated, low, high = [tube.watts, tube.rated, tube.low, tube.high].map { |v| laser_number(v) }
-    yardstick = "#{LaserJob::MACHINES[Laser::Tube::YARDSTICK].split.first} #{laser_number(top)}"
-    label = "Cuts like about #{watts} W, likely #{low} to #{high} W; rated #{rated} W; the #{LaserJob::MACHINES[Laser::Tube::YARDSTICK]} counted at #{laser_number(top)} W"
+    yardstick = tube.own? ? "#{top} W" : "#{LaserJob::MACHINES[Laser::Tube::YARDSTICK].split.first} #{laser_number(top)}"
+    label = "Cuts like about #{watts} W, likely #{low} to #{high} W; rated #{rated} W; " +
+            (tube.own? ? "its own average counted as #{rated} W" : "the #{LaserJob::MACHINES[Laser::Tube::YARDSTICK]} counted at #{laser_number(tube.against)} W")
     marks = [
       tag.rect(class: "track", x: l, y: bar_y, width: w - l - r, height: bar_h),
       tag.rect(class: "fill", x: l, y: bar_y, width: x.(tube.low) - l, height: bar_h),
@@ -201,7 +202,7 @@ module LaserHelper
     # The small meter has no room below for the yardstick: it sits above the bar's end.
     marks << tag.text(yardstick, x: w - r, y: compact ? bar_y - 7 : below, "text-anchor": "end")
     unless compact
-      marks += (10...top).step(10).reject { |v| (v - tube.rated).abs < 6 }.map { |v| tag.text(v, class: "tick", x: x.(v), y: below, "text-anchor": "middle") }
+      marks += (10...top).step(10).reject { |v| (v - tube.rated).abs < 6 || top - v < 6 }.map { |v| tag.text(v, class: "tick", x: x.(v), y: below, "text-anchor": "middle") }
     end
     tag.svg(safe_join(marks), class: ["laser-gauge", ("compact" if compact)], viewBox: "0 0 #{w} #{h}", role: "img", "aria-label": label)
   end
@@ -212,6 +213,19 @@ module LaserHelper
     words = { 1 / 2r => "half", 3 / 5r => "three fifths", 2 / 3r => "two thirds", 3 / 4r => "three quarters", 4 / 5r => "four fifths" }
     near, word = words.min_by { |v, _w| (v - share).abs }
     (near - share).abs <= 0.02 ? "about #{word} of" : "about #{(share * 100).round}% of"
+  end
+
+  # What a large laser reading means at the machine: how much more (or less)
+  # energy older settings need now.
+  def laser_tube_advice(tube)
+    more = ((1 / tube.speed - 1) * 100).round
+    if more >= 3
+      "Older settings may need about #{more}% more energy now: if a cut does not go through, slow down by about that much."
+    elsif more <= -3
+      "It is cutting about #{-more}% stronger than its average: settings from the log should go through."
+    else
+      "That is about its average: settings from the log should behave as logged."
+    end
   end
 
   # "November 9, 2026".

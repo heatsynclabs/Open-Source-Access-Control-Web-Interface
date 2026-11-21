@@ -11,8 +11,12 @@ module Laser
   # median of every pair's average), which stays steady when many people
   # copy the same class setting, and the range resamples people.
   #
-  # It is a comparison, not a power meter. It is only as right as the large
-  # laser's rating, it reads the whole beam (tube, mirrors, lens, power
+  # The large laser has nothing to be read against, so it is read against
+  # itself (Tube::Own): its last WINDOW months against the energy law fitted
+  # to its whole log, that average counted as its rated watts.
+  #
+  # Both are comparisons, not a power meter. They are only as right as the
+  # large laser's rating, they read the whole beam (tube, mirrors, lens, power
   # supply), and the log records habit as well as power. See docs/laser.md.
   class Tube
     YARDSTICK = "large"
@@ -23,26 +27,58 @@ module Laser
     REPLACED = { "large" => [], "mini" => [] }.freeze
     PEOPLE = 15 # people who cut the same stock on both lasers, before there is a reading
     STOCK_PEOPLE = 5 # for a stock to be listed
+    WINDOW = 12 # months of the large laser's log read against the rest
     RESAMPLES = 400
     SEED = 1
 
-    Reading = Data.define(:machine, :rated, :against, :people, :needed, :since, :through, :restart, :watts, :low, :high,
+    # kind: :against (the mini, read against the large laser) or :own (the
+    # large laser, its last WINDOW months against its own log from `since`).
+    # speed: the share of the speed that gives the same cut as on the yardstick.
+    Reading = Data.define(:kind, :machine, :rated, :against, :people, :needed, :since, :from, :through, :restart, :watts, :low, :high,
                           :speed, :stocks, :example) do
       def ready? = !watts.nil?
+      def own? = kind == :own
     end
 
     # The reading for a machine, or nil for the yardstick itself. Worked out
     # once per sync (it resamples people); laser:sync warms it. Cached as a
     # plain hash under CACHE, so a changed Reading never meets an old copy.
-    CACHE = 1
+    CACHE = 2
 
     def self.summary(machine)
-      return nil if machine == YARDSTICK || !LaserJob::WATTS.key?(machine)
+      return nil unless LaserJob::WATTS.key?(machine)
       values = Rails.cache.fetch(["laser", "tube", CACHE, machine, LaserJob.synced_at.to_i]) do
-        restart = REPLACED.values_at(YARDSTICK, machine).flatten(1).max_by(&:first)
-        new(Laser::Log.jobs(YARDSTICK), Laser::Log.jobs(machine), machine: machine, since: restart&.first, restart: restart).reading.to_h
+        if machine == YARDSTICK
+          restart = REPLACED.fetch(machine).max_by(&:first)
+          Own.new(Laser::Log.jobs(machine), since: restart&.first, restart: restart).reading.to_h
+        else
+          restart = REPLACED.values_at(YARDSTICK, machine).flatten(1).max_by(&:first)
+          new(Laser::Log.jobs(YARDSTICK), Laser::Log.jobs(machine), machine: machine, since: restart&.first, restart: restart).reading.to_h
+        end
       end
       Reading.new(**values)
+    end
+
+    # Clean cuts through rigid stock 2 mm and up, as the laser math uses,
+    # from people the log can tell apart, on or after `since`.
+    def self.usable(jobs, since)
+      jobs.select do |j|
+        j.success? && j.cut_op == "cut" && j.mm && j.mm >= 2 && Model::RIGID.include?(j.material) &&
+          j.cut_power.to_f.positive? && j.cut_speed.to_f.positive? && j.person.present? && (since.nil? || j.date >= since)
+      end
+    end
+
+    # Hodges-Lehmann: the median of the averages of every pair (each value
+    # with itself included).
+    def self.middle(values)
+      Stats.median(values.each_with_index.flat_map { |v, i| values[i..].map { |w| (v + w) / 2.0 } })
+    end
+
+    # The 90% range of the middle, resampling the votes (people).
+    def self.range(votes)
+      rng = Random.new(SEED)
+      fits = Array.new(RESAMPLES) { middle(Array.new(votes.size) { votes.sample(random: rng) }) }
+      [Stats.quantile(fits, 0.05), Stats.quantile(fits, 0.95)]
     end
 
     def initialize(yardstick_jobs, jobs, machine: "mini", since: nil, restart: nil)
@@ -56,12 +92,12 @@ module Laser
     end
 
     def reading
-      base = { machine: @machine, rated: LaserJob::WATTS.fetch(@machine), against: LaserJob::WATTS.fetch(YARDSTICK),
+      base = { kind: :against, machine: @machine, rated: LaserJob::WATTS.fetch(@machine), against: LaserJob::WATTS.fetch(YARDSTICK),
                people: @votes.size, needed: PEOPLE, since: (@large + @mini).map(&:date).min, through: (@large + @mini).map(&:date).max,
-               restart: @restart }
+               from: nil, restart: @restart }
       return Reading.new(**base, watts: nil, low: nil, high: nil, speed: nil, stocks: [], example: nil) if @votes.size < PEOPLE
       gap = middle(@votes.values)
-      low, high = range
+      low, high = Tube.range(@votes.values)
       against = base[:against]
       listed = stocks
       Reading.new(**base, watts: (against * Math.exp(gap)).round(1), low: (against * Math.exp(low)).round(1),
@@ -70,14 +106,8 @@ module Laser
 
     private
 
-    # Clean cuts through rigid stock 2 mm and up, as the laser math uses,
-    # from people the log can tell apart, since the last tube change.
-    def usable(jobs)
-      jobs.select do |j|
-        j.success? && j.cut_op == "cut" && j.mm && j.mm >= 2 && Model::RIGID.include?(j.material) &&
-          j.cut_power.to_f.positive? && j.cut_speed.to_f.positive? && j.person.present? && (@since.nil? || j.date >= @since)
-      end
-    end
+    def usable(jobs) = Tube.usable(jobs, @since)
+    def middle(values) = Tube.middle(values)
 
     # log(power x passes / speed): the J/mm yardstick without the watts.
     def effort(job) = Math.log(job.cut_power * job.passes / job.cut_speed)
@@ -88,19 +118,6 @@ module Laser
     def shared_stock
       large, mini = per_stock(@large), per_stock(@mini)
       (large.keys & mini.keys).map { |key| [key, large[key] - mini[key]] }
-    end
-
-    # Hodges-Lehmann: the median of the averages of every pair (each value
-    # with itself included).
-    def middle(values)
-      Stats.median(values.each_with_index.flat_map { |v, i| values[i..].map { |w| (v + w) / 2.0 } })
-    end
-
-    def range
-      rng = Random.new(SEED)
-      votes = @votes.values
-      fits = Array.new(RESAMPLES) { middle(Array.new(votes.size) { votes.sample(random: rng) }) }
-      [Stats.quantile(fits, 0.05), Stats.quantile(fits, 0.95)]
     end
 
     # Each stock at least STOCK_PEOPLE people cut on both lasers, read on its
@@ -124,6 +141,46 @@ module Laser
     def most_used(jobs)
       jobs.each_with_index.group_by { |j, _i| [j.cut_power, j.cut_speed, j.passes.to_f] }
         .max_by { |_setting, rows| [rows.size, rows.map(&:last).max] }.first
+    end
+  end
+
+  # The large laser against itself: the energy law (Laser::Model) fitted to
+  # its clean cuts since `since`, and each person's cuts of the last WINDOW
+  # months against it, one vote per person. Counting the law (the average of
+  # the whole log) as the rated watts, the middle vote is what it cuts like
+  # now: 74 W says recent cuts took 80 / 74 times the energy the log's
+  # average did for the same stock.
+  class Tube::Own
+    def initialize(jobs, machine: Tube::YARDSTICK, since: nil, restart: nil)
+      @machine, @since, @restart = machine, since, restart
+      @rated = LaserJob::WATTS.fetch(machine)
+      kept = jobs.select { |j| since.nil? || j.date >= since }
+      @cuts = Tube.usable(kept, since)
+      @through = @cuts.map(&:date).max
+      @from = @through && (@through << Tube::WINDOW) + 1
+      model = Model.new(kept, watts: @rated)
+      @recent = @through ? @cuts.select { |j| j.date >= @from }.map { |j| [j, model.residual(j)] } : []
+      @votes = @recent.group_by { |j, _r| j.person }.transform_values { |rows| Stats.median(rows.map(&:last)) }
+    end
+
+    def reading
+      base = { kind: :own, machine: @machine, rated: @rated, against: @rated, people: @votes.size, needed: Tube::PEOPLE,
+               since: @cuts.map(&:date).min, from: @from, through: @through, restart: @restart, example: nil }
+      return Tube::Reading.new(**base, watts: nil, low: nil, high: nil, speed: nil, stocks: []) if @votes.size < Tube::PEOPLE
+      mid = Tube.middle(@votes.values)
+      low, high = Tube.range(@votes.values)
+      Tube::Reading.new(**base, watts: watts(mid), low: watts(high), high: watts(low), speed: Math.exp(-mid).round(3), stocks: stocks)
+    end
+
+    private
+
+    def watts(resid) = (@rated * Math.exp(-resid)).round(1)
+
+    def stocks
+      @recent.group_by { |j, _r| [j.material, j.mm] }.filter_map do |(material, mm), rows|
+        votes = rows.group_by { |j, _r| j.person }.values.map { |rs| Stats.median(rs.map(&:last)) }
+        { material: material, mm: mm, people: votes.size, watts: watts(Tube.middle(votes)) } if votes.size >= Tube::STOCK_PEOPLE
+      end.sort_by { |s| [-s[:people], Model::RIGID.index(s[:material]), s[:mm]] }.first(6)
     end
   end
 end

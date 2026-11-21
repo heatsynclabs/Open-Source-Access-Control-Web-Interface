@@ -132,7 +132,7 @@ class LaserPageTest < ActionDispatch::IntegrationTest
     Rails.cache.clear
   end
 
-  test "the mini laser shows its tube reading once enough people cut the same stock on both lasers" do
+  test "each laser shows its tube reading once enough people have cut on it" do
     sign_in member
     get laser_path(machine: "mini")
     assert_select ".laser-tube", 0, "too few people on both lasers yet"
@@ -151,9 +151,10 @@ class LaserPageTest < ActionDispatch::IntegrationTest
     get laser_path(machine: "mini", view: "sheet")
     assert_match "Coming from the Large 80W? Keep the power", response.body
     get laser_path
-    assert_select ".laser-tube", 0, "the large laser is the yardstick"
+    assert_select ".laser-tube .eyebrow", "Tube reading"
+    assert_match "of its rated 80 W: its last 12 months against its own average", response.body
     get laser_path(view: "math")
-    assert_select "#tube", 0
+    assert_select "#tube .tile .label", "Energy for the same cut"
   end
 
   test "analytics counts the large laser's 2011 to 2013 jobs as the large laser's" do

@@ -71,7 +71,21 @@ class Laser::QueriesTest < ActiveSupport::TestCase
     restarted = Laser::Tube.new(large, mini, since: Date.new(2025, 6, 1), restart: [Date.new(2025, 6, 1), "New tube"]).reading
     refute restarted.ready?
     assert_equal [0, 15], [restarted.people, restarted.needed]
-    assert_nil Laser::Tube.summary("large"), "the large laser is the yardstick"
+  end
+
+  test "the large laser's tube reading is its last year against its own log" do
+    jobs = (0...20).flat_map do |p|
+      [3.0, 6.0].flat_map do |mm|
+        [job(p * 10 + mm.to_i, person: "p#{p}", mm: mm, bucket: "x", power: 60, speed: 15 / (mm / 3), date: Date.new(2024, 3, 1)),
+         job(p * 10 + mm.to_i + 1000, person: "p#{p}", mm: mm, bucket: "x", power: 60, speed: 12 / (mm / 3), date: Date.new(2025, 9, 1))]
+      end
+    end
+    t = Laser::Tube::Own.new(jobs).reading
+    assert t.own?
+    assert_equal [80, 20, Date.new(2025, 9, 1)], [t.rated, t.people, t.through]
+    assert_in_delta 80 / Math.sqrt(1.25), t.watts, 0.5 # recent cuts took 25% more energy; the law sits halfway
+    assert_operator t.speed, :<, 1
+    refute Laser::Tube::Own.new(jobs.first(20)).reading.ready?
   end
 
   test "the energy law recovers the exponent it was built with" do
