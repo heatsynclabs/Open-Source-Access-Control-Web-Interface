@@ -1,7 +1,7 @@
 <div class="section-head"><p class="eyebrow">Over the years</p><h2>Since the lab began</h2></div>
 <%= render "analytics/history/tabs", current: nil if @section == "history" && @history&.loaded? %>
 <% if @history&.loaded? %>
-  <p class="note">Records the members site does not keep itself: PayPal and utility records, the old Wi-Fi log, the laser log, the mailing list and wiki, the calendar's history and the tax returns. Each chart covers every year its records reach; a gap in a line is a month or year with no record. Most were gathered by hand and do not update on their own; the laser log is read every night. "Deep dive" under a chart opens everything behind it.</p>
+  <p class="note">Records the members site does not keep itself: PayPal and utility records, the old Wi-Fi log, the laser log, the mailing list and wiki, the calendar's history and the tax returns. Each chart covers every year its records reach; a gap in a line is a month or year with no record. Most were gathered by hand and do not update on their own; the laser log is read every night. The tabs above, or "Deep dive" under a chart, open everything behind each one.</p>
   <div class="grid two">
     <% payers = @history.monthly(["Paying members", "dues_payers"]) %>
     <%= render ChartCardComponent.new(title: "Paying members", note: "People who paid dues through PayPal each month ($25 or more on a subscription), each payment counted once across the Board's PayPal exports, this site's imports and a recent PayPal download. Dues paid in cash or by check are not in PayPal.", rows: series_rows(payers), columns: ["Month", "Paying members"], more: history_topic_path("members")) do %>
