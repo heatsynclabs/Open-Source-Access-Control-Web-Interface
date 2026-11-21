@@ -4,7 +4,7 @@ namespace :laser do
     abort "run bundle exec rails db:migrate first (laser_jobs is missing)" unless LaserJob.available?
     failed = false
     LaserLog::Sync.new.run.each do |sheet, t|
-      name = "#{LaserJob::MACHINES[sheet.machine]} #{sheet.source}"
+      name = "#{LaserJob::LABELS[sheet.machine]} #{sheet.source}"
       if t[:error]
         failed = true
         puts "laser sync: #{name}: #{t[:error]}; its jobs are unchanged"

@@ -6,7 +6,17 @@
 # wiki's Large 80W Laser and Mini 60W Laser pages link them. See
 # docs/laser.md.
 module LaserLog
+  # The mini laser's old form was first the lab's first laser's: its jobs
+  # from 2011 to 2013 are that machine's ("first"). The mini came around
+  # 2019 (Slack, October 2019) and its jobs on the form start in November.
+  FIRST_LASER_UNTIL = Date.new(2019, 1, 1)
+
   Sheet = Data.define(:machine, :source, :id, :tab, :layout) do
+    # The machines whose jobs this sheet holds.
+    def machines = machine == "mini" && source == LaserJob::OLD ? %w[mini first] : [machine]
+
+    def machine_for(day) = machines.include?("first") && day < FIRST_LASER_UNTIL ? "first" : machine
+
     def csv_url = "https://docs.google.com/spreadsheets/d/#{id}/export?format=csv#{"&gid=#{tab}" if tab}"
     def url = "https://docs.google.com/spreadsheets/d/#{id}/edit#{"#gid=#{tab}" if tab}"
   end

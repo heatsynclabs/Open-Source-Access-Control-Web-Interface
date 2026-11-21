@@ -5,7 +5,8 @@ module Laser
   # apart); between stretches they are nil, not 0. The first month of each
   # stretch, the last month of a stretch that ended, and the month we are in
   # are left out, being only partly covered. Results come from the current
-  # forms only: the large laser's old form never asked.
+  # forms only: the large laser's old form never asked. Machines are
+  # LaserJob::LABELS, the lab's first laser (2011 to 2013) among them.
   class Usage
     GAP = 180
 
@@ -62,7 +63,7 @@ module Laser
     private
 
     def per_machine(&block)
-      LaserJob::MACHINES.map do |machine, label|
+      LaserJob::LABELS.map do |machine, label|
         { name: label, data: series(@machines.fetch(machine, []), @covered.fetch(machine, Set.new), &block) }
       end
     end

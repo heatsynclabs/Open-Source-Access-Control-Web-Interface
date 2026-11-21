@@ -35,10 +35,10 @@ module LaserLog
       now = Time.current
       jobs = rows.each_with_index.filter_map do |(row, kept), i|
         attributes, name = cleaner.call(row, i + 2)
-        attributes&.merge(kept)&.merge(machine: sheet.machine, source: sheet.source, person_key: name.blank? ? "" : LaserLog.person_key(name),
+        attributes&.merge(kept)&.merge(machine: sheet.machine_for(attributes[:logged_on]), source: sheet.source, person_key: name.blank? ? "" : LaserLog.person_key(name),
                                        created_at: now, updated_at: now)
       end
-      scope = LaserJob.where(machine: sheet.machine, source: sheet.source)
+      scope = LaserJob.where(machine: sheet.machines, source: sheet.source)
       held = scope.count
       raise Error, "#{jobs.size} jobs, fewer than the #{held} already held" if jobs.size < held * TOO_FEW
       LaserJob.transaction do

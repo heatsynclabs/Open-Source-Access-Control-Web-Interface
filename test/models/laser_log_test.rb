@@ -119,7 +119,7 @@ class LaserLogTest < ActiveSupport::TestCase
     refute LaserJob.all.map(&:attributes).to_s.match?(/Lovelace|Hopper/)
   end
 
-  test "the mini laser's old form keeps its results and older material names" do
+  test "the mini laser's old form keeps its results and older material names; its 2011 to 2013 jobs are the first laser's" do
     LaserJob.delete_all
     header = ["Timestamp", "Start Time", "Finish Time", "Project Title", "Name", "Laser Run Time (TOTAL for ALL copies)",
               "Was the machine clean when you STARTED?", "Did you clean up the machine and work area when you FINISHED?", "Material",
@@ -129,9 +129,13 @@ class LaserLogTest < ActiveSupport::TestCase
       out << header
       out << ["3/1/2012 19:00:00", "", "", "Box", "Ada Lovelace", "10", "Yes", "Yes", "Cardboard (Corrugated)", "3 mm (1/8\")", "30", "40", "1", "", "", "", "", "Fail", "", "", ""]
     end
+    csv += CSV.generate_line(["3/1/2020 19:00:00", "", "", "Tag", "Grace Hopper", "5", "Yes", "Yes", "Acrylic (Plexiglas, Lucite)", "3 mm (1/8\")", "60", "10", "1", "", "", "", "", "Success", "", "", ""])
     sync(csv, LaserLog.sheet("mini", LaserJob::OLD))
-    job = LaserJob.find_by!(machine: "mini", source: LaserJob::OLD)
-    assert_equal ["Corrugated cardboard", "fail", "Cardboard (Corrugated)"], [job.material, job.result, job.material_raw]
+    first = LaserJob.find_by!(machine: "first", source: LaserJob::OLD)
+    assert_equal ["Corrugated cardboard", "fail", "Cardboard (Corrugated)"], [first.material, first.result, first.material_raw]
+    assert_equal [Date.new(2020, 3, 1)], LaserJob.where(machine: "mini").pluck(:logged_on)
+    sync(csv, LaserLog.sheet("mini", LaserJob::OLD))
+    assert_equal 2, LaserJob.count, "a re-read replaces both machines' rows from that sheet"
   end
 
   test "sync refuses a sheet that is not the log, or far shorter than what is held, and keeps its jobs" do

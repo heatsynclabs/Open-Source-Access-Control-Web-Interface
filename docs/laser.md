@@ -32,12 +32,13 @@ login:
 | Large 80W | current, from 2022-04-29 | `1BpAYtyFIKQ4UoXv31mKC43YFxfBk34d_q-muw1SP2aU`, tab `1050947612` | 1,424 |
 | Large 80W | old, 2013-10-29 to 2022-04 | `0AoBMPvlNCqvldHl5SERwRHVjN09wRHEtODZzd2RXNWc` | 2,619 |
 | Mini 60W | current, from 2022-04-29 | `1tDxqWNbrJ9M5UuvxpV4khA5Drt6HOfNuQRQbdNvYTxM` | 1,239 |
-| Mini 60W | old, 2011-08 to 2013-05, then 2019-11 to 2022-04 | `1gItwjL4vfXwAsAQZ4dHuAlmoJ7lkLDme82yCei9KeF8`, tab `1432871391` | 1,424 |
+| Mini 60W (2011 to 2013: the first laser) | old, 2011-08 to 2013-05, then 2019-11 to 2022-04 | `1gItwjL4vfXwAsAQZ4dHuAlmoJ7lkLDme82yCei9KeF8`, tab `1432871391` | 1,424 |
 
-The sheets have no machine column: each job counts for the machine its form is for. The
-second laser came to the lab around 2019 (Slack, October 2019), so the mini's old form's
-2011 to 2013 jobs were probably on the lab's first laser (not confirmed); they stay with
-the mini, and its charts show the six year gap. If a sheet stops being shared, its nightly
+The sheets have no machine column: each job counts for the machine its form is for, with
+one exception. The mini's old form was first the lab's first laser's: the mini came around
+2019 (Slack, October 2019), and the form's 1,139 jobs from 2011 to 2013 are kept as
+machine `first` (`LaserLog::FIRST_LASER_UNTIL`). They are on the analytics page as their
+own machine and never on the Laser page, whose mini starts in November 2019. If a sheet stops being shared, its nightly
 read fails and the site keeps its last copy.
 
 **The old forms** (`LaserLog::Layout`) are read by header name into the current form's
