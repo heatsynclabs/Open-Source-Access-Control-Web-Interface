@@ -1,6 +1,6 @@
 <div class="laser<%= " laser-print" if @view == "sheet" %>">
 <% name = LaserJob::MACHINES[@machine] %>
-<%= render PageHeaderComponent.new(eyebrow: "#{name} laser", title: "Laser settings", lead: "What worked on the #{name} laser, from the jobs members logged on its form by the machine: #{number_with_delimiter(@jobs.count(&:settings?))} jobs with settings and results, #{@jobs.first.date.year} to #{@jobs.last.date.year}#{", beside #{number_with_delimiter(@earlier.size)} from its old form (#{@earlier.first.date.year} to #{@jobs.first.date.year}), shown as history" if @earlier.any?}.#{" The same old form holds the lab's first laser's jobs of 2011 to 2013, before the Mini came; they are not counted here (Analytics has them)." if @machine == "mini"} Member reported, not a guarantee: test on scrap, and never leave the laser while it is firing.") %>
+<%= render PageHeaderComponent.new(eyebrow: "#{name} laser", title: "Laser settings", lead: "What worked on the #{name} laser, from the jobs members logged on its form by the machine: #{number_with_delimiter(@jobs.count(&:settings?))} jobs with settings and results, #{@jobs.first.date.year} to #{@jobs.last.date.year}#{", beside #{number_with_delimiter(@earlier.size)} from its old form (#{@earlier.first.date.year} to #{@jobs.first.date.year}), shown as history" if @earlier.any?}.#{" The same old form holds the Large's jobs of 2011 to 2013, from before the Mini came; they are not counted here (Analytics counts them as the Large's)." if @machine == "mini"} Member reported, not a guarantee: test on scrap, and never leave the laser while it is firing.") %>
 
 <nav class="filters laser-machines" aria-label="Laser">
   <% LaserJob::MACHINES.each do |key, label| %>
@@ -13,6 +13,8 @@
     <%= link_to label, laser_at(view: key), class: ("on" if @view == key), "aria-current": ("page" if @view == key) %>
   <% end %>
 </nav>
+
+<%= render "laser/tube" if @tube && @view != "math" %>
 
 <%= render @view %>
 

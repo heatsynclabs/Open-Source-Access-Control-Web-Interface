@@ -119,6 +119,58 @@ class LaserPageTest < ActionDispatch::IntegrationTest
     assert_match "Names on the form are not shown", response.body
   end
 
+  def cut_on_both(people)
+    rows = (0...people).flat_map do |p|
+      [["large", 15], ["mini", 10]].map do |machine, speed|
+        { machine: machine, sheet_row: 1000 + p * 2 + (machine == "mini" ? 1 : 0), logged_at: Time.zone.local(2025, 3, 1 + p, 18), logged_on: Date.new(2025, 3, 1 + p),
+          person_key: "both#{p}", title: "Box #{p}", material: "Plywood / wood", family: "Wood", mm: 3.0, bucket: "3 mm (1/8 in)",
+          cut_op: "cut", cut_power: 60, cut_speed: speed, cut_passes: 1, result: "success", result_raw: "Success",
+          created_at: Time.current, updated_at: Time.current }
+      end
+    end
+    LaserJob.insert_all!(rows)
+    Rails.cache.clear
+  end
+
+  test "the mini laser shows its tube reading once enough people cut the same stock on both lasers" do
+    sign_in member
+    get laser_path(machine: "mini")
+    assert_select ".laser-tube", 0, "too few people on both lasers yet"
+    cut_on_both(20)
+    get laser_path(machine: "mini")
+    assert_select ".laser-tube .eyebrow", "Tube reading"
+    assert_select ".laser-tube strong", /\A\d+ W\z/
+    assert_match "not its rated 60 W", response.body
+    assert_select ".laser-tube svg.laser-gauge[aria-label*='rated 60 W']"
+    assert_select ".laser-tube a[href*='view=math'][href*='#tube']"
+    get laser_path(machine: "mini", view: "math")
+    assert_select ".laser-tube", 0, "Laser math has the full card instead"
+    assert_select "#tube h2", "Tube reading"
+    assert_select "#tube .tile.headline .label", "Cuts like"
+    assert_select "#tube tbody tr", minimum: 1
+    get laser_path(machine: "mini", view: "sheet")
+    assert_match "Coming from the Large 80W? Keep the power", response.body
+    get laser_path
+    assert_select ".laser-tube", 0, "the large laser is the yardstick"
+    get laser_path(view: "math")
+    assert_select "#tube", 0
+  end
+
+  test "analytics counts the large laser's 2011 to 2013 jobs as the large laser's" do
+    first = { machine: LaserJob::FIRST, source: LaserJob::OLD, sheet_row: 900, logged_at: Time.zone.local(2012, 3, 1, 19), logged_on: Date.new(2012, 3, 1),
+              person_key: "", material: "Acrylic", family: "Plastic", mm: 3.0, bucket: "3 mm (1/8 in)", cut_op: "cut", cut_power: 40,
+              cut_speed: 20, cut_passes: 1, result: "success", created_at: Time.current, updated_at: Time.current }
+    LaserJob.insert_all!([first])
+    LabMetric.delete_all
+    LabMetric.create!(key: "dues_payers", label: "", period: "month", starts_on: Date.new(2016, 3, 1), value: 43, source: "test") # Over the years needs a record
+    sign_in member
+    get analytics_section_path(section: "history", topic: "laser")
+    assert_response :success
+    assert_select ".tile .label", "On the Large 80W"
+    assert_select ".tile .sub", "since Mar 2012"
+    assert_no_match(/first laser/i, response.body)
+  end
+
   test "before the log is read the page says so" do
     LaserJob.delete_all
     sign_in member

@@ -176,6 +176,52 @@ module LaserHelper
     [w / 11.0, h / 17.0].min * 0.985
   end
 
+  # The tube reading as a meter from 0 to the large laser's rated watts: the
+  # reading filled in, its likely range lighter, the rating as a dashed tick.
+  # compact: the strip above every Mini view; otherwise the Laser math card.
+  def laser_tube_gauge(tube, compact: false)
+    w, h, l, r = compact ? [340, 54, 4, 4] : [860, 84, 10, 10]
+    bar_y, bar_h = compact ? [19, 12] : [30, 16]
+    top = tube.against
+    x = ->(v) { (l + v.clamp(0, top) / top.to_f * (w - l - r)).round(1) }
+    below = bar_y + bar_h + (compact ? 16 : 20)
+    watts, rated, low, high = [tube.watts, tube.rated, tube.low, tube.high].map { |v| laser_number(v) }
+    yardstick = "#{LaserJob::MACHINES[Laser::Tube::YARDSTICK].split.first} #{laser_number(top)}"
+    label = "Cuts like about #{watts} W, likely #{low} to #{high} W; rated #{rated} W; the #{LaserJob::MACHINES[Laser::Tube::YARDSTICK]} counted at #{laser_number(top)} W"
+    marks = [
+      tag.rect(class: "track", x: l, y: bar_y, width: w - l - r, height: bar_h),
+      tag.rect(class: "fill", x: l, y: bar_y, width: x.(tube.low) - l, height: bar_h),
+      tag.rect(tag.title("Likely #{low} to #{high} W"), class: "range", x: x.(tube.low), y: bar_y, width: [x.(tube.high) - x.(tube.low), 2].max, height: bar_h),
+      tag.line(class: "reading", x1: x.(tube.watts), x2: x.(tube.watts), y1: bar_y - 4, y2: bar_y + bar_h + 4),
+      tag.text("#{watts} W", class: "reading-label", x: x.(tube.watts), y: bar_y - 7, "text-anchor": "middle"),
+      tag.line(tag.title("Rated #{rated} W"), class: "rated", x1: x.(tube.rated), x2: x.(tube.rated), y1: bar_y - 4, y2: bar_y + bar_h + 4),
+      tag.text("rated #{rated}", class: "rated-label", x: x.(tube.rated), y: below, "text-anchor": "middle"),
+      tag.text("0", x: l, y: below, "text-anchor": "start"),
+    ]
+    # The small meter has no room below for the yardstick: it sits above the bar's end.
+    marks << tag.text(yardstick, x: w - r, y: compact ? bar_y - 7 : below, "text-anchor": "end")
+    unless compact
+      marks += (10...top).step(10).reject { |v| (v - tube.rated).abs < 6 }.map { |v| tag.text(v, class: "tick", x: x.(v), y: below, "text-anchor": "middle") }
+    end
+    tag.svg(safe_join(marks), class: ["laser-gauge", ("compact" if compact)], viewBox: "0 0 #{w} #{h}", role: "img", "aria-label": label)
+  end
+
+  # "about two thirds of", or "about 72% of": the share of the speed to run
+  # at when bringing a setting over from the large laser.
+  def laser_share(share)
+    words = { 1 / 2r => "half", 3 / 5r => "three fifths", 2 / 3r => "two thirds", 3 / 4r => "three quarters", 4 / 5r => "four fifths" }
+    near, word = words.min_by { |v, _w| (v - share).abs }
+    (near - share).abs <= 0.02 ? "about #{word} of" : "about #{(share * 100).round}% of"
+  end
+
+  # "November 9, 2026".
+  def laser_day(date) = date.strftime("%B %-d, %Y")
+
+  # "60% at 15 mm/s" (", 2 passes" when there are more).
+  def laser_setting(power, speed, passes = 1)
+    "#{laser_number(power)}% at #{laser_number(speed)} mm/s#{", #{laser_number(passes)} passes" if passes.to_f > 1}"
+  end
+
   # "+12%" or "-3%", or n/a.
   def laser_change(value)
     return tag.span("n/a", class: "muted") if value.nil?

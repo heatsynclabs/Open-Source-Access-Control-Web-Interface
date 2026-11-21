@@ -4,7 +4,7 @@ namespace :laser do
     abort "run bundle exec rails db:migrate first (laser_jobs is missing)" unless LaserJob.available?
     failed = false
     LaserLog::Sync.new.run.each do |sheet, t|
-      name = "#{LaserJob::LABELS[sheet.machine]} #{sheet.source}"
+      name = "#{LaserJob::MACHINES[sheet.machine]} #{sheet.source}"
       if t[:error]
         failed = true
         puts "laser sync: #{name}: #{t[:error]}; its jobs are unchanged"
@@ -12,7 +12,10 @@ namespace :laser do
         puts "laser sync: #{name}: #{t[:kept]} jobs kept of #{t[:read]} rows"
       end
     end
-    LaserJob::MACHINES.each_key { |machine| Laser::Model.summary(machine) } # worked out now, so the first visitor does not wait
+    LaserJob::MACHINES.each_key do |machine| # worked out now, so the first visitor does not wait
+      Laser::Model.summary(machine)
+      Laser::Tube.summary(machine)
+    end
     abort "laser sync: a sheet was not read" if failed
   end
 end
