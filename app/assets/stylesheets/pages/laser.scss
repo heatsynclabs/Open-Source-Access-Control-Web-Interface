@@ -80,7 +80,7 @@
     .key b { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 8.5pt; letter-spacing: .12em; text-transform: uppercase; }
     .key .ex { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 15pt; background: #f2ab1e; border: 2px solid #14110d; padding: 0 .08in; margin-right: .06in; }
     .key .ex.light { background: #faf6ec; }
-    .body { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .3in; padding: .14in .45in .04in; }
+    .body { display: grid; align-items: start; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .3in; padding: .14in .45in .04in; }
     .t { width: 100%; border-collapse: collapse; margin-bottom: .12in; border: 2px solid #1c1812; background: #faf6ec; box-shadow: 4px 4px 0 #1c1812; font-size: inherit; }
     .t th { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 7.5pt; letter-spacing: .12em; text-transform: uppercase; background: #14110d; color: #ece3d3; padding: .03in .06in; text-align: right; border-bottom: 0; }
     .t th.fam { text-align: left; font-size: 10pt; letter-spacing: .18em; color: #f2ab1e; }
@@ -111,10 +111,14 @@
     &.dense { .t td { padding: .018in .045in; } .t td.v { font-size: 13pt; } .t { margin-bottom: .09in; } .card { font-size: 8pt; } }
   }
 
+  // Printing the cheat sheet prints the sheet alone, from the top left of
+  // the page (laser_sheet_page_style sets the page size and zoom).
   @media print {
-    body:has(.laser-print) > *:not(main), .laser-print > :not(.sheetwrap) { display: none !important; }
-    body:has(.laser-print) { background: #fff; }
-    body:has(.laser-print) main { padding: 0; margin: 0; max-width: none; }
-    .sheetwrap { border: 0; box-shadow: none; overflow: visible; }
+    body:has(.laser-print) > *:not(main), main:has(.laser-print) > :not(.laser), .laser-print > :not(.sheetwrap) { display: none !important; }
+    html:has(.laser-print), body:has(.laser-print), main:has(.laser-print), .laser-print, .sheetwrap {
+      margin: 0 !important; padding: 0 !important; border: 0 !important; box-shadow: none !important; max-width: none !important; background: #fff;
+    }
+    .sheetwrap { overflow: visible; }
+    .sheet { break-inside: avoid; }
   }
 }

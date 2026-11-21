@@ -14,11 +14,11 @@ class LaserController < ApplicationController
     "math" => "Laser math", "sheet" => "Cheat sheet", "log" => "The log",
   }.freeze
   LOG_PAGE = 50
-  # paper => [label, width in, height in, pages] (the cheat sheet is 11 x 17 in;
-  # Letter and A4 print it as two pages, tables then notes)
+  # paper => [label, width in, height in]; the 11 x 17 in cheat sheet is
+  # scaled to fit one page of it
   PAPERS = {
-    "letter" => ["Letter", 8.5, 11, 2], "a4" => ["A4", 8.27, 11.69, 2], "tabloid" => ["Tabloid 11 x 17", 11, 17, 1],
-    "a3" => ["A3", 11.69, 16.54, 1], "poster" => ["Poster 18 x 24", 18, 24, 1], "poster24" => ["Poster 24 x 36", 24, 36, 1],
+    "letter" => ["Letter", 8.5, 11], "a4" => ["A4", 8.27, 11.69], "tabloid" => ["Tabloid 11 x 17", 11, 17],
+    "a3" => ["A3", 11.69, 16.54], "poster" => ["Poster 18 x 24", 18, 24], "poster24" => ["Poster 24 x 36", 24, 36],
   }.freeze
 
   helper_method :laser_at

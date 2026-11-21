@@ -156,27 +156,24 @@ module LaserHelper
     tag.i(class: ["d", stats[:rate] >= 90 ? "ok" : stats[:rate] >= 75 ? "cond" : "bad"])
   end
 
-  # @page and the print zoom for a paper size, as the explorer sets them.
+  # @page and the print zoom for a paper size: the whole sheet on one page,
+  # never taller than the paper, so the notes and footer cannot spill over.
   def laser_sheet_page_style(paper)
-    _label, w, h, pages = LaserController::PAPERS.fetch(paper)
-    zoom = format("%.4f", laser_sheet_zoom(paper))
-    two = pages == 2 ? ".sheet { height: auto !important; min-height: 0 !important; } .sheet .notes { break-before: page; padding-top: .45in; } .sheet .body { flex: none; }" : ""
-    "@page { size: #{w}in #{h}in; margin: 0; } @media print { .sheet { zoom: #{zoom} !important; } #{two} }"
+    _label, w, h = LaserController::PAPERS.fetch(paper)
+    "@page { size: #{w}in #{h}in; margin: 0; } " \
+      "@media print { .sheet { zoom: #{format("%.4f", laser_sheet_zoom(paper))} !important; height: 17in !important; min-height: 0 !important; } }"
   end
 
   def laser_sheet_paper_note(paper)
-    label, _w, _h, pages = LaserController::PAPERS.fetch(paper)
+    label, = LaserController::PAPERS.fetch(paper)
     percent = (laser_sheet_zoom(paper) * 100).round
-    if pages == 2
-      "#{label}: two pages at #{percent}% size. Page 1 is the settings tables, page 2 is the trouble notes."
-    else
-      "#{label}: one page at #{percent}% size#{", full bleed or close to it" if percent >= 100}."
-    end
+    "#{label}: the whole sheet on one page at #{percent}% size."
   end
 
+  # A hair under the fit, so rounding never pushes the bottom onto a second page.
   def laser_sheet_zoom(paper)
-    _label, w, h, pages = LaserController::PAPERS.fetch(paper)
-    (pages == 2 ? w / 11.0 : [w / 11.0, h / 17.0].min) - 0.003
+    _label, w, h = LaserController::PAPERS.fetch(paper)
+    [w / 11.0, h / 17.0].min * 0.985
   end
 
   # "+12%" or "-3%", or n/a.

@@ -91,7 +91,7 @@ class LaserPageTest < ActionDispatch::IntegrationTest
     assert_select ".sheet .t th.fam", "Wood"
     assert_select ".sheet .t td.v", minimum: 2
     assert_select ".sheet .notes .card.haz h2", "Every job"
-    assert_match "two pages", response.body
+    assert_match "the whole sheet on one page", response.body
     assert_match "@page { size: 8.5in 11in", response.body
   end
 
