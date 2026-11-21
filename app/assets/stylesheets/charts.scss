@@ -40,7 +40,7 @@
     display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); gap: var(--space-4); align-items: start;
     margin-bottom: var(--space-3);
     @media (max-width: 700px) { grid-template-columns: minmax(0, 1fr); }
-    svg { width: 100%; height: auto; overflow: visible; font-family: var(--font-ui); }
+    svg { width: 100%; height: auto; overflow: hidden; font-family: var(--font-ui); border: 1px solid var(--steel); background: var(--slab-hi); }
     .county { fill: var(--slab); stroke: var(--steel); stroke-width: 0.75; }
     .state { fill: none; stroke: var(--bone); stroke-width: 1.5; stroke-linejoin: round; }
     .inset { fill: none; stroke: var(--rust); stroke-width: 1.5; stroke-dasharray: 4 3; }
@@ -51,6 +51,7 @@
     .zone-num { font-family: var(--font-mono); font-weight: 700; }
     .town { fill: var(--ash); }
     .town-label { fill: var(--ash); font-size: 10px; }
+    .county-label { fill: var(--ash); font-size: 10px; text-transform: uppercase; letter-spacing: var(--tracking-wide); }
   }
 
   // Horizontal bars for ranked lists (top certifications, recurring events).

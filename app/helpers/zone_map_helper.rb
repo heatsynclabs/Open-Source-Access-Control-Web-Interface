@@ -6,7 +6,7 @@
 module ZoneMapHelper
   # zone => [lat, lon, label side] at roughly the middle of its ZIP codes.
   ZONE_PLACES = {
-    "West Valley" => [33.55, -112.27, :left], "Phoenix" => [33.49, -112.07, :left],
+    "West Valley" => [33.55, -112.27, :above], "Phoenix" => [33.49, -112.07, :left],
     "Scottsdale and Fountain Hills" => [33.57, -111.86, :right], "Tempe" => [33.39, -111.935, :left],
     "Mesa, downtown and west" => [33.405, -111.845, :above], "East Mesa" => [33.42, -111.68, :right],
     "Chandler" => [33.29, -111.86, :left], "Gilbert" => [33.32, -111.76, :below],
@@ -17,7 +17,9 @@ module ZoneMapHelper
   # Towns on the state view for bearings (no data).
   TOWNS = { "Flagstaff" => [35.198, -111.651], "Yuma" => [32.693, -114.628], "Prescott" => [34.54, -112.469] }.freeze
   METRO_ZONES = (ZONE_PLACES.keys - ["Tucson and the south"]).freeze
-  MAX_RADIUS = 20
+  # County names on the metro view, for bearings.
+  METRO_COUNTIES = { "Maricopa County" => [33.71, -112.42], "Pinal County" => [33.08, -111.62] }.freeze
+  MAX_RADIUS = 17
 
   # zones: { name => count, nil for fewer than 5 }
   def zone_map(zones)
@@ -39,7 +41,7 @@ module ZoneMapHelper
       east, south = ArizonaMap.point("state", ArizonaMap::VIEWS["metro"][:south], ArizonaMap::VIEWS["metro"][:east])
       in_metro = zones.slice(*METRO_ZONES).values.compact.sum
       marks << tag.rect(x: west, y: north, width: (east - west).round(1), height: (south - north).round(1), class: "inset")
-      marks << tag.text("Phoenix metro: #{in_metro}+", x: east + 6, y: north + 4, class: "zone-label")
+      marks << tag.text("Phoenix metro, #{in_metro}+ (right)", x: west, y: south + 14, class: "zone-label")
       TOWNS.each do |town, (lat, lon)|
         x, y = ArizonaMap.point("state", lat, lon)
         marks << tag.circle(cx: x, cy: y, r: 2.5, class: "town")
@@ -47,6 +49,10 @@ module ZoneMapHelper
       end
       marks += zone_dot("state", "Tucson and the south", zones, most)
     else
+      METRO_COUNTIES.each do |county, (lat, lon)|
+        x, y = ArizonaMap.point("metro", lat, lon)
+        marks << tag.text(county, x: x, y: y, class: "county-label")
+      end
       METRO_ZONES.each { |name| marks += zone_dot("metro", name, zones, most) }
       x, y = ArizonaMap.point("metro", *LAB)
       marks << tag.rect(tag.title("HeatSync Labs, 108 W Main St, Mesa"), x: x - 4, y: y - 4, width: 8, height: 8, class: "lab",
