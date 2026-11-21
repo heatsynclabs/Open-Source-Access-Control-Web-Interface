@@ -1,7 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Zooms the 11 inch wide cheat sheet (1056 CSS pixels) to fit its frame on
-// screen. Printing sets its own zoom (laser_sheet_page_style).
+// screen, and makes it denser if its content runs past 17 inches (1632 CSS
+// pixels), so it still prints on one sheet. Printing sets its own zoom
+// (laser_sheet_page_style).
 export default class extends Controller {
   static targets = ["sheet"]
 
@@ -9,6 +11,7 @@ export default class extends Controller {
     this.fit = this.fit.bind(this)
     this.observer = new ResizeObserver(this.fit)
     this.observer.observe(this.element)
+    this.sheetTarget.classList.toggle("dense", this.sheetTarget.offsetHeight > 1632)
     this.fit()
   }
 
