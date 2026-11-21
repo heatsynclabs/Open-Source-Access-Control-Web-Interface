@@ -16,7 +16,7 @@ module Analytics
       "talk" => { title: "The mailing list and Slack" },
       "wiki" => { title: "The wiki" },
       "calendar" => { title: "The calendar" },
-      "laser" => { title: "The laser cutter" },
+      "laser" => { title: "The laser cutters" },
       "joining" => { title: "How people find the lab" },
       "money" => { title: "Money", money: true },
     }.freeze
