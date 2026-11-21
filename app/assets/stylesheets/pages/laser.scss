@@ -58,6 +58,40 @@
   .laser-math .up { color: var(--ink-err); }
   .laser-estimate-inputs { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: var(--space-4); label { display: grid; gap: var(--space-1); } }
 
+  // The tube reading (Laser::Tube): a strip above each view of the mini, and
+  // the card that opens its Laser math. The gauge runs from 0 to the large
+  // laser's rated watts.
+  .laser-tube {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 340px); gap: var(--space-3) var(--space-6); align-items: center;
+    background: var(--slab); border: 2px solid var(--steel-hi); border-left: 6px solid var(--hazard);
+    padding: var(--space-3) var(--space-4); margin: calc(-1 * var(--space-2)) 0 var(--space-6); font-size: var(--text-sm);
+    p { margin: 0; max-width: 72ch; }
+    .eyebrow { margin-bottom: var(--space-1); }
+    strong { font-family: var(--font-display); font-size: var(--text-lg); }
+  }
+  @media (max-width: 720px) { .laser-tube { grid-template-columns: 1fr; } }
+  .laser-tube-card { margin: 0 0 var(--space-6); scroll-margin-top: var(--space-6);
+    .card-head h2 { margin: 0; }
+    h3 { margin: var(--space-6) 0 var(--space-2); }
+    .tiles { margin: var(--space-4) 0; }
+    .table-wrap { margin: var(--space-4) 0 0; max-width: 560px; }
+    caption { caption-side: bottom; text-align: left; padding-top: var(--space-2); }
+  }
+  .laser-tube-lead { font-size: var(--text-lg); margin: 0; max-width: 62ch; }
+  .laser-tube-limits li + li { margin-top: var(--space-2); }
+  .laser-gauge { display: block; width: 100%; height: auto; font-family: var(--font-ui); font-size: 12px; fill: var(--ash); overflow: visible;
+    &.compact { max-width: 340px; font-size: 12px; justify-self: end; }
+    .track { fill: var(--slab-hi); stroke: var(--steel-hi); stroke-width: 1.5; }
+    .fill { fill: var(--hazard); }
+    .range { fill: var(--hazard); fill-opacity: 0.4; }
+    .reading { stroke: var(--bone); stroke-width: 3; }
+    .reading-label { fill: var(--bone); font-weight: 700; font-size: 14px; }
+    &.compact .reading-label { font-size: 13px; }
+    .rated { stroke: var(--bone); stroke-width: 1.5; stroke-dasharray: 3 2; }
+    .rated-label { fill: var(--bone); }
+  }
+  @media (max-width: 720px) { .laser-gauge.compact { justify-self: start; } }
+
   .laser-log-filters { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); input[type="search"] { flex: 1; min-width: 200px; } }
   .laser-foot { margin-top: var(--space-8); }
 

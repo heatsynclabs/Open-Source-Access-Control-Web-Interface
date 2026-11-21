@@ -62,10 +62,11 @@
       <li>Check focus and flatten the sheet. Wrong focus height and warped stock both come up repeatedly in the log.</li>
       <li>Slow down before you add power or passes.<%= " 6 mm MDF at 80/10 took two passes and flamed; 80/7 cut in one." if @machine == "large" %></li>
       <li>Still weak, or one side of the bed cuts worse? The log points to a dirty lens or a bed out of level. Write it in Machine Notes. Optics work is for the laser maintainers only.</li>
+      <% if @tube&.ready? %><li>Coming from the <%= LaserJob::MACHINES[Laser::Tube::YARDSTICK] %>? Keep the power and run at <%= laser_share(@tube.speed) %> its speed. By the log this tube cuts like about <%= laser_number(@tube.watts) %> W, not its rated <%= laser_number(@tube.rated) %> (<%= @tube.through.strftime("%B %Y") %>).</li><% end %>
     </ol></div>
     <div class="card"><h2>Known trouble</h2><ul>
-      <% if rates[:thick_plywood].last.positive? %><li>Plywood 9 mm and up had trouble in <%= rates[:thick_plywood].first %>% of cuts. Plan to finish with a saw or knife.</li><% end %>
-      <% if rates[:mdf].last.positive? %><li>MDF and hardboard change sheet to sheet: <%= rates[:mdf].first %>% of cuts had trouble. Test each new sheet.</li><% end %>
+      <% if rates[:thick_plywood].first.positive? %><li>Plywood 9 mm and up had trouble in <%= rates[:thick_plywood].first %>% of cuts. Plan to finish with a saw or knife.</li><% end %>
+      <% if rates[:mdf].first.positive? %><li>MDF and hardboard change sheet to sheet: <%= rates[:mdf].first %>% of cuts had trouble. Test each new sheet.</li><% end %>
       <li>Paper, cardboard and foam core catch fire at slow speeds and sharp corners. Go fast and low.</li>
       <li>Black acrylic flares. Space parts apart and watch for flame.</li>
       <li>EVA foam bows with heat. PE foam remelts along the bottom edge.</li>

@@ -1,0 +1,47 @@
+<%# Laser math's tube reading (Laser::Tube): the number, how it is read, each stock on its own, and what it cannot say. %>
+<% t = @tube %>
+<% large = LaserJob::MACHINES[Laser::Tube::YARDSTICK] %>
+<% name = LaserJob::MACHINES[@machine] %>
+<% w = ->(v) { "#{laser_number(v)} W" } %>
+<section class="card laser-tube-card" id="tube" aria-labelledby="tube-title">
+  <div class="card-head">
+    <h2 id="tube-title">Tube reading</h2>
+    <%= render ChipComponent.new("Log through #{laser_day(t.through)}", tone: :info) %>
+  </div>
+  <p class="laser-tube-lead">Rated <%= w.(t.rated) %>. Based on the log, this laser cuts like about <strong><%= w.(t.watts) %></strong>, and the reading updates every night.</p>
+  <div class="tiles">
+    <%= render StatTileComponent.new(value: w.(t.watts), label: "Cuts like", sub: "likely #{laser_number(t.low)} to #{w.(t.high)}", tone: :headline) %>
+    <%= render StatTileComponent.new(value: w.(t.rated), label: "Rated") %>
+    <%= render StatTileComponent.new(value: "#{laser_number(t.speed * 100)}%", label: "Speed from the #{large.split.first}", sub: "at the same power") %>
+    <%= render StatTileComponent.new(value: number_with_delimiter(t.people), label: "People", sub: "cut the same stock on both lasers") %>
+  </div>
+  <%= laser_tube_gauge(t) %>
+
+  <h3>How it is read</h3>
+  <p>Since <%= laser_day(t.since) %>, <%= t.people %> people cut the same material and thickness on both lasers and logged it as working. For each person, compare power &times; passes &divide; speed on the two machines. The middle person used about <%= format("%.2f", 1 / t.speed) %> times as much on the <%= name %> as on the <%= large %>. Counting the <%= large %> at its rated <%= w.(t.against) %>, that is a <%= w.(t.watts) %> laser. The range comes from resampling those people.</p>
+  <% if (ex = t.example) %>
+    <p>For example, the most used setting for <%= laser_number(ex[:mm], 1) %> mm <%= ex[:material].downcase %> is <strong><%= laser_setting(*ex[:large]) %></strong> on the <%= large %> and <strong><%= laser_setting(*ex[:mini]) %></strong> on the <%= name %>. To bring a setting over, keep the power and run at <%= laser_share(t.speed) %> the speed. If Find a setting has jobs for your stock, use those first.</p>
+  <% end %>
+  <% if t.stocks.any? %>
+    <div class="table-wrap">
+      <table>
+        <caption class="muted small">Each stock read on its own, from the people who cut it on both lasers. A weaker beam shows as the same gap on every stock; habit shows as stocks that disagree.</caption>
+        <thead><tr><th>Stock</th><th class="num">People on both</th><th class="num">Reads as</th></tr></thead>
+        <tbody>
+          <% t.stocks.each do |s| %>
+            <tr><td><%= s[:material] %>, <%= laser_number(s[:mm], 1) %> mm</td><td class="num"><%= s[:people] %></td><td class="num"><%= w.(s[:watts]) %></td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+  <h3>What it cannot say</h3>
+  <ul class="laser-tube-limits">
+    <li>It takes the <%= large %> at its rated <%= w.(t.against) %>. If that beam is weak, this one reads high, and the other way round. The <%= link_to "#{large}'s energy index", laser_path(view: "math") %> shows how steady it has been.</li>
+    <li>It reads the whole beam: tube, mirrors, lens and power supply. It cannot say which part is down.</li>
+    <li>It reads what people chose. People copy the class settings, so habit is in it as well as power.</li>
+    <li>The rest of this page keeps the rated <%= w.(t.rated) %>, so its J/mm read about <%= laser_number((t.rated / t.watts - 1) * 100) %>% high next to the <%= large %>'s.</li>
+    <li>When a tube is replaced, the reading starts over from that day. A beam power meter, or the same test grid cut on both lasers, would measure it directly.</li>
+  </ul>
+</section>
