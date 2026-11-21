@@ -79,6 +79,14 @@ class AnalyticsHistoryTest < ActionDispatch::IntegrationTest
     assert_select "nav[aria-label=Period]"
   end
 
+  test "the tab opens on All with every deep dive's tab beside it" do
+    sign_in member
+    history_tab
+    assert_select "nav[aria-label='Over the years'] a.on", "All"
+    assert_select "nav[aria-label='Over the years'] a[href=?]", analytics_path(section: "history", topic: "laser")
+    assert_select "nav[aria-label='Over the years'] a", text: "Money", count: 0
+  end
+
   test "each chart leads to its deep dive, and the deep dives link to each other" do
     sign_in member
     history_tab
@@ -86,8 +94,8 @@ class AnalyticsHistoryTest < ActionDispatch::IntegrationTest
     LabCalendar.stub(:between, ->(_range) { raise LabCalendar::Unavailable }) { get analytics_section_path(section: "history", topic: "members") }
     assert_select "h2", "Paying members"
     assert_select "h3", "PayPal against this site's records"
-    assert_select "nav[aria-label='Deep dives'] a.on", "Paying members"
-    assert_select "nav[aria-label='Deep dives'] a", text: "Money", count: 0
+    assert_select "nav[aria-label='Over the years'] a.on", "Paying members"
+    assert_select "nav[aria-label='Over the years'] a", text: "Money", count: 0
   end
 
   test "every deep dive renders, and money only for the treasurer and admins" do
@@ -115,5 +123,6 @@ class AnalyticsHistoryTest < ActionDispatch::IntegrationTest
     sign_in member
     LabCalendar.stub(:between, ->(_range) { raise LabCalendar::Unavailable }) { get analytics_section_path }
     assert_select "h2", "Since the lab began"
+    assert_select "nav[aria-label='Over the years']", count: 0
   end
 end

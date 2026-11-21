@@ -1,4 +1,5 @@
 <div class="section-head"><p class="eyebrow">Over the years</p><h2>Since the lab began</h2></div>
+<%= render "analytics/history/tabs", current: nil if @section == "history" && @history&.loaded? %>
 <% if @history&.loaded? %>
   <p class="note">Records the members site does not keep itself: PayPal and utility records, the old Wi-Fi log, the laser log, the mailing list and wiki, the calendar's history and the tax returns. Each chart covers every year its records reach; a gap in a line is a month or year with no record. Most were gathered by hand and do not update on their own; the laser log is read every night. "Deep dive" under a chart opens everything behind it.</p>
   <div class="grid two">

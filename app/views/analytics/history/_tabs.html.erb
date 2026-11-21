@@ -1,0 +1,7 @@
+<%# The Over the years tabs: All (every chart) and each deep dive. current is a topic key, or nil for All. %>
+<nav class="filters" aria-label="Over the years">
+  <%= link_to "All", analytics_path(section: "history"), class: ["toggle", ("on" if current.nil?)], "aria-current": ("page" if current.nil?) %>
+  <% @history_topics.each do |key, other| %>
+    <%= link_to other[:title], history_topic_path(key), class: ["toggle", ("on" if key == current)], "aria-current": ("page" if key == current) %>
+  <% end %>
+</nav>
