@@ -22,7 +22,7 @@
     <% end %>
 
     <% people = months.(u.people_by_month) %>
-    <%= render ChartCardComponent.new(title: "People using a laser a month", note: "Different people who logged a job on either machine.", rows: people, columns: ["Month", "People"]) do %>
+    <%= render ChartCardComponent.new(title: "People using a laser a month", note: "Different people who logged a job on any of the lasers.", rows: people, columns: ["Month", "People"]) do %>
       <%= line_chart people, discrete: true, curve: false, points: false %>
     <% end %>
 
@@ -42,7 +42,7 @@
     <% end %>
 
     <% clean = months.(u.found_clean_by_month) %>
-    <%= render ChartCardComponent.new(title: "Found the machine clean", note: "The share of jobs, on either laser, whose maker found the machine clean when they started.", rows: clean, columns: ["Month", "Found clean (%)"]) do %>
+    <%= render ChartCardComponent.new(title: "Found the machine clean", note: "The share of jobs, on any of the lasers, whose maker found the machine clean when they started.", rows: clean, columns: ["Month", "Found clean (%)"]) do %>
       <%= line_chart clean, discrete: true, curve: false, points: false, suffix: "%", max: 100 %>
     <% end %>
   </div>
