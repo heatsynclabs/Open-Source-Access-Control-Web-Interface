@@ -42,6 +42,52 @@ class Laser::QueriesTest < ActiveSupport::TestCase
     assert_equal 0, large_series[Date.new(2019, 3, 1)] # a quiet month inside a stretch
   end
 
+  test "the tube reading puts watts on the mini from people who cut the same stock on both lasers" do
+    large, mini = [], []
+    20.times do |p|
+      person = "p#{p}"
+      large << job(p * 10 + 1, person: person, power: 60, speed: 15) << job(p * 10 + 2, person: person, power: 60, speed: 15)
+      mini << job(p * 10 + 3, person: person, power: 60, speed: 10)
+      large << job(p * 10 + 4, person: person, material: "Acrylic", power: 80, speed: 10)
+      mini << job(p * 10 + 5, person: person, material: "Acrylic", power: 80, speed: 6.6)
+    end
+    mini << job(999, person: "p1", power: 99, speed: 1, result: "fail") # failures never count
+    mini << job(998, person: "nobody else", power: 20, speed: 30) # nor do people who only cut on one laser
+    t = Laser::Tube.new(large, mini).reading
+    assert t.ready?
+    assert_equal [60, 80, 20], [t.rated, t.against, t.people]
+    assert_in_delta 53.0, t.watts, 0.4 # 80 W x (60/15) / (60/10)
+    assert_in_delta 0.66, t.speed, 0.01
+    assert_operator t.low, :<=, t.watts
+    assert_operator t.high, :>=, t.watts
+    assert_equal [["Plywood / wood", 3.0, 20], ["Acrylic", 3.0, 20]], t.stocks.map { |s| s.values_at(:material, :mm, :people) }
+    assert_equal [[60.0, 15.0, 1.0], [60.0, 10.0, 1.0]], t.example.values_at(:large, :mini)
+  end
+
+  test "the tube reading waits for enough people, and starts over after a new tube" do
+    large = (1..20).map { |p| job(p, person: "p#{p}", date: Date.new(2024, 1, 1)) }
+    mini = (1..20).map { |p| job(100 + p, person: "p#{p}", speed: 10, date: Date.new(2024, 1, 2)) }
+    refute Laser::Tube.new(large.first(10), mini.first(10)).reading.ready?
+    restarted = Laser::Tube.new(large, mini, since: Date.new(2025, 6, 1), restart: [Date.new(2025, 6, 1), "New tube"]).reading
+    refute restarted.ready?
+    assert_equal [0, 15], [restarted.people, restarted.needed]
+  end
+
+  test "the large laser's tube reading is its last year against its own log" do
+    jobs = (0...20).flat_map do |p|
+      [3.0, 6.0].flat_map do |mm|
+        [job(p * 10 + mm.to_i, person: "p#{p}", mm: mm, bucket: "x", power: 60, speed: 15 / (mm / 3), date: Date.new(2024, 3, 1)),
+         job(p * 10 + mm.to_i + 1000, person: "p#{p}", mm: mm, bucket: "x", power: 60, speed: 12 / (mm / 3), date: Date.new(2025, 9, 1))]
+      end
+    end
+    t = Laser::Tube::Own.new(jobs).reading
+    assert t.own?
+    assert_equal [80, 20, Date.new(2025, 9, 1)], [t.rated, t.people, t.through]
+    assert_in_delta 80 / Math.sqrt(1.25), t.watts, 0.5 # recent cuts took 25% more energy; the law sits halfway
+    assert_operator t.speed, :<, 1
+    refute Laser::Tube::Own.new(jobs.first(20)).reading.ready?
+  end
+
   test "the energy law recovers the exponent it was built with" do
     jobs = (1..40).map do |i|
       mm = [2.0, 3.0, 4.0, 6.0, 9.0][i % 5]

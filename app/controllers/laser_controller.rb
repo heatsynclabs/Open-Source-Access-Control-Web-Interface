@@ -1,7 +1,8 @@
 # The lab's laser cutters' settings guide, for signed-in members: what power
 # and speed worked for each material and thickness, what goes wrong, the
 # laser math, a printable cheat sheet and the log itself, for one machine at a
-# time (MACHINES; the large 80 W by default). Built from each machine's
+# time (MACHINES; the large 80 W by default), with each machine's tube
+# reading (Laser::Tube) above every view. Built from each machine's
 # current log form (LaserJob, rebuilt nightly by laser:sync); its old form
 # shows beside it as history (what people used then) and in the log, never
 # in "what worked". Nothing here names the person who logged a job. See
@@ -32,6 +33,7 @@ class LaserController < ApplicationController
     @earlier = Laser::Log.jobs(@machine, LaserJob::OLD)
     @settings = Laser::Settings.new(@jobs)
     @earlier_settings = Laser::Settings.new(@earlier)
+    @tube = Laser::Tube.summary(@machine)
     send("#{@view}_view")
   end
 

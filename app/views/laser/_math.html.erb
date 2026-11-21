@@ -8,11 +8,12 @@
 <% watts = (pp * 100).round %>
 <% ex = ->(power, speed) { format("%.1f", pp * power / speed) } %>
 <div class="laser-math">
+<%= render(@tube.ready? ? "laser/tube_card" : "laser/tube") if @tube %>
 <p class="muted">Fitted to <%= number_with_delimiter(m[:worked]) %> clean cuts through wood, MDF and acrylic. These are patterns in what members logged, not bench measurements.</p>
 
 <h2>1. One number for a cut</h2>
 <p>Power and speed only matter together. Divide one by the other and you get the energy the beam leaves in each millimetre of cut.</p>
-<div class="laser-eq">E = <%= pp %> &times; power % &divide; speed mm/s &times; passes<small>E is in joules per mm. The <%= pp %> turns percent into watts on a <%= watts %> W tube, assuming output is proportional to the setting. Example: 60% at 15 mm/s is <%= pp %> &times; 60 &divide; 15 = <%= ex.(60, 15) %> J/mm.</small></div>
+<div class="laser-eq">E = <%= pp %> &times; power % &divide; speed mm/s &times; passes<small>E is in joules per mm. The <%= pp %> turns percent into watts on a <%= watts %> W tube, assuming output is proportional to the setting.<% if @tube&.ready? && !@tube.own? %> That is the rated <%= watts %> W; the tube reading above puts this beam nearer <%= laser_number(@tube.watts) %> W.<% end %> Example: 60% at 15 mm/s is <%= pp %> &times; 60 &divide; 15 = <%= ex.(60, 15) %> J/mm.</small></div>
 <p>Any two settings with the same E should cut about the same: 60% at 15 mm/s and 80% at 20 mm/s are both <%= ex.(60, 15) %> J/mm.</p>
 
 <h2>2. Energy scales with thickness</h2>

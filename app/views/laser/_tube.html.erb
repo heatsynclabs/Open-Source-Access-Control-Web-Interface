@@ -1,0 +1,27 @@
+<%# The tube reading in one line, above every view of a laser (Laser::Tube); Laser math has the whole card. %>
+<% t = @tube %>
+<% large = LaserJob::MACHINES[Laser::Tube::YARDSTICK] %>
+<% if t.ready? %>
+  <aside class="laser-tube" aria-label="Tube reading">
+    <div class="laser-tube-text">
+      <p class="eyebrow">Tube reading</p>
+      <% if t.own? %>
+        <p>Based on the log through <%= laser_day(t.through) %>, this laser cuts like about <strong><%= laser_number(t.watts) %> W</strong> of its rated <%= laser_number(t.rated) %> W: its last <%= Laser::Tube::WINDOW %> months against its own average since <%= t.since.strftime("%B %Y") %>.
+          <%= laser_tube_advice(t) %>
+          <%= link_to "How this is read", laser_at(view: "math", anchor: "tube"), class: "nowrap" %></p>
+      <% else %>
+        <p>Based on the log through <%= laser_day(t.through) %>, this laser cuts like about <strong><%= laser_number(t.watts) %> W</strong>, not its rated <%= laser_number(t.rated) %> W.
+          Coming from the <%= large %>? Keep the power and run at <%= laser_share(t.speed) %> the speed.
+          <%= link_to "How this is read", laser_at(view: "math", anchor: "tube"), class: "nowrap" %></p>
+      <% end %>
+    </div>
+    <%= laser_tube_gauge(t, compact: true) %>
+  </aside>
+<% elsif t.restart %>
+  <aside class="laser-tube" aria-label="Tube reading">
+    <div class="laser-tube-text">
+      <p class="eyebrow">Tube reading</p>
+      <p>New tube on <%= laser_day(t.restart.first) %>. <%= t.people %> of the <%= t.needed %> people needed have <%= t.own? ? "logged clean cuts on it" : "cut the same stock on both lasers" %> since, so there is no reading yet. Until then, start from this laser's own settings.</p>
+    </div>
+  </aside>
+<% end %>

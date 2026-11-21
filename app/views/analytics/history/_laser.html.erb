@@ -1,4 +1,4 @@
-<%= render "analytics/history/head", topic: "laser", note: "From the log forms members fill in at the lab's two laser cutters, the Large 80W and the Mini 60W, read every night: each machine's current form (from April 2022) and the old form before it. Jobs from 2011 to 2013, on the form the Mini later used, were on the lab's first laser and are shown as their own machine (the Mini came around 2019). Only logged jobs are here; months with nothing logged for long stretches are left blank, as are partly covered months. The Laser page in the menu has the settings guide built from the same logs." %>
+<%= render "analytics/history/head", topic: "laser", note: "From the log forms members fill in at the lab's two laser cutters, the Large 80W and the Mini 60W, read every night: each machine's current form (from April 2022) and the old form before it. The Large is the lab's 2011 Exlas: it came with a 100 W tube and runs an 80 W one now. Its jobs from 2011 to 2013 were logged on the form the Mini took over when it came, around 2019, and count as the Large's here. Only logged jobs are here; months with nothing logged for long stretches are left blank, as are partly covered months. The Laser page in the menu has the settings guide built from the same logs." %>
 <% if @laser&.any? %>
   <% u = @laser %>
   <% months = ->(series) { series.transform_keys { |month| month.strftime("%b %Y") } } %>
@@ -6,9 +6,9 @@
   <% t = u.totals %>
   <div class="tiles">
     <%= render StatTileComponent.new(value: number_with_delimiter(t[:jobs]), label: "Jobs logged", sub: "since #{t[:first]&.strftime("%b %Y")}", tone: :headline) %>
-    <% LaserJob::LABELS.each do |machine, label| %>
+    <% LaserJob::MACHINES.each do |machine, label| %>
       <% m = t[:machines][machine] or next %>
-      <%= render StatTileComponent.new(value: number_with_delimiter(m[:jobs]), label: "On the #{label}", sub: machine == "first" ? "2011 to 2013" : "since #{m[:first]&.strftime("%b %Y")}") %>
+      <%= render StatTileComponent.new(value: number_with_delimiter(m[:jobs]), label: "On the #{label}", sub: "since #{m[:first]&.strftime("%b %Y")}") %>
     <% end %>
     <%= render StatTileComponent.new(value: number_with_delimiter(t[:people]), label: "People", sub: "#{t[:one_job]} logged one job only") %>
     <%= render StatTileComponent.new(value: number_with_delimiter(t[:hours]), label: "Laser hours") %>
