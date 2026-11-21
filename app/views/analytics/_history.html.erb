@@ -54,7 +54,7 @@
       <%= render "bar_list", rows: @history.totals("how_heard_all", largest_first: true), empty: "No answers loaded." %>
     <% end %>
 
-    <%= render ChartCardComponent.new(title: "Where members live", note: "People who have paid dues, by the area of the ZIP code on their account. Darker is more people.", more: history_topic_path("joining")) do %>
+    <%= render ChartCardComponent.new(title: "Where members live", note: "People who have paid dues, by the area of the ZIP code on their account, on a map of Arizona with the Phoenix metro drawn larger.", more: history_topic_path("joining")) do %>
       <%= render "analytics/history/zone_map" %>
     <% end %>
   </div>

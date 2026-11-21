@@ -48,8 +48,9 @@ class AnalyticsHistoryTest < ActionDispatch::IntegrationTest
     assert_match "Different people added them: 20 in 2013, fewer than 5 in 2025", response.body
     assert_select "h2", text: "Money", count: 0
     assert_no_match "$1,850", response.body
-    assert_select ".zone-map .zone.lab .zone-num", "56"
-    assert_select ".zone-map .zone-num", "fewer than 5"
+    assert_select ".az-map svg.az-metro .county", 15
+    assert_select ".az-map .zone-label", text: /Mesa, downtown and west 56/
+    assert_match "fewer than 5 elsewhere in Arizona", response.body
   end
 
   test "the wiki deep dive lists the most-read pages" do

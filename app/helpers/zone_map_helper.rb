@@ -1,0 +1,73 @@
+# The map of where members live (analytics, Over the years): Arizona's real
+# outline and counties (ArizonaMap, from US Census boundaries) with a dot per
+# zone of ZIP codes (members_by_zone in lab_metrics), its area in step with
+# the number of dues payers there. Two views: the whole state, and the Phoenix
+# metro, where nearly everyone lives. Zones under 5 people are hollow rings.
+module ZoneMapHelper
+  # zone => [lat, lon, label side] at roughly the middle of its ZIP codes.
+  ZONE_PLACES = {
+    "West Valley" => [33.55, -112.27, :left], "Phoenix" => [33.49, -112.07, :left],
+    "Scottsdale and Fountain Hills" => [33.57, -111.86, :right], "Tempe" => [33.39, -111.935, :left],
+    "Mesa, downtown and west" => [33.405, -111.845, :above], "East Mesa" => [33.42, -111.68, :right],
+    "Chandler" => [33.29, -111.86, :left], "Gilbert" => [33.32, -111.76, :below],
+    "Pinal County" => [33.16, -111.56, :below], "Tucson and the south" => [32.22, -110.97, :right],
+  }.freeze
+  LAB = [33.4148, -111.8366] # 108 W Main St, Mesa
+  LAB_ZONE = "Mesa, downtown and west"
+  # Towns on the state view for bearings (no data).
+  TOWNS = { "Flagstaff" => [35.198, -111.651], "Yuma" => [32.693, -114.628], "Prescott" => [34.54, -112.469] }.freeze
+  METRO_ZONES = (ZONE_PLACES.keys - ["Tucson and the south"]).freeze
+  MAX_RADIUS = 20
+
+  # zones: { name => count, nil for fewer than 5 }
+  def zone_map(zones)
+    most = zones.slice(*ZONE_PLACES.keys).values.compact.max.to_f
+    label = "Where members live: " + zones.map { |name, n| "#{name} #{n || "fewer than 5"}" }.join(", ")
+    tag.div(class: "az-map", role: "img", "aria-label": label) do
+      safe_join([zone_map_view("state", zones, most), zone_map_view("metro", zones, most)])
+    end
+  end
+
+  private
+
+  def zone_map_view(view, zones, most)
+    v = ArizonaMap::VIEWS.fetch(view)
+    marks = ArizonaMap::COUNTIES.fetch(view).map { |name, d| tag.path(tag.title("#{name} County"), d: d, class: "county") }
+    marks << tag.path(d: ArizonaMap::STATE.fetch(view), class: "state")
+    if view == "state"
+      west, north = ArizonaMap.point("state", ArizonaMap::VIEWS["metro"][:north], ArizonaMap::VIEWS["metro"][:west])
+      east, south = ArizonaMap.point("state", ArizonaMap::VIEWS["metro"][:south], ArizonaMap::VIEWS["metro"][:east])
+      in_metro = zones.slice(*METRO_ZONES).values.compact.sum
+      marks << tag.rect(x: west, y: north, width: (east - west).round(1), height: (south - north).round(1), class: "inset")
+      marks << tag.text("Phoenix metro: #{in_metro}+", x: east + 6, y: north + 4, class: "zone-label")
+      TOWNS.each do |town, (lat, lon)|
+        x, y = ArizonaMap.point("state", lat, lon)
+        marks << tag.circle(cx: x, cy: y, r: 2.5, class: "town")
+        marks << tag.text(town, x: x + 5, y: y + 4, class: "town-label")
+      end
+      marks += zone_dot("state", "Tucson and the south", zones, most)
+    else
+      METRO_ZONES.each { |name| marks += zone_dot("metro", name, zones, most) }
+      x, y = ArizonaMap.point("metro", *LAB)
+      marks << tag.rect(tag.title("HeatSync Labs, 108 W Main St, Mesa"), x: x - 4, y: y - 4, width: 8, height: 8, class: "lab",
+                        transform: "rotate(45 #{x} #{y})")
+    end
+    tag.svg(safe_join(marks), class: "az-#{view}", viewBox: "0 0 #{v[:width]} #{v[:height]}")
+  end
+
+  def zone_dot(view, name, zones, most)
+    return [] unless zones.key?(name)
+    n = zones[name]
+    return [] if n&.zero?
+    lat, lon, side = ZONE_PLACES.fetch(name)
+    x, y = ArizonaMap.point(view, lat, lon)
+    r = n ? [Math.sqrt(n / most) * MAX_RADIUS, 4].max.round(1) : 4
+    text = "#{name}#{" (the lab)" if name == LAB_ZONE}: #{n || "fewer than 5"}"
+    lx, ly, anchor = { left: [x - r - 5, y + 4, "end"], right: [x + r + 5, y + 4, "start"],
+                       above: [x, y - r - 6, "middle"], below: [x, y + r + 13, "middle"] }.fetch(side)
+    [tag.circle(tag.title(text), cx: x, cy: y, r: r, class: ["zone", ("few" if n.nil?)]),
+     tag.text(class: "zone-label", x: lx.round(1), y: ly.round(1), "text-anchor": anchor) do
+       safe_join([name, " ", tag.tspan(n || "<5", class: "zone-num")])
+     end]
+  end
+end

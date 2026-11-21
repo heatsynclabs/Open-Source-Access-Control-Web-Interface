@@ -10,7 +10,7 @@
     <%= column_chart heard, discrete: true, stacked: true %>
   <% end %>
 
-  <%= render ChartCardComponent.new(title: "Where members live, by area", note: "People who have paid dues, by the ZIP code on their account, grouped into areas laid out roughly as on a map (west on the left, north at the top). Darker is more people.") do %>
+  <%= render ChartCardComponent.new(title: "Where members live, by area", note: "People who have paid dues, by the ZIP code on their account, grouped into areas (ZIP code ranges) and placed at roughly the middle of each. County lines are drawn from US Census boundaries; the box on the state map is the metro view.") do %>
     <%= render "analytics/history/zone_map" %>
   <% end %>
 
