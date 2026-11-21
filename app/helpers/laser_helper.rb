@@ -133,19 +133,22 @@ module LaserHelper
     tag.svg(safe_join(marks), class: "laser-chart", viewBox: "0 0 #{w} #{h}", role: "img", "aria-label": "Energy index by quarter")
   end
 
-  # The cheat sheet's cut families split into two columns: first fit, in
-  # order, into the left column up to half of all the sheet's rows (a table's
-  # header counts as two), the rest to the right, above the engrave table.
+  # The cheat sheet's cut families split into two columns, the right one
+  # ending with the engrave table: of every split that keeps the families'
+  # order within each column, the one whose taller column is shortest. Height
+  # is in rows: a table header counts two, a row whose material name wraps
+  # (over 15 letters) one and a half.
   def laser_sheet_columns(cut)
-    size = ->(rows) { rows.size + 2 }
-    half = (cut.values.sum(&size) + @sheet[:engrave].size + 2) / 2.0
-    left, used = {}, 0
-    cut.each do |family, rows|
-      next if used + size.(rows) > half && left.any?
-      left[family] = rows
-      used += size.(rows)
+    rows_height = ->(rows) { rows.each_with_index.sum { |row, i| i.zero? || rows[i - 1][:material] != row[:material] ? (row[:material].size > 15 ? 1.5 : 1) : 1 } }
+    height = cut.transform_values { |rows| rows_height.(rows) + 2.5 }
+    engrave = @sheet[:engrave].sum { |row| row[:material].size > 24 ? 1.5 : 1 } + 3.5
+    families = cut.keys
+    best = (0...2**families.size).min_by do |mask|
+      left = families.select.with_index { |_f, i| mask[i] == 1 }
+      [left.sum { |f| height[f] }, (families - left).sum { |f| height[f] } + engrave].max
     end
-    [left, cut.except(*left.keys)]
+    left = families.select.with_index { |_f, i| best[i] == 1 }
+    [cut.slice(*left), cut.except(*left)]
   end
 
   # The cheat sheet's clean success dot.
