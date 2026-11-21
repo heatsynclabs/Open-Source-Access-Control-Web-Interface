@@ -1,0 +1,27 @@
+<%= render "analytics/history/head", topic: "wifi", note: "From February 2013 to March 2017 a scanner on the lab network logged every device that joined or left the Wi-Fi, about every 11 minutes (this site's old mac_logs table). A device counts on a day it joined; devices that stay connected for over 12 hours at a time (printers, servers) are left out, and months with fewer than 15 days of data are gaps. No device or person is named here." %>
+<div class="grid two">
+  <% days = @history.monthly(["Average day", "wifi_devices_per_day"], ["Busiest day", "wifi_busiest_day"]) %>
+  <%= render ChartCardComponent.new(title: "Devices a day", note: "Devices that joined on an average day of the month, and on its busiest day (usually an event).", rows: series_rows(days), columns: ["Month", "Average day", "Busiest day"]) do %>
+    <%= line_chart days, discrete: true, curve: false, points: false %>
+  <% end %>
+
+  <% distinct = @history.monthly(["Different devices", "wifi_distinct_devices"]) %>
+  <%= render ChartCardComponent.new(title: "Different devices a month", note: "Every device seen at least once that month: regulars and visitors together.", rows: series_rows(distinct), columns: ["Month", "Devices"]) do %>
+    <%= line_chart distinct, discrete: true, curve: false, points: false %>
+  <% end %>
+
+  <% weekdays = @history.by_year_series("wifi_weekday") %>
+  <%= render ChartCardComponent.new(title: "By day of the week", note: "Devices on an average day of each weekday, per year. Wednesday held up through 2017 while the other days fell from 2015.", rows: series_rows(weekdays), columns: ["Day", *weekdays.map { |year| year[:name] }]) do %>
+    <%= column_chart weekdays, discrete: true %>
+  <% end %>
+
+  <% hours = @history.totals("wifi_arrival_hour").to_h { |hour, share| [hour_label(hour.to_i), share] } %>
+  <%= render ChartCardComponent.new(title: "When devices arrived", note: "The hour of each device's first join of the day, as a share of all arrivals, 2013 to 2017.", rows: hours, columns: ["Hour", "Share of arrivals (%)"]) do %>
+    <%= column_chart hours, discrete: true, suffix: "%" %>
+  <% end %>
+
+  <% swipes = @history.monthly(["Card swipes", Analytics::Door.new(Analytics::Period.new("all")).entries_by_period], within: "wifi_devices_per_day") %>
+  <%= render ChartCardComponent.new(title: "Card swipes in the same years", note: "Door card swipes a month from the door log, for comparison. Swipes are members only; the Wi-Fi also sees guests, so the two move together over years more than month to month (in 2015 swipes fell by a fifth and Wi-Fi devices by a quarter).", rows: series_rows(swipes), columns: ["Month", "Card swipes"]) do %>
+    <%= line_chart swipes, discrete: true, curve: false, points: false %>
+  <% end %>
+</div>

@@ -19,7 +19,7 @@ is the operations folder's `docs/24-door-system-now.md`.
 |---|---|---|
 | `door-log-import` | every 2 minutes | recent executions "success"; Admin > Door logs shows new rows after door use |
 | `door-after-hours-lock` | :00, :15, :30, :45 from 22:00 to 08:45 | executions "success"; the doors show locked overnight |
-| `guestlist-sync` | 03:10 daily | executions "success", output like `guestlist sync: 26 read`; see [Analytics](analytics.md) |
+| `guestlist-sync` | 03:10 daily | executions "success", output like `guestlist sync: 26 read` and, once the laser page is on production, one `laser sync: <machine> <form>: N jobs kept of N rows` line per sheet (four); command `sh -c 'cd /app && bundle exec rails guestlist:sync laser:sync'`; see [Analytics](analytics.md) and [Laser settings](laser.md) |
 
 To pause one (for maintenance), turn it off in Scheduled Tasks and back on afterwards.
 Pausing the log import loses nothing unless the board fills its 40 events.

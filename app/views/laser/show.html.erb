@@ -1,0 +1,20 @@
+<div class="laser<%= " laser-print" if @view == "sheet" %>">
+<% name = LaserJob::MACHINES[@machine] %>
+<%= render PageHeaderComponent.new(eyebrow: "#{name} laser", title: "Laser settings", lead: "What worked on the #{name} laser, from the jobs members logged on its form by the machine: #{number_with_delimiter(@jobs.count(&:settings?))} jobs with settings and results, #{@jobs.first.date.year} to #{@jobs.last.date.year}#{", beside #{number_with_delimiter(@earlier.size)} from its old form (#{@earlier.first.date.year} to #{@jobs.first.date.year}), shown as history" if @earlier.any?}.#{" The same old form holds the lab's first laser's jobs of 2011 to 2013, before the Mini came; they are not counted here (Analytics has them)." if @machine == "mini"} Member reported, not a guarantee: test on scrap, and never leave the laser while it is firing.") %>
+
+<nav class="filters laser-machines" aria-label="Laser">
+  <% LaserJob::MACHINES.each do |key, label| %>
+    <%= link_to label, laser_path(view: @view, machine: (key unless key == "large")), class: ["toggle", ("on" if key == @machine)], "aria-current": ("true" if key == @machine) %>
+  <% end %>
+</nav>
+
+<nav class="tabs" aria-label="Views">
+  <% LaserController::VIEWS.each do |key, label| %>
+    <%= link_to label, laser_at(view: key), class: ("on" if @view == key), "aria-current": ("page" if @view == key) %>
+  <% end %>
+</nav>
+
+<%= render @view %>
+
+<p class="muted small laser-foot">Read from the laser log nightly; last read <%= l(@synced_at, format: :short) %>. Log a job, failures included, on the form by the machine: this page is built from it. Usage over the years is on <%= link_to "Analytics", analytics_path(section: "history", topic: "laser") %>.</p>
+</div>

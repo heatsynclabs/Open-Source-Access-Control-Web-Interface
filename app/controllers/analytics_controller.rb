@@ -1,6 +1,7 @@
 # Aggregate charts for signed-in members: members, door use, the calendar
 # and class sign-ups, plus dues and class money for the treasurer and
-# admins. Counts only; nothing on this page names a person.
+# admins, and "Over the years" (LabMetric: records the site does not hold).
+# Counts only; nothing on this page names a person.
 #
 # The page has one tab per source (section) and "All". The page itself is
 # only the header, tabs and period buttons, so it shows at once; the numbers
@@ -13,7 +14,7 @@ class AnalyticsController < ApplicationController
   CACHE_FOR = 10.minutes
   SECTIONS = {
     "all" => "All", "door" => "Lab use", "calendar" => "Calendar", "classes" => "Classes",
-    "members" => "Members", "dues" => "Dues",
+    "members" => "Members", "dues" => "Dues", "history" => "Over the years",
   }.freeze
 
   before_action :choose_section
@@ -30,6 +31,12 @@ class AnalyticsController < ApplicationController
     classes_sections if (all || @section == "classes") && TicketedEvent.available?
     @payments = cached(:payments) { payments_section(Analytics::Payments.new(@period)) } if (all || @section == "dues") && @sections.key?("dues")
     @overview = overview if all
+    if (all || @section == "history") && LabMetric.available?
+      @history = Analytics::History.new
+      @history_topics = history_topics
+      @laser = Laser::Usage.new(LaserJob::LABELS.keys.to_h { |m| [m, Laser::Log.jobs(m, nil)] }) if LaserJob.available? && LaserJob.exists?
+      @calendar_years = calendar_years if @topic == "calendar"
+    end
     render layout: false
   end
 
@@ -39,6 +46,12 @@ class AnalyticsController < ApplicationController
     @period = Analytics::Period.new(params[:period])
     @sections = SECTIONS.reject { |key, _label| key == "dues" && !can?(:manage, Payment) }
     @section = @sections.key?(params[:section]) ? params[:section] : "all"
+    @topic = params[:topic] if @section == "history" && history_topics.key?(params[:topic])
+  end
+
+  # The Over the years deep dives this person may open.
+  def history_topics
+    Analytics::History::TOPICS.reject { |_key, topic| topic[:money] && !@sections.key?("dues") }
   end
 
   def cached(section, &block)
@@ -105,6 +118,17 @@ class AnalyticsController < ApplicationController
     ]
     lines += [["People paying dues", @payments[:payers], false], ["Dues recorded", @payments[:dues], false, "$"]] if @payments
     Analytics::Overview.new(@period, lines)
+  end
+
+  # The live calendar over every year, for the calendar deep dive.
+  def calendar_years
+    cached(:calendar_years) do
+      calendar = Analytics::Calendar.new(Analytics::Period.new("all"))
+      { series: calendar.by_year_series, hours: calendar.hours_by_year, weekdays: calendar.by_weekday,
+        top: calendar.top_series(15).map { |title, count, category| [title, count, category.key] } }
+    end
+  rescue LabCalendar::Unavailable
+    nil
   end
 
   # The calendar section reads the Google feed. If that is down the rest of

@@ -3,7 +3,7 @@
   <% most = rows.map { |row| row[1] }.max %>
   <ul class="bar-list">
     <% rows.each do |label, count, category_key| %>
-      <li class="<%= "cat-#{category_key}" if category_key %>"><span><%= label %></span><span class="value"><%= count %></span><span class="bar" role="presentation"><span style="--v: <%= share(count, most) %>"></span></span></li>
+      <li class="<%= "cat-#{category_key}" if category_key %>"><span><%= label %></span><span class="value"><%= number_with_delimiter(count) %></span><span class="bar" role="presentation"><span style="--v: <%= share(count, most) %>"></span></span></li>
     <% end %>
   </ul>
 <% else %>

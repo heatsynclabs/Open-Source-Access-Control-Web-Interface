@@ -1,0 +1,124 @@
+// The Laser page (laser#show): the settings finder, its scatter and the
+// laser math charts, and the printable cheat sheet.
+@layer pages {
+  .laser .tabs { margin-bottom: var(--space-6); }
+  .laser-step { margin-bottom: var(--space-4); .label { margin-bottom: var(--space-2); } }
+  .laser .inline-form { display: inline-flex; gap: var(--space-2); }
+  .laser-answer { margin-top: var(--space-6); }
+  .laser-answer-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); }
+  .laser-answer .tiles { margin-bottom: var(--space-4); }
+
+  // Worked / partly / failed, side by side.
+  .laser-bar { display: flex; height: 12px; background: var(--slab-hi); margin-bottom: var(--space-2); }
+  .laser-bar i { display: block; height: 100%; }
+  .laser-bar .ok, .laser-legend .ok { background: var(--live); }
+  .laser-bar .cond, .laser-legend .cond { background: var(--hazard); }
+  .laser-bar .bad, .laser-legend .bad { background: var(--fault); }
+
+  .laser-more { margin-top: var(--space-4); summary { cursor: pointer; font-weight: 600; } }
+  .laser-facts { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin: var(--space-4) 0; }
+  .laser-facts dt { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--ash); }
+  .laser-facts dd { margin: var(--space-1) 0 0; font-weight: 600; span { display: block; font-weight: 400; } }
+  .laser-legend { display: flex; flex-wrap: wrap; gap: var(--space-4); i { display: inline-block; width: 10px; height: 10px; margin-right: var(--space-1); border-radius: 50%; } }
+  .laser-note { border-left: 3px solid var(--hazard); padding-left: var(--space-3); margin-top: var(--space-3); &.fail { border-color: var(--fault); } p { margin: 0; } }
+
+  // Drawn charts: grid and labels in the chart tokens, marks in signal colours.
+  .laser-chart { width: 100%; height: auto; font-family: var(--font-ui); font-size: 11px; fill: var(--ash); }
+  .laser-chart .grid { stroke: var(--chart-grid); }
+  .laser-chart .axis { fill: var(--bone); font-size: 12px; }
+  .laser-chart circle { fill-opacity: 0.85; stroke: var(--steel-hi); stroke-width: 1.5; }
+  .laser-chart circle.ok { fill: var(--live); }
+  .laser-chart circle.cond { fill: var(--hazard); }
+  .laser-chart circle.bad { fill: var(--fault); }
+  .laser-chart polyline { fill: none; stroke-width: 2.5; }
+  .laser-chart .law-plywood { stroke: var(--rust); fill: var(--rust); }
+  .laser-chart .law-acrylic { stroke: var(--info); fill: var(--info); }
+  .laser-chart .law-mdf { stroke: var(--violet); fill: var(--violet); }
+  .laser-chart polyline.law-plywood, .laser-chart polyline.law-acrylic, .laser-chart polyline.law-mdf { fill: none; }
+  .laser-chart .end-label { fill: var(--bone); font-size: 12px; }
+  .laser-chart .optics { stroke: var(--rust); stroke-width: 2; stroke-dasharray: 3 3; }
+  .laser-chart .optics-label { fill: var(--rust-deep); font-size: 10px; }
+  .laser-chart .trend { fill: none; stroke: var(--bone); stroke-width: 2.5; }
+  .laser-chart .baseline { stroke: var(--bone); stroke-dasharray: 6 4; }
+  .laser-chart circle.point { fill: var(--hazard); stroke: var(--steel-hi); stroke-width: 2; fill-opacity: 1; }
+  .laser-chart circle.point.earlier { fill: var(--slab); }
+  .laser-chart .point-label { fill: var(--bone); }
+
+  .laser-table td.big { font-family: var(--font-display); font-size: var(--text-lg); }
+  .laser-table tr.family th { background: var(--slab-hi); text-transform: uppercase; letter-spacing: var(--tracking-wide); font-size: var(--text-xs); }
+
+  .laser-stats { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin: var(--space-4) 0 var(--space-6); }
+  .laser-stats .num { font-family: var(--font-display); font-size: var(--text-2xl); margin: 0 0 var(--space-2); }
+
+  .laser-math h2 { margin-top: var(--space-8); }
+  .laser-math section.card, .laser-math .table-wrap { margin: var(--space-4) 0; }
+  .laser-eq { border-left: 4px solid var(--hazard); padding: var(--space-3) var(--space-4); background: var(--slab); font-family: var(--font-ui); font-size: var(--text-lg); margin: var(--space-4) 0;
+    small { display: block; font-family: var(--font-body, inherit); font-size: var(--text-sm); color: var(--ash); margin-top: var(--space-2); } }
+  .laser-math .down { color: var(--ink-ok); }
+  .laser-math .up { color: var(--ink-err); }
+  .laser-estimate-inputs { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: var(--space-4); label { display: grid; gap: var(--space-1); } }
+
+  .laser-log-filters { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); input[type="search"] { flex: 1; min-width: 200px; } }
+  .laser-foot { margin-top: var(--space-8); }
+
+  // The cheat sheet: on screen a card; printed, the only thing on the page.
+  // The cheat sheet: a port of the laser explorer's 11 x 17 in sheet, in its
+  // own print colours (not the site theme), zoomed to fit (sheet-fit).
+  .laser-printbar { margin-bottom: var(--space-6); display: grid; gap: var(--space-3); justify-items: start; p { margin: 0; } }
+  .sheetwrap { overflow: hidden; border: 2px solid var(--steel-hi); box-shadow: var(--shadow); background: #f4efe3; }
+  .sheet {
+    zoom: var(--z, 1); width: 11in; min-height: 17in; margin: 0; background: #f4efe3; color: #1c1812;
+    display: flex; flex-direction: column; overflow: hidden; font-family: 'Instrument Sans', sans-serif; font-size: 10pt;
+    * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .plate { background: #faf6ec; padding: .26in .45in .2in; display: flex; align-items: flex-end; gap: .4in; }
+    .plate .logo { height: .52in; width: auto; flex: none; }
+    .plate .ttl { margin-left: auto; text-align: right; }
+    .eyebrow { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 9.5pt; letter-spacing: .22em; text-transform: uppercase; color: #97600c; margin: 0 0 .05in; }
+    h1 { font-family: 'Archivo', sans-serif; font-weight: 800; text-transform: uppercase; font-size: 36pt; line-height: .92; margin: .06in 0 0; letter-spacing: -.01em; text-align: right; color: #1c1812; }
+    .tape { height: .2in; background: repeating-linear-gradient(-45deg, #f2ab1e 0 .17in, #14110d .17in .34in); border-block: 2px solid #14110d; flex: none; }
+    .key { display: flex; gap: .3in; align-items: center; padding: .08in .45in; border-bottom: 2px solid #1c1812; font-size: 9.5pt; background: #ebe3d3; }
+    .key b { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 8.5pt; letter-spacing: .12em; text-transform: uppercase; }
+    .key .ex { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 15pt; background: #f2ab1e; border: 2px solid #14110d; padding: 0 .08in; margin-right: .06in; }
+    .key .ex.light { background: #faf6ec; }
+    .body { display: grid; align-items: start; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .3in; padding: .14in .45in .04in; }
+    .t { width: 100%; border-collapse: collapse; margin-bottom: .12in; border: 2px solid #1c1812; background: #faf6ec; box-shadow: 4px 4px 0 #1c1812; font-size: inherit; }
+    .t th { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 7.5pt; letter-spacing: .12em; text-transform: uppercase; background: #14110d; color: #ece3d3; padding: .03in .06in; text-align: right; border-bottom: 0; }
+    .t th.fam { text-align: left; font-size: 10pt; letter-spacing: .18em; color: #f2ab1e; }
+    .t td { padding: .03in .045in; border-top: 1px solid rgba(28, 24, 18, .16); border-bottom: 0; text-align: right; font-size: 9.5pt; line-height: 1.1; vertical-align: middle; color: #1c1812; }
+    .t tr[data-first] td { border-top: 2px solid #1c1812; }
+    .t tbody tr:first-child td { border-top: 0; }
+    .t td.m { text-align: left; font-weight: 600; font-size: 10pt; }
+    .t td.b { text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 7.5pt; letter-spacing: -.02em; color: #4a4236; white-space: nowrap; }
+    .t td.v { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 14.5pt; width: .55in; }
+    .t td.v + td.v { background: rgba(242, 171, 30, .2); }
+    .t td.p { font-family: 'JetBrains Mono', monospace; font-size: 10pt; width: .42in; }
+    .t td.s, .t th.s { font-family: 'JetBrains Mono', monospace; font-size: 7pt; letter-spacing: -.02em; color: #5f5648; white-space: nowrap; }
+    .t th.s { color: #b3a996; font-family: 'IBM Plex Mono', monospace; }
+    .t tr.thin td.v, .t tr.thin td.p { color: #8a8071; }
+    .d { display: inline-block; width: .09in; height: .09in; border-radius: 50%; border: 1.2px solid #14110d; margin-right: .05in; vertical-align: -.01in; }
+    .d.ok { background: #2f8562; }
+    .d.cond { background: #f2ab1e; }
+    .d.bad { background: #b8341f; }
+    .key .d { margin-left: .04in; }
+    .notes { display: grid; grid-template-columns: 1fr 1.25fr 1fr; gap: .22in; padding: 0 .45in .14in; }
+    .card { border: 2px solid #1c1812; background: #faf6ec; padding: .1in .14in; box-shadow: 4px 4px 0 #1c1812; font-size: 8.6pt; line-height: 1.26; color: #1c1812; }
+    .card.haz { background: #f2ab1e; }
+    .card h2 { font-family: 'Archivo', sans-serif; font-weight: 800; text-transform: uppercase; font-size: 13pt; margin: 0 0 .06in; line-height: 1; color: #1c1812; }
+    .card ol, .card ul { margin: 0; padding-left: .17in; }
+    .card li { margin-bottom: .035in; }
+    .foot { margin-top: auto; background: #14110d; color: #b3a996; font-family: 'JetBrains Mono', monospace; font-size: 7.5pt; padding: .1in .45in; display: flex; flex-wrap: nowrap; justify-content: space-between; gap: .3in; line-height: 1.2; span { white-space: nowrap; } }
+    // More logged materials than fit: sheet-fit adds this to stay on one 17 in sheet.
+    &.dense { .t td { padding: .018in .045in; } .t td.v { font-size: 13pt; } .t { margin-bottom: .09in; } .card { font-size: 8pt; } }
+  }
+
+  // Printing the cheat sheet prints the sheet alone, from the top left of
+  // the page (laser_sheet_page_style sets the page size and zoom).
+  @media print {
+    body:has(.laser-print) > *:not(main), main:has(.laser-print) > :not(.laser), .laser-print > :not(.sheetwrap) { display: none !important; }
+    html:has(.laser-print), body:has(.laser-print), main:has(.laser-print), .laser-print, .sheetwrap {
+      margin: 0 !important; padding: 0 !important; border: 0 !important; box-shadow: none !important; max-width: none !important; background: #fff;
+    }
+    .sheetwrap { overflow: visible; }
+    .sheet { break-inside: avoid; }
+  }
+}

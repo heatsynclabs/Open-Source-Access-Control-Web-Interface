@@ -1,0 +1,85 @@
+<%# The cheat sheet for the wall by the laser, a port of the laser explorer's: an 11 x 17 in sheet that zooms to fit the page (sheet-fit controller) and prints alone at the chosen paper size (laser_sheet_page_style). %>
+<% name, = LaserController::PAPERS[@paper] %>
+<% left, right = laser_sheet_columns(@sheet[:cut]) %>
+<% rates = @trouble.by_material %>
+<style><%= laser_sheet_page_style(@paper) %></style>
+<section class="card laser-printbar">
+  <p>The same numbers on one sheet for the wall by the laser. Pick a paper size, then print. Turn off headers and footers in the print dialog, and keep background graphics on.</p>
+  <nav class="filters" aria-label="Paper size">
+    <% LaserController::PAPERS.each do |key, (label, *)| %>
+      <%= link_to label, laser_at(view: "sheet", paper: key), class: ["toggle", ("on" if key == @paper)], "aria-current": ("true" if key == @paper) %>
+    <% end %>
+  </nav>
+  <p class="muted small"><%= laser_sheet_paper_note(@paper) %></p>
+  <button type="button" class="btn" data-controller="print" data-action="print#print">Print the <%= name %> sheet</button>
+</section>
+
+<div class="sheetwrap" data-controller="sheet-fit">
+<div class="sheet" data-sheet-fit-target="sheet">
+  <div class="plate">
+    <%= image_tag "hsl-lockup-h.svg", alt: "HeatSync Labs", class: "logo" %>
+    <div class="ttl"><div class="eyebrow"><%= LaserJob::MACHINES[@machine] %> laser / settings that worked</div><h1>Cheat sheet</h1></div>
+  </div>
+  <div class="tape"></div>
+  <div class="key">
+    <span><span class="ex">60</span><span class="ex light">15</span> <b>Power % then speed mm/s.</b> Typical, the median of logged jobs that worked.</span>
+    <span><b>Average</b> is the mean of the same jobs.</span>
+    <span><i class="d ok"></i>90%+ <i class="d cond"></i>75 to 89% <i class="d bad"></i>under 75% clean success.</span>
+    <span><b>Grey numbers</b>: under 5 good jobs, or settings all over the place. Starting guess only.</span>
+  </div>
+  <div class="body">
+    <div>
+      <div class="eyebrow">Cut through</div>
+      <% left.each do |family, rows| %><%= render "laser/sheet_cut", family: family, rows: rows %><% end %>
+    </div>
+    <div>
+      <% if right.any? %>
+        <div class="eyebrow">Cut through, continued</div>
+        <% right.each do |family, rows| %><%= render "laser/sheet_cut", family: family, rows: rows %><% end %>
+      <% end %>
+      <% if @sheet[:engrave].any? %>
+        <div class="eyebrow">Engrave, any thickness, scan gap in mm</div>
+        <table class="t no-stack">
+          <thead><tr><th class="fam">Raster engrave</th><th>Power</th><th>Speed</th><th>Gap</th><th class="s">Average</th><th class="s">Jobs</th></tr></thead>
+          <tbody>
+            <% @sheet[:engrave].each do |row| %>
+              <% s = row[:stats] %>
+              <tr class="<%= "thin" if s[:basis] < 5 || s[:scattered] %>" data-first>
+                <td class="m"><%= row[:material] %></td>
+                <td class="v"><%= laser_number(s[:power]) %></td><td class="v"><%= laser_number(s[:speed]) %></td>
+                <td class="p"><%= laser_number(s[:gap], 3) if s[:gap] %></td>
+                <td class="s"><%= laser_number(s[:power_mean], 1) %> / <%= laser_number(s[:speed_mean]) %></td>
+                <td class="s"><%= laser_sheet_dot(s) %><%= s[:n] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% end %>
+    </div>
+  </div>
+  <div class="notes">
+    <div class="card"><h2>Will not cut through?</h2><ol>
+      <li>Check focus and flatten the sheet. Wrong focus height and warped stock both come up repeatedly in the log.</li>
+      <li>Slow down before you add power or passes.<%= " 6 mm MDF at 80/10 took two passes and flamed; 80/7 cut in one." if @machine == "large" %></li>
+      <li>Still weak, or one side of the bed cuts worse? The log points to a dirty lens or a bed out of level. Write it in Machine Notes. Optics work is for the laser maintainers only.</li>
+    </ol></div>
+    <div class="card"><h2>Known trouble</h2><ul>
+      <% if rates[:thick_plywood].last.positive? %><li>Plywood 9 mm and up had trouble in <%= rates[:thick_plywood].first %>% of cuts. Plan to finish with a saw or knife.</li><% end %>
+      <% if rates[:mdf].last.positive? %><li>MDF and hardboard change sheet to sheet: <%= rates[:mdf].first %>% of cuts had trouble. Test each new sheet.</li><% end %>
+      <li>Paper, cardboard and foam core catch fire at slow speeds and sharp corners. Go fast and low.</li>
+      <li>Black acrylic flares. Space parts apart and watch for flame.</li>
+      <li>EVA foam bows with heat. PE foam remelts along the bottom edge.</li>
+      <li>Glass chips at higher power. PET and Mylar film warp and melt.</li>
+      <% if @machine == "large" %><li>LaserCut stuck at 87% or a soft dog error: restart LaserCut, then the laser, then the PC. Copy files off the USB stick first.</li><% end %>
+    </ul></div>
+    <div class="card haz"><h2>Every job</h2><ul>
+      <li>HeatSync laser certification is required before you use this machine.</li>
+      <li>Never leave the laser while it is firing. Keep the water spray in reach.</li>
+      <li>Run a test cut on scrap. These numbers move with lens condition and stock.</li>
+      <li>Clean the slats and tray when you finish.</li>
+      <li>Log the job, failures included. This sheet is built from that log.</li>
+    </ul></div>
+  </div>
+  <div class="foot"><span>Built from <%= number_with_delimiter(@jobs.count(&:settings?)) %> logged jobs with settings, <%= @jobs.first.date.year %> to <%= @jobs.last.date.year %>. Member reported, not guaranteed.</span><span>HeatSync Labs / 108 W Main St, Mesa / generated <%= Date.current.iso8601 %></span></div>
+</div>
+</div>

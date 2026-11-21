@@ -1,0 +1,33 @@
+<%= render "analytics/history/head", topic: "calendar", note: "The live lab calendar over every year it has (the same Google feed as the Calendar tab, which follows the period buttons), and two tables from the calendar's full download of December 2025: where events were held, and how many people add them. Who added an event is read only to count people; nobody is named." %>
+<div class="grid two">
+  <% if @calendar_years %>
+    <% c = @calendar_years %>
+    <%= render ChartCardComponent.new(title: "Events a year", note: "Held events by kind (open hours left out). The year we are in is not over.", rows: series_rows(c[:series]), columns: ["Year", *c[:series].map { |s| s[:name] }]) do %>
+      <%= column_chart c[:series], discrete: true, stacked: true, paletteOrder: calendar_palette_order(c[:series]) %>
+    <% end %>
+
+    <%= render ChartCardComponent.new(title: "Hours of events a year", note: "Start to end of every timed event; all-day events add no hours.", rows: c[:hours], columns: ["Year", "Hours"]) do %>
+      <%= column_chart c[:hours], discrete: true %>
+    <% end %>
+
+    <%= render ChartCardComponent.new(title: "By day of the week, all years", rows: c[:weekdays], columns: ["Day", "Events"]) do %>
+      <%= column_chart c[:weekdays] %>
+    <% end %>
+
+    <%= render ChartCardComponent.new(title: "The longest-running events", note: "Held most often, all years, coloured by kind.") do %>
+      <%= render "analytics/bar_list", rows: c[:top], empty: "No events." %>
+    <% end %>
+  <% else %>
+    <p class="msg warn">The live calendar could not be read just now; the tables below are from the December 2025 download.</p>
+  <% end %>
+
+  <% places = @history.yearly(["At the lab", "calendar_places", "At the lab"], ["Online", "calendar_places", "Online"], ["Elsewhere", "calendar_places", "Elsewhere"]) %>
+  <%= render ChartCardComponent.new(title: "Where events were held", note: "At the lab: its name or address, or no location. Online: a web link, Jitsi, Zoom or Google Meet. Elsewhere: Gangplank in Chandler, the lab's first home, or another venue (to 10 December 2025).", rows: series_rows(places), columns: ["Year", "At the lab", "Online", "Elsewhere"]) do %>
+    <%= column_chart places, discrete: true, stacked: true %>
+  <% end %>
+
+  <% added = @history.yearly(["Events or series added", "calendar_items_added"]) %>
+  <%= render ChartCardComponent.new(title: "Events added, and by how many people", note: "A repeating series counts once, the year it was added (to 10 December 2025).", rows: @history.table("calendar_items_added", "calendar_contributors"), columns: ["Year", "Events or series added", "People adding them"]) do %>
+    <%= column_chart added, discrete: true %>
+  <% end %>
+</div>

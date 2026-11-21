@@ -1,0 +1,16 @@
+<%= render "analytics/history/head", topic: "wiki", note: "The old wiki (wiki.heatsynclabs.org) from its full edit history (February 2026 copy) and its database (October 2026 copy). Views are the wiki's own counters from 2009, search engines included. Editors are counted, never named; user and talk pages are left out of the reading list." %>
+<div class="grid two">
+  <% edits = @history.yearly(["Edits", "wiki_edits"]) %>
+  <%= render ChartCardComponent.new(title: "Edits a year", note: "The table adds the people editing and the pages started each year.", rows: @history.table("wiki_edits", "wiki_editors", "wiki_pages_created"), columns: ["Year", "Edits", "People editing", "Pages started"]) do %>
+    <%= column_chart edits, discrete: true %>
+  <% end %>
+
+  <% started = @history.yearly(["Pages started", "wiki_pages_created"]) %>
+  <%= render ChartCardComponent.new(title: "Pages started a year", rows: series_rows(started), columns: ["Year", "Pages started"]) do %>
+    <%= column_chart started, discrete: true %>
+  <% end %>
+
+  <%= render ChartCardComponent.new(title: "Most-read pages", note: "#{number_with_delimiter(@history.totals("wiki_views").first&.last.to_i)} views in all; the fifteen most-read articles.") do %>
+    <%= render "analytics/bar_list", rows: @history.totals("wiki_page_views"), empty: "No wiki figures loaded." %>
+  <% end %>
+</div>

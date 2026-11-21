@@ -1,0 +1,18 @@
+<% t = @trouble %>
+<% rates = t.by_material %>
+<% dirty, clean = t.dirty_start %>
+<p class="muted"><%= t.clean_share %>% of <%= number_with_delimiter(t.with_settings.size) %> logged jobs were a clean success. These are the patterns in the rest.</p>
+<div class="laser-stats">
+  <div class="card"><p class="num"><%= t.issues["did not cut through"].to_i %></p><p>or so jobs say it did not cut all the way through: the top complaint, ahead of fire or burning (about <%= t.issues["fire / burning"].to_i %>), LaserCut software trouble (about <%= t.issues["software / comms"].to_i %>) and focus or alignment (about <%= t.issues["focus / alignment"].to_i %>). Counted from keywords in the notes.</p></div>
+  <div class="card"><p class="num"><%= rates[:mdf].first %>%</p><p>of MDF and hardboard cuts had trouble, against <%= rates[:plywood].first %>% for plywood and <%= rates[:acrylic].first %>% for acrylic. It varies sheet to sheet, so test each one.</p></div>
+  <div class="card"><p class="num"><%= rates[:thick_plywood].first %>%</p><p>of plywood cuts at 9 mm and thicker had trouble (<%= pluralize(rates[:thick_plywood].last, "job") %>). Plan to finish those with a saw.</p></div>
+  <div class="card"><p class="num"><%= rates[:passes].first %>%</p><p>of jobs with 2 or more cut passes had trouble, against <%= rates[:single].first %>% for one pass. Needing a second pass often means the focus or the lens is off.</p></div>
+  <div class="card"><p class="num"><%= dirty %>%</p><p>had trouble after starting on a dirty machine, against <%= clean %>% after a clean one. Dirty slats do not hurt the cut; a dirty lens does.</p></div>
+</div>
+
+<% drift = t.drift %>
+<% optics = Laser::Model::OPTICS.fetch(@machine) %>
+<% old = @machine == "large" ? "every job, since that form did not ask for results" : "jobs that worked or have no result" %>
+<%= render ChartCardComponent.new(title: "The machine drifts", note: "Power divided by speed that 3 mm plywood took to cut through, by half year (higher means a weaker beam), and the typical power / speed under each point. Filled points are jobs that worked on the current form; hollow points are the old form, #{old}. Breaks are half years with nothing logged.#{" Dashed lines are optics work noted in the log." if optics.any?}", rows: drift.map { |half, v| [half, v ? [v[:ratio], "#{laser_number(v[:power])}% at #{laser_number(v[:speed])} mm/s", v[:earlier] ? "old form" : "current form"] : ["", "", ""]] }, columns: ["Half year", "Power / speed", "Typical setting", "From"]) do %>
+  <%= laser_drift_chart(drift, optics: optics) %>
+<% end %>

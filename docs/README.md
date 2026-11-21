@@ -9,6 +9,7 @@ and how to change it. Start with the overview.
 | [Door access](door-access.md) | admins, maintainers | remote door control, the door board, door-api, the night lock, the door log |
 | [Access cards](cards.md) | admins | adding, disabling, deleting and uploading cards, and what "slot" means |
 | [Analytics](analytics.md) | admins, maintainers | where each number on the analytics page comes from, which are live, refreshing the guestlist class numbers |
+| [Laser settings](laser.md) | members, laser maintainers, maintainers | the Laser page: where its data comes from, how the log is cleaned, the nightly read |
 | [Files and waivers](files-and-waivers.md) | admins, maintainers | where waivers and tool photos are stored, who can see them, backups |
 | [Environments and deploying](environments-and-deploying.md) | maintainers | production and staging, how a change gets from a branch to the live site, undoing one |
 | [Configuration](configuration.md) | maintainers | every setting, what it does, where it is set |

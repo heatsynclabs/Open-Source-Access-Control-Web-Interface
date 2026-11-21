@@ -7,6 +7,7 @@
   <%= render "classes" %>
   <%= render "members" %>
   <%= render "dues" %>
+  <%= render "history" %>
 <% when "door" %>
   <%= render "door" %>
 <% when "calendar" %>
@@ -18,5 +19,7 @@
   <%= render "members" %>
 <% when "dues" %>
   <%= render "dues" %>
+<% when "history" %>
+  <%= @topic && @history&.loaded? ? render("analytics/history/#{@topic}") : render("history") %>
 <% end %>
 <% end %>

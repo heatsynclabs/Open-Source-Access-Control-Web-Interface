@@ -1,0 +1,51 @@
+<%= render "analytics/history/head", topic: "laser", note: "From the log forms members fill in at the lab's two laser cutters, the Large 80W and the Mini 60W, read every night: each machine's current form (from April 2022) and the old form before it. Jobs from 2011 to 2013, on the form the Mini later used, were on the lab's first laser and are shown as their own machine (the Mini came around 2019). Only logged jobs are here; months with nothing logged for long stretches are left blank, as are partly covered months. The Laser page in the menu has the settings guide built from the same logs." %>
+<% if @laser&.any? %>
+  <% u = @laser %>
+  <% months = ->(series) { series.transform_keys { |month| month.strftime("%b %Y") } } %>
+  <% by_machine = ->(list) { list.map { |s| { name: s[:name], data: months.(s[:data]) } } } %>
+  <% t = u.totals %>
+  <div class="tiles">
+    <%= render StatTileComponent.new(value: number_with_delimiter(t[:jobs]), label: "Jobs logged", sub: "since #{t[:first]&.strftime("%b %Y")}", tone: :headline) %>
+    <% LaserJob::LABELS.each do |machine, label| %>
+      <% m = t[:machines][machine] or next %>
+      <%= render StatTileComponent.new(value: number_with_delimiter(m[:jobs]), label: "On the #{label}", sub: machine == "first" ? "2011 to 2013" : "since #{m[:first]&.strftime("%b %Y")}") %>
+    <% end %>
+    <%= render StatTileComponent.new(value: number_with_delimiter(t[:people]), label: "People", sub: "#{t[:one_job]} logged one job only") %>
+    <%= render StatTileComponent.new(value: number_with_delimiter(t[:hours]), label: "Laser hours") %>
+    <%= render StatTileComponent.new(value: "#{t[:busiest_tenth]}%", label: "Jobs by the busiest tenth", sub: "of the people") %>
+  </div>
+  <p><%= link_to "Laser settings: what worked for each material", laser_path, class: "btn" %></p>
+  <div class="grid two">
+    <% jobs = by_machine.(u.jobs_by_machine) %>
+    <%= render ChartCardComponent.new(title: "Jobs a month", note: "Each laser's logged jobs.", rows: series_rows(jobs), columns: ["Month", *jobs.map { |s| s[:name] }]) do %>
+      <%= line_chart jobs, discrete: true, curve: false, points: false %>
+    <% end %>
+
+    <% people = months.(u.people_by_month) %>
+    <%= render ChartCardComponent.new(title: "People using a laser a month", note: "Different people who logged a job on any of the lasers.", rows: people, columns: ["Month", "People"]) do %>
+      <%= line_chart people, discrete: true, curve: false, points: false %>
+    <% end %>
+
+    <% hours = by_machine.(u.hours_by_machine) %>
+    <%= render ChartCardComponent.new(title: "Laser hours a month", note: "The run time people logged, all copies of a job together.", rows: series_rows(hours), columns: ["Month", *hours.map { |s| s[:name] }]) do %>
+      <%= line_chart hours, discrete: true, curve: false, points: false, suffix: " h" %>
+    <% end %>
+
+    <% results = u.results_by_year.map { |name, data| { name: name, data: data } } %>
+    <%= render ChartCardComponent.new(title: "How jobs turned out, by year", note: "Both lasers' current forms (from April 2022); the large laser's old form did not ask.", rows: series_rows(results), columns: ["Year", *results.map { |s| s[:name] }]) do %>
+      <%= column_chart results, discrete: true, stacked: true %>
+    <% end %>
+
+    <% families = u.families_by_year.map { |name, data| { name: name, data: data } } %>
+    <%= render ChartCardComponent.new(title: "What was lasered, by year", note: "Jobs on both lasers by kind of material, after material names are cleaned up.", rows: series_rows(families), columns: ["Year", *families.map { |s| s[:name] }]) do %>
+      <%= column_chart families, discrete: true, stacked: true %>
+    <% end %>
+
+    <% clean = months.(u.found_clean_by_month) %>
+    <%= render ChartCardComponent.new(title: "Found the machine clean", note: "The share of jobs, on any of the lasers, whose maker found the machine clean when they started.", rows: clean, columns: ["Month", "Found clean (%)"]) do %>
+      <%= line_chart clean, discrete: true, curve: false, points: false, suffix: "%", max: 100 %>
+    <% end %>
+  </div>
+<% else %>
+  <%= render EmptyStateComponent.new("The laser logs have not been read on this site yet (docs/laser.md).") %>
+<% end %>

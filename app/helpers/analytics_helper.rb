@@ -25,6 +25,17 @@ module AnalyticsHelper
     series_list.map { |series| series.merge(data: by_bucket(series[:data], period)) }
   end
 
+  # Table rows [[label, [value, ...]]] for Chartkick series (one column per
+  # series, every label any of them has), for a chart card's numbers.
+  def series_rows(series)
+    series.flat_map { |line| line[:data].keys }.uniq.map { |label| [label, series.map { |line| line[:data][label] }] }
+  end
+
+  # An Over the years deep dive (Analytics::History::TOPICS).
+  def history_topic_path(topic)
+    analytics_path(section: "history", topic: topic)
+  end
+
   # "12am", "3pm": an hour of the day on the door heatmap.
   def hour_label(hour)
     Time.zone.local(2000, 1, 1, hour).strftime("%-l%P")

@@ -1,5 +1,5 @@
 <div class="analytics">
-<%= render PageHeaderComponent.new(eyebrow: "The lab", title: "Analytics", lead: "How the lab is doing, from the members database, the door log, the lab calendar and class sign-ups. Counts only: nothing here names a person.") %>
+<%= render PageHeaderComponent.new(eyebrow: "The lab", title: "Analytics", lead: "How the lab is doing, from the members database, the door log, the lab calendar, class sign-ups and older records the lab has kept. Counts only: nothing here names a person.") %>
 <p class="msg info"><strong>Some of this is incomplete.</strong> The numbers only cover what got recorded. Dues paid in cash, by check or outside PayPal are missing unless the treasurer entered them, there are gaps of years in the PayPal imports, and waivers, orientations and sign-offs were not always written down. Read the charts as trends, not exact counts.</p>
 
 <nav class="tabs" aria-label="Section">
@@ -8,18 +8,20 @@
   <% end %>
 </nav>
 
+<% unless @section == "history" %>
 <nav class="filters" aria-label="Period">
   <% Analytics::Period::CHOICES.each do |key, choice| %>
     <%= link_to choice[:label], analytics_path(period: key, section: @section), class: ["toggle", ("on" if @period.key == key)], "aria-current": ("page" if @period.key == key) %>
   <% end %>
   <span class="muted small">Grouped by <%= @period.unit %>. The <%= @period.unit %> we are in is marked "so far" and drawn dashed or paler, since it is not over. Figures refresh every <%= distance_of_time_in_words(AnalyticsController::CACHE_FOR) %>.</span>
 </nav>
+<% end %>
 
 <%# The numbers load from analytics#section; its charts need the chart scripts on this page. %>
 <% load_chart_scripts %>
-<%= turbo_frame_tag "analytics-section", src: analytics_section_path(period: @period.key, section: @section), target: "_top" do %>
+<%= turbo_frame_tag "analytics-section", src: analytics_section_path(period: @period.key, section: @section, topic: @topic), target: "_top" do %>
   <div class="analytics-loading" aria-busy="true">
-    <p class="muted"><span class="spinner" role="presentation"></span> Working out the numbers for <%= @sections[@section].downcase == "all" ? "every section" : @sections[@section] %>, <%= @period.label.downcase %>. The first look after a while can take a few seconds.</p>
+    <p class="muted"><span class="spinner" role="presentation"></span> Working out the numbers for <%= @sections[@section].downcase == "all" ? "every section" : @sections[@section] %><%= ", #{@period.label.downcase}" unless @section == "history" %>. The first look after a while can take a few seconds.</p>
     <div class="tiles"><% 4.times do %><div class="tile skeleton short" role="presentation"></div><% end %></div>
     <section class="card"><div class="skeleton" role="presentation"></div></section>
   </div>

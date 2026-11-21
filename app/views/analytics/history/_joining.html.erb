@@ -1,0 +1,20 @@
+<%= render "analytics/history/head", topic: "joining", note: "From this site's accounts (September 2026 copy): what people wrote under \"How did you hear about us?\", sorted into rough kinds by keyword, and the ZIP code on the accounts of people who have paid dues. The answers themselves are never shown or kept. Anything under 5 people is shown as fewer than 5 or grouped." %>
+<div class="grid two">
+  <%= render ChartCardComponent.new(title: "How people heard about the lab", note: "Every answer since 2012. \"Other\" is answers that fit no kind, including people naming whoever told them.") do %>
+    <%= render "analytics/bar_list", rows: @history.totals("how_heard_all", largest_first: true), empty: "No answers loaded." %>
+  <% end %>
+
+  <% kinds = @history.labels("how_heard").map { |label| [label, "how_heard", label] } %>
+  <% heard = @history.yearly(*kinds) %>
+  <%= render ChartCardComponent.new(title: "By the year they joined", note: "Kinds with fewer than 5 answers in a year are left out of that year's bar.", rows: @history.breakdown_table("how_heard"), columns: ["Year joined", *@history.labels("how_heard")]) do %>
+    <%= column_chart heard, discrete: true, stacked: true %>
+  <% end %>
+
+  <%= render ChartCardComponent.new(title: "Where members live, by area", note: "People who have paid dues, by the ZIP code on their account, grouped into areas (ZIP code ranges) and placed at roughly the middle of each. County lines are drawn from US Census boundaries; the box on the state map is the metro view.") do %>
+    <%= render "analytics/history/zone_map" %>
+  <% end %>
+
+  <%= render ChartCardComponent.new(title: "Where members live, by ZIP code", note: "The same people by ZIP code. 85201 is downtown Mesa, where the lab is; 85281 to 85283 are Tempe.") do %>
+    <%= render "analytics/bar_list", rows: @history.totals("members_by_zip"), empty: "No ZIP codes loaded." %>
+  <% end %>
+</div>

@@ -1,0 +1,32 @@
+<%= render "analytics/history/head", topic: "money", note: "PayPal records from 2013 (each transaction once), the lab's Form 990-EZ returns (2010, 2011, 2013, 2018 to 2021 and 2024 in whole dollars; 2012, 2022 and 2023 rounded to $1,000 from a published summary; 2014 to 2017 were postcard returns with no figures) and the City of Mesa bills. Totals only; no payer or payment is shown." %>
+<div class="grid two">
+  <% paypal = [{ name: "Dues", data: @history.sum_by_year("dues_dollars") }, { name: "Donations", data: @history.sum_by_year("donation_dollars") }] %>
+  <%= render ChartCardComponent.new(title: "Dues and donations through PayPal", note: "#{@history.short_years("dues_dollars").to_sentence} have fewer than twelve months on record. Donations are missing from mid-2022 to mid-2025, when this site imported dues only.", rows: series_rows(paypal), columns: ["Year", "Dues", "Donations"]) do %>
+    <%= column_chart paypal, discrete: true, prefix: "$" %>
+  <% end %>
+
+  <% per_member = @history.ratio_by_year("dues_dollars", "dues_payers") %>
+  <%= render ChartCardComponent.new(title: "Dues per paying member a month", note: "PayPal dues divided by paying members, month by month: rises when members move up a tier.", rows: per_member, columns: ["Year", "Dollars"]) do %>
+    <%= column_chart per_member, discrete: true, prefix: "$" %>
+  <% end %>
+
+  <% sources = @history.yearly(["Gifts and grants", "irs_contributions"], ["Programs and classes", "irs_program"], ["Membership dues", "irs_dues"], ["Other", "irs_other"]) %>
+  <%= render ChartCardComponent.new(title: "Where income came from, as filed", note: "Part I of the returns on file. From 2018 the preparer reported dues under gifts and grants, so the dues line is empty: compare totals across years, not the split. 2013's other revenue was a $742 loss on sales, in the table but not drawn.", rows: series_rows(sources), columns: ["Year", "Gifts and grants", "Programs and classes", "Membership dues", "Other"]) do %>
+    <%= column_chart sources, discrete: true, stacked: true, prefix: "$", min: 0 %>
+  <% end %>
+
+  <% returns = @history.yearly(["Income", "irs_revenue"], ["Spending", "irs_expenses"], ["Rent, utilities and upkeep", "irs_occupancy"]) %>
+  <%= render ChartCardComponent.new(title: "Income and spending", rows: series_rows(returns), columns: ["Year", "Income", "Spending", "Rent, utilities and upkeep"]) do %>
+    <%= column_chart returns, discrete: true, prefix: "$" %>
+  <% end %>
+
+  <% assets = @history.yearly(["Net assets", "irs_net_assets"]) %>
+  <%= render ChartCardComponent.new(title: "Net assets at year end", rows: series_rows(assets), columns: ["Year", "Net assets"]) do %>
+    <%= column_chart assets, discrete: true, prefix: "$" %>
+  <% end %>
+
+  <% bills = [{ name: "140 W Main", data: @history.sum_by_year("utility_dollars", "140 W Main") }, { name: "108 W Main", data: @history.sum_by_year("utility_dollars", "108 W Main") }] %>
+  <%= render ChartCardComponent.new(title: "Utility bills by year", note: "2011 starts in June and 2022 ends in June.", rows: series_rows(bills), columns: ["Year", "140 W Main", "108 W Main"]) do %>
+    <%= column_chart bills, discrete: true, stacked: true, prefix: "$" %>
+  <% end %>
+</div>

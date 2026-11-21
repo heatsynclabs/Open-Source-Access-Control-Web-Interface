@@ -1,0 +1,22 @@
+<%= render "analytics/history/head", topic: "members", note: "PayPal dues from April 2013: every completed subscription payment of $25 or more, each payment once across the Board's PayPal exports (2014 to 2022), this site's imports and a recent PayPal download. Months with missing or part records are gaps (October and November 2025 have none). Dues paid in cash or by check are never in PayPal." %>
+<div class="grid two">
+  <% compare = @history.monthly(["PayPal", "dues_payers"], ["Recorded on this site", Analytics::Payments.new(Analytics::Period.new("all")).payers_by_period.transform_values { |count| count.nonzero? }]) %>
+  <%= render ChartCardComponent.new(title: "PayPal against this site's records", note: "This site's payments come from PayPal imports and hand entries for cash and checks. Where its line breaks, nobody imported PayPal that month (2015 to 2017, late 2024, late 2025): the PayPal line fills those years. Where this site is higher, the difference is dues paid other ways (cash, checks, one-off PayPal payments).", rows: series_rows(compare), columns: ["Month", "PayPal", "This site"]) do %>
+    <%= line_chart compare, discrete: true, curve: false, points: false %>
+  <% end %>
+
+  <% tiers = @history.monthly(["$25", "dues_payers_by_tier", "$25"], ["$50", "dues_payers_by_tier", "$50"], ["$100", "dues_payers_by_tier", "$100"], ["Other amount", "dues_payers_by_tier", "Other amount"]) %>
+  <%= render ChartCardComponent.new(title: "By dues tier", note: "Each payer counted at the last amount they paid that month: Associate $25 and Basic $50 are drawn. Plus $100 and other amounts ($75 in 2013 and 2014, $30 to $40 from 2022, yearly prepayments) are rarely 5 or more in a month; they are in the table.", rows: series_rows(tiers), columns: ["Month", "$25", "$50", "$100", "Other"]) do %>
+    <%= line_chart tiers.first(2), discrete: true, curve: false, points: false %>
+  <% end %>
+
+  <% average = @history.average_by_year("dues_payers") %>
+  <%= render ChartCardComponent.new(title: "Paying members a month, by year", note: "The average over each year's complete months on record.", rows: average, columns: ["Year", "Average a month"]) do %>
+    <%= column_chart average, discrete: true %>
+  <% end %>
+
+  <% payments = @history.monthly(["Dues payments", "dues_payments"]) %>
+  <%= render ChartCardComponent.new(title: "Dues payments a month", note: "Payments, not people: someone paying for two memberships, or twice in a month, counts twice here and once above.", rows: series_rows(payments), columns: ["Month", "Payments"]) do %>
+    <%= line_chart payments, discrete: true, curve: false, points: false %>
+  <% end %>
+</div>

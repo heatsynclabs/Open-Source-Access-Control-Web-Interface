@@ -1,0 +1,24 @@
+<%= render "analytics/history/head", topic: "power", note: "From the City of Mesa utility bills on the Board drive, June 2011 to June 2022 (130 bills; a few are missing). Each bill gives the average kilowatt-hours a day over its period, so bills of different lengths compare. The lab was at 140 W Main to mid-2018 and 108 W Main since, a bigger building; both were billed from April to June 2018. The April and May 2013 bills look like an under-read meter and its catch-up, and are shown as billed." %>
+<div class="grid two">
+  <% power = @history.monthly(["140 W Main", "kwh_per_day", "140 W Main"], ["108 W Main", "kwh_per_day", "108 W Main"]) %>
+  <%= render ChartCardComponent.new(title: "Electricity used a day", rows: series_rows(power), columns: ["Month", "140 W Main", "108 W Main"]) do %>
+    <%= line_chart power, discrete: true, curve: false, points: false, suffix: " kWh" %>
+  <% end %>
+
+  <% seasons = [{ name: "140 W Main", data: @history.average_by_calendar_month("kwh_per_day", "140 W Main") }, { name: "108 W Main", data: @history.average_by_calendar_month("kwh_per_day", "108 W Main") }] %>
+  <%= render ChartCardComponent.new(title: "Through the year", note: "Each calendar month's average over every year on record: air conditioning nearly doubles summer use.", rows: series_rows(seasons), columns: ["Month", "140 W Main", "108 W Main"]) do %>
+    <%= line_chart seasons, discrete: true, curve: false, suffix: " kWh" %>
+  <% end %>
+
+  <% yearly = [{ name: "140 W Main", data: @history.average_by_year("kwh_per_day", "140 W Main") }, { name: "108 W Main", data: @history.average_by_year("kwh_per_day", "108 W Main") }] %>
+  <%= render ChartCardComponent.new(title: "A day, by year", note: "The average of each year's bills (2011 from June, 2022 to June, 2018 split between the buildings).", rows: series_rows(yearly), columns: ["Year", "140 W Main", "108 W Main"]) do %>
+    <%= column_chart yearly, discrete: true, suffix: " kWh" %>
+  <% end %>
+
+  <% if @history_topics.key?("money") %>
+    <% bills = [{ name: "140 W Main", data: @history.sum_by_year("utility_dollars", "140 W Main") }, { name: "108 W Main", data: @history.sum_by_year("utility_dollars", "108 W Main") }] %>
+    <%= render ChartCardComponent.new(title: "Utility bills by year", note: "Electricity, water, sewer and trash together. Only for the treasurer and admins.", rows: series_rows(bills), columns: ["Year", "140 W Main", "108 W Main"]) do %>
+      <%= column_chart bills, discrete: true, stacked: true, prefix: "$" %>
+    <% end %>
+  <% end %>
+</div>

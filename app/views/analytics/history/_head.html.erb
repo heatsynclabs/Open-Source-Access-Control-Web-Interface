@@ -1,0 +1,11 @@
+<%# The top of an Over the years deep dive: the way back, the other deep dives, and what this one is drawn from. %>
+<div class="section-head">
+  <p class="eyebrow"><%= link_to "Over the years", analytics_path(section: "history") %></p>
+  <h2><%= Analytics::History::TOPICS.fetch(topic)[:title] %></h2>
+</div>
+<nav class="filters" aria-label="Deep dives">
+  <% @history_topics.each do |key, other| %>
+    <%= link_to other[:title], history_topic_path(key), class: ["toggle", ("on" if key == topic)], "aria-current": ("page" if key == topic) %>
+  <% end %>
+</nav>
+<p class="note"><%= note %></p>

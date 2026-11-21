@@ -1,0 +1,16 @@
+<%# One family's cut table on the cheat sheet. %>
+<table class="t no-stack">
+  <thead><tr><th class="fam" colspan="2"><%= family %></th><th>Power</th><th>Speed</th><th>Pass</th><th class="s">Average</th><th class="s">Jobs</th></tr></thead>
+  <tbody>
+    <% rows.each_with_index do |row, i| %>
+      <% s = row[:stats] %>
+      <% first = i.zero? || rows[i - 1][:material] != row[:material] %>
+      <tr class="<%= "thin" if s[:basis] < 5 || s[:scattered] %>" <%= "data-first" if first %>>
+        <td class="m"><%= row[:material] if first %></td><td class="b"><%= row[:bucket] %></td>
+        <td class="v"><%= laser_number(s[:power]) %></td><td class="v"><%= laser_number(s[:speed]) %></td><td class="p"><%= laser_number(s[:passes]) %></td>
+        <td class="s"><%= laser_number(s[:power_mean], 1) %> / <%= laser_number(s[:speed_mean], 1) %></td>
+        <td class="s"><%= laser_sheet_dot(s) %><%= s[:n] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
