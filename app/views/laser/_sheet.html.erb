@@ -39,7 +39,7 @@
       <% end %>
       <% if @sheet[:engrave].any? %>
         <div class="eyebrow">Engrave, any thickness, scan gap in mm</div>
-        <table class="t">
+        <table class="t no-stack">
           <thead><tr><th class="fam">Raster engrave</th><th>Power</th><th>Speed</th><th>Gap</th><th class="s">Average</th><th class="s">Jobs</th></tr></thead>
           <tbody>
             <% @sheet[:engrave].each do |row| %>
