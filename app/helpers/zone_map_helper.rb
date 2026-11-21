@@ -1,8 +1,10 @@
 # The map of where members live (analytics, Over the years): Arizona's real
 # outline and counties (ArizonaMap, from US Census boundaries) with a dot per
 # zone of ZIP codes (members_by_zone in lab_metrics), its area in step with
-# the number of dues payers there. Two views: the whole state, and the Phoenix
-# metro, where nearly everyone lives. Zones under 5 people are hollow rings.
+# the number of dues payers there and the number inside it. Two views: the
+# whole state, and the Phoenix metro, where nearly everyone lives. Each metro
+# zone has its own colour (the charts' palette, in order, .az-map --z1 to
+# --z8); Pinal, Tucson and zones under 5 people (rings) are neutral.
 module ZoneMapHelper
   # zone => [lat, lon, label side] at roughly the middle of its ZIP codes.
   ZONE_PLACES = {
@@ -12,14 +14,14 @@ module ZoneMapHelper
     "Chandler" => [33.29, -111.86, :left], "Gilbert" => [33.32, -111.76, :below],
     "Pinal County" => [33.16, -111.56, :below], "Tucson and the south" => [32.22, -110.97, :right],
   }.freeze
-  LAB = [33.4148, -111.8366] # 108 W Main St, Mesa
   LAB_ZONE = "Mesa, downtown and west"
   # Towns on the state view for bearings (no data).
   TOWNS = { "Flagstaff" => [35.198, -111.651], "Yuma" => [32.693, -114.628], "Prescott" => [34.54, -112.469] }.freeze
   METRO_ZONES = (ZONE_PLACES.keys - ["Tucson and the south"]).freeze
   # County names on the metro view, for bearings.
   METRO_COUNTIES = { "Maricopa County" => [33.71, -112.42], "Pinal County" => [33.08, -111.62] }.freeze
-  MAX_RADIUS = 17
+  MAX_RADIUS = 24
+  MIN_RADIUS = 11 # room for two digits
 
   # zones: { name => count, nil for fewer than 5 }
   def zone_map(zones)
@@ -54,9 +56,6 @@ module ZoneMapHelper
         marks << tag.text(county, x: x, y: y, class: "county-label")
       end
       METRO_ZONES.each { |name| marks += zone_dot("metro", name, zones, most) }
-      x, y = ArizonaMap.point("metro", *LAB)
-      marks << tag.rect(tag.title("HeatSync Labs, 108 W Main St, Mesa"), x: x - 4, y: y - 4, width: 8, height: 8, class: "lab",
-                        transform: "rotate(45 #{x} #{y})")
     end
     tag.svg(safe_join(marks), class: "az-#{view}", viewBox: "0 0 #{v[:width]} #{v[:height]}")
   end
@@ -67,13 +66,13 @@ module ZoneMapHelper
     return [] if n&.zero?
     lat, lon, side = ZONE_PLACES.fetch(name)
     x, y = ArizonaMap.point(view, lat, lon)
-    r = n ? [Math.sqrt(n / most) * MAX_RADIUS, 4].max.round(1) : 4
+    r = n ? [Math.sqrt(n / most) * MAX_RADIUS, MIN_RADIUS].max.round(1) : MIN_RADIUS
     text = "#{name}#{" (the lab)" if name == LAB_ZONE}: #{n || "fewer than 5"}"
+    slot = ZONE_PLACES.keys.first(8).index(name)
     lx, ly, anchor = { left: [x - r - 5, y + 4, "end"], right: [x + r + 5, y + 4, "start"],
                        above: [x, y - r - 6, "middle"], below: [x, y + r + 13, "middle"] }.fetch(side)
-    [tag.circle(tag.title(text), cx: x, cy: y, r: r, class: ["zone", ("few" if n.nil?)]),
-     tag.text(class: "zone-label", x: lx.round(1), y: ly.round(1), "text-anchor": anchor) do
-       safe_join([name, " ", tag.tspan(n || "<5", class: "zone-num")])
-     end]
+    [tag.circle(tag.title(text), cx: x, cy: y, r: r, class: ["zone", ("few" if n.nil?)], style: ("--zone: var(--z#{slot + 1})" if slot && n)),
+     tag.text(n || "<5", x: x, y: (y + 4).round(1), "text-anchor": "middle", class: ["zone-num", ("few" if n.nil?)]),
+     tag.text(name == LAB_ZONE ? "#{name} (the lab)" : name, class: "zone-label", x: lx.round(1), y: ly.round(1), "text-anchor": anchor)]
   end
 end

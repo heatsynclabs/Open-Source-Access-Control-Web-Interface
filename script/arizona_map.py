@@ -20,7 +20,7 @@ STATE_ID = "04"
 COS = math.cos(math.radians(34))
 VIEWS = {  # name: (west, east, south, north, pixels per degree of latitude)
     "state": (-114.85, -109.0, 31.3, 37.03, 92.0),
-    "metro": (-112.45, -111.45, 33.05, 33.75, 560.0),
+    "metro": (-112.45, -111.45, 33.05, 33.75, 700.0),
 }
 
 

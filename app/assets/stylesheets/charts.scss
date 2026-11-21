@@ -38,19 +38,21 @@
   // side by side, a dot per zone (ZoneMapHelper).
   .grid.two > :has(.az-map) { grid-column: 1 / -1; } // the map takes a whole row
   .az-map {
-    display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); gap: var(--space-4); align-items: start;
-    max-width: 980px;
+    display: grid; grid-template-columns: minmax(0, 0.75fr) minmax(0, 1fr); gap: var(--space-4); align-items: start;
+    // the charts' series palette (app/javascript/charts.js), light then dark
+    --z1: #c98714; --z2: #3a7bc8; --z3: #2f9a6a; --z4: #8a5cd0; --z5: #d0502a; --z6: #1a9bb0; --z7: #c2457f; --z8: #6f7d22;
+    [data-theme="dark"] & { --z1: #c08214; --z2: #4a86d0; --z3: #33a06f; --z4: #9468d8; --z5: #d65a32; --z6: #2199ad; --z7: #d0548c; --z8: #808f2c; }
     margin-bottom: var(--space-3);
     @media (max-width: 700px) { grid-template-columns: minmax(0, 1fr); }
     svg { width: 100%; height: auto; overflow: hidden; font-family: var(--font-ui); border: 1px solid var(--steel); background: var(--slab-hi); }
     .county { fill: var(--slab); stroke: var(--steel); stroke-width: 0.75; }
     .state { fill: none; stroke: var(--bone); stroke-width: 1.5; stroke-linejoin: round; }
     .inset { fill: none; stroke: var(--rust); stroke-width: 1.5; stroke-dasharray: 4 3; }
-    .zone { fill: var(--hazard); fill-opacity: 0.85; stroke: var(--steel-hi); stroke-width: 1.5; }
-    .zone.few { fill: none; stroke: var(--hazard); stroke-width: 2; }
-    .lab { fill: var(--fault); stroke: var(--slab); stroke-width: 1.5; }
+    .zone { fill: var(--zone, var(--smoke)); stroke: var(--slab-hi); stroke-width: 2; }
+    .zone.few { fill: var(--slab-hi); stroke: var(--smoke); stroke-dasharray: 3 2; }
     .zone-label { fill: var(--bone); font-size: 11px; paint-order: stroke; stroke: var(--slab); stroke-width: 3px; stroke-linejoin: round; }
-    .zone-num { font-family: var(--font-mono); font-weight: 700; }
+    .zone-num { fill: #fff; font-family: var(--font-mono); font-size: 12px; font-weight: 700; paint-order: stroke; stroke: rgba(0, 0, 0, 0.35); stroke-width: 2px; }
+    .zone-num.few { fill: var(--ash); stroke: none; font-size: 10px; }
     .town { fill: var(--ash); }
     .town-label { fill: var(--ash); font-size: 10px; }
     .county-label { fill: var(--ash); font-size: 10px; text-transform: uppercase; letter-spacing: var(--tracking-wide); }

@@ -1,4 +1,4 @@
 <%# Where dues payers live: zones of ZIP codes as dots on Arizona's real map (ZoneMapHelper, members_by_zone). %>
 <% zones = @history.totals("members_by_zone").to_h %>
 <%= zone_map(zones) %>
-<p class="muted small">Dot area is the number of people. The diamond is the lab. Not on the map: <%= zones["Elsewhere in Arizona"] || "fewer than 5" %> elsewhere in Arizona, <%= zones["Out of state"] || "fewer than 5" %> out of state, <%= zones["Not given"] %> with no ZIP code on their account.</p>
+<p class="muted small">Circle area follows the number of people, written inside. The lab is in downtown Mesa. Not on the map: <%= zones["Elsewhere in Arizona"] || "fewer than 5" %> elsewhere in Arizona, <%= zones["Out of state"] || "fewer than 5" %> out of state, <%= zones["Not given"] %> with no ZIP code on their account.</p>
