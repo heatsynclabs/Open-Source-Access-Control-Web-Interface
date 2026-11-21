@@ -98,8 +98,9 @@ against the PayPal export.
 ### The nightly task
 
 A Coolify scheduled task on members-production, `guestlist-sync`, runs
-`sh -c 'cd /app && bundle exec rails guestlist:sync'` in `members_web` at 03:10 Arizona
-time (frequency `10 10 * * *`, which Coolify reads as UTC). It prints one line, for example
+`sh -c 'cd /app && bundle exec rails guestlist:sync laser:sync'` in `members_web` at 03:10 Arizona
+time (frequency `10 10 * * *`, which Coolify reads as UTC); the laser log read is in
+[Laser](laser.md). The guestlist check prints one line, for example
 `guestlist sync: 26 read, 1 taken_down`, and fails only when guestlist answered nothing at
 all. To run it by hand, use Execute on the task in Coolify, or run
 `bundle exec rails guestlist:sync` in the container from `/app`. It needs nothing but
