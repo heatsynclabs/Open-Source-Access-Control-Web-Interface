@@ -84,6 +84,17 @@ class LaserPageTest < ActionDispatch::IntegrationTest
     assert_select "svg.laser-chart text", "2015"
   end
 
+  test "the cheat sheet is the explorer's sheet: plate, key, family tables, notes and footer" do
+    sign_in member
+    get laser_path(view: "sheet", paper: "letter")
+    assert_select ".sheet .plate h1", "Cheat sheet"
+    assert_select ".sheet .t th.fam", "Wood"
+    assert_select ".sheet .t td.v", minimum: 2
+    assert_select ".sheet .notes .card.haz h2", "Every job"
+    assert_match "two pages", response.body
+    assert_match "@page { size: 8.5in 11in", response.body
+  end
+
   test "every view renders" do
     sign_in member
     LaserController::VIEWS.each_key do |view|

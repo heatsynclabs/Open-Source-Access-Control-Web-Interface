@@ -133,6 +133,49 @@ module LaserHelper
     tag.svg(safe_join(marks), class: "laser-chart", viewBox: "0 0 #{w} #{h}", role: "img", "aria-label": "Energy index by quarter")
   end
 
+  # The cheat sheet's cut families split into two columns: first fit, in
+  # order, into the left column up to half of all the sheet's rows (a table's
+  # header counts as two), the rest to the right, above the engrave table.
+  def laser_sheet_columns(cut)
+    size = ->(rows) { rows.size + 2 }
+    half = (cut.values.sum(&size) + @sheet[:engrave].size + 2) / 2.0
+    left, used = {}, 0
+    cut.each do |family, rows|
+      next if used + size.(rows) > half && left.any?
+      left[family] = rows
+      used += size.(rows)
+    end
+    [left, cut.except(*left.keys)]
+  end
+
+  # The cheat sheet's clean success dot.
+  def laser_sheet_dot(stats)
+    tag.i(class: ["d", stats[:rate] >= 90 ? "ok" : stats[:rate] >= 75 ? "cond" : "bad"])
+  end
+
+  # @page and the print zoom for a paper size, as the explorer sets them.
+  def laser_sheet_page_style(paper)
+    _label, w, h, pages = LaserController::PAPERS.fetch(paper)
+    zoom = format("%.4f", laser_sheet_zoom(paper))
+    two = pages == 2 ? ".sheet { height: auto !important; min-height: 0 !important; } .sheet .notes { break-before: page; padding-top: .45in; } .sheet .body { flex: none; }" : ""
+    "@page { size: #{w}in #{h}in; margin: 0; } @media print { .sheet { zoom: #{zoom} !important; } #{two} }"
+  end
+
+  def laser_sheet_paper_note(paper)
+    label, _w, _h, pages = LaserController::PAPERS.fetch(paper)
+    percent = (laser_sheet_zoom(paper) * 100).round
+    if pages == 2
+      "#{label}: two pages at #{percent}% size. Page 1 is the settings tables, page 2 is the trouble notes."
+    else
+      "#{label}: one page at #{percent}% size#{", full bleed or close to it" if percent >= 100}."
+    end
+  end
+
+  def laser_sheet_zoom(paper)
+    _label, w, h, pages = LaserController::PAPERS.fetch(paper)
+    (pages == 2 ? w / 11.0 : [w / 11.0, h / 17.0].min) - 0.003
+  end
+
   # "+12%" or "-3%", or n/a.
   def laser_change(value)
     return tag.span("n/a", class: "muted") if value.nil?

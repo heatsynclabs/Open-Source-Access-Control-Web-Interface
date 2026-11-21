@@ -44,7 +44,7 @@
   .laser-chart circle.point.earlier { fill: var(--slab); }
   .laser-chart .point-label { fill: var(--bone); }
 
-  .laser-table td.big, .laser-sheet td.big { font-family: var(--font-display); font-size: var(--text-lg); }
+  .laser-table td.big { font-family: var(--font-display); font-size: var(--text-lg); }
   .laser-table tr.family th { background: var(--slab-hi); text-transform: uppercase; letter-spacing: var(--tracking-wide); font-size: var(--text-xs); }
 
   .laser-stats { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin: var(--space-4) 0 var(--space-6); }
@@ -62,19 +62,57 @@
   .laser-foot { margin-top: var(--space-8); }
 
   // The cheat sheet: on screen a card; printed, the only thing on the page.
-  .laser-printbar { margin-bottom: var(--space-6); }
-  .laser-sheet { background: var(--slab); border: 2px solid var(--steel-hi); padding: var(--space-6); }
-  .laser-sheet header p { font-size: var(--text-sm); }
-  .laser-sheet-body { columns: 2 340px; column-gap: var(--space-6); margin: var(--space-4) 0; }
-  .laser-sheet table { width: 100%; break-inside: avoid; margin-bottom: var(--space-4); font-size: var(--text-sm); }
-  .laser-sheet tr.thin td { color: var(--smoke); }
-  .laser-sheet-notes { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); font-size: var(--text-sm); h3 { margin-bottom: var(--space-2); } p { margin: 0 0 var(--space-2); } }
-  .laser-sheet footer { margin-top: var(--space-4); font-size: var(--text-xs); color: var(--ash); }
+  // The cheat sheet: a port of the laser explorer's 11 x 17 in sheet, in its
+  // own print colours (not the site theme), zoomed to fit (sheet-fit).
+  .laser-printbar { margin-bottom: var(--space-6); display: grid; gap: var(--space-3); justify-items: start; p { margin: 0; } }
+  .sheetwrap { overflow: hidden; border: 2px solid var(--steel-hi); box-shadow: var(--shadow); background: #f4efe3; }
+  .sheet {
+    zoom: var(--z, 1); width: 11in; min-height: 17in; margin: 0; background: #f4efe3; color: #1c1812;
+    display: flex; flex-direction: column; overflow: hidden; font-family: 'Instrument Sans', sans-serif; font-size: 10pt;
+    * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .plate { background: #faf6ec; padding: .26in .45in .2in; display: flex; align-items: flex-end; gap: .4in; }
+    .plate .logo { height: .52in; width: auto; flex: none; }
+    .plate .ttl { margin-left: auto; text-align: right; }
+    .eyebrow { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 9.5pt; letter-spacing: .22em; text-transform: uppercase; color: #97600c; margin: 0 0 .05in; }
+    h1 { font-family: 'Archivo', sans-serif; font-weight: 800; text-transform: uppercase; font-size: 36pt; line-height: .92; margin: .06in 0 0; letter-spacing: -.01em; text-align: right; color: #1c1812; }
+    .tape { height: .2in; background: repeating-linear-gradient(-45deg, #f2ab1e 0 .17in, #14110d .17in .34in); border-block: 2px solid #14110d; flex: none; }
+    .key { display: flex; gap: .3in; align-items: center; padding: .08in .45in; border-bottom: 2px solid #1c1812; font-size: 9.5pt; background: #ebe3d3; }
+    .key b { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 8.5pt; letter-spacing: .12em; text-transform: uppercase; }
+    .key .ex { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 15pt; background: #f2ab1e; border: 2px solid #14110d; padding: 0 .08in; margin-right: .06in; }
+    .key .ex.light { background: #faf6ec; }
+    .body { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .3in; padding: .14in .45in .04in; }
+    .t { width: 100%; border-collapse: collapse; margin-bottom: .12in; border: 2px solid #1c1812; background: #faf6ec; box-shadow: 4px 4px 0 #1c1812; font-size: inherit; }
+    .t th { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 7.5pt; letter-spacing: .12em; text-transform: uppercase; background: #14110d; color: #ece3d3; padding: .03in .06in; text-align: right; border-bottom: 0; }
+    .t th.fam { text-align: left; font-size: 10pt; letter-spacing: .18em; color: #f2ab1e; }
+    .t td { padding: .04in .045in; border-top: 1px solid rgba(28, 24, 18, .16); border-bottom: 0; text-align: right; font-size: 9.5pt; line-height: 1.1; vertical-align: middle; color: #1c1812; }
+    .t tr[data-first] td { border-top: 2px solid #1c1812; }
+    .t tbody tr:first-child td { border-top: 0; }
+    .t td.m { text-align: left; font-weight: 600; font-size: 10pt; }
+    .t td.b { text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 7.5pt; letter-spacing: -.02em; color: #4a4236; white-space: nowrap; }
+    .t td.v { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 14.5pt; width: .55in; }
+    .t td.v + td.v { background: rgba(242, 171, 30, .2); }
+    .t td.p { font-family: 'JetBrains Mono', monospace; font-size: 10pt; width: .42in; }
+    .t td.s, .t th.s { font-family: 'JetBrains Mono', monospace; font-size: 7pt; letter-spacing: -.02em; color: #5f5648; white-space: nowrap; }
+    .t th.s { color: #b3a996; font-family: 'IBM Plex Mono', monospace; }
+    .t tr.thin td.v, .t tr.thin td.p { color: #8a8071; }
+    .d { display: inline-block; width: .09in; height: .09in; border-radius: 50%; border: 1.2px solid #14110d; margin-right: .05in; vertical-align: -.01in; }
+    .d.ok { background: #2f8562; }
+    .d.cond { background: #f2ab1e; }
+    .d.bad { background: #b8341f; }
+    .key .d { margin-left: .04in; }
+    .notes { display: grid; grid-template-columns: 1fr 1.25fr 1fr; gap: .22in; padding: 0 .45in .14in; }
+    .card { border: 2px solid #1c1812; background: #faf6ec; padding: .1in .14in; box-shadow: 4px 4px 0 #1c1812; font-size: 8.6pt; line-height: 1.26; color: #1c1812; }
+    .card.haz { background: #f2ab1e; }
+    .card h2 { font-family: 'Archivo', sans-serif; font-weight: 800; text-transform: uppercase; font-size: 13pt; margin: 0 0 .06in; line-height: 1; color: #1c1812; }
+    .card ol, .card ul { margin: 0; padding-left: .17in; }
+    .card li { margin-bottom: .035in; }
+    .foot { margin-top: auto; background: #14110d; color: #b3a996; font-family: 'JetBrains Mono', monospace; font-size: 7.5pt; padding: .1in .45in; display: flex; justify-content: space-between; gap: .3in; }
+  }
 
   @media print {
-    body:has(.laser-print) > *:not(main), .laser-print > :not(.laser-sheet) { display: none !important; }
+    body:has(.laser-print) > *:not(main), .laser-print > :not(.sheetwrap) { display: none !important; }
+    body:has(.laser-print) { background: #fff; }
     body:has(.laser-print) main { padding: 0; margin: 0; max-width: none; }
-    .laser-sheet { border: 0; padding: 0; background: #fff; color: #000; }
-    .laser-sheet-body { columns: 2; }
+    .sheetwrap { border: 0; box-shadow: none; overflow: visible; }
   }
 }
