@@ -7,7 +7,7 @@ module ZoneMapHelper
   # zone => [lat, lon, label side] at roughly the middle of its ZIP codes.
   ZONE_PLACES = {
     "West Valley" => [33.55, -112.27, :above], "Phoenix" => [33.49, -112.07, :left],
-    "Scottsdale and Fountain Hills" => [33.57, -111.86, :right], "Tempe" => [33.39, -111.935, :left],
+    "Scottsdale and Fountain Hills" => [33.57, -111.86, :above], "Tempe" => [33.39, -111.935, :left],
     "Mesa, downtown and west" => [33.405, -111.845, :above], "East Mesa" => [33.42, -111.68, :right],
     "Chandler" => [33.29, -111.86, :left], "Gilbert" => [33.32, -111.76, :below],
     "Pinal County" => [33.16, -111.56, :below], "Tucson and the south" => [32.22, -110.97, :right],

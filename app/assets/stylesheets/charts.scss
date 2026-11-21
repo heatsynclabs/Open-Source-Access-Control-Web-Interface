@@ -36,8 +36,10 @@
 
   // Where members live: Arizona (counties, state line) and the Phoenix metro
   // side by side, a dot per zone (ZoneMapHelper).
+  .grid.two > :has(.az-map) { grid-column: 1 / -1; } // the map takes a whole row
   .az-map {
     display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); gap: var(--space-4); align-items: start;
+    max-width: 980px;
     margin-bottom: var(--space-3);
     @media (max-width: 700px) { grid-template-columns: minmax(0, 1fr); }
     svg { width: 100%; height: auto; overflow: hidden; font-family: var(--font-ui); border: 1px solid var(--steel); background: var(--slab-hi); }
