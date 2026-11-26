@@ -164,7 +164,7 @@ class MarqueeTest < ActiveSupport::TestCase
       refute client.configured?, host
       assert_raises(Marquee::Client::Unreachable) { client.state }
     end
-    assert Marquee::Client.new(host: "http://172.22.111.158/").configured?
+    assert Marquee::Client.new(host: "http://172.22.110.185/").configured?
     assert Marquee::Client.new(host: "marquee.lan:8080").configured?
   end
 end

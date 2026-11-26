@@ -30,7 +30,8 @@ with the member's name and the text sent.
 - Messages are cleaned to printable ASCII (the sign's font), 100 characters at
   most, and only the offered colours and repeat counts are sent.
 - The address is the **Marquee host** setting (Admin, Settings), defaulting to
-  `MARQUEE_HOST`. Give the sign a DHCP reservation so it does not move.
+  `MARQUEE_HOST`. The sign holds a fixed address, 172.22.110.185, set in its
+  own firmware (outside the DHCP pool), so it does not move.
 
 ## Lab open and the closing time
 

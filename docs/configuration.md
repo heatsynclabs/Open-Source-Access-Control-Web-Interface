@@ -53,7 +53,7 @@ the rest are read straight from the environment.
 
 | Setting | Meaning | Secret |
 |---|---|---|
-| `MARQUEE_HOST` | default address of the LED sign on the lab network (`172.22.111.158`). The **Marquee host** site setting overrides it without a redeploy | |
+| `MARQUEE_HOST` | default address of the LED sign on the lab network (`172.22.110.185`). The **Marquee host** site setting overrides it without a redeploy | |
 
 ## Staging only (compose file or Coolify)
 
