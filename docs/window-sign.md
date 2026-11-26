@@ -38,7 +38,7 @@ with the member's name and the text sent.
 The sign polls `space_api.json` every five minutes. While the doors are
 unlocked, the space API also carries `"open_until": "21:00"` when a calendar
 event in the Open hours category is running, and the sign then scrolls
-`... COME IN - UNTIL 9 PM`. The lookup reads only the calendar copy already
+`... COME IN UNTIL 9 PM`. The lookup reads only the calendar copy already
 cached by the calendar pages, so the space API never waits on Google
 (`LabCalendar.open_hours_until`).
 

@@ -10,7 +10,7 @@ module Marquee
   MESSAGE_MAX = 100
   FRAME_MAX = 12          # words in a run of still frames
   # OPEN held still (it fits the 30 pixel panel), then the sentence scrolls.
-  OPEN_FRAMES = "OPEN|OPEN HOURS - WE'RE OPEN - COME IN - {until}".freeze
+  OPEN_FRAMES = "OPEN|OPEN HOURS, WE'RE OPEN, COME IN {until}".freeze
   CONSOLE_URL = "https://heatsynclabs.github.io/marquee/".freeze
   REPO_URL = "https://github.com/heatsynclabs/marquee".freeze
 
@@ -35,7 +35,7 @@ module Marquee
 
   # One-tap buttons. Each plays now and then the sign goes back to its rotation.
   PRESETS = [
-    Preset.new("open", "Open Hours", "OPEN, then WE'RE OPEN - COME IN, twice",
+    Preset.new("open", "Open Hours", "OPEN, then WE'RE OPEN, COME IN, twice",
                { "cards" => OPEN_FRAMES, "color" => "#33ff66", "repeat" => 2, "now" => true }),
     Preset.new("robot", "Robot", "Gears turning, then it flies by",
                { "anim" => "robot", "hold" => 16_800, "now" => true }),
