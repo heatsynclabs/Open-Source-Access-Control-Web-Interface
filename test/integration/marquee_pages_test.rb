@@ -73,6 +73,9 @@ class MarqueePagesTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "turbo-frame#marquee-panel[src=?]", marquee_panel_path
     assert_select "turbo-frame#marquee-rotation", count: 0 # admins only
+    # Right at the form: what is sent is logged with their name.
+    assert_select "form .sign-accountable", /audit log with your name, the exact text and the time/
+    assert_select "form button[type=submit][aria-describedby=sign-accountable]", /Send as Test Person/
 
     sign = with_sign do
       post marquee_message_path, params: { text: "<b>HI</b> — come in", color: "Cyan", repeat: "3" }

@@ -1,5 +1,5 @@
 <%= render PageHeaderComponent.new(eyebrow: "Devices", eyebrow_path: devices_path, title: "Window sign",
-      lead: "The LED sign in the front window. Anything you send shows up right away for people walking by on Main Street, so keep it friendly. Every message is logged with your name.") %>
+      lead: "The LED sign in the front window. Anything you send shows up right away for people walking by on Main Street, so keep it friendly. Everything you do here is logged with your name.") %>
 
 <div class="stack">
 <%= turbo_frame_tag "marquee-panel", src: marquee_panel_path, class: "sign-panel",
@@ -53,8 +53,12 @@
       </div>
     </div>
 
+    <div class="msg warn sign-accountable" role="note" id="sign-accountable">
+      <p><strong>This goes on the record.</strong> Everything you put on the sign is saved in the lab's audit log with your name, the exact text and the time, and admins can read it. It shows in the front window to everyone on Main Street, so keep it something you'd be happy to sign.</p>
+    </div>
+
     <div class="form-actions">
-      <%= button_tag type: "submit", class: "btn primary" do %><%= lucide_icon "send" %> Send to the sign<% end %>
+      <%= button_tag type: "submit", class: "btn primary", "aria-describedby": "sign-accountable" do %><%= lucide_icon "send" %> Send as <%= current_user.name %><% end %>
     </div>
   <% end %>
 </section>
