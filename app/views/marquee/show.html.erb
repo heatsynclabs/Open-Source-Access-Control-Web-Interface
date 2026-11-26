@@ -1,0 +1,109 @@
+<%= render PageHeaderComponent.new(eyebrow: "Devices", eyebrow_path: devices_path, title: "Window sign",
+      lead: "The LED sign in the front window. Anything you send shows up right away for people walking by on Main Street, so keep it friendly. Everything you do here is logged with your name.") %>
+
+<div class="stack">
+<%= turbo_frame_tag "marquee-panel", src: marquee_panel_path, class: "sign-panel",
+      data: { controller: "frame-refresh", frame_refresh_every_value: 15 } do %>
+  <section class="card sign-status" aria-busy="true">
+    <p class="muted"><span class="spinner" role="presentation"></span> Asking the sign what it is showing.</p>
+  </section>
+<% end %>
+
+<section class="card">
+  <div class="card-head"><h2>One tap</h2></div>
+  <div class="sign-presets">
+    <% Marquee::PRESETS.each do |preset| %>
+      <%= button_to marquee_preset_path, params: { key: preset.key }, class: ["sign-preset", ("quiet" if preset.key == "normal")] do %>
+        <strong><%= preset.label %></strong>
+        <span class="muted small"><%= preset.hint %></span>
+      <% end %>
+    <% end %>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-head"><h2>Put a message up</h2></div>
+  <%= form_with url: marquee_message_path, class: "form sign-message", data: { turbo: true } do %>
+    <div class="field wide">
+      <%= label_tag :text, "Message" %>
+      <%= text_field_tag :text, nil, maxlength: Marquee::MESSAGE_MAX, required: true, autocomplete: "off",
+            placeholder: "WELCOME MAKERS", class: "sign-text" %>
+      <p class="hint">Letters, numbers and punctuation. It scrolls across, five letters fit at a time.</p>
+    </div>
+
+    <div class="field wide" role="radiogroup" aria-labelledby="sign-colour-label">
+      <span class="label" id="sign-colour-label">Colour</span>
+      <div class="sign-swatches">
+        <% Marquee::COLORS.each_with_index do |(label, value), i| %>
+          <label class="sign-swatch">
+            <%= radio_button_tag :color, label, i.zero? %>
+            <span class="dot <%= 'rainbow' if value == 'rainbow' %>" style="<%= "--swatch: #{value}" unless value == 'rainbow' %>"></span>
+            <%= label %>
+          </label>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="field wide" role="radiogroup" aria-labelledby="sign-repeat-label">
+      <span class="label" id="sign-repeat-label">Show it</span>
+      <div class="sign-choices">
+        <% Marquee::REPEATS.each_with_index do |(label, value), i| %>
+          <label class="check"><%= radio_button_tag :repeat, value, i.zero? %> <%= label %></label>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="msg warn sign-accountable" role="note" id="sign-accountable">
+      <p><strong>This goes on the record.</strong> Everything you put on the sign is saved in the lab's audit log with your name, the exact text and the time, and admins can read it. It shows in the front window to everyone on Main Street, so keep it something you'd be happy to sign.</p>
+    </div>
+
+    <div class="form-actions">
+      <%= button_tag type: "submit", class: "btn primary", "aria-describedby": "sign-accountable" do %><%= lucide_icon "send" %> Send as <%= current_user.name %><% end %>
+    </div>
+  <% end %>
+</section>
+
+<section class="card">
+  <div class="card-head"><h2>Brightness</h2></div>
+  <div class="sign-choices">
+    <% Marquee::BRIGHTNESS.each_key do |label| %>
+      <%= button_to label, marquee_brightness_path, params: { level: label }, class: "btn" %>
+    <% end %>
+  </div>
+  <p class="note">Normal suits the window day and night. The sign limits its own power draw, so Bright is safe.</p>
+</section>
+
+<% if @can_manage %>
+  <section class="card">
+    <div class="card-head"><h2>Between messages</h2><span class="muted small">admins</span></div>
+    <%= turbo_frame_tag "marquee-rotation", src: marquee_rotation_path, loading: :lazy do %>
+      <p class="muted"><span class="spinner" role="presentation"></span> Reading what the sign shows between messages.</p>
+    <% end %>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Upkeep</h2><span class="muted small">admins</span></div>
+    <div class="sign-choices">
+      <%= button_to "Check lab status now", marquee_poll_path, class: "btn" %>
+      <%= button_to "Restart the sign", marquee_restart_path, class: "btn danger",
+            form: { data: { turbo_confirm: "Restart the sign? It is dark for about ten seconds." } } %>
+      <%= link_to "Full console", Marquee::CONSOLE_URL, class: "btn", target: "_blank", rel: "noopener" %>
+    </div>
+    <p class="note">The sign answers at <span class="mono"><%= Setting.marquee_host %></span> on the lab network. If that changes, set <strong>Marquee host</strong> in <%= link_to "Settings", settings_path %>. The full console has every option and works in Chrome or Edge on the lab Wi-Fi. Firmware and docs: <%= link_to "heatsynclabs/marquee", Marquee::REPO_URL, target: "_blank", rel: "noopener" %>.</p>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Recent messages</h2><span class="muted small">admins</span></div>
+    <% if @recent.blank? %>
+      <p class="muted">No messages sent from the site yet.</p>
+    <% else %>
+      <ul class="row-list">
+        <% @recent.each do |event| %>
+          <li><span class="mono"><%= event.summary %></span> <span class="muted small">by <%= event.editor_name %>, <%= time_ago_in_words(event.created_at) %> ago</span></li>
+        <% end %>
+      </ul>
+      <p class="note">Everything is in the <%= link_to "audit log", audit_events_path %>.</p>
+    <% end %>
+  </section>
+<% end %>
+</div>

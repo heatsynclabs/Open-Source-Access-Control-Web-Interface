@@ -16,6 +16,11 @@ class Setting < RailsSettings::Base
   field :member_resources_inset, type: :string,
         default: "No info here yet, bug a member about filling this part out!"
 
+  # Where the LED marquee in the front window answers on the lab network: an
+  # IP address or hostname, optionally :port. The sign sets this fixed address
+  # itself (outside the DHCP pool), so it does not change.
+  field :marquee_host, type: :string, default: ENV.fetch("MARQUEE_HOST", "172.22.110.185")
+
   field :analytics_code, type: :string,
         default: "<!-- insert analytics code here -->"
 

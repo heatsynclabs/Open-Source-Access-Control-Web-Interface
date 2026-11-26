@@ -33,6 +33,10 @@ class Ability
 
       if cardholder
         can :access_doors_remotely, :door_access
+        # The window sign: put a message up, use the presets. What it shows
+        # between messages, its address and restarting it stay with admins
+        # (:manage, :marquee, through :manage, :all below).
+        can :use, :marquee
         can :authorize, Card # used for interlock card/certification auth
       end
 

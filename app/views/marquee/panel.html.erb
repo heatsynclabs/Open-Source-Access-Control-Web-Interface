@@ -1,0 +1,19 @@
+<%= turbo_frame_tag "marquee-panel" do %>
+  <% if @error %>
+    <section class="card sign-status offline">
+      <p class="sign-state"><span class="sign-dot" role="presentation"></span> Not answering</p>
+      <p class="muted">The sign did not reply (<%= @error %>). It may be unplugged, or have a new address on the lab network. Buttons below will say so too, and nothing gets lost.</p>
+    </section>
+  <% else %>
+    <section class="card sign-status online">
+      <p class="sign-state"><span class="sign-dot" role="presentation"></span> Online</p>
+      <p class="sign-now">Showing <strong><%= Marquee.showing(@state["current"]) %></strong><%= ", #{pluralize(@state['queued'].to_i, 'message')} waiting" if @state["queued"].to_i > 0 %>.</p>
+      <ul class="sign-facts muted small">
+        <li><%= sign_lab_line(@state["status"]) %></li>
+        <% if (clock = sign_clock(@state["time"])) %><li>Sign clock <%= clock %></li><% end %>
+        <li>Brightness <%= sign_brightness(@state["brightness"]) %></li>
+        <li>Up <%= distance_of_time_in_words(0, @state["uptime_s"].to_i) %></li>
+      </ul>
+    </section>
+  <% end %>
+<% end %>

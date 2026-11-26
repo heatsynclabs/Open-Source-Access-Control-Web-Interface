@@ -12,6 +12,7 @@ module NavigationHelper
       (NavLink.new("Laser", laser_path, %w[laser]) if user_signed_in?),
       (NavLink.new("Certifications", certifications_path, %w[certifications user_certifications]) if user_signed_in? && can?(:read, Certification)),
       (NavLink.new("Analytics", analytics_path, %w[analytics]) if user_signed_in?),
+      (NavLink.new("Devices", devices_path, %w[devices marquee]) if can?(:use, :marquee)),
     ].compact
   end
 
