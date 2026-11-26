@@ -16,12 +16,6 @@ module LabCalendar
       Rails.cache.read(FRESH_KEY) || refresh
     end
 
-    # The newest copy already in the cache, fresh or not, or nil. Never
-    # downloads, for callers that must answer at once (the space API).
-    def cached_text
-      Rails.cache.read(FRESH_KEY) || Rails.cache.read(LAST_GOOD_KEY)&.dig(:body)
-    end
-
     # { fetched_at: Time, stale: true/false }, or nil before the first fetch.
     def freshness
       last_good = Rails.cache.read(LAST_GOOD_KEY)

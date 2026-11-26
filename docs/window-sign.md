@@ -33,14 +33,12 @@ with the member's name and the text sent.
   `MARQUEE_HOST`. The sign holds a fixed address, 172.22.110.185, set in its
   own firmware (outside the DHCP pool), so it does not move.
 
-## Lab open and the closing time
+## Lab open
 
-The sign polls `space_api.json` every five minutes. While the doors are
-unlocked, the space API also carries `"open_until": "21:00"` when a calendar
-event in the Open hours category is running, and the sign then scrolls
-`... COME IN UNTIL 9 PM`. The lookup reads only the calendar copy already
-cached by the calendar pages, so the space API never waits on Google
-(`LabCalendar.open_hours_until`).
+The sign polls `space_api.json` every five minutes and, while the doors are
+unlocked, mixes in OPEN and then OPEN HOURS, WE'RE OPEN, COME IN, with a small
+robot face between the phrases. It shows no closing time on purpose: a host
+may keep the lab open later than the calendar says.
 
 ## Staging
 

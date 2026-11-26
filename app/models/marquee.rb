@@ -9,8 +9,10 @@ module Marquee
   # The panel's font covers printable ASCII only; anything else would show as "?".
   MESSAGE_MAX = 100
   FRAME_MAX = 12          # words in a run of still frames
-  # OPEN held still (it fits the 30 pixel panel), then the sentence scrolls.
-  OPEN_FRAMES = "OPEN|OPEN HOURS, WE'RE OPEN, COME IN {until}".freeze
+  # OPEN held still (it fits the 30 pixel panel), then the sentence scrolls
+  # with a small robot face ({bot}) between the phrases. No closing time: a
+  # host may keep the lab open later than scheduled.
+  OPEN_FRAMES = "OPEN|OPEN HOURS {bot} WE'RE OPEN {bot} COME IN".freeze
   CONSOLE_URL = "https://heatsynclabs.github.io/marquee/".freeze
   REPO_URL = "https://github.com/heatsynclabs/marquee".freeze
 
@@ -35,7 +37,7 @@ module Marquee
 
   # One-tap buttons. Each plays now and then the sign goes back to its rotation.
   PRESETS = [
-    Preset.new("open", "Open Hours", "OPEN, then WE'RE OPEN, COME IN, twice",
+    Preset.new("open", "Open Hours", "OPEN, then OPEN HOURS, WE'RE OPEN, COME IN, twice",
                { "cards" => OPEN_FRAMES, "color" => "#33ff66", "repeat" => 2, "now" => true }),
     Preset.new("robot", "Robot", "Gears turning, then it flies by",
                { "anim" => "robot", "hold" => 16_800, "now" => true }),
@@ -64,7 +66,7 @@ module Marquee
         .strip[0, max].to_s.strip
   end
 
-  # "OPEN | come in |" => "OPEN|come in"; keeps the {until} token. The sign
+  # "OPEN | come in |" => "OPEN|come in"; keeps {bot} and {until}. The sign
   # holds 127 characters for the whole run.
   def clean_frames(text)
     text.to_s.split("|").map { |frame| clean_text(frame, 60) }.reject(&:empty?).first(FRAME_MAX).join("|")[0, 120]
@@ -96,7 +98,7 @@ module Marquee
     arg = current["arg"].to_s
     case current["kind"]
     when "text"   then "“#{arg}”"
-    when "cards"  then arg.gsub(/\s*-?\s*\{until\}/, "").split("|").map(&:strip).reject(&:empty?).join(" / ")
+    when "cards"  then arg.gsub(/\s*-?\s*\{until\}/, "").gsub(/\s*\{bot\}\s*/, ", ").split("|").map(&:strip).reject(&:empty?).join(" / ")
     when "stored" then "the #{arg} animation"
     else SHOWING.fetch(arg, arg.presence || "unknown")
     end

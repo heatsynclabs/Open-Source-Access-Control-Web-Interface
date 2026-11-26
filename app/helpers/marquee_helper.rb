@@ -14,8 +14,7 @@ module MarqueeHelper
     status = {} unless status.is_a?(Hash)
     return "Lab status not known yet" unless status["valid"]
     return "Lab closed" unless status["on"]
-    closes = sign_clock(status["until"])
-    "Lab open#{" until #{closes}" if closes}, so Open Hours comes up every other turn"
+    "Lab open, so Open Hours comes up every other turn"
   end
 
   def sign_brightness(value)

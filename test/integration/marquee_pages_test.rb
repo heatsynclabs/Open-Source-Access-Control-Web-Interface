@@ -15,7 +15,7 @@ class MarqueePagesTest < ActionDispatch::IntegrationTest
       @state = state || { "fw" => "1.1.2", "uptime_s" => 3600, "brightness" => 60, "queued" => 0,
                           "time" => "2026-11-25 20:41:00",
                           "current" => { "kind" => "anim", "arg" => "robot" },
-                          "status" => { "valid" => true, "on" => true, "until" => "21:00" } }
+                          "status" => { "valid" => true, "on" => true } }
       @rotation = rotation || { "ms" => 15000, "items" => [{ "anim" => "clock" }, { "anim" => "fire" }],
                                 "open" => { "cards" => "OPEN|HOURS", "color" => "#33ff66" } }
       @sent = []
@@ -125,7 +125,7 @@ class MarqueePagesTest < ActionDispatch::IntegrationTest
     with_sign { get marquee_panel_path }
     assert_response :success
     assert_select ".sign-status.online .sign-now strong", "the robot"
-    assert_match "Lab open until 9:00 PM", response.body
+    assert_match "Lab open, so Open Hours comes up every other turn", response.body
     assert_match "Sign clock 8:41 PM", response.body
   end
 
@@ -180,29 +180,5 @@ class MarqueePagesTest < ActionDispatch::IntegrationTest
     end
     assert_equal 6, sign.sent.size
     assert_match "a lot of messages", flash[:alert]
-  end
-
-  # ---- the space API's closing time, which the sign reads ----
-
-  test "the space API says when Open Hours ends while the doors are open" do
-    closes = Time.zone.parse("2026-11-25 21:00")
-    DoorLog.stub(:show_status, { unlocked: true, door_1_locked: false, door_2_locked: false }) do
-      LabCalendar.stub(:open_hours_until, closes) { get space_api_path(format: :json) }
-    end
-    json = JSON.parse(response.body)
-    assert_equal true, json["open"]
-    assert_equal "21:00", json["open_until"]
-  end
-
-  test "no closing time when the doors are locked or nothing is scheduled" do
-    DoorLog.stub(:show_status, { unlocked: false, door_1_locked: true, door_2_locked: true }) do
-      LabCalendar.stub(:open_hours_until, -> { flunk "not asked while closed" }) { get space_api_path(format: :json) }
-    end
-    refute JSON.parse(response.body).key?("open_until")
-
-    DoorLog.stub(:show_status, { unlocked: true, door_1_locked: false, door_2_locked: false }) do
-      LabCalendar.stub(:open_hours_until, nil) { get space_api_path(format: :json) }
-    end
-    refute JSON.parse(response.body).key?("open_until")
   end
 end

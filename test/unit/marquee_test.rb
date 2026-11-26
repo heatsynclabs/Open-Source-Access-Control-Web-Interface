@@ -27,14 +27,14 @@ class MarqueeTest < ActiveSupport::TestCase
   end
 
   test 'frames keep words and the until token, nothing else' do
-    assert_equal "OPEN|COME IN - {until}", Marquee.clean_frames(" OPEN | COME  IN - {until} || \u00e9 ")
+    assert_equal "OPEN|COME IN {bot}", Marquee.clean_frames(" OPEN | COME  IN {bot} || \u00e9 ")
     assert_operator Marquee.clean_frames((["WE'RE OPEN COME IN"] * 12).join("|")).length, :<=, 120
     assert_equal Marquee::FRAME_MAX, Marquee.clean_frames((["A"] * 40).join("|")).split("|").size
   end
 
   test 'showing turns the sign state into words' do
     assert_equal "the robot", Marquee.showing({ "kind" => "anim", "arg" => "robot" })
-    assert_equal "OPEN / COME IN", Marquee.showing({ "kind" => "cards", "arg" => "OPEN|COME IN - {until}" })
+    assert_equal "OPEN / OPEN HOURS, COME IN", Marquee.showing({ "kind" => "cards", "arg" => "OPEN|OPEN HOURS {bot} COME IN" })
     assert_equal "“hi”", Marquee.showing({ "kind" => "text", "arg" => "hi" })
     assert_equal "unknown", Marquee.showing(nil)
   end

@@ -43,36 +43,11 @@ module LabCalendar
   end
 
   # Expanded once per version of the feed.
-  def expanded_events(text = Feed.new.text)
-    Rails.cache.fetch(events_cache_key(text), expires_in: 1.day) do
+  def expanded_events
+    text = Feed.new.text
+    Rails.cache.fetch(["lab_calendar/events/v2", Digest::SHA256.hexdigest(text)], expires_in: 1.day) do
       Occurrences.new(text).between(HISTORY_START.in_time_zone, LOOKAHEAD.from_now)
     end
-  end
-
-  # When the Open Hours event running at `at` ends, or nil when none is.
-  # The space API adds it as "open_until" so the window sign can say UNTIL
-  # 9 PM. Uses only what is already cached (the calendar pages and the home
-  # week card keep it current) so the door status never waits, and never
-  # raises: a calendar problem must not break what everything else reads.
-  def open_hours_until(at = Time.current)
-    text = Feed.new.cached_text
-    return nil unless text
-    Rails.cache.fetch("lab_calendar/open_hours_until/#{at.to_i / 60}", expires_in: 2.minutes) do
-      # Only a list some page already expanded; expanding here could take
-      # seconds after the feed changes.
-      expanded = Rails.cache.read(events_cache_key(text)) || []
-      event = expanded.find do |e|
-        !e.all_day && e.open_hours? && e.starts_at <= at && e.ends_at > at
-      end
-      event&.ends_at&.in_time_zone
-    end
-  rescue StandardError => e
-    Rails.logger.warn "open_hours_until: #{e.class}: #{e.message}"
-    nil
-  end
-
-  def events_cache_key(text)
-    ["lab_calendar/events/v2", Digest::SHA256.hexdigest(text)]
   end
 
   # When the feed was last read from Google, and whether that copy is older
