@@ -9,6 +9,13 @@ class SpaceApiController < ApplicationController
     door_status = DoorLog.show_status # Expect {:unlocked => boolean, :door_1_locked => boolean, :door_2_locked => boolean}
 
     @json["open"] = door_status[:unlocked]
+
+    # While the doors are open during a scheduled Open Hours event, when it
+    # ends ("21:00", lab time). The window sign reads this.
+    if door_status[:unlocked]
+      closes = LabCalendar.open_hours_until
+      @json["open_until"] = closes.strftime("%H:%M") if closes
+    end
     
     if( door_status[:unlocked] )
       @json["status"] = "doors_open=both"

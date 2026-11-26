@@ -49,6 +49,12 @@ the rest are read straight from the environment.
 | `S3_DOCUMENTS_BUCKET` | signed waivers (`members-waivers`); empty means the same bucket as photos | |
 | `S3_KEY`, `S3_SECRET` | the access key for the store | yes |
 
+## Window sign (see [The window sign](window-sign.md))
+
+| Setting | Meaning | Secret |
+|---|---|---|
+| `MARQUEE_HOST` | default address of the LED sign on the lab network (`172.22.111.158`). The **Marquee host** site setting overrides it without a redeploy | |
+
 ## Staging only (compose file or Coolify)
 
 | Setting | Meaning |

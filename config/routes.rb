@@ -108,6 +108,20 @@ Dooraccess::Application.routes.draw do
   # Who opens the lab most, for any signed-in member.
   get 'door_leaderboard' => 'door_leaderboard#index', :as => :door_leaderboard
 
+  # Devices at the lab that the site can drive. One for now: the window sign.
+  get 'devices' => 'devices#index', :as => :devices
+  scope 'devices/marquee', controller: 'marquee', as: 'marquee' do
+    get '/' => :show, :as => ''
+    get 'panel' => :panel
+    get 'rotation' => :rotation
+    post 'message' => :message
+    post 'preset' => :preset
+    post 'brightness' => :brightness
+    patch 'rotation' => :update_rotation, :as => 'update_rotation'
+    post 'poll' => :poll
+    post 'restart' => :restart
+  end
+
   match 'more_info' => 'home#more_info', via: [:get, :post]
   root :to => "home#index"
 end

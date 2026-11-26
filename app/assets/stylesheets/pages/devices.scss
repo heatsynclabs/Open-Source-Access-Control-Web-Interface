@@ -1,0 +1,59 @@
+// The Devices page and the window sign page (devices#index, marquee#show).
+@layer pages {
+  // ---------------------------------------------------------- device list
+  .device-list { display: grid; gap: var(--space-4); max-width: 720px; }
+  .device-tile {
+    display: flex; align-items: center; gap: var(--space-4);
+    padding: var(--space-5); border: 2px solid var(--steel-hi); background: var(--slab);
+    color: inherit; text-decoration: none;
+    &:hover, &:focus-visible { border-color: var(--hazard); }
+  }
+  .device-icon svg { width: 32px; height: 32px; color: var(--accent-text); }
+  .device-text { display: grid; gap: var(--space-1); flex: 1; strong { font-size: var(--text-lg); } }
+  .device-go svg { width: 20px; height: 20px; color: var(--ash); }
+
+  // ---------------------------------------------------------- sign status
+  .sign-panel { display: block; }
+  .sign-status { border-left: 6px solid var(--steel-hi); }
+  .sign-status.online { border-left-color: var(--live); }
+  .sign-status.offline { border-left-color: var(--fault); }
+  .sign-state { display: flex; align-items: center; gap: var(--space-2); margin: 0 0 var(--space-2); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: var(--text-sm); }
+  .sign-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--steel-hi); }
+  .online .sign-dot { background: var(--live); }
+  .offline .sign-dot { background: var(--fault); }
+  .sign-now { font-size: var(--text-lg); margin: 0 0 var(--space-3); }
+  .sign-facts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-5); list-style: none; margin: 0; padding: 0; }
+
+  // ---------------------------------------------------------- one tap
+  .sign-presets { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  .sign-presets form { display: contents; }
+  .sign-preset {
+    display: grid; gap: var(--space-1); text-align: left; width: 100%; min-height: 88px;
+    padding: var(--space-4); border: 2px solid var(--steel-hi); background: var(--slab-hi);
+    color: inherit; font: inherit; cursor: pointer;
+    strong { font-size: var(--text-lg); }
+    // The site's buttons are set in capitals; the line under the label reads
+    // better as a sentence.
+    span { text-transform: none; letter-spacing: normal; font-family: var(--font-body, inherit); font-weight: 400; line-height: 1.4; }
+    &:hover, &:focus-visible { border-color: var(--hazard); }
+    &.quiet { background: transparent; }
+  }
+
+  // ---------------------------------------------------------- message
+  .sign-text { font-family: var(--font-mono); font-size: var(--text-lg); text-transform: none; }
+  .sign-swatches, .sign-choices { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); align-items: center; }
+  .sign-choices form { display: inline; }
+  .sign-swatch {
+    display: inline-flex; align-items: center; gap: var(--space-2); cursor: pointer;
+    padding: var(--space-1) var(--space-3) var(--space-1) var(--space-2); border: 2px solid var(--steel-hi);
+    input { position: absolute; opacity: 0; pointer-events: none; }
+    &:has(input:checked) { border-color: var(--hazard); }
+    &:has(input:focus-visible) { outline: 2px solid var(--hazard); outline-offset: 2px; }
+  }
+  .sign-swatch .dot { width: 16px; height: 16px; border-radius: 50%; background: var(--swatch, #fff); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35); }
+  .sign-swatch .dot.rainbow { background: conic-gradient(#ff0000, #ffe000, #00d040, #20e0ff, #0060ff, #9000e0, #ff0000); }
+
+  // ---------------------------------------------------------- rotation
+  .sign-line { display: flex; gap: var(--space-2); margin-bottom: var(--space-2); input { flex: 1; min-width: 0; } select { width: auto; } }
+  .sign-rotation .sign-choices { margin-bottom: var(--space-5); }
+}

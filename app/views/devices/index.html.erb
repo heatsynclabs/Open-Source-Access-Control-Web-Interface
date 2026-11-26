@@ -1,0 +1,13 @@
+<%= render PageHeaderComponent.new(eyebrow: "Lab", title: "Devices",
+      lead: "Things at the lab you can work from here.") %>
+
+<div class="device-list">
+  <%= link_to marquee_path, class: "device-tile" do %>
+    <span class="device-icon" aria-hidden="true"><%= lucide_icon "monitor" %></span>
+    <span class="device-text">
+      <strong>Window sign</strong>
+      <span class="muted">The LED sign in the front window. Put a message up, show Open Hours, or bring out the robot.</span>
+    </span>
+    <span class="device-go" aria-hidden="true"><%= lucide_icon "chevron-right" %></span>
+  <% end %>
+</div>

@@ -1,0 +1,47 @@
+<%= turbo_frame_tag "marquee-rotation" do %>
+  <% if @error %>
+    <p class="muted">Could not read it from the sign (<%= @error %>). Try again once the sign is answering.</p>
+  <% else %>
+    <%= form_with model: @rotation, scope: :rotation, url: marquee_update_rotation_path, method: :patch,
+          class: "form sign-rotation", data: { turbo_frame: "_top" } do |f| %>
+      <div class="sign-choices">
+        <label class="check"><%= f.check_box :clock %> The clock</label>
+        <label class="check"><%= f.check_box :robot %> The robot</label>
+      </div>
+
+      <div class="field wide" role="group" aria-labelledby="sign-texts-label">
+        <span class="label" id="sign-texts-label">Text that scrolls by</span>
+        <% @rotation.texts.each_with_index do |line, i| %>
+          <div class="sign-line">
+            <%= text_field_tag "rotation[texts][#{i}][text]", line["text"], maxlength: Marquee::MESSAGE_MAX,
+                  autocomplete: "off", "aria-label": "Text #{i + 1}", placeholder: (i.zero? ? "HEATSYNC LABS" : "Optional") %>
+            <%= select_tag "rotation[texts][#{i}][color]", options_for_select(Marquee::COLORS.keys, line["color"]),
+                  "aria-label": "Colour for text #{i + 1}" %>
+          </div>
+        <% end %>
+        <p class="hint">Leave a line empty to skip it.</p>
+      </div>
+
+      <div class="fields">
+        <div class="field wide">
+          <label class="check"><%= f.check_box :open_enabled %> Open Hours while the doors are open</label>
+          <%= f.text_field :open_frames, class: "mono", "aria-label": "Open Hours frames" %>
+          <p class="hint">Frames split with |. One that fits (five letters) holds still, a longer one scrolls once. {until} becomes UNTIL 9 PM while a calendar Open Hours event is running.</p>
+        </div>
+        <div class="field">
+          <%= f.label :seconds, "Seconds for each" %>
+          <%= f.number_field :seconds, in: 5..120 %>
+          <p class="hint">The robot always finishes its run.</p>
+        </div>
+      </div>
+
+      <% if @rotation.extras.any? %>
+        <p class="note">Also in the mix, set from the full console and kept as is: <%= @rotation.extra_labels.to_sentence %>.</p>
+      <% end %>
+
+      <div class="form-actions">
+        <%= f.submit "Save", class: "primary" %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>
