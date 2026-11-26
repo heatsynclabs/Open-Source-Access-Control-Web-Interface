@@ -158,7 +158,7 @@ class MarqueePagesTest < ActionDispatch::IntegrationTest
     assert_redirected_to marquee_path
     kind, doc = sign.sent.last
     assert_equal :rotation, kind
-    assert_equal [{ "text" => "HEATSYNC LABS", "color" => "#ff9f43" }, { "anim" => "robot", "hold" => 23500 },
+    assert_equal [{ "text" => "HEATSYNC LABS", "color" => "#ff9f43" }, { "anim" => "robot", "hold" => 16800 },
                   { "anim" => "fire" }], doc["items"]
     assert_equal "OPEN|COME|IN", doc["open"]["cards"]
     assert AuditEvent.exists?(event_type: "marquee.rotation")

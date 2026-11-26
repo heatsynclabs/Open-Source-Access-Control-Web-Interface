@@ -44,7 +44,7 @@ class MarqueeTest < ActiveSupport::TestCase
   PANEL_ROTATION = {
     "ms" => 15000,
     "items" => [{ "anim" => "clock" }, { "text" => "HEATSYNC LABS", "color" => "#ff9f43" },
-                { "anim" => "plasma" }, { "anim" => "robot", "hold" => 23500 }],
+                { "anim" => "plasma" }, { "anim" => "robot", "hold" => 16800 }],
     "open" => { "cards" => "OPEN|HOURS|{until}", "color" => "#33ff66" },
   }.freeze
 
@@ -61,7 +61,7 @@ class MarqueeTest < ActiveSupport::TestCase
     doc = rotation.to_panel
     assert_equal 15000, doc["ms"]
     assert_equal [{ "anim" => "clock" }, { "text" => "HEATSYNC LABS", "color" => "#ff9f43" },
-                  { "anim" => "robot", "hold" => 23500 }, { "anim" => "plasma" }], doc["items"]
+                  { "anim" => "robot", "hold" => 16800 }, { "anim" => "plasma" }], doc["items"]
     assert_equal({ "cards" => "OPEN|HOURS|{until}", "color" => "#33ff66" }, doc["open"])
   end
 
@@ -72,7 +72,7 @@ class MarqueeTest < ActiveSupport::TestCase
     rotation = Marquee::Rotation.from_params(params, extras: [{ "anim" => "fire" }])
     assert rotation.valid?
     doc = rotation.to_panel
-    assert_equal [{ "text" => "HELLO", "color" => "#20e0ff" }, { "anim" => "robot", "hold" => 23500 }, { "anim" => "fire" }],
+    assert_equal [{ "text" => "HELLO", "color" => "#20e0ff" }, { "anim" => "robot", "hold" => 16800 }, { "anim" => "fire" }],
                  doc["items"]
     assert_equal false, doc["open"]
     assert_equal 20000, doc["ms"]

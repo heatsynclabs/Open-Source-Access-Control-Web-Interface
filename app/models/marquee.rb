@@ -37,8 +37,8 @@ module Marquee
   PRESETS = [
     Preset.new("open", "Open Hours", "OPEN, then WE'RE OPEN - COME IN, twice",
                { "cards" => OPEN_FRAMES, "color" => "#33ff66", "repeat" => 2, "now" => true }),
-    Preset.new("robot", "Robot", "The robot walks, waves and flies by",
-               { "anim" => "robot", "hold" => 23_500, "now" => true }),
+    Preset.new("robot", "Robot", "Gears turning, then it flies by",
+               { "anim" => "robot", "hold" => 16_800, "now" => true }),
     Preset.new("clock", "Clock", "The time, for 15 seconds",
                { "anim" => "clock", "hold" => 15_000, "now" => true }),
     Preset.new("normal", "Back to normal", "Drop any waiting messages",

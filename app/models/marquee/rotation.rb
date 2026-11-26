@@ -16,7 +16,7 @@ module Marquee
 
     MAX_ITEMS = 6           # the panel keeps six
     TEXT_LINES = 3
-    ROBOT_HOLD = 23_500     # one full robot routine
+    ROBOT_HOLD = 16_800     # one full robot routine
 
     attribute :clock, :boolean, default: true
     attribute :robot, :boolean, default: true
